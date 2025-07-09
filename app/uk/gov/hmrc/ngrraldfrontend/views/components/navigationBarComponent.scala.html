@@ -1,0 +1,64 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.ngrraldfrontend.models.components.NavButton
+@import uk.gov.hmrc.ngrraldfrontend.models.components.NavigationBarContent
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukBackLink
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.backlink.BackLink
+
+@this(govukBackLink: GovukBackLink)
+
+@(navigationBar: NavigationBarContent, showBackLink: Boolean = false)(implicit request: RequestHeader, messages: Messages)
+
+@hrefLinkClass(button: NavButton) = {
+    @if(button.fieldName.equals("SignOutPage")){
+        "hmrc-account-menu__link2 hmrc-account-menu__link@if(button.selected != false){--active}"
+    }else{
+        "hmrc-account-menu__link hmrc-account-menu__link@if(button.selected != false){--active}"
+    }
+}
+
+<div class="govuk-width-container" style="margin-top: -45px; margin-bottom: @if(showBackLink) {10px} else {30px};">
+    <nav id="secondary-nav" class="hmrc-account-menu">
+        @navigationBar.accountHome.map{ Home =>
+        <a href=@Home.call.url
+           class="hmrc-account-menu__link hmrc-account-menu__link@if(Home.selected != false){--active} hmrc-account-menu__link--home">
+            <span class="hmrc-account-icon hmrc-account-icon--home">
+                @messages(Home.messageKey)
+            </span>
+        </a>
+        }
+
+        <ul class="hmrc-account-menu__main">
+            @navigationBar.navigationButtons.map{ buttons =>
+            @buttons.map{ button =>
+            <li>
+                <a href=@button.call.url
+                   class=@hrefLinkClass(button)>
+                    @button.notification.map{ notification =>
+                    <span class="hmrc-notification-badge">@notification</span>
+                    }
+                    @messages(button.messageKey)
+                </a>
+            </li>
+            }
+            }
+        </ul>
+    </nav>
+    @if(showBackLink){
+    @govukBackLink(BackLink.mimicsBrowserBackButtonViaJavaScript)
+    }
+</div>
