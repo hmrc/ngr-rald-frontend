@@ -24,3 +24,7 @@ tellUsAboutYourNewAgreement.bullet.4 = what your rent includes
 tellUsAboutYourNewAgreement.bullet.5 = if you have done any alterations and improvements
 tellUsAboutYourNewAgreement.subTitle.2 = Supporting documents
 tellUsAboutYourNewAgreement.p4 = You do not need to upload any documents to support what you tell us.
+
+#TellUsAboutYourRenewedAgreement
+tellUsAboutYourRenewedAgreement.title = Tell us about your renewed agreement
+tellUsAboutYourRenewedAgreement.p1 = You need to tell us within 60 days if you have a renewed your agreement.

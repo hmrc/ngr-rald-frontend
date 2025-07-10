@@ -28,15 +28,15 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class TellUsAboutYourNewAgreementController @Inject()(view: TellUsAboutYourAgreementView,
-                                                      authenticate: AuthRetrievals,
-                                                      isRegisteredCheck: RegistrationAction,
-                                                      mcc: MessagesControllerComponents
-                                                     )(implicit appConfig: AppConfig)  extends FrontendController(mcc) with I18nSupport {
+class TellUsAboutYourRenewedAgreementController @Inject()(view: TellUsAboutYourAgreementView,
+                                                          authenticate: AuthRetrievals,
+                                                          isRegisteredCheck: RegistrationAction,
+                                                          mcc: MessagesControllerComponents
+                                                     )(implicit appConfig: AppConfig) extends FrontendController(mcc) with I18nSupport {
 
   def show: Action[AnyContent] = {
     (authenticate andThen isRegisteredCheck).async { implicit request =>
-      Future.successful(Ok(view(navigationBarContent = createDefaultNavBar, selectedPropertyAddress = "selectedPropertyAddress", newAgreement = true)))
+      Future.successful(Ok(view(navigationBarContent = createDefaultNavBar, selectedPropertyAddress = "selectedPropertyAddress", newAgreement = false)))
     }
   }
 
@@ -45,4 +45,4 @@ class TellUsAboutYourNewAgreementController @Inject()(view: TellUsAboutYourAgree
         Future.successful(Redirect(routes.TellUsAboutYourNewAgreementController.show.url))
       }
   }
-}
+}                                                     

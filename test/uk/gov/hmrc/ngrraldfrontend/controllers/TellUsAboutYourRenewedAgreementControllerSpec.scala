@@ -22,10 +22,10 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLoca
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
 import uk.gov.hmrc.ngrraldfrontend.views.html.TellUsAboutYourAgreementView
 
-class TellUsAboutYourNewAgreementControllerSpec extends ControllerSpecSupport {
-  val pageTitle = "Tell us about your new agreement"
+class TellUsAboutYourRenewedAgreementControllerSpec extends ControllerSpecSupport {
+  val pageTitle = "Tell us about your renewed agreement"
   val view: TellUsAboutYourAgreementView = inject[TellUsAboutYourAgreementView]
-  val controller: TellUsAboutYourNewAgreementController = new TellUsAboutYourNewAgreementController(view, mockAuthJourney, mockIsRegisteredCheck, mcc)(mockConfig)
+  val controller: TellUsAboutYourRenewedAgreementController = new TellUsAboutYourRenewedAgreementController(view, mockAuthJourney, mockIsRegisteredCheck, mcc)(mockConfig)
 
   "Tell us about your new agreement controller" must {
     "method show" must {
