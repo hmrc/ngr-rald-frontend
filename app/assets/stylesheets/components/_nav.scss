@@ -1,0 +1,14 @@
+/*---------- Override PTA sub-navigation colour----------*/
+.hmrc-account-menu__main a {
+  color: #0b0c0c;
+}
+
+.hmrc-account-menu__link2 {
+    &:visited {
+      color: #0b0c0c;
+    }
+}
+
+.govuk-summary-list__key_width {
+    width: 45%;
+}

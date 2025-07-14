@@ -1,2 +1,30 @@
 service.name = ngr-rald-frontend
 service.text = This is your new service
+
+#service
+service.continue = Continue
+
+#NavigationBar
+nav.home=Account home
+nav.signOut=Sign out
+nav.messages=Messages
+nav.actionNeeded=Action needed
+nav.profileAndSettings=Profile and settings
+
+#TellUsAboutYourNewAgreement
+tellUsAboutYourNewAgreement.title = Tell us about your new agreement
+tellUsAboutYourNewAgreement.p1 = You need to tell us within 60 days if you have a new agreement.
+tellUsAboutYourNewAgreement.subTitle = Information you need
+tellUsAboutYourNewAgreement.p2 = It will help to have a copy of your agreement to refer to.
+tellUsAboutYourNewAgreement.p3 = Depending on what you tell us about, you need to know things like:
+tellUsAboutYourNewAgreement.bullet.1 = who your landlord is
+tellUsAboutYourNewAgreement.bullet.2 = when you made the agreement
+tellUsAboutYourNewAgreement.bullet.3 = how much your rent is
+tellUsAboutYourNewAgreement.bullet.4 = what your rent includes
+tellUsAboutYourNewAgreement.bullet.5 = if you have done any alterations and improvements
+tellUsAboutYourNewAgreement.subTitle.2 = Supporting documents
+tellUsAboutYourNewAgreement.p4 = You do not need to upload any documents to support what you tell us.
+
+#TellUsAboutYourRenewedAgreement
+tellUsAboutYourRenewedAgreement.title = Tell us about your renewed agreement
+tellUsAboutYourRenewedAgreement.p1 = You need to tell us within 60 days if you have a renewed your agreement.

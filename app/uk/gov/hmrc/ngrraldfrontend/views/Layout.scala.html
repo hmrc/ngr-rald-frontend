@@ -1,21 +1,84 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
 @import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
+@import uk.gov.hmrc.ngrraldfrontend.views.html.FullWidthLayout
+@import uk.gov.hmrc.ngrraldfrontend.views.html.TwoThirdsLayout
+@import uk.gov.hmrc.hmrcfrontend.config.ContactFrontendConfig
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage._
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
+@import uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcStandardPage
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage.HmrcStandardPageParams
+@import uk.gov.hmrc.ngrraldfrontend.models.components.NavigationBarContent
+@import uk.gov.hmrc.ngrraldfrontend.views.html.components.navigationBarComponent
 
 @this(
   appConfig: AppConfig,
-  hmrcStandardPage: HmrcStandardPage
-)
+  hmrcLanguageSelectHelper: HmrcLanguageSelectHelper,
+  standardBetaBanner: StandardBetaBanner,
+  fullWidthLayout: FullWidthLayout,
+  twoThirdsLayout: TwoThirdsLayout,
+  hmrcStandardPage: HmrcStandardPage,
+  stylesheets: Stylesheets,
+  navigationBarComponent: navigationBarComponent
+)(implicit cfConfig: ContactFrontendConfig)
 
-@(pageTitle: Option[String] = None)(contentBlock: Html)(implicit request: RequestHeader, messages: Messages)
+@(pageTitle: Option[String] = None,
+showBackLink: Boolean = false,
+fullWidth: Boolean = false,
+navigationBarContent: Option[NavigationBarContent] = None
+)(contentBlock: Html)(implicit request: RequestHeader, messages: Messages,  appConfig: AppConfig)
+
+@headScripts = {
+    @stylesheets()
+}
+
+@navbar = {
+    @navigationBarContent.map { content =>
+        @navigationBarComponent(content, showBackLink)
+    }
+}
+
+@languageSelector = {
+    @hmrcLanguageSelectHelper()
+}
+
+@content = {
+    @if(appConfig.features.welshLanguageSupportEnabled()) {
+        @languageSelector
+    }
+    @contentBlock
+}
 
 @hmrcStandardPage(
-  HmrcStandardPageParams(
-    pageTitle = pageTitle,
-    isWelshTranslationAvailable = appConfig.welshLanguageSupportEnabled
-  )
-)(contentBlock)
-
-@{
-    //$COVERAGE-OFF$
-}
+    HmrcStandardPageParams(
+        pageTitle = pageTitle.map(title => messages("service.base.title", title)),
+        templateOverrides = TemplateOverrides(
+        mainContentLayout = if (fullWidth) {
+            Some((_: Html) => fullWidthLayout(content, navbar))
+        } else {
+            Some((_: Html) => twoThirdsLayout(content, navbar))
+        },
+        additionalHeadBlock = Some(headScripts)
+        ),
+        backLink = None,
+        banners = Banners(
+            phaseBanner = Some(standardBetaBanner()),
+        ),
+    )
+)(content)
