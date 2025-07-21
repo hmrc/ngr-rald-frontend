@@ -21,7 +21,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.FormError
 
 class TypeOfLeaseRenewalFormSpec extends AnyWordSpec with Matchers {
-  "ConnectionToPropertyForm" should {
+  "TypeOfLeaseRenewalForm" should {
 
     "bind successfully with a valid input value 'RenewedAgreement'" in {
       val data = Map("type-of-renewal" -> "RenewedAgreement")
