@@ -25,12 +25,14 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.mvc.{AnyContentAsEmpty, MessagesControllerComponents}
+import play.api.mvc.{AnyContent, AnyContentAsEmpty, Call, MessagesControllerComponents}
 import play.api.test.{FakeRequest, Injecting}
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name}
 import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, Nino}
 import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames}
+import uk.gov.hmrc.ngrraldfrontend.controllers.routes
 import uk.gov.hmrc.ngrraldfrontend.mocks.MockAppConfig
+import uk.gov.hmrc.ngrraldfrontend.models.forms.TypeOfLeaseRenewalForm
 import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, Postcode}
 
 import scala.concurrent.ExecutionContext
@@ -72,11 +74,11 @@ trait TestSupport extends PlaySpec
   lazy implicit val mockConfig: MockAppConfig = new MockAppConfig(app.configuration)
   lazy val messagesApi: MessagesApi = inject[MessagesApi]
   implicit lazy val messages: Messages = MessagesImpl(Lang("en"), messagesApi)
-    lazy val fakeRequest: FakeRequest[AnyContentAsEmpty.type] =
-        FakeRequest("", "").withHeaders(HeaderNames.authorisation -> "Bearer 1")
-    lazy val authenticatedFakeRequest: AuthenticatedUserRequest[AnyContentAsEmpty.type] =
-        AuthenticatedUserRequest(fakeRequest, None, None, None, credId = Some("1234"), None, None, nino = Nino(true, Some("")))
-        
-        
+  lazy val fakeRequest: FakeRequest[AnyContentAsEmpty.type] =
+      FakeRequest("", "").withHeaders(HeaderNames.authorisation -> "Bearer 1")
+      
+  def authenticatedFakeRequest[A](fakeRequest: FakeRequest[A] = fakeRequest): AuthenticatedUserRequest[A] =
+      AuthenticatedUserRequest[A](fakeRequest, None, None, None, credId = Some("1234"), None, None, nino = Nino(true, Some("")))
+
 }
 
