@@ -18,6 +18,7 @@
 @import uk.gov.hmrc.ngrraldfrontend.models.components.NavigationBarContent
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.ngrraldfrontend.views.html.components._
+@import uk.gov.hmrc.ngrraldfrontend.models._
 
 @this(
  layout: Layout,
@@ -25,26 +26,36 @@
  formHelper: FormWithCSRF
 )
 
-@(navigationBarContent: NavigationBarContent, selectedPropertyAddress: String, newAgreement:Boolean)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+@(navigationBarContent: NavigationBarContent, selectedPropertyAddress: String, Agreement:AgreementType)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
 @layout(pageTitle = Some(messages("tellUsAboutYourNewAgreement.title")), showBackLink = true, fullWidth = true, navigationBarContent = Some(navigationBarContent)) {
 
- @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.TellUsAboutYourNewAgreementController.show, Symbol("autoComplete") -> "off") {
+ @formHelper(action = if(Agreement == New){
+    uk.gov.hmrc.ngrraldfrontend.controllers.routes.TellUsAboutYourNewAgreementController.show
+    }else if(Agreement == Renewed){
+    uk.gov.hmrc.ngrraldfrontend.controllers.routes.TellUsAboutYourRenewedAgreementController.show
+    }else{
+    uk.gov.hmrc.ngrraldfrontend.controllers.routes.TellUsAboutRentController.show
+    }, Symbol("autoComplete") -> "off"){
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <span class="govuk-caption-m">@selectedPropertyAddress</span>
       <h1 class="govuk-heading-l">
-          @if(newAgreement){
+          @if(Agreement == New){
             @messages("tellUsAboutYourNewAgreement.title")
+          }else if(Agreement == Renewed){
+          @messages("tellUsAboutYourRenewedAgreement.title")
           }else{
-            @messages("tellUsAboutYourRenewedAgreement.title")
+          @messages("TellUsAboutYourRent.title")
           }
       </h1>
       <p class="govuk-body">
-          @if(newAgreement){
+          @if(Agreement == New){
             @messages("tellUsAboutYourNewAgreement.p1")
-          }else{
+          }else if(Agreement == Renewed){
             @messages("tellUsAboutYourRenewedAgreement.p1")
+          }else{
+            @messages("TellUsAboutYourRent.p1")
           }
       </p>
       <h1 class="govuk-heading-m">
@@ -53,6 +64,11 @@
       <p class="govuk-body">
           @messages("tellUsAboutYourNewAgreement.p2")
       </p>
+        @if(Agreement == Rent){
+            <p class="govuk-body">
+                @messages("TellUsAboutYourRent.p3")
+            </p>
+        }
       <p class="govuk-body">
           @messages("tellUsAboutYourNewAgreement.p3")
       </p>
@@ -60,18 +76,29 @@
             <li>
                 @messages("tellUsAboutYourNewAgreement.bullet.1")
             </li>
-            <li>
-                @messages("tellUsAboutYourNewAgreement.bullet.2")
-            </li>
+            @if(Agreement == Rent){
+                <li>
+                    @messages("TellUsAboutYourRent.bullet.2")
+                </li>
+            }else{
+                <li>
+                    @messages("tellUsAboutYourNewAgreement.bullet.2")
+                </li>
+            }
             <li>
                 @messages("tellUsAboutYourNewAgreement.bullet.3")
             </li>
             <li>
                 @messages("tellUsAboutYourNewAgreement.bullet.4")
             </li>
-            @if(newAgreement){
+
+            @if(Agreement == New){
                 <li>
                     @messages("tellUsAboutYourNewAgreement.bullet.5")
+                </li>
+            }else if(Agreement == Rent){
+                <li>
+                    @messages("TellUsAboutYourRent.bullet.5")
                 </li>
             }
         </ul>

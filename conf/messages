@@ -30,6 +30,13 @@ tellUsAboutYourNewAgreement.p4 = You do not need to upload any documents to supp
 tellUsAboutYourRenewedAgreement.title = Tell us about your renewed agreement
 tellUsAboutYourRenewedAgreement.p1 = You need to tell us within 60 days if you have a renewed your agreement.
 
+#TellUsAboutYourRent
+TellUsAboutYourRent.title = Tell us about your rent review
+TellUsAboutYourRent.p1 = You need to tell us within 60 days if you have completed a rent review.
+TellUsAboutYourRent.p3 = You should also have a rent review memorandum that sets out the new terms that you agreed with your landlord or their agent
+TellUsAboutYourRent.bullet.2 = when you made the change to your agreement
+TellUsAboutYourRent.bullet.5 = if you have done any alterations or improvements
+
 #WhatTypeOfAgreement
 whatTypeOfAgreement.title = What type of agreement do you have?
 whatTypeOfAgreement.LeaseOrTenancy = Lease or tenancy agreement
@@ -37,6 +44,7 @@ whatTypeOfAgreement.written = Licence or other type of written agreement
 whatTypeOfAgreement.verbal = Verbal agreement
 whatTypeOfAgreement.error.required = Select what type of agreement you have
 
+#typeOfLeaseRenewal
 typeOfLeaseRenewal.title = What type of lease renewal is it?
 typeOfLeaseRenewal.option1 = A renewed agreement
 typeOfLeaseRenewal.option2 = A surrender and renewal

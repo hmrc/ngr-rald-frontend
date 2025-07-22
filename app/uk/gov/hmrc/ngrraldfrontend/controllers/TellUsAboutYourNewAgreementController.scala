@@ -27,6 +27,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
 import uk.gov.hmrc.ngrraldfrontend.views.html.TellUsAboutYourAgreementView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.ngrraldfrontend.models._
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -45,7 +46,7 @@ class TellUsAboutYourNewAgreementController @Inject()(view: TellUsAboutYourAgree
       ngrConnector.getLinkedProperty(credId = CredId(request.credId.getOrElse(""))).flatMap {
         case true =>
           raldRepo.findByCredId(credId = CredId(request.credId.getOrElse(""))).flatMap {
-            case Some(answers) => Future.successful(Ok(view(navigationBarContent = createDefaultNavBar, selectedPropertyAddress = answers.selectedProperty.addressFull, newAgreement = true)))
+            case Some(answers) => Future.successful(Ok(view(navigationBarContent = createDefaultNavBar, selectedPropertyAddress = answers.selectedProperty.addressFull, Agreement = New)))
             case None => throw new NotFoundException("Couldn't find property in mongo") 
           }
         case _ => throw new NotFoundException("Couldn't connect to backend")

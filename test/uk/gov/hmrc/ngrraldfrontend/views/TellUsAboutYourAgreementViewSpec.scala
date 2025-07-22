@@ -20,6 +20,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
 import uk.gov.hmrc.ngrraldfrontend.views.html.TellUsAboutYourAgreementView
+import uk.gov.hmrc.ngrraldfrontend.models.{New, Renewed, Rent}
 
 class TellUsAboutYourAgreementViewSpec extends ViewBaseSpec {
   lazy val view: TellUsAboutYourAgreementView = inject[TellUsAboutYourAgreementView]
@@ -61,11 +62,11 @@ class TellUsAboutYourAgreementViewSpec extends ViewBaseSpec {
   val address = "5 Brixham Marina, Berry Head Road, Brixham, Devon, TQ5 9BW"
 
   "TellUsAboutYourNewAgreementView" must {
-    val tellUsAboutYourNewAgreementView = view(content, address, true)
+    val tellUsAboutYourNewAgreementView = view(content, address, New)
     lazy implicit val document: Document = Jsoup.parse(tellUsAboutYourNewAgreementView.body)
-    val htmlApply = view.apply(content, address, true).body
-    val htmlRender = view.render(content, address, true, request, messages, mockConfig).body
-    lazy val htmlF = view.f(content, address, true)
+    val htmlApply = view.apply(content, address, New).body
+    val htmlRender = view.render(content, address, New, request, messages, mockConfig).body
+    lazy val htmlF = view.f(content, address, New)
 
     "htmlF is not empty" in {
       htmlF.toString() must not be empty
@@ -133,11 +134,11 @@ class TellUsAboutYourAgreementViewSpec extends ViewBaseSpec {
   }
 
   "TellUsAboutYourRenewedAgreementView" must {
-    val tellUsAboutYourRenewedAgreementView = view(content, address, false)
+    val tellUsAboutYourRenewedAgreementView = view(content, address, Renewed)
     lazy implicit val document: Document = Jsoup.parse(tellUsAboutYourRenewedAgreementView.body)
-    val htmlApply = view.apply(content, address, false).body
-    val htmlRender = view.render(content, address, false, request, messages, mockConfig).body
-    lazy val htmlF = view.f(content, address, false)
+    val htmlApply = view.apply(content, address, Renewed).body
+    val htmlRender = view.render(content, address, Renewed, request, messages, mockConfig).body
+    lazy val htmlF = view.f(content, address, Renewed)
 
     "htmlF is not empty" in {
       htmlF.toString() must not be empty

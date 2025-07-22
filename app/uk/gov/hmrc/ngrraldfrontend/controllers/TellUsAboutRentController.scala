@@ -22,7 +22,7 @@ import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, RegistrationAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.connectors.NGRConnector
-import uk.gov.hmrc.ngrraldfrontend.models.Renewed
+import uk.gov.hmrc.ngrraldfrontend.models.Rent
 import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
@@ -33,20 +33,20 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TellUsAboutYourRenewedAgreementController @Inject()(view: TellUsAboutYourAgreementView,
-                                                          authenticate: AuthRetrievals,
-                                                          isRegisteredCheck: RegistrationAction,
-                                                          ngrConnector: NGRConnector,
-                                                          raldRepo: RaldRepo,
-                                                          mcc: MessagesControllerComponents
-                                                     )(implicit appConfig: AppConfig, ec:ExecutionContext) extends FrontendController(mcc) with I18nSupport {
+class TellUsAboutRentController  @Inject()(view: TellUsAboutYourAgreementView,
+                                           authenticate: AuthRetrievals,
+                                           isRegisteredCheck: RegistrationAction,
+                                           ngrConnector: NGRConnector,
+                                           raldRepo: RaldRepo,
+                                           mcc: MessagesControllerComponents
+                                          )(implicit appConfig: AppConfig, ec:ExecutionContext)  extends FrontendController(mcc) with I18nSupport {
 
   def show: Action[AnyContent] = {
     (authenticate andThen isRegisteredCheck).async { implicit request =>
       ngrConnector.getLinkedProperty(credId = CredId(request.credId.getOrElse(""))).flatMap {
         case true =>
           raldRepo.findByCredId(credId = CredId(request.credId.getOrElse(""))).flatMap {
-            case Some(answers) => Future.successful(Ok(view(navigationBarContent = createDefaultNavBar, selectedPropertyAddress = answers.selectedProperty.addressFull, Agreement = Renewed)))
+            case Some(answers) => Future.successful(Ok(view(navigationBarContent = createDefaultNavBar, selectedPropertyAddress = answers.selectedProperty.addressFull, Agreement = Rent)))
             case None => throw new NotFoundException("Couldn't find property in mongo")
           }
         case _ => throw new NotFoundException("Couldn't connect to backend")
@@ -54,9 +54,10 @@ class TellUsAboutYourRenewedAgreementController @Inject()(view: TellUsAboutYourA
     }
   }
 
-    def submit: Action[AnyContent] = {
-      (authenticate andThen isRegisteredCheck).async { _ =>
-        Future.successful(Redirect(routes.TellUsAboutYourNewAgreementController.show.url))
-      }
+  def submit: Action[AnyContent] = {
+    (authenticate andThen isRegisteredCheck).async { _ =>
+      Future.successful(Redirect(routes.TellUsAboutRentController.show.url))
+    }
   }
-}                                                     
+}
+
