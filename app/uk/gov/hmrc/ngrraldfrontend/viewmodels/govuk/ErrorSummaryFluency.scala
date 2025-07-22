@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.ngrraldfrontend.viewModels.govuk
+package uk.gov.hmrc.ngrraldfrontend.viewmodels.govuk
 
 import play.api.data.Form
 import play.api.i18n.Messages

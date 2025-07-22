@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.ngrraldfrontend.viewModels
+package uk.gov.hmrc.ngrraldfrontend.viewmodels
 
 package object govuk {
   object all extends ErrorSummaryFluency

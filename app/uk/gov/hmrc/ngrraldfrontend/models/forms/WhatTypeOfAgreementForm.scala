@@ -18,7 +18,9 @@ package uk.gov.hmrc.ngrraldfrontend.models.forms
 
 import play.api.data.Form
 import play.api.data.Forms.mapping
+import play.api.i18n.Messages
 import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 
 final case class WhatTypeOfAgreementForm(radioValue: String)
@@ -38,5 +40,12 @@ object WhatTypeOfAgreementForm extends Mappings {
       )(WhatTypeOfAgreementForm.apply)(WhatTypeOfAgreementForm.unapply)
     )
   }
+
+  private val leaseOrTenancy: NGRRadioButtons = NGRRadioButtons(radioContent = "whatTypeOfAgreement.LeaseOrTenancy", radioValue = LeaseOrTenancy)
+  private val written: NGRRadioButtons = NGRRadioButtons(radioContent = "whatTypeOfAgreement.written", radioValue = Written)
+  private val verbal: NGRRadioButtons = NGRRadioButtons(radioContent = "whatTypeOfAgreement.verbal", radioValue = Verbal)
+
+  def ngrRadio(form: Form[WhatTypeOfAgreementForm])(implicit messages: Messages): NGRRadio =
+    NGRRadio(NGRRadioName("what-type-of-agreement-radio"), Seq(leaseOrTenancy, written, verbal))
 
 }

@@ -44,14 +44,7 @@ class WhatTypeOfAgreementController @Inject()(view: WhatTypeOfAgreementView,
                                               mcc: MessagesControllerComponents)
                                              (implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport {
-
-  private def leaseOrTenancy: NGRRadioButtons = NGRRadioButtons(radioContent = "whatTypeOfAgreement.LeaseOrTenancy", radioValue = LeaseOrTenancy)
-  private def written: NGRRadioButtons = NGRRadioButtons(radioContent = "whatTypeOfAgreement.written", radioValue = Written)
-  private def verbal: NGRRadioButtons = NGRRadioButtons(radioContent = "whatTypeOfAgreement.verbal", radioValue = Verbal)
-
-  private def ngrRadio(form: Form[WhatTypeOfAgreementForm])(implicit messages: Messages): NGRRadio =
-    NGRRadio(NGRRadioName("what-type-of-agreement-radio"), Seq(leaseOrTenancy, written, verbal))
-
+  
   def show: Action[AnyContent] = {
     (authenticate andThen isRegisteredCheck).async { implicit request =>
       raldRepo.findByCredId(CredId(request.credId.getOrElse(""))).flatMap {
@@ -61,7 +54,7 @@ class WhatTypeOfAgreementController @Inject()(view: WhatTypeOfAgreementView,
               navigationBarContent = createDefaultNavBar,
               selectedPropertyAddress = answers.selectedProperty.addressFull,
               form = form,
-              ngrRadio = buildRadios(form, ngrRadio(form))
+              ngrRadio = buildRadios(form, WhatTypeOfAgreementForm.ngrRadio(form))
             )
           ))
         case _ =>
@@ -80,7 +73,7 @@ class WhatTypeOfAgreementController @Inject()(view: WhatTypeOfAgreementView,
                 createDefaultNavBar,
                 selectedPropertyAddress = answers.selectedProperty.addressFull,
                 formWithErrors,
-                buildRadios(formWithErrors, ngrRadio(formWithErrors))
+                buildRadios(formWithErrors, WhatTypeOfAgreementForm.ngrRadio(formWithErrors))
                 )))
               case None => Future.successful(Redirect(s"${appConfig.ngrDashboardUrl}/select-your-property"))
             },
