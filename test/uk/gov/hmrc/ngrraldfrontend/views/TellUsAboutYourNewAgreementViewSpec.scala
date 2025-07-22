@@ -19,7 +19,6 @@ package uk.gov.hmrc.ngrraldfrontend.views
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
-import uk.gov.hmrc.ngrraldfrontend.models.components.{NavBarContents, NavBarCurrentPage, NavBarPageContents, NavigationBarContent}
 import uk.gov.hmrc.ngrraldfrontend.views.html.TellUsAboutYourNewAgreementView
 
 class TellUsAboutYourNewAgreementViewSpec extends ViewBaseSpec {

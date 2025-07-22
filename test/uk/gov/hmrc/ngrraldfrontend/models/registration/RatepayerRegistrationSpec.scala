@@ -18,7 +18,6 @@ package uk.gov.hmrc.ngrraldfrontend.models.registration
 
 import play.api.libs.json.Json
 import uk.gov.hmrc.ngrraldfrontend.helpers.TestSupport
-import uk.gov.hmrc.ngrraldfrontend.models.registration.RatepayerRegistration
 
 class RatepayerRegistrationSpec extends TestSupport {
 

@@ -17,7 +17,6 @@
 package uk.gov.hmrc.ngrraldfrontend.models.components
 
 import uk.gov.hmrc.ngrraldfrontend.helpers.TestSupport
-import org.mockito.Mockito.{spy, when}
 
 class NavBarPagesSpec extends TestSupport {
 
