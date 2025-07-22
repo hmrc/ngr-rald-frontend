@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.ngrraldfrontend.controllers
 
-import play.api.http.Status.{NOT_IMPLEMENTED, OK}
+import play.api.http.Status.{BAD_REQUEST, NOT_IMPLEMENTED, OK}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
 import uk.gov.hmrc.http.HeaderNames
@@ -47,6 +47,15 @@ class TypeOfLeaseRenewalControllerSpec extends ControllerSpecSupport {
         
         val result = controller.submit()(authenticatedFakeRequest(fakePostRequest))
         status(result) mustBe NOT_IMPLEMENTED
+      }
+
+      "Return BAD_REQUEST for missing input and the correct view" in {
+        val fakePostRequest = FakeRequest(routes.TypeOfLeaseRenewalController.submit)
+          .withFormUrlEncodedBody((TypeOfLeaseRenewalForm.formName, ""))
+          .withHeaders(HeaderNames.authorisation -> "Bearer 1")
+
+        val result = controller.submit()(authenticatedFakeRequest(fakePostRequest))
+        status(result) mustBe BAD_REQUEST
       }
     }
   }
