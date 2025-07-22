@@ -21,9 +21,12 @@ import play.api.libs.json.Json
 import play.api.libs.ws.JsonBodyWritables.*
 import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse, StringContextOps}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse, NotFoundException, StringContextOps}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
+import uk.gov.hmrc.ngrraldfrontend.models.{PropertyLinkingUserAnswers, RaldUserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.registration.{CredId, RatepayerRegistrationValuation}
+import uk.gov.hmrc.ngrraldfrontend.models.vmvProperty.VMVProperty
+import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
 
 import java.net.URL
 import javax.inject.{Inject, Singleton}
@@ -31,7 +34,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class NGRConnector @Inject()(http: HttpClientV2,
-                             appConfig: AppConfig
+                             appConfig: AppConfig,
+                             raldRepo: RaldRepo
                              )
                             (implicit ec: ExecutionContext){
 
@@ -43,5 +47,24 @@ class NGRConnector @Inject()(http: HttpClientV2,
     http.get(url("get-ratepayer"))
       .withBody(Json.toJson(model))
       .execute[Option[RatepayerRegistrationValuation]]
+  }
+
+  def getPropertyLinkingUserAnswers(credId: CredId)(implicit hc: HeaderCarrier): Future[Option[PropertyLinkingUserAnswers]] = {
+    implicit val rds: HttpReads[PropertyLinkingUserAnswers] = readFromJson
+    val dummyVMVProperty: VMVProperty = VMVProperty(0L, "", "", "", List.empty)
+    val model: PropertyLinkingUserAnswers = PropertyLinkingUserAnswers(credId, dummyVMVProperty)
+    http.get(url("get-property-linking-user-answers"))
+      .withBody(Json.toJson(model))
+      .execute[Option[PropertyLinkingUserAnswers]]
+  }
+
+  def getLinkedProperty(credId: CredId)(implicit hc: HeaderCarrier): Future[Boolean] = {
+    getPropertyLinkingUserAnswers(credId)
+      .flatMap {
+        case Some(propertyLinkingUserAnswers) => 
+          raldRepo.upsertRaldUserAnswers(RaldUserAnswers(credId, propertyLinkingUserAnswers.vmvProperty))
+        case None => 
+          throw new NotFoundException("failed to find propertyLinkingUserAnswers from backend mongo")
+      }
   }
 }

@@ -27,6 +27,7 @@ trait AppConfig {
   val ngrLoginRegistrationHost: String
   val ngrDashboardUrl: String
   val ngrLogoutUrl: String
+  val timeToLive: String
   def getString(key: String): String
 }
 
@@ -35,7 +36,8 @@ class FrontendAppConfig @Inject()(config: Configuration, servicesConfig: Service
   override val features = new Features()(config)
   override val nextGenerationRatesHost: String = servicesConfig.baseUrl("next-generation-rates")
   override val ngrLoginRegistrationHost: String = servicesConfig.baseUrl("ngr-login-register-frontend")
-  override val ngrDashboardUrl: String = s"$dashboardHost/ngr-dashboard-frontend/dashboard"
+  override val timeToLive: String = servicesConfig.getString("time-to-live.time")
+  override val ngrDashboardUrl: String = s"$dashboardHost/ngr-dashboard-frontend"
   override val ngrLogoutUrl: String = s"$dashboardHost/ngr-dashboard-frontend/signout"
 
   def getString(key: String): String =
@@ -45,5 +47,4 @@ class FrontendAppConfig @Inject()(config: Configuration, servicesConfig: Service
     throw new RuntimeException(s"Could not find config key '$key'")
 
   lazy val dashboardHost: String = getString("microservice.services.ngr-dashboard-frontend.host")
-  lazy val propertyLinkingHost: String = getString("microservice.services.ngr-property-linking-frontend.host")
 }

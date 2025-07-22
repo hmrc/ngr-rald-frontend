@@ -1,0 +1,45 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
+@import uk.gov.hmrc.ngrraldfrontend.models.components.NavigationBarContent
+@import uk.gov.hmrc.ngrraldfrontend.viewModels.govuk.all._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.ngrraldfrontend.views.html.components._
+@import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatTypeOfAgreementForm
+
+@this(
+ layout: Layout,
+ govukRadios : GovukRadios,
+ govukErrorSummary: GovukErrorSummary,
+ saveAndContinueButton: saveAndContinueButton,
+ formHelper: FormWithCSRF
+)
+
+@(navigationBarContent: NavigationBarContent, selectedPropertyAddress: String, form: Form[WhatTypeOfAgreementForm], ngrRadio: Radios)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+
+@layout(pageTitle = Some(messages("tellUsAboutYourNewAgreement.title")), showBackLink = true, fullWidth = true, navigationBarContent = Some(navigationBarContent)) {
+
+ @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatTypeOfAgreementController.submit, Symbol("autoComplete") -> "off") {
+    @if(form.errors.nonEmpty) {
+      @govukErrorSummary(ErrorSummaryViewModel(form))
+    }
+    <span class="govuk-caption-m">@selectedPropertyAddress</span>
+    <h1 class="govuk-heading-l">@messages("whatTypeOfAgreement.title")</h1>
+    @govukRadios(ngrRadio)
+    @saveAndContinueButton(msg = messages("service.continue"), isStartButton = false)
+ }
+}

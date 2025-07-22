@@ -18,25 +18,38 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, RegistrationAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
+import uk.gov.hmrc.ngrraldfrontend.connectors.NGRConnector
 import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
+import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
 import uk.gov.hmrc.ngrraldfrontend.views.html.TellUsAboutYourAgreementView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class TellUsAboutYourNewAgreementController @Inject()(view: TellUsAboutYourAgreementView,
                                                       authenticate: AuthRetrievals,
                                                       isRegisteredCheck: RegistrationAction,
+                                                      ngrConnector: NGRConnector,
+                                                      raldRepo: RaldRepo,
                                                       mcc: MessagesControllerComponents
-                                                     )(implicit appConfig: AppConfig)  extends FrontendController(mcc) with I18nSupport {
+                                                     )(implicit appConfig: AppConfig, ec:ExecutionContext)  extends FrontendController(mcc) with I18nSupport {
 
   def show: Action[AnyContent] = {
     (authenticate andThen isRegisteredCheck).async { implicit request =>
-      Future.successful(Ok(view(navigationBarContent = createDefaultNavBar, selectedPropertyAddress = "selectedPropertyAddress", newAgreement = true)))
+      ngrConnector.getLinkedProperty(credId = CredId(request.credId.getOrElse(""))).flatMap {
+        case true =>
+          raldRepo.findByCredId(credId = CredId(request.credId.getOrElse(""))).flatMap {
+            case Some(answers) => Future.successful(Ok(view(navigationBarContent = createDefaultNavBar, selectedPropertyAddress = answers.selectedProperty.addressFull, newAgreement = true)))
+            case None => throw new NotFoundException("Couldn't find property in mongo") 
+          }
+        case _ => throw new NotFoundException("Couldn't connect to backend")
+      }
     }
   }
 

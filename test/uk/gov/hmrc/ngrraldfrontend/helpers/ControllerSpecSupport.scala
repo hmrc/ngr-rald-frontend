@@ -23,11 +23,11 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, RegistrationAction}
 import uk.gov.hmrc.ngrraldfrontend.connectors.NGRConnector
 import uk.gov.hmrc.ngrraldfrontend.models.AuthenticatedUserRequest
+import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
 
 import scala.concurrent.{ExecutionContext, Future}
 
 trait ControllerSpecSupport extends TestSupport {
-
   val mockIsRegisteredCheck: RegistrationAction = mock[RegistrationAction]
   val mockAuthJourney: AuthRetrievals = mock[AuthRetrievals]
   
