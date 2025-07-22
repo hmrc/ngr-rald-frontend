@@ -22,8 +22,6 @@ import uk.gov.hmrc.ngrraldfrontend.models.registration.*
 import uk.gov.hmrc.ngrraldfrontend.models.registration.ReferenceType.TRN
 import uk.gov.hmrc.ngrraldfrontend.models.registration.UserType.Individual
 
-import java.time.{Instant, LocalDate}
-
 trait TestData {
  val credId: CredId = CredId("1234")
  val testRegistrationModel: RatepayerRegistration = RatepayerRegistration(

@@ -19,7 +19,6 @@ package uk.gov.hmrc.ngrraldfrontend.views
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
-import uk.gov.hmrc.ngrraldfrontend.models.components.{NavBarContents, NavBarCurrentPage, NavBarPageContents, NavigationBarContent}
 import uk.gov.hmrc.ngrraldfrontend.views.html.TellUsAboutYourNewAgreementView
 
 class TellUsAboutYourNewAgreementViewSpec extends ViewBaseSpec {
@@ -56,17 +55,6 @@ class TellUsAboutYourNewAgreementViewSpec extends ViewBaseSpec {
     val p4 = "#main-content > div > div > form > div > div > p:nth-child(8)"
     val continue = "#continue"
   }
-
-  val content: NavigationBarContent = NavBarPageContents.CreateNavBar(
-    contents = NavBarContents(
-      homePage = Some(true),
-      messagesPage = Some(false),
-      profileAndSettingsPage = Some(false),
-      signOutPage = Some(true)
-    ),
-    currentPage = NavBarCurrentPage(homePage = true),
-    notifications = Some(1)
-  )
 
   val address = "5 Brixham Marina, Berry Head Road, Brixham, Devon, TQ5 9BW"
 

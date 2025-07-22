@@ -1,5 +1,6 @@
 service.name = ngr-rald-frontend
 service.text = This is your new service
+service.base.title = {0} - GOV.UK
 
 #service
 service.continue = Continue
@@ -28,3 +29,8 @@ tellUsAboutYourNewAgreement.p4 = You do not need to upload any documents to supp
 #TellUsAboutYourRenewedAgreement
 tellUsAboutYourRenewedAgreement.title = Tell us about your renewed agreement
 tellUsAboutYourRenewedAgreement.p1 = You need to tell us within 60 days if you have a renewed your agreement.
+
+typeOfLeaseRenewal.title = What type of lease renewal is it?
+typeOfLeaseRenewal.option1 = A renewed agreement
+typeOfLeaseRenewal.option2 = A surrender and renewal
+typeOfLeaseRenewal.required.error = Select what type of lease renewal it is

@@ -72,11 +72,11 @@ trait TestSupport extends PlaySpec
   lazy implicit val mockConfig: MockAppConfig = new MockAppConfig(app.configuration)
   lazy val messagesApi: MessagesApi = inject[MessagesApi]
   implicit lazy val messages: Messages = MessagesImpl(Lang("en"), messagesApi)
-    lazy val fakeRequest: FakeRequest[AnyContentAsEmpty.type] =
-        FakeRequest("", "").withHeaders(HeaderNames.authorisation -> "Bearer 1")
-    lazy val authenticatedFakeRequest: AuthenticatedUserRequest[AnyContentAsEmpty.type] =
-        AuthenticatedUserRequest(fakeRequest, None, None, None, credId = Some("1234"), None, None, nino = Nino(true, Some("")))
-        
-        
+  lazy val fakeRequest: FakeRequest[AnyContentAsEmpty.type] =
+      FakeRequest("", "").withHeaders(HeaderNames.authorisation -> "Bearer 1")
+
+  def authenticatedFakeRequest[A](fakeRequest: FakeRequest[A] = fakeRequest): AuthenticatedUserRequest[A] =
+      AuthenticatedUserRequest[A](fakeRequest, None, None, None, credId = Some("1234"), None, None, nino = Nino(true, Some("")))
+
 }
 

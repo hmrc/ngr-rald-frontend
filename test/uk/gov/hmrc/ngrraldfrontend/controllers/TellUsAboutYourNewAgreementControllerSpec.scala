@@ -30,7 +30,7 @@ class TellUsAboutYourNewAgreementControllerSpec extends ControllerSpecSupport {
   "Tell us about your new agreement controller" must {
     "method show" must {
       "Return OK and the correct view" in {
-        val result = controller.show()(authenticatedFakeRequest)
+        val result = controller.show()(authenticatedFakeRequest())
         status(result) mustBe OK
         val content = contentAsString(result)
         content must include(pageTitle)
@@ -39,7 +39,7 @@ class TellUsAboutYourNewAgreementControllerSpec extends ControllerSpecSupport {
 
     "method submit" must {
       "Return OK and the correct view" in {
-        val result = controller.submit()(authenticatedFakeRequest)
+        val result = controller.submit()(authenticatedFakeRequest())
         status(result) mustBe SEE_OTHER
         redirectLocation(result) shouldBe Some(routes.TellUsAboutYourNewAgreementController.show.url)
       }
