@@ -30,14 +30,19 @@ class TellUsAboutYourAgreementViewSpec extends ViewBaseSpec {
     val p1NewAgreement = "You need to tell us within 60 days if you have a new agreement."
     val headingRenewedAgreement = "Tell us about your renewed agreement"
     val p1RenewedAgreement = "You need to tell us within 60 days if you have a renewed your agreement."
+    val headingRent = "Tell us about your rent review"
+    val p1Rent = "You need to tell us within 60 days if you have completed a rent review."
     val subheading = "Information you need"
     val p2 = "It will help to have a copy of your agreement to refer to."
+    val RentP3 = "You should also have a rent review memorandum that sets out the new terms that you agreed with your landlord or their agent"
     val p3 = "Depending on what you tell us about, you need to know things like:"
     val bulletPoint1 = "who your landlord is"
     val bulletPoint2 = "when you made the agreement"
+    val rentbulletPoint2 = "when you made the change to your agreement"
     val bulletPoint3 = "how much your rent is"
     val bulletPoint4 = "what your rent includes"
     val bulletPoint5 = "if you have done any alterations and improvements"
+    val rentbulletPoint5 = "if you have done any alterations or improvements"
     val subheading2 = "Supporting documents"
     val p4 = "You do not need to upload any documents to support what you tell us."
     val continue = "Continue"
@@ -55,7 +60,9 @@ class TellUsAboutYourAgreementViewSpec extends ViewBaseSpec {
     val bulletPoint4 = "#main-content > div > div > form > div > div > ul > li:nth-child(4)"
     val bulletPoint5 = "#main-content > div > div > form > div > div > ul > li:nth-child(5)"
     val subheading2 = "#main-content > div > div > form > div > div > h1:nth-child(8)"
+    val rentSubheading2 = "#main-content > div > div > form > div > div > h1:nth-child(9)"
     val p4 = "#main-content > div > div > form > div > div > p:nth-child(9)"
+    val rentp4 = "#main-content > div > div > form > div > div > p:nth-child(10)"
     val continue = "#continue"
   }
 
@@ -194,6 +201,78 @@ class TellUsAboutYourAgreementViewSpec extends ViewBaseSpec {
 
     "show correct p4" in {
       elementText(Selectors.p4) mustBe Strings.p4
+    }
+
+    "show correct continue button" in {
+      elementText(Selectors.continue) mustBe Strings.continue
+    }
+  }
+
+  "TellUsAboutRentView" must {
+    val tellUsAboutRentView = view(content, address, Rent)
+    lazy implicit val document: Document = Jsoup.parse(tellUsAboutRentView.body)
+    val htmlApply = view.apply(content, address, Rent).body
+    val htmlRender = view.render(content, address, Rent, request, messages, mockConfig).body
+    lazy val htmlF = view.f(content, address, Rent)
+
+    "htmlF is not empty" in {
+      htmlF.toString() must not be empty
+    }
+
+    "apply must be the same as render" in {
+      htmlApply mustBe htmlRender
+    }
+
+    "render is not empty" in {
+      htmlRender must not be empty
+    }
+
+    "show correct heading" in {
+      elementText(Selectors.heading) mustBe Strings.headingRent
+    }
+
+    "show correct p1" in {
+      elementText(Selectors.p1) mustBe Strings.p1Rent
+    }
+
+    "show correct subheading" in {
+      elementText(Selectors.subheading) mustBe Strings.subheading
+    }
+
+    "show correct p2" in {
+      elementText(Selectors.p2) mustBe Strings.p2
+    }
+
+    "show correct p3" in {
+      elementText(Selectors.p3) mustBe Strings.RentP3
+    }
+
+    "show correct bulletPoint1" in {
+      elementText(Selectors.bulletPoint1) mustBe Strings.bulletPoint1
+    }
+
+    "show correct bulletPoint2" in {
+      elementText(Selectors.bulletPoint2) mustBe Strings.rentbulletPoint2
+    }
+
+    "show correct bulletPoint3" in {
+      elementText(Selectors.bulletPoint3) mustBe Strings.bulletPoint3
+    }
+
+    "show correct bulletPoint4" in {
+      elementText(Selectors.bulletPoint4) mustBe Strings.bulletPoint4
+    }
+
+    "show correct bulletPoint5" in {
+      elementText(Selectors.bulletPoint5) mustBe Strings.rentbulletPoint5
+    }
+
+    "show correct subheading2" in {
+      elementText(Selectors.rentSubheading2) mustBe Strings.subheading2
+    }
+
+    "show correct p4" in {
+      elementText(Selectors.rentp4) mustBe Strings.p4
     }
 
     "show correct continue button" in {

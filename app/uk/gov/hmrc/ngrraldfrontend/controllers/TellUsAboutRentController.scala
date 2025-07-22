@@ -22,18 +22,18 @@ import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, RegistrationAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.connectors.NGRConnector
-import uk.gov.hmrc.ngrraldfrontend.models.Rent
 import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
 import uk.gov.hmrc.ngrraldfrontend.views.html.TellUsAboutYourAgreementView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.ngrraldfrontend.models._
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TellUsAboutRentController  @Inject()(view: TellUsAboutYourAgreementView,
+class TellUsAboutRentController @Inject()(view: TellUsAboutYourAgreementView,
                                            authenticate: AuthRetrievals,
                                            isRegisteredCheck: RegistrationAction,
                                            ngrConnector: NGRConnector,
