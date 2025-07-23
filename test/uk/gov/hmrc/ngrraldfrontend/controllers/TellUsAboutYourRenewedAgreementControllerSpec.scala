@@ -31,7 +31,7 @@ import scala.concurrent.Future
 class TellUsAboutYourRenewedAgreementControllerSpec extends ControllerSpecSupport {
   val pageTitle = "Tell us about your renewed agreement"
   val view: TellUsAboutYourAgreementView = inject[TellUsAboutYourAgreementView]
-  val controller: TellUsAboutYourRenewedAgreementController = new TellUsAboutYourRenewedAgreementController(view, mockAuthJourney, mockIsRegisteredCheck, mockNgrConnector, mockRaldRepo, mcc)(mockConfig)
+  val controller: TellUsAboutYourRenewedAgreementController = new TellUsAboutYourRenewedAgreementController(view, mockAuthJourney, mockPropertyLinkingAction, mockNgrConnector, mockRaldRepo, mcc)(mockConfig)
 
   "Tell us about your new agreement controller" must {
     "method show" must {

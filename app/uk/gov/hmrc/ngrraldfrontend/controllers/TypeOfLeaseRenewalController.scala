@@ -18,7 +18,7 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, RegistrationAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction, RegistrationAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.NGRRadio
 import uk.gov.hmrc.ngrraldfrontend.models.NGRRadio.buildRadios
@@ -34,31 +34,31 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class TypeOfLeaseRenewalController @Inject()(typeOfLeaseRenewalView: TypeOfLeaseRenewalView,
                                              authenticate: AuthRetrievals,
-                                             isRegisteredCheck: RegistrationAction,
+                                             hasLinkedProperties: PropertyLinkingAction,
                                              mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport {
 
 
   def show: Action[AnyContent] = {
-    (authenticate andThen isRegisteredCheck).async { implicit request =>
+    (authenticate andThen hasLinkedProperties).async { implicit request =>
       Future.successful(Ok(typeOfLeaseRenewalView(
         form = form,
         navigationBarContent = createDefaultNavBar,
         radios = buildRadios(form, TypeOfLeaseRenewalForm.ngrRadio),
-        propertyAddress = "TODO: Add address here"
+        propertyAddress = request.propertyLinking.get.addressFull,
       )))
     }
   }
 
   def submit: Action[AnyContent] =
-    (authenticate andThen isRegisteredCheck).async { implicit request =>
+    (authenticate andThen hasLinkedProperties).async { implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
               Future.successful(BadRequest(typeOfLeaseRenewalView(
                 form = formWithErrors,
                 navigationBarContent = createDefaultNavBar,
                 radios = buildRadios(formWithErrors, TypeOfLeaseRenewalForm.ngrRadio),
-                propertyAddress = "TODO: Add address here"
+                propertyAddress = request.propertyLinking.get.addressFull
               )))
         },
          answers =>

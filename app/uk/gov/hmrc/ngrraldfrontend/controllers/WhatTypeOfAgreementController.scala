@@ -20,7 +20,7 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, RegistrationAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction, RegistrationAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.RaldUserAnswers
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
@@ -39,44 +39,36 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class WhatTypeOfAgreementController @Inject()(view: WhatTypeOfAgreementView,
                                               authenticate: AuthRetrievals,
-                                              isRegisteredCheck: RegistrationAction,
+                                              hasLinkedProperties: PropertyLinkingAction,
                                               raldRepo: RaldRepo,
                                               mcc: MessagesControllerComponents)
                                              (implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport {
-  
+
   def show: Action[AnyContent] = {
-    (authenticate andThen isRegisteredCheck).async { implicit request =>
-      raldRepo.findByCredId(CredId(request.credId.getOrElse(""))).flatMap {
-        case Some(answers) =>
+    (authenticate andThen hasLinkedProperties).async { implicit request =>
           Future.successful(Ok(
             view(
               navigationBarContent = createDefaultNavBar,
-              selectedPropertyAddress = answers.selectedProperty.addressFull,
+              selectedPropertyAddress = request.propertyLinking.get.addressFull,
               form = form,
               ngrRadio = buildRadios(form, WhatTypeOfAgreementForm.ngrRadio(form))
             )
           ))
-        case _ =>
-          Future.successful(Redirect(s"${appConfig.ngrDashboardUrl}/select-your-property"))
-      }
     }
   }
 
     def submit: Action[AnyContent] = {
-      (authenticate andThen isRegisteredCheck).async { implicit request =>
+      (authenticate andThen hasLinkedProperties).async { implicit request =>
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => raldRepo.findByCredId(CredId(request.credId.getOrElse(""))).flatMap{
-              case Some(answers) =>  Future.successful(BadRequest(view(
+            formWithErrors => Future.successful(BadRequest(view(
                 createDefaultNavBar,
-                selectedPropertyAddress = answers.selectedProperty.addressFull,
+                selectedPropertyAddress = request.propertyLinking.get.addressFull,
                 formWithErrors,
                 buildRadios(formWithErrors, WhatTypeOfAgreementForm.ngrRadio(formWithErrors))
-                )))
-              case None => Future.successful(Redirect(s"${appConfig.ngrDashboardUrl}/select-your-property"))
-            },
+                ))),
             whatTypeOfAgreementForm =>
               raldRepo.insertTypeOfAgreement(
                 credId = CredId(request.credId.getOrElse("")),

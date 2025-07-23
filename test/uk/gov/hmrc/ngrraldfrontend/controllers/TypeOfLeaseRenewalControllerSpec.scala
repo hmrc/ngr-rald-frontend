@@ -27,7 +27,7 @@ import uk.gov.hmrc.ngrraldfrontend.views.html.TypeOfLeaseRenewalView
 class TypeOfLeaseRenewalControllerSpec extends ControllerSpecSupport {
   val pageTitle = "What type of lease renewal is it?"
   val view: TypeOfLeaseRenewalView = inject[TypeOfLeaseRenewalView]
-  val controller: TypeOfLeaseRenewalController = new TypeOfLeaseRenewalController(view, mockAuthJourney, mockIsRegisteredCheck, mcc)(mockConfig)
+  val controller: TypeOfLeaseRenewalController = new TypeOfLeaseRenewalController(view, mockAuthJourney, mockPropertyLinkingAction, mcc)(mockConfig)
 
   "TypeOfLeaseRenewalController" must {
     "method show" must {

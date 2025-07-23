@@ -34,7 +34,7 @@ import scala.concurrent.Future
 class WhatTypeOfAgreementControllerSpec extends ControllerSpecSupport {
   val pageTitle = "What type of agreement do you have?"
   val view: WhatTypeOfAgreementView = inject[WhatTypeOfAgreementView]
-  val controller: WhatTypeOfAgreementController = new WhatTypeOfAgreementController(view, mockAuthJourney, mockIsRegisteredCheck, mockRaldRepo, mcc)(mockConfig, ec)
+  val controller: WhatTypeOfAgreementController = new WhatTypeOfAgreementController(view, mockAuthJourney, mockPropertyLinkingAction, mockRaldRepo, mcc)(mockConfig, ec)
 
   "Tell us about your new agreement controller" must {
     "method show" must {
@@ -45,11 +45,6 @@ class WhatTypeOfAgreementControllerSpec extends ControllerSpecSupport {
         val content = contentAsString(result)
         content must include(pageTitle)
       }
-      "Redirect to dashboard if no properties are in the mongo" in {
-        when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(None))
-        val result = controller.show()(authenticatedFakeRequest())
-        status(result) mustBe SEE_OTHER
-      }
     }
 
     "method submit" must {
@@ -58,7 +53,7 @@ class WhatTypeOfAgreementControllerSpec extends ControllerSpecSupport {
         mockRequest(hasCredId = true)
         val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.WhatTypeOfAgreementController.submit)
           .withFormUrlEncodedBody(("what-type-of-agreement-radio", "Written"))
-          .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
+          .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
           result.header.headers.get("Location") shouldBe Some("/ngr-rald-frontend/what-type-of-agreement-do-you-have ")
         })
@@ -70,24 +65,13 @@ class WhatTypeOfAgreementControllerSpec extends ControllerSpecSupport {
         mockRequest(hasCredId = true)
         val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.WhatTypeOfAgreementController.submit)
           .withFormUrlEncodedBody(("what-type-of-agreement-radio", ""))
-          .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
+          .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
           result.header.headers.get("Location") shouldBe Some("/ngr-rald-frontend/what-type-of-agreement-do-you-have ")
         })
         status(result) mustBe BAD_REQUEST
         val content = contentAsString(result)
         content must include(pageTitle)
-      }
-      "Return to dashboard if no property is in the mongo" in {
-        when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(None))
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.WhatTypeOfAgreementController.submit)
-          .withFormUrlEncodedBody(("what-type-of-agreement-radio", ""))
-          .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
-        result.map(result => {
-          result.header.headers.get("Location") shouldBe Some("/ngr-rald-frontend/what-type-of-agreement-do-you-have ")
-        })
-        status(result) mustBe SEE_OTHER
       }
     }
   }
