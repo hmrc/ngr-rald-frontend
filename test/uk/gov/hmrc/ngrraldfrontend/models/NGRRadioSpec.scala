@@ -17,62 +17,55 @@
 package uk.gov.hmrc.ngrraldfrontend.models
 
 import play.api.data.Form
-import play.api.data.Forms.*
 import uk.gov.hmrc.govukfrontend.views.Aliases.*
 import uk.gov.hmrc.govukfrontend.views.viewmodels.FormGroup
 import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.Fieldset
 import uk.gov.hmrc.ngrraldfrontend.helpers.TestSupport
+import uk.gov.hmrc.ngrraldfrontend.models.components.*
+import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatTypeOfAgreementForm
 
 class NGRRadioSpec extends TestSupport {
 
-  case object Yes extends RadioEntry {
-    override def toString: String = "Yes"
-  }
-  case object No extends RadioEntry {
-    override def toString: String = "No"
-  }
-
-  object SampleRadioForm {
-    val form: Form[Boolean] = Form(
-      "value" -> boolean.verifying("error.required", value => value || !value)
-    )
-  }
   "buildRadios" must {
     "generate a radio button with page heading" in {
+      val ngrButton1 = NGRRadioButtons("whatTypeOfAgreement.LeaseOrTenancy", LeaseOrTenancy)
+      val ngrButton2 = NGRRadioButtons("whatTypeOfAgreement.written", Written)
+      val ngrButton3 = NGRRadioButtons("whatTypeOfAgreement.verbal", Verbal)
+      val ngrRadioName = NGRRadioName("radioName")
+      val testnNgrTitle = Some(NGRRadioHeader(title = "radioName", classes = "", isPageHeading = true))
+      val ngrRadios = NGRRadio(radioGroupName = ngrRadioName, NGRRadioButtons = Seq(ngrButton1, ngrButton2, ngrButton3), ngrTitle = testnNgrTitle)
+
+      lazy val form: Form[WhatTypeOfAgreementForm] =  WhatTypeOfAgreementForm.form
+      NGRRadio.buildRadios(form, ngrRadios) mustBe
+        Radios(
+          Some(Fieldset(None, Some(Legend(Text("radioName"), "", true)), "", None, Map())),
+          None, None, FormGroup(None, Map(), None, None), Some("radioName"), "radioName",
+          List(
+            RadioItem(Text("Lease or tenancy agreement"), None, Some("LeaseOrTenancy"), None, Some(Hint(None, "", Map(), Text(""))), None, false, None, false, Map()),
+            RadioItem(Text("Licence or other type of written agreement"), None, Some("Written"), None, Some(Hint(None, "", Map(), Text(""))), None, false, None, false, Map()),
+            RadioItem(Text("Verbal agreement"), None, Some("Verbal"), None, Some(Hint(None, "", Map(), Text(""))), None, false, None, false, Map())
+          ),
+          "govuk-radios", Map(), None
+        )
+    }
+
+    "generate a radio button with a warning" in {
       val ngrButton1 = NGRRadioButtons("Yes", Yes)
       val ngrButton2 = NGRRadioButtons("No", No)
       val ngrRadioName = NGRRadioName("radioName")
       val testnNgrTitle = Some(NGRRadioHeader(title = "radioName", classes = "", isPageHeading = true))
-      val ngrRadios = NGRRadio(radioGroupName = ngrRadioName, NGRRadioButtons = Seq(ngrButton1,ngrButton2), ngrTitle = testnNgrTitle)
-
-      lazy val form: Form[Boolean] =  SampleRadioForm.form
-      NGRRadio.buildRadios(form, ngrRadios) mustBe
-        Radios(
-          Some(Fieldset(None, Some(Legend(Text("radioName"), "", true)), "", None, Map())),
-          None, None, FormGroup(None, Map(), None, None),
-          Some("radioName"), "radioName", List(RadioItem(Text("Yes"),
-            None, Some("Yes"), None, Some(Hint(None, "", Map(), Text(""))),
-            None, false, None, false, Map()), RadioItem(Text("No"), None, Some("No"),
-            None, Some(Hint(None, "", Map(), Text(""))), None, false, None, false, Map())), "govuk-radios", Map(), None)
-    }
-
-    "generate a radio button with a warning" in {
-      val ngrButton1 = NGRRadioButtons("Yes", Yes, Some("This is a hint for Yes"))
-      val ngrButton2 = NGRRadioButtons("No", No, Some("This is a hint for No"))
-      val ngrRadioName = NGRRadioName("radioName")
-      val testnNgrTitle = Some(NGRRadioHeader(title = "radioName", classes = "", isPageHeading = true))
       val ngrRadios = NGRRadio(radioGroupName = ngrRadioName, NGRRadioButtons = Seq(ngrButton1, ngrButton2), ngrTitle = testnNgrTitle)
 
-      lazy val form: Form[Boolean] =  SampleRadioForm.form.withError("radioName", "error message")
+      lazy val form: Form[WhatTypeOfAgreementForm] =  WhatTypeOfAgreementForm.form.withError("radioName", "error message")
       NGRRadio.buildRadios(form ,ngrRadios) mustBe
         Radios(Some(Fieldset(None, Some(Legend(Text("radioName"), "", true)), "",
           None, Map())), None, Some(ErrorMessage(None, "", Map(), Some("Error"),
           Text("error message"))), FormGroup(None, Map(), None, None),
           Some("radioName"), "radioName",
           List(RadioItem(Text("Yes"), None, Some("Yes"),
-            None, Some(Hint(None, "", Map(), Text("This is a hint for Yes"))),
+            None, Some(Hint(None, "", Map(), Text(""))),
             None, false, None, false, Map()), RadioItem(Text("No"),
-            None, Some("No"), None, Some(Hint(None, "", Map(), Text("This is a hint for No"))),
+            None, Some("No"), None, Some(Hint(None, "", Map(), Text(""))),
             None, false, None, false, Map())), "govuk-radios", Map(), None)
     }
   }

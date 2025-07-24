@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,8 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.ngrraldfrontend.config
+package uk.gov.hmrc.ngrraldfrontend.viewModels
 
-import com.google.inject.AbstractModule
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, AuthRetrievalsImpl}
-
-class Module extends AbstractModule {
-
-  override def configure(): Unit = {
-    bind(classOf[AppConfig]).to(classOf[FrontendAppConfig]).asEagerSingleton()
-    bind(classOf[AuthRetrievals]).to(classOf[AuthRetrievalsImpl]).asEagerSingleton()
-  }
+package object govuk {
+  object all extends ErrorSummaryFluency
 }

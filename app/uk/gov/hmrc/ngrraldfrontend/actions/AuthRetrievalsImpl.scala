@@ -54,6 +54,7 @@ class AuthRetrievalsImpl @Inject()(
             request = request,
             confidenceLevel = Some(confidenceLevel),
             authProvider = credentials.map(_.providerType),
+            propertyLinking = None,
             nino = Nino(hasNino = true, Some(nino)),
             email = email.filter(_.nonEmpty),
             credId = credentials.map(_.providerId),

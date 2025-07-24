@@ -16,31 +16,53 @@
 
 package uk.gov.hmrc.ngrraldfrontend.connectors
 
-import uk.gov.hmrc.http.HttpResponse
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import uk.gov.hmrc.http.{HttpResponse, NotFoundException}
+import uk.gov.hmrc.ngrraldfrontend.helpers.TestData
 import uk.gov.hmrc.ngrraldfrontend.mocks.MockHttpV2
+import uk.gov.hmrc.ngrraldfrontend.models.PropertyLinkingUserAnswers
 import uk.gov.hmrc.ngrraldfrontend.models.registration.*
 import uk.gov.hmrc.ngrraldfrontend.models.registration.ReferenceType.TRN
+import uk.gov.hmrc.ngrraldfrontend.models.vmvProperty.VMVProperty
 
 import scala.concurrent.Future
 
-class NGRConnectorSpec extends MockHttpV2 {
-  val ngrConnector: NGRConnector = new NGRConnector(mockHttpClientV2, mockConfig)
+class NGRConnectorSpec extends MockHttpV2 with TestData {
+  val ngrConnector: NGRConnector = new NGRConnector(mockHttpClientV2, mockConfig, mockRaldRepo)
   val email: Email = Email("hello@me.com")
   val trn: TRNReferenceNumber = TRNReferenceNumber(TRN, "1234")
-  
-  "getRatepayer" when {
-    "Successfully return a Ratepayer" in {
-      val ratepayer: RatepayerRegistration = RatepayerRegistration()
-      val response: RatepayerRegistrationValuation = RatepayerRegistrationValuation(credId, Some(ratepayer))
-      setupMockHttpV2Get(s"${mockConfig.nextGenerationRatesHost}/next-generation-rates/get-ratepayer")(Some(response))
-      val result: Future[Option[RatepayerRegistrationValuation]] = ngrConnector.getRatepayer(credId)
+
+  "getPropertyLinkingUserAnswers" when {
+    "Successfully return a PropertyLinkingUserAnswers" in {
+      val propertyLinkingUserAnswers = PropertyLinkingUserAnswers(CredId("1234"), property)
+      setupMockHttpV2Get(s"${mockConfig.nextGenerationRatesHost}/next-generation-rates/get-property-linking-user-answers")(Some(propertyLinkingUserAnswers))
+      val result: Future[Option[PropertyLinkingUserAnswers]] = ngrConnector.getPropertyLinkingUserAnswers(credId)
       result.futureValue.get.credId mustBe credId
-      result.futureValue.get.ratepayerRegistration mustBe Some(ratepayer)
+      result.futureValue.get.vmvProperty mustBe property
     }
-    "ratepayer not found" in {
-      setupMockHttpV2Get(s"${mockConfig.nextGenerationRatesHost}/next-generation-rates/get-ratepayer")(None)
-      val result: Future[Option[RatepayerRegistrationValuation]] = ngrConnector.getRatepayer(credId)
+    "PropertyLinkingUserAnswers not found" in {
+      setupMockHttpV2Get(s"${mockConfig.nextGenerationRatesHost}/next-generation-rates/get-property-linking-user-answers")(None)
+      val result: Future[Option[PropertyLinkingUserAnswers]] = ngrConnector.getPropertyLinkingUserAnswers(credId)
       result.futureValue mustBe None
+    }
+  }
+
+  "getLinkedProperty" when {
+    "Successfully return a Property" in {
+      val propertyLinkingUserAnswers = PropertyLinkingUserAnswers(CredId("1234"), property)
+      setupMockHttpV2Get(s"${mockConfig.nextGenerationRatesHost}/next-generation-rates/get-property-linking-user-answers")(Some(propertyLinkingUserAnswers))
+      when(mockRaldRepo.upsertRaldUserAnswers(any())).thenReturn(Future.successful(true))
+      val result: Future[Option[VMVProperty]] = ngrConnector.getLinkedProperty(credId)
+      result.futureValue mustBe  Some(property)
+    }
+    "Property not found" in {
+      setupMockHttpV2Get(s"${mockConfig.nextGenerationRatesHost}/next-generation-rates/get-property-linking-user-answers")(None)
+      val exception = intercept[NotFoundException] {
+        await(ngrConnector.getLinkedProperty(credId))
+      }
+      exception.getMessage contains "failed to find propertyLinkingUserAnswers from backend mongo" mustBe true
     }
   }
 }

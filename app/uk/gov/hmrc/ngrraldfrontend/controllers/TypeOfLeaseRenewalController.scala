@@ -18,7 +18,8 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, RegistrationAction}
+import uk.gov.hmrc.http.NotFoundException
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.NGRRadio
 import uk.gov.hmrc.ngrraldfrontend.models.NGRRadio.buildRadios
@@ -34,32 +35,34 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class TypeOfLeaseRenewalController @Inject()(typeOfLeaseRenewalView: TypeOfLeaseRenewalView,
                                              authenticate: AuthRetrievals,
-                                             isRegisteredCheck: RegistrationAction,
+                                             hasLinkedProperties: PropertyLinkingAction,
                                              mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport {
 
 
   def show: Action[AnyContent] = {
-    (authenticate andThen isRegisteredCheck).async { implicit request =>
+    (authenticate andThen hasLinkedProperties).async { implicit request =>
+      request.propertyLinking.map(property =>
       Future.successful(Ok(typeOfLeaseRenewalView(
         form = form,
         navigationBarContent = createDefaultNavBar,
         radios = buildRadios(form, TypeOfLeaseRenewalForm.ngrRadio),
-        propertyAddress = "TODO: Add address here"
-      )))
+        propertyAddress = property.addressFull,
+      )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
     }
   }
 
   def submit: Action[AnyContent] =
-    (authenticate andThen isRegisteredCheck).async { implicit request =>
+    (authenticate andThen hasLinkedProperties).async { implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
+          request.propertyLinking.map(property =>
               Future.successful(BadRequest(typeOfLeaseRenewalView(
                 form = formWithErrors,
                 navigationBarContent = createDefaultNavBar,
                 radios = buildRadios(formWithErrors, TypeOfLeaseRenewalForm.ngrRadio),
-                propertyAddress = "TODO: Add address here"
-              )))
+                propertyAddress = property.addressFull
+              )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
         },
          answers =>
            Future.successful(NotImplemented)

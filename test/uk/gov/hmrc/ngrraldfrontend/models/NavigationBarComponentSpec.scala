@@ -65,7 +65,7 @@ class NavigationBarComponentSpec extends ViewBaseSpec {
 
     "Links are populated correctly" in {
       content.navigationButtons.isDefined mustBe true
-      content.accountHome.get shouldBe NavButton(fieldName = "HomePage", call = Call("GET", mockConfig.ngrDashboardUrl), messageKey = "nav.home", linkId = "Home", selected = true, notification = None)
+      content.accountHome.get shouldBe NavButton(fieldName = "HomePage", call = Call("GET", s"${mockConfig.ngrDashboardUrl}/dashboard"), messageKey = "nav.home", linkId = "Home", selected = true, notification = None)
       content.navigationButtons.get shouldBe Seq(NavButton(fieldName = "SignOutPage", call = Call("GET", mockConfig.ngrLogoutUrl), messageKey = "nav.signOut", linkId = "SignOut", selected = false, notification = None))
     }
   }

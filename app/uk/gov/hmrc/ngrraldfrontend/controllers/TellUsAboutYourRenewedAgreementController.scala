@@ -18,30 +18,38 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, RegistrationAction}
+import uk.gov.hmrc.http.NotFoundException
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
+import uk.gov.hmrc.ngrraldfrontend.connectors.NGRConnector
 import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
+import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
 import uk.gov.hmrc.ngrraldfrontend.views.html.TellUsAboutYourAgreementView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class TellUsAboutYourRenewedAgreementController @Inject()(view: TellUsAboutYourAgreementView,
                                                           authenticate: AuthRetrievals,
-                                                          isRegisteredCheck: RegistrationAction,
+                                                          hasLinkedProperties: PropertyLinkingAction,
+                                                          ngrConnector: NGRConnector,
+                                                          raldRepo: RaldRepo,
                                                           mcc: MessagesControllerComponents
-                                                     )(implicit appConfig: AppConfig) extends FrontendController(mcc) with I18nSupport {
+                                                     )(implicit appConfig: AppConfig, ec:ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
   def show: Action[AnyContent] = {
-    (authenticate andThen isRegisteredCheck).async { implicit request =>
-      Future.successful(Ok(view(navigationBarContent = createDefaultNavBar, selectedPropertyAddress = "selectedPropertyAddress", newAgreement = false)))
+    (authenticate andThen hasLinkedProperties).async { implicit request =>
+      request.propertyLinking.map(property =>
+          Future.successful(Ok(view(navigationBarContent = createDefaultNavBar, selectedPropertyAddress = property.addressFull, newAgreement = false))))
+        .getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
     }
   }
 
     def submit: Action[AnyContent] = {
-      (authenticate andThen isRegisteredCheck).async { _ =>
+      (authenticate andThen hasLinkedProperties).async { _ =>
         Future.successful(Redirect(routes.TellUsAboutYourNewAgreementController.show.url))
       }
   }

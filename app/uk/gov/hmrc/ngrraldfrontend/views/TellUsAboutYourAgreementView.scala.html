@@ -32,7 +32,7 @@
  @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.TellUsAboutYourNewAgreementController.show, Symbol("autoComplete") -> "off") {
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <span class="govuk-caption-m">selectedPropertyAddress</span>
+        <span class="govuk-caption-m">@selectedPropertyAddress</span>
       <h1 class="govuk-heading-l">
           @if(newAgreement){
             @messages("tellUsAboutYourNewAgreement.title")

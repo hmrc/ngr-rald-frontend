@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.ngrraldfrontend.config
+package uk.gov.hmrc.ngrraldfrontend.models.vmvProperty
 
-import com.google.inject.AbstractModule
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, AuthRetrievalsImpl}
+import play.api.libs.json.{Format, Json}
 
-class Module extends AbstractModule {
+case class VMVProperty(uarn: Long,
+                       addressFull: String,
+                       localAuthorityCode: String,
+                       localAuthorityReference: String,
+                       valuations: List[Valuation]
+                      )
 
-  override def configure(): Unit = {
-    bind(classOf[AppConfig]).to(classOf[FrontendAppConfig]).asEagerSingleton()
-    bind(classOf[AuthRetrievals]).to(classOf[AuthRetrievalsImpl]).asEagerSingleton()
-  }
+object VMVProperty {
+  implicit val format: Format[VMVProperty] = Json.format[VMVProperty]
 }

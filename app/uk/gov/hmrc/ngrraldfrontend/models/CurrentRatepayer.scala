@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.ngrraldfrontend.config
+package uk.gov.hmrc.ngrraldfrontend.models
 
-import com.google.inject.AbstractModule
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, AuthRetrievalsImpl}
+import play.api.libs.json.{Format, Json, OFormat}
+import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
-class Module extends AbstractModule {
+import java.time.LocalDate
 
-  override def configure(): Unit = {
-    bind(classOf[AppConfig]).to(classOf[FrontendAppConfig]).asEagerSingleton()
-    bind(classOf[AuthRetrievals]).to(classOf[AuthRetrievalsImpl]).asEagerSingleton()
-  }
+final case class CurrentRatepayer(isBeforeApril: Boolean, becomeRatepayerDate: Option[String])
+
+object CurrentRatepayer {
+  implicit val format: OFormat[CurrentRatepayer] = Json.format[CurrentRatepayer]
 }

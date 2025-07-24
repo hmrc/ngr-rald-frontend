@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.ngrraldfrontend.config
+package uk.gov.hmrc.ngrraldfrontend.models
 
-import com.google.inject.AbstractModule
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, AuthRetrievalsImpl}
+import play.api.libs.json.{Format, Json}
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
+import uk.gov.hmrc.ngrraldfrontend.models.vmvProperty.VMVProperty
 
-class Module extends AbstractModule {
+final case class RaldUserAnswers(
+                                  credId: CredId,
+                                  selectedProperty: VMVProperty,
+                                  whatTypeOfAgreement: Option[String] = None
+                                )
 
-  override def configure(): Unit = {
-    bind(classOf[AppConfig]).to(classOf[FrontendAppConfig]).asEagerSingleton()
-    bind(classOf[AuthRetrievals]).to(classOf[AuthRetrievalsImpl]).asEagerSingleton()
-  }
+
+object RaldUserAnswers{
+  implicit val format:Format[RaldUserAnswers] = Json.format[RaldUserAnswers]
 }

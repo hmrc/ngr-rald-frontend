@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.ngrraldfrontend.config
+package uk.gov.hmrc.ngrraldfrontend.models.forms.mappings
 
-import com.google.inject.AbstractModule
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, AuthRetrievalsImpl}
+import play.api.data.FieldMapping
+import play.api.data.Forms.of
 
-class Module extends AbstractModule {
+trait Mappings extends Formatters {
 
-  override def configure(): Unit = {
-    bind(classOf[AppConfig]).to(classOf[FrontendAppConfig]).asEagerSingleton()
-    bind(classOf[AuthRetrievals]).to(classOf[AuthRetrievalsImpl]).asEagerSingleton()
-  }
+  protected def text(errorKey: String = "error.required", args: Seq[String] = Seq.empty): FieldMapping[String] =
+    of(stringFormatter(errorKey, args))
+
 }

@@ -21,9 +21,42 @@ import uk.gov.hmrc.ngrraldfrontend.models.*
 import uk.gov.hmrc.ngrraldfrontend.models.registration.*
 import uk.gov.hmrc.ngrraldfrontend.models.registration.ReferenceType.TRN
 import uk.gov.hmrc.ngrraldfrontend.models.registration.UserType.Individual
+import uk.gov.hmrc.ngrraldfrontend.models.vmvProperty.{VMVProperty, Valuation}
+
+import java.time.LocalDate
 
 trait TestData {
  val credId: CredId = CredId("1234")
+
+ val property = VMVProperty(
+  uarn = 11905603000L,
+  localAuthorityReference = "2191322564521",
+  addressFull = "A, RODLEY LANE, RODLEY, LEEDS, BH1 7EY",
+  localAuthorityCode = "4720",
+  valuations = List(
+   Valuation(
+    assessmentStatus = "CURRENT",
+    assessmentRef = 85141561000L,
+    rateableValue = Some(109300),
+    scatCode = Some("249"),
+    currentFromDate = LocalDate.of(2023, 4, 1),
+    effectiveDate = LocalDate.of(2023, 4, 1),
+    descriptionText = "GOLF",
+    listYear = "2023",
+    primaryDescription = "CS",
+    allowedActions = List(
+     "check",
+     "challenge",
+     "viewDetailedValuation",
+     "propertyLink",
+     "similarProperties"
+    ),
+    propertyLinkEarliestStartDate = Some(LocalDate.of(2017, 4, 1)),
+    listType = "current"
+   )
+  )
+ )
+ 
  val testRegistrationModel: RatepayerRegistration = RatepayerRegistration(
   userType = Some(Individual),
   agentStatus = Some(AgentStatus.Agent),

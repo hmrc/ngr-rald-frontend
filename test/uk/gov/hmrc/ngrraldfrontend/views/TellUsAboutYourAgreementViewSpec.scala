@@ -61,8 +61,8 @@ class TellUsAboutYourAgreementViewSpec extends ViewBaseSpec {
   val address = "5 Brixham Marina, Berry Head Road, Brixham, Devon, TQ5 9BW"
 
   "TellUsAboutYourNewAgreementView" must {
-    val addPropertyToYourAccountView = view(content, address, true)
-    lazy implicit val document: Document = Jsoup.parse(addPropertyToYourAccountView.body)
+    val tellUsAboutYourNewAgreementView = view(content, address, true)
+    lazy implicit val document: Document = Jsoup.parse(tellUsAboutYourNewAgreementView.body)
     val htmlApply = view.apply(content, address, true).body
     val htmlRender = view.render(content, address, true, request, messages, mockConfig).body
     lazy val htmlF = view.f(content, address, true)
@@ -133,8 +133,8 @@ class TellUsAboutYourAgreementViewSpec extends ViewBaseSpec {
   }
 
   "TellUsAboutYourRenewedAgreementView" must {
-    val addPropertyToYourAccountView = view(content, address, false)
-    lazy implicit val document: Document = Jsoup.parse(addPropertyToYourAccountView.body)
+    val tellUsAboutYourRenewedAgreementView = view(content, address, false)
+    lazy implicit val document: Document = Jsoup.parse(tellUsAboutYourRenewedAgreementView.body)
     val htmlApply = view.apply(content, address, false).body
     val htmlRender = view.render(content, address, false, request, messages, mockConfig).body
     lazy val htmlF = view.f(content, address, false)

@@ -19,6 +19,7 @@ package uk.gov.hmrc.ngrraldfrontend.models
 import play.api.mvc.{Request, WrappedRequest}
 import uk.gov.hmrc.auth.core.retrieve.Name
 import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, Nino}
+import uk.gov.hmrc.ngrraldfrontend.models.vmvProperty.VMVProperty
 
 
 sealed abstract class BaseUserRequest[A](
@@ -34,6 +35,7 @@ final case class AuthenticatedUserRequest[A](
                                               override val confidenceLevel: Option[ConfidenceLevel],
                                               override val authProvider: Option[String],
                                               override val email: Option[String],
+                                              propertyLinking:Option[VMVProperty],
                                               credId: Option[String],
                                               name: Option[Name],
                                               affinityGroup: Option[AffinityGroup],

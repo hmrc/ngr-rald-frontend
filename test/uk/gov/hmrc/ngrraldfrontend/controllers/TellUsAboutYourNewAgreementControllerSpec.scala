@@ -16,16 +16,22 @@
 
 package uk.gov.hmrc.ngrraldfrontend.controllers
 
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.shouldBe
 import play.api.http.Status.{OK, SEE_OTHER}
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
+import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redirectLocation, status}
+import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
+import uk.gov.hmrc.ngrraldfrontend.models.RaldUserAnswers
 import uk.gov.hmrc.ngrraldfrontend.views.html.TellUsAboutYourAgreementView
+
+import scala.concurrent.Future
 
 class TellUsAboutYourNewAgreementControllerSpec extends ControllerSpecSupport {
   val pageTitle = "Tell us about your new agreement"
   val view: TellUsAboutYourAgreementView = inject[TellUsAboutYourAgreementView]
-  val controller: TellUsAboutYourNewAgreementController = new TellUsAboutYourNewAgreementController(view, mockAuthJourney, mockIsRegisteredCheck, mcc)(mockConfig)
+  val controller: TellUsAboutYourNewAgreementController = new TellUsAboutYourNewAgreementController(view, mockAuthJourney, mockPropertyLinkingAction, mockNgrConnector, mockRaldRepo, mcc)(mockConfig)
 
   "Tell us about your new agreement controller" must {
     "method show" must {
@@ -35,8 +41,14 @@ class TellUsAboutYourNewAgreementControllerSpec extends ControllerSpecSupport {
         val content = contentAsString(result)
         content must include(pageTitle)
       }
+      "Return NotFoundException when property is not found in the mongo" in {
+        mockRequestWithoutProperty()
+        val exception = intercept[NotFoundException] {
+          await(controller.show(authenticatedFakeRequest()))
+        }
+        exception.getMessage contains "Couldn't find property in mongo" mustBe true
+      }
     }
-
     "method submit" must {
       "Return OK and the correct view" in {
         val result = controller.submit()(authenticatedFakeRequest())
