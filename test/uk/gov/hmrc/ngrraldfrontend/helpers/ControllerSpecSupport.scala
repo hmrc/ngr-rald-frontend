@@ -20,10 +20,9 @@ import org.mockito.Mockito.when
 import play.api.mvc.*
 import uk.gov.hmrc.auth.core.Nino
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction, RegistrationAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.connectors.NGRConnector
 import uk.gov.hmrc.ngrraldfrontend.models.AuthenticatedUserRequest
-import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -80,17 +79,4 @@ trait ControllerSpecSupport extends TestSupport {
 
       override protected def executionContext: ExecutionContext = ec
     }
-
-  def mockRequest(authRequest: AuthenticatedUserRequest[AnyContentAsEmpty.type]): Unit = {
-    when(mockAuthJourney andThen mockPropertyLinkingAction) thenReturn new ActionBuilder[AuthenticatedUserRequest, AnyContent] {
-      override def invokeBlock[A](request: Request[A], block: AuthenticatedUserRequest[A] => Future[Result]): Future[Result] = {
-        block(authRequest.asInstanceOf[AuthenticatedUserRequest[A]])
-      }
-
-      override def parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
-
-      override protected def executionContext: ExecutionContext = ec
-    }
-  }
-
 }

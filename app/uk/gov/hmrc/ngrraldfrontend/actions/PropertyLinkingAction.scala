@@ -17,12 +17,11 @@
 package uk.gov.hmrc.ngrraldfrontend.actions
 
 import com.google.inject.ImplementedBy
-import play.api.mvc.Results.Redirect
 import play.api.mvc.*
+import play.api.mvc.Results.Redirect
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.connectors.NGRConnector
-import uk.gov.hmrc.ngrraldfrontend.controllers.routes
 import uk.gov.hmrc.ngrraldfrontend.models.AuthenticatedUserRequest
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
@@ -32,12 +31,12 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class PropertyLinkingActionImpl @Inject()(
-                                    ngrConnector: NGRConnector,
-                                    authenticate: AuthRetrievals,
-                                    raldRepo: RaldRepo,
-                                    appConfig: AppConfig,
-                                    mcc: MessagesControllerComponents
-                                  )(implicit ec: ExecutionContext) extends PropertyLinkingAction with RegistrationAction {
+                                           ngrConnector: NGRConnector,
+                                           authenticate: AuthRetrievals,
+                                           raldRepo: RaldRepo,
+                                           appConfig: AppConfig,
+                                           mcc: MessagesControllerComponents
+                                         )(implicit ec: ExecutionContext) extends PropertyLinkingAction {
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedUserRequest[A] => Future[Result]): Future[Result] = {
 
@@ -45,40 +44,23 @@ class PropertyLinkingActionImpl @Inject()(
       implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(authRequest, authRequest.session)
 
       val credId = CredId(authRequest.credId.getOrElse(""))
-
-      def checkPropertyLinking(): Future[Result] =
-        raldRepo.findByCredId(credId).flatMap{
-          case Some(property) =>  block(authRequest.copy(propertyLinking = Some(property.selectedProperty)))
-          case _ => ngrConnector.getPropertyLinkingUserAnswers(credId).flatMap { maybePropertyLinkingUserAnswers =>
-            if (maybePropertyLinkingUserAnswers.isDefined) {
-              block(authRequest.copy(propertyLinking = maybePropertyLinkingUserAnswers.map{selectedProperty => selectedProperty.vmvProperty}))
-            } else {
-              redirectToDashboard()
-            }
+      raldRepo.findByCredId(credId).flatMap {
+        case Some(property) => block(authRequest.copy(propertyLinking = Some(property.selectedProperty)))
+        case _ => ngrConnector.getLinkedProperty(credId).flatMap { property =>
+          if (property.isDefined) {
+            block(authRequest.copy(propertyLinking = property))
+          } else {
+            redirectToDashboard()
           }
         }
-
-      ngrConnector.getRatepayer(credId).flatMap { maybeRatepayer =>
-        val isRegistered = maybeRatepayer
-          .flatMap(_.ratepayerRegistration)
-          .flatMap(_.isRegistered)
-          .getOrElse(false)
-
-        if (isRegistered)
-          checkPropertyLinking()
-        else
-          redirectToRegister()
       }
     })
-  }
-
-  private def redirectToRegister(): Future[Result] = {
-    Future.successful(Redirect(s"${appConfig.ngrLoginRegistrationHost}/ngr-login-register-frontend/register"))
   }
 
   private def redirectToDashboard(): Future[Result] = {
     Future.successful(Redirect(s"${appConfig.ngrDashboardUrl}/dashboard"))
   }
+
   // $COVERAGE-OFF$
   override def parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
 

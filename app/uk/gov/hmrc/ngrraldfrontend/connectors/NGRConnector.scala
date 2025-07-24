@@ -41,14 +41,6 @@ class NGRConnector @Inject()(http: HttpClientV2,
 
   private def url(path: String): URL = url"${appConfig.nextGenerationRatesHost}/next-generation-rates/$path"
 
-  def getRatepayer(credId: CredId)(implicit hc: HeaderCarrier): Future[Option[RatepayerRegistrationValuation]] = {
-    implicit val rds: HttpReads[RatepayerRegistrationValuation] = readFromJson
-    val model: RatepayerRegistrationValuation = RatepayerRegistrationValuation(credId, None)
-    http.get(url("get-ratepayer"))
-      .withBody(Json.toJson(model))
-      .execute[Option[RatepayerRegistrationValuation]]
-  }
-
   def getPropertyLinkingUserAnswers(credId: CredId)(implicit hc: HeaderCarrier): Future[Option[PropertyLinkingUserAnswers]] = {
     implicit val rds: HttpReads[PropertyLinkingUserAnswers] = readFromJson
     val dummyVMVProperty: VMVProperty = VMVProperty(0L, "", "", "", List.empty)
@@ -58,13 +50,11 @@ class NGRConnector @Inject()(http: HttpClientV2,
       .execute[Option[PropertyLinkingUserAnswers]]
   }
 
-  def getLinkedProperty(credId: CredId)(implicit hc: HeaderCarrier): Future[Boolean] = {
+  def getLinkedProperty(credId: CredId)(implicit hc: HeaderCarrier): Future[Option[VMVProperty]] = {
     getPropertyLinkingUserAnswers(credId)
-      .flatMap {
-        case Some(propertyLinkingUserAnswers) => 
-          raldRepo.upsertRaldUserAnswers(RaldUserAnswers(credId, propertyLinkingUserAnswers.vmvProperty))
-        case None => 
-          throw new NotFoundException("failed to find propertyLinkingUserAnswers from backend mongo")
+      .map {
+        case Some(propertyLinkingUserAnswers) => Some(propertyLinkingUserAnswers.vmvProperty)
+        case None => throw new NotFoundException("failed to find propertyLinkingUserAnswers from backend mongo")
       }
   }
 }

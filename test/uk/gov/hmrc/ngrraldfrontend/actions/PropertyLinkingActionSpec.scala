@@ -70,23 +70,6 @@ class PropertyLinkingActionSpec extends TestSupport with TestData {
 
   "Property Linking Action" when {
     "a user navigating to /ngr-dashboard-frontend/select-your-property" must {
-      "must be navigated to requested page if not registered" in {
-        when(
-          mockAuthConnector.authorise[mockAuthAction.RetrievalsType](any(), any())(any(), any())
-        )
-          .thenReturn(retrievalResult)
-        when(mockNGRConnector.getRatepayer(any())(any()))
-          .thenReturn(Future.successful(Some(RatepayerRegistrationValuation(credId, Some(testRegistrationModel)))))
-
-        val stubs = spy(new Stubs)
-
-        val authResult = mockAuthAction.invokeBlock(testRequest, stubs.successBlock)
-        status(authResult) mustBe OK
-
-        val result = propertyLinkingAction.invokeBlock(testRequest, stubs.successBlock)
-        status(result) mustBe SEE_OTHER
-      }
-
       "must be navigated to dashboard page if cannot find linked property but it's registered" in {
         when(
           mockAuthConnector
@@ -94,11 +77,8 @@ class PropertyLinkingActionSpec extends TestSupport with TestData {
         )
           .thenReturn(retrievalResult)
 
-        when(mockNGRConnector.getRatepayer(any())(any()))
-          .thenReturn(Future.successful(Some(RatepayerRegistrationValuation(credId, Some(testRegistrationModel.copy(isRegistered = Some(true)))))))
-
         when(mockRaldRepo.findByCredId(any())).thenReturn(Future.successful(None))
-        when(mockNGRConnector.getPropertyLinkingUserAnswers(any())(any())).thenReturn(Future.successful(None))
+        when(mockNGRConnector.getLinkedProperty(any())(any())).thenReturn(Future.successful(None))
 
         val stubs = spy(new Stubs)
 
@@ -116,11 +96,8 @@ class PropertyLinkingActionSpec extends TestSupport with TestData {
         )
           .thenReturn(retrievalResult)
 
-        when(mockNGRConnector.getRatepayer(any())(any()))
-          .thenReturn(Future.successful(Some(RatepayerRegistrationValuation(credId, Some(testRegistrationModel.copy(isRegistered = Some(true)))))))
-
         when(mockRaldRepo.findByCredId(any())).thenReturn(Future.successful(None))
-        when(mockNGRConnector.getPropertyLinkingUserAnswers(any())(any())).thenReturn(Future.successful(Some(PropertyLinkingUserAnswers(credId, property))))
+        when(mockNGRConnector.getLinkedProperty(any())(any())).thenReturn(Future.successful(Some(property)))
 
         val stubs = spy(new Stubs)
 
@@ -137,9 +114,6 @@ class PropertyLinkingActionSpec extends TestSupport with TestData {
             .authorise[mockAuthAction.RetrievalsType](any(), any())(any(), any())
         )
           .thenReturn(retrievalResult)
-
-        when(mockNGRConnector.getRatepayer(any())(any()))
-          .thenReturn(Future.successful(Some(RatepayerRegistrationValuation(credId, Some(testRegistrationModel.copy(isRegistered = Some(true)))))))
 
         when(mockRaldRepo.findByCredId(any())).thenReturn(Future.successful(Some(RaldUserAnswers(credId, property))))
 
