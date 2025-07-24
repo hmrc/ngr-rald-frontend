@@ -23,9 +23,9 @@ import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
 import org.scalatest.matchers.should.Matchers.shouldBe
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
+import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import uk.gov.hmrc.auth.core.Nino
-import uk.gov.hmrc.http.HeaderNames
+import uk.gov.hmrc.http.{HeaderNames, NotFoundException}
 import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, RaldUserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 
@@ -45,6 +45,13 @@ class WhatTypeOfAgreementControllerSpec extends ControllerSpecSupport {
         val content = contentAsString(result)
         content must include(pageTitle)
       }
+      "Return NotFoundException when property is not found in the mongo" in {
+        mockRequestWithoutProperty()
+        val exception = intercept[NotFoundException] {
+          await(controller.show(authenticatedFakeRequest()))
+        }
+        exception.getMessage contains "Couldn't find property in mongo" mustBe true
+      }
     }
 
     "method submit" must {
@@ -61,7 +68,6 @@ class WhatTypeOfAgreementControllerSpec extends ControllerSpecSupport {
         redirectLocation(result) shouldBe Some(routes.WhatTypeOfAgreementController.show.url)
       }
       "Return Form with Errors when no radio button is selected" in {
-        when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(Some(RaldUserAnswers(credId = CredId(null), selectedProperty = property))))
         mockRequest(hasCredId = true)
         val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.WhatTypeOfAgreementController.submit)
           .withFormUrlEncodedBody(("what-type-of-agreement-radio", ""))
@@ -72,6 +78,15 @@ class WhatTypeOfAgreementControllerSpec extends ControllerSpecSupport {
         status(result) mustBe BAD_REQUEST
         val content = contentAsString(result)
         content must include(pageTitle)
+      }
+      "Return Exception if no address is in the mongo" in {
+        mockRequestWithoutProperty()
+        val exception = intercept[NotFoundException] {
+          await(controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.WhatTypeOfAgreementController.submit)
+            .withFormUrlEncodedBody(("what-type-of-agreement-radio", ""))
+            .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some("")))))
+        }
+        exception.getMessage contains "Couldn't find property in mongo" mustBe true
       }
     }
   }

@@ -42,14 +42,9 @@ class TellUsAboutYourNewAgreementController @Inject()(view: TellUsAboutYourAgree
 
   def show: Action[AnyContent] = {
     (authenticate andThen hasLinkedProperties).async { implicit request =>
-      ngrConnector.getLinkedProperty(credId = CredId(request.credId.getOrElse(""))).flatMap {
-        case true =>
-          raldRepo.findByCredId(credId = CredId(request.credId.getOrElse(""))).flatMap {
-            case Some(answers) => Future.successful(Ok(view(navigationBarContent = createDefaultNavBar, selectedPropertyAddress = answers.selectedProperty.addressFull, newAgreement = true)))
-            case None => throw new NotFoundException("Couldn't find property in mongo") 
-          }
-        case _ => throw new NotFoundException("Couldn't connect to backend")
-      }
+      request.propertyLinking.map(property =>
+          Future.successful(Ok(view(navigationBarContent = createDefaultNavBar, selectedPropertyAddress = property.addressFull, newAgreement = true))))
+        .getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
     }
   }
 

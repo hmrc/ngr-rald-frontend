@@ -18,8 +18,8 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 
 import play.api.http.Status.{BAD_REQUEST, NOT_IMPLEMENTED, OK}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
-import uk.gov.hmrc.http.HeaderNames
+import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, status}
+import uk.gov.hmrc.http.{HeaderNames, NotFoundException}
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
 import uk.gov.hmrc.ngrraldfrontend.models.forms.TypeOfLeaseRenewalForm
 import uk.gov.hmrc.ngrraldfrontend.views.html.TypeOfLeaseRenewalView
@@ -37,6 +37,13 @@ class TypeOfLeaseRenewalControllerSpec extends ControllerSpecSupport {
         val content = contentAsString(result)
         content must include(pageTitle)
       }
+      "Return NotFoundException when property is not found in the mongo" in {
+        mockRequestWithoutProperty()
+        val exception = intercept[NotFoundException] {
+          await(controller.show(authenticatedFakeRequest()))
+        }
+        exception.getMessage contains "Couldn't find property in mongo" mustBe true
+      }
     }
 
     "method submit" must {
@@ -48,14 +55,24 @@ class TypeOfLeaseRenewalControllerSpec extends ControllerSpecSupport {
         val result = controller.submit()(authenticatedFakeRequest(fakePostRequest))
         status(result) mustBe NOT_IMPLEMENTED
       }
-
       "Return BAD_REQUEST for missing input and the correct view" in {
+        mockRequest()
         val fakePostRequest = FakeRequest(routes.TypeOfLeaseRenewalController.submit)
           .withFormUrlEncodedBody((TypeOfLeaseRenewalForm.formName, ""))
           .withHeaders(HeaderNames.authorisation -> "Bearer 1")
 
         val result = controller.submit()(authenticatedFakeRequest(fakePostRequest))
         status(result) mustBe BAD_REQUEST
+      }
+      "Return Exception if no address is in the mongo" in {
+        mockRequestWithoutProperty()
+        val fakePostRequest = FakeRequest(routes.TypeOfLeaseRenewalController.submit)
+          .withFormUrlEncodedBody((TypeOfLeaseRenewalForm.formName, ""))
+          .withHeaders(HeaderNames.authorisation -> "Bearer 1")
+        val exception = intercept[NotFoundException] {
+          await( controller.submit()(authenticatedFakeRequest(fakePostRequest)))
+        }
+        exception.getMessage contains "Couldn't find property in mongo" mustBe true
       }
     }
   }

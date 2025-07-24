@@ -36,32 +36,19 @@ class TellUsAboutYourNewAgreementControllerSpec extends ControllerSpecSupport {
   "Tell us about your new agreement controller" must {
     "method show" must {
       "Return OK and the correct view" in {
-        when(mockRaldRepo.upsertRaldUserAnswers(any())) thenReturn (Future.successful(true))
-        when(mockNgrConnector.getLinkedProperty(any())(any())) thenReturn (Future.successful(true))
-        when(mockRaldRepo.findByCredId(any())).thenReturn(Future.successful(Some(RaldUserAnswers(credId, property))))
         val result = controller.show()(authenticatedFakeRequest())
         status(result) mustBe OK
         val content = contentAsString(result)
         content must include(pageTitle)
       }
-      "Return NotFoundException when failing to connect to the backend" in {
-        when(mockNgrConnector.getLinkedProperty(any())(any())) thenReturn (Future.successful(false))
-        val exception = intercept[NotFoundException] {
-          await(controller.show(authenticatedFakeRequest()))
-        }
-        exception.getMessage contains "Couldn't connect to backend" mustBe true
-      }
       "Return NotFoundException when property is not found in the mongo" in {
-        when(mockRaldRepo.upsertRaldUserAnswers(any())) thenReturn (Future.successful(true))
-        when(mockNgrConnector.getLinkedProperty(any())(any())) thenReturn (Future.successful(true))
-        when(mockRaldRepo.findByCredId(any())).thenReturn(Future.successful(None))
+        mockRequestWithoutProperty()
         val exception = intercept[NotFoundException] {
           await(controller.show(authenticatedFakeRequest()))
         }
         exception.getMessage contains "Couldn't find property in mongo" mustBe true
       }
     }
-
     "method submit" must {
       "Return OK and the correct view" in {
         val result = controller.submit()(authenticatedFakeRequest())

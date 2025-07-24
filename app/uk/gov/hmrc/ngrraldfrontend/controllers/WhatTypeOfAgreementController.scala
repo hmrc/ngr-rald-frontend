@@ -47,14 +47,15 @@ class WhatTypeOfAgreementController @Inject()(view: WhatTypeOfAgreementView,
 
   def show: Action[AnyContent] = {
     (authenticate andThen hasLinkedProperties).async { implicit request =>
+      request.propertyLinking.map(property =>
           Future.successful(Ok(
             view(
               navigationBarContent = createDefaultNavBar,
-              selectedPropertyAddress = request.propertyLinking.get.addressFull,
+              selectedPropertyAddress = property.addressFull,
               form = form,
               ngrRadio = buildRadios(form, WhatTypeOfAgreementForm.ngrRadio(form))
             )
-          ))
+          ))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
     }
   }
 
@@ -63,12 +64,14 @@ class WhatTypeOfAgreementController @Inject()(view: WhatTypeOfAgreementView,
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => Future.successful(BadRequest(view(
+            formWithErrors =>
+              request.propertyLinking.map(property =>
+              Future.successful(BadRequest(view(
                 createDefaultNavBar,
-                selectedPropertyAddress = request.propertyLinking.get.addressFull,
+                selectedPropertyAddress = property.addressFull,
                 formWithErrors,
                 buildRadios(formWithErrors, WhatTypeOfAgreementForm.ngrRadio(formWithErrors))
-                ))),
+                )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo")),
             whatTypeOfAgreementForm =>
               raldRepo.insertTypeOfAgreement(
                 credId = CredId(request.credId.getOrElse("")),

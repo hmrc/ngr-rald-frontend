@@ -30,15 +30,15 @@ import scala.concurrent.{ExecutionContext, Future}
 trait ControllerSpecSupport extends TestSupport {
   val mockPropertyLinkingAction: PropertyLinkingAction = mock[PropertyLinkingAction]
   val mockAuthJourney: AuthRetrievals = mock[AuthRetrievals]
-  
+
   val mockNgrConnector: NGRConnector = mock[NGRConnector]
   implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
   mockRequest()
 
-  
+
   def mockRequest(hasCredId: Boolean = false, hasNino: Boolean = true): Unit =
     when(mockAuthJourney andThen mockPropertyLinkingAction) thenReturn new ActionBuilder[AuthenticatedUserRequest, AnyContent] {
-      override def invokeBlock[A](request: Request[A], block: AuthenticatedUserRequest[A] => Future[Result]): Future[Result] =  {
+      override def invokeBlock[A](request: Request[A], block: AuthenticatedUserRequest[A] => Future[Result]): Future[Result] = {
         val authRequest = AuthenticatedUserRequest(
           request,
           None,
@@ -52,13 +52,37 @@ trait ControllerSpecSupport extends TestSupport {
         )
         block(authRequest)
       }
+
       override def parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
+
       override protected def executionContext: ExecutionContext = ec
     }
 
 
+  def mockRequestWithoutProperty(hasCredId: Boolean = false, hasNino: Boolean = true): Unit =
+    when(mockAuthJourney andThen mockPropertyLinkingAction) thenReturn new ActionBuilder[AuthenticatedUserRequest, AnyContent] {
+      override def invokeBlock[A](request: Request[A], block: AuthenticatedUserRequest[A] => Future[Result]): Future[Result] = {
+        val authRequest = AuthenticatedUserRequest(
+          request,
+          None,
+          None,
+          Some("user@email.com"),
+          None,
+          if (hasCredId) Some("1234") else None,
+          None,
+          None,
+          nino = if (hasNino) Nino(hasNino = true, Some("AA000003D")) else Nino(hasNino = false, None)
+        )
+        block(authRequest)
+      }
+
+      override def parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
+
+      override protected def executionContext: ExecutionContext = ec
+    }
+
   def mockRequest(authRequest: AuthenticatedUserRequest[AnyContentAsEmpty.type]): Unit = {
-    when(mockAuthJourney  andThen mockPropertyLinkingAction) thenReturn new ActionBuilder[AuthenticatedUserRequest, AnyContent] {
+    when(mockAuthJourney andThen mockPropertyLinkingAction) thenReturn new ActionBuilder[AuthenticatedUserRequest, AnyContent] {
       override def invokeBlock[A](request: Request[A], block: AuthenticatedUserRequest[A] => Future[Result]): Future[Result] = {
         block(authRequest.asInstanceOf[AuthenticatedUserRequest[A]])
       }

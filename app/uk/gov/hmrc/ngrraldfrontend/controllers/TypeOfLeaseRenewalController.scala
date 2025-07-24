@@ -18,6 +18,7 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction, RegistrationAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.NGRRadio
@@ -41,12 +42,13 @@ class TypeOfLeaseRenewalController @Inject()(typeOfLeaseRenewalView: TypeOfLease
 
   def show: Action[AnyContent] = {
     (authenticate andThen hasLinkedProperties).async { implicit request =>
+      request.propertyLinking.map(property =>
       Future.successful(Ok(typeOfLeaseRenewalView(
         form = form,
         navigationBarContent = createDefaultNavBar,
         radios = buildRadios(form, TypeOfLeaseRenewalForm.ngrRadio),
-        propertyAddress = request.propertyLinking.get.addressFull,
-      )))
+        propertyAddress = property.addressFull,
+      )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
     }
   }
 
@@ -54,12 +56,13 @@ class TypeOfLeaseRenewalController @Inject()(typeOfLeaseRenewalView: TypeOfLease
     (authenticate andThen hasLinkedProperties).async { implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
+          request.propertyLinking.map(property =>
               Future.successful(BadRequest(typeOfLeaseRenewalView(
                 form = formWithErrors,
                 navigationBarContent = createDefaultNavBar,
                 radios = buildRadios(formWithErrors, TypeOfLeaseRenewalForm.ngrRadio),
-                propertyAddress = request.propertyLinking.get.addressFull
-              )))
+                propertyAddress = property.addressFull
+              )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
         },
          answers =>
            Future.successful(NotImplemented)
