@@ -28,6 +28,7 @@ import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.ngrraldfrontend.helpers.{TestData, TestSupport}
+import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.{PropertyLinkingUserAnswers, RaldUserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.registration.*
 
@@ -115,7 +116,7 @@ class PropertyLinkingActionSpec extends TestSupport with TestData {
         )
           .thenReturn(retrievalResult)
 
-        when(mockRaldRepo.findByCredId(any())).thenReturn(Future.successful(Some(RaldUserAnswers(credId, property))))
+        when(mockRaldRepo.findByCredId(any())).thenReturn(Future.successful(Some(RaldUserAnswers(credId, NewAgreement, property))))
 
         val stubs = spy(new Stubs)
 

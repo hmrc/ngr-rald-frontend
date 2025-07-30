@@ -26,6 +26,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import uk.gov.hmrc.auth.core.Nino
 import uk.gov.hmrc.http.{HeaderNames, NotFoundException}
+import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, RaldUserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 
@@ -39,7 +40,7 @@ class WhatTypeOfAgreementControllerSpec extends ControllerSpecSupport {
   "Tell us about your new agreement controller" must {
     "method show" must {
       "Return OK and the correct view" in {
-        when(mockRaldRepo.findByCredId(any()))thenReturn(Future.successful(Some(RaldUserAnswers(credId = CredId(null), selectedProperty = property))))
+        when(mockRaldRepo.findByCredId(any()))thenReturn(Future.successful(Some(RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property))))
         val result = controller.show()(authenticatedFakeRequest())
         status(result) mustBe OK
         val content = contentAsString(result)
@@ -56,7 +57,7 @@ class WhatTypeOfAgreementControllerSpec extends ControllerSpecSupport {
 
     "method submit" must {
       "Return OK and the correct view after submitting with written radio button" in {
-        when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(Some(RaldUserAnswers(credId = CredId(null), selectedProperty = property))))
+        when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(Some(RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property))))
         mockRequest(hasCredId = true)
         val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.WhatTypeOfAgreementController.submit)
           .withFormUrlEncodedBody(("what-type-of-agreement-radio", "Written"))

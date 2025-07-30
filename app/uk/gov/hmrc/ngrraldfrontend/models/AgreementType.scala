@@ -16,7 +16,18 @@
 
 package uk.gov.hmrc.ngrraldfrontend.models
 
-trait AgreementType
-case object NewAgreement extends AgreementType
-case object RenewedAgreement extends AgreementType
-case object RentAgreement extends AgreementType
+import enumeratum.{Enum, EnumEntry, PlayJsonEnum}
+
+sealed trait AgreementType extends EnumEntry
+
+object AgreementType extends Enum[AgreementType] with PlayJsonEnum[AgreementType] {
+
+  val values = findValues
+  
+  case object NewAgreement extends AgreementType
+
+  case object RenewedAgreement extends AgreementType
+
+  case object RentAgreement extends AgreementType
+
+}

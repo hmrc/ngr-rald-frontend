@@ -21,6 +21,7 @@ import org.scalatest.matchers.should.Matchers.shouldBe
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json.{Format, Json, OFormat}
 import uk.gov.hmrc.ngrraldfrontend.helpers.TestData
+import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.vmvProperty.VMVProperty
 
@@ -32,7 +33,9 @@ class RaldUserAnswersSpec extends AnyWordSpec with Matchers with TestData {
     "serialize to JSON" in {
       val answers = RaldUserAnswers(
         credId = CredId("cred123"),
-        selectedProperty = property
+        agreementType =  NewAgreement,
+        selectedProperty = property,
+        whatTypeOfAgreement = None
       )
 
       val json = Json.toJson(answers)
@@ -48,6 +51,7 @@ class RaldUserAnswersSpec extends AnyWordSpec with Matchers with TestData {
           |   "credId" : {
           |        "value" : "9900000000000101"
           |    },
+          |    "agreementType" : "NewAgreement",
           |    "selectedProperty" : {
           |        "localAuthorityReference" : "2191322564521",
           |        "valuations" : [

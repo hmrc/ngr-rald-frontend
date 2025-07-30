@@ -22,6 +22,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.vmvProperty.VMVProperty
 
 final case class RaldUserAnswers(
                                   credId: CredId,
+                                  agreementType: AgreementType,
                                   selectedProperty: VMVProperty,
                                   whatTypeOfAgreement: Option[String] = None
                                 )

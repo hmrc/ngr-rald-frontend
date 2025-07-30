@@ -28,7 +28,7 @@ import java.time.LocalDate
 trait TestData {
  val credId: CredId = CredId("1234")
 
- val property = VMVProperty(
+ val property: VMVProperty = VMVProperty(
   uarn = 11905603000L,
   localAuthorityReference = "2191322564521",
   addressFull = "A, RODLEY LANE, RODLEY, LEEDS, BH1 7EY",

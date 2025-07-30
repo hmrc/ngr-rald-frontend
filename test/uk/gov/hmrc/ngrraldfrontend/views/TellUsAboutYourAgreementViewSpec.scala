@@ -71,11 +71,11 @@ class TellUsAboutYourAgreementViewSpec extends ViewBaseSpec {
   val address = "5 Brixham Marina, Berry Head Road, Brixham, Devon, TQ5 9BW"
 
   "TellUsAboutYourNewAgreementView" must {
-    val tellUsAboutYourNewAgreementView = view(content, address, NewAgreement)
+    val tellUsAboutYourNewAgreementView = view(content, address, AgreementType.NewAgreement)
     lazy implicit val document: Document = Jsoup.parse(tellUsAboutYourNewAgreementView.body)
-    val htmlApply = view.apply(content, address, NewAgreement).body
-    val htmlRender = view.render(content, address, NewAgreement, request, messages, mockConfig).body
-    lazy val htmlF = view.f(content, address, NewAgreement)
+    val htmlApply = view.apply(content, address, AgreementType.NewAgreement).body
+    val htmlRender = view.render(content, address, AgreementType.NewAgreement, request, messages, mockConfig).body
+    lazy val htmlF = view.f(content, address, AgreementType.NewAgreement)
 
     "htmlF is not empty" in {
       htmlF.toString() must not be empty
@@ -143,11 +143,11 @@ class TellUsAboutYourAgreementViewSpec extends ViewBaseSpec {
   }
 
   "TellUsAboutYourRenewedAgreementView" must {
-    val tellUsAboutYourRenewedAgreementView = view(content, address, RenewedAgreement)
+    val tellUsAboutYourRenewedAgreementView = view(content, address, AgreementType.RenewedAgreement)
     lazy implicit val document: Document = Jsoup.parse(tellUsAboutYourRenewedAgreementView.body)
-    val htmlApply = view.apply(content, address, RenewedAgreement).body
-    val htmlRender = view.render(content, address, RenewedAgreement, request, messages, mockConfig).body
-    lazy val htmlF = view.f(content, address, RenewedAgreement)
+    val htmlApply = view.apply(content, address, AgreementType.RenewedAgreement).body
+    val htmlRender = view.render(content, address, AgreementType.RenewedAgreement, request, messages, mockConfig).body
+    lazy val htmlF = view.f(content, address, AgreementType.RenewedAgreement)
 
     "htmlF is not empty" in {
       htmlF.toString() must not be empty
@@ -210,11 +210,11 @@ class TellUsAboutYourAgreementViewSpec extends ViewBaseSpec {
     }
   }
   "TellUsAboutYourRentView" must {
-    val tellUsAboutYourRenewedAgreementView = view(content, address, RentAgreement)
+    val tellUsAboutYourRenewedAgreementView = view(content, address, AgreementType.RentAgreement)
     lazy implicit val document: Document = Jsoup.parse(tellUsAboutYourRenewedAgreementView.body)
-    val htmlApply = view.apply(content, address, RentAgreement).body
-    val htmlRender = view.render(content, address, RentAgreement, request, messages, mockConfig).body
-    lazy val htmlF = view.f(content, address, RentAgreement)
+    val htmlApply = view.apply(content, address, AgreementType.RentAgreement).body
+    val htmlRender = view.render(content, address, AgreementType.RentAgreement, request, messages, mockConfig).body
+    lazy val htmlF = view.f(content, address, AgreementType.RentAgreement)
 
     "htmlF is not empty" in {
       htmlF.toString() must not be empty

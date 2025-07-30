@@ -19,6 +19,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.ngrraldfrontend.views.html.components._
 @import uk.gov.hmrc.ngrraldfrontend.models.*
+@import uk.gov.hmrc.ngrraldfrontend.models.{RaldUserAnswers}
 
 @this(
  layout: Layout,
@@ -31,29 +32,29 @@
 @layout(pageTitle = Some(messages("tellUsAboutYourNewAgreement.title")), showBackLink = true, fullWidth = true, navigationBarContent = Some(navigationBarContent)) {
 
  @formHelper(action =
-    if(agreement == NewAgreement){
-        uk.gov.hmrc.ngrraldfrontend.controllers.routes.TellUsAboutYourNewAgreementController.show
-    }else if(agreement == RenewedAgreement){
-        uk.gov.hmrc.ngrraldfrontend.controllers.routes.TellUsAboutYourRenewedAgreementController.show
+    if(agreement == AgreementType.NewAgreement){
+        uk.gov.hmrc.ngrraldfrontend.controllers.routes.TellUsAboutYourNewAgreementController.submit
+    }else if(agreement == AgreementType.RenewedAgreement){
+        uk.gov.hmrc.ngrraldfrontend.controllers.routes.TellUsAboutYourRenewedAgreementController.submit
     }else{
-        uk.gov.hmrc.ngrraldfrontend.controllers.routes.TellUsAboutRentController.show
+        uk.gov.hmrc.ngrraldfrontend.controllers.routes.TellUsAboutRentController.submit
     }, Symbol("autoComplete") -> "off") {
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <span class="govuk-caption-m">@selectedPropertyAddress</span>
       <h1 class="govuk-heading-l">
-          @if(agreement == NewAgreement){
+          @if(agreement == AgreementType.NewAgreement){
             @messages("tellUsAboutYourNewAgreement.title")
-          }else if(agreement == RenewedAgreement){
+          }else if(agreement == AgreementType.RenewedAgreement){
             @messages("tellUsAboutYourRenewedAgreement.title")
           }else{
             @messages("tellUsAboutRent.title")
           }
       </h1>
       <p class="govuk-body">
-          @if(agreement == NewAgreement){
+          @if(agreement == AgreementType.NewAgreement){
             @messages("tellUsAboutYourNewAgreement.p1")
-          }else if(agreement == RenewedAgreement){
+          }else if(agreement == AgreementType.RenewedAgreement){
             @messages("tellUsAboutYourRenewedAgreement.p1")
           }else{
           @messages("tellUsAboutRent.p1")
@@ -65,7 +66,7 @@
       <p class="govuk-body">
           @messages("tellUsAboutYourNewAgreement.p2")
       </p>
-        @if(agreement == RentAgreement){
+        @if(agreement == AgreementType.RentAgreement){
             <p class="govuk-body">
                 @messages("tellUsAboutRent.p2.5")
             </p>
@@ -77,7 +78,7 @@
             <li>
                 @messages("tellUsAboutYourNewAgreement.bullet.1")
             </li>
-            @if(agreement == RentAgreement){
+            @if(agreement == AgreementType.RentAgreement){
                 <li>
                     @messages("tellUsAboutRent.bullet.2")
                 </li>
@@ -92,11 +93,11 @@
             <li>
                 @messages("tellUsAboutYourNewAgreement.bullet.4")
             </li>
-            @if(agreement == NewAgreement){
+            @if(agreement == AgreementType.NewAgreement){
                 <li>
                     @messages("tellUsAboutYourNewAgreement.bullet.5")
                 </li>
-            }else if(agreement == RentAgreement){
+            }else if(agreement == AgreementType.RentAgreement){
                 <li>
                     @messages("tellUsAboutRent.bullet.5")
                 </li>
