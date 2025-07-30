@@ -21,6 +21,7 @@ import org.scalatest.matchers.should.Matchers.shouldBe
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 import uk.gov.hmrc.ngrraldfrontend.helpers.{TestData, TestSupport}
+import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.RaldUserAnswers
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 
@@ -38,13 +39,13 @@ class RaldRepoSpec extends TestSupport with TestData
     "save a new PropertyLinkingUserAnswer" when {
       "correct LookUpAddresses has been supplied" in {
         val isSuccessful = await(
-          repository.upsertRaldUserAnswers(RaldUserAnswers(credId, property)))
+          repository.upsertRaldUserAnswers(RaldUserAnswers(credId, NewAgreement, property)))
         isSuccessful shouldBe true
         val actual = await(repository.findByCredId(credId))
-        actual shouldBe Some(RaldUserAnswers(credId, property))
+        actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property))
       }
       "missing credId" in {
-        val missingCredId = RaldUserAnswers(credId = CredId(null), selectedProperty = property)
+        val missingCredId = RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property)
         val exception = intercept[IllegalStateException] {
           await(repository.upsertRaldUserAnswers(missingCredId))
         }
@@ -54,8 +55,10 @@ class RaldRepoSpec extends TestSupport with TestData
     "insert type of agreement successfully" in {
       val initialize = await(
         repository.upsertRaldUserAnswers(RaldUserAnswers(
-          credId, 
-          property
+          credId,
+          NewAgreement,
+          property,
+          None
         )))
       initialize
       val isSuccessful = await(
@@ -63,7 +66,7 @@ class RaldRepoSpec extends TestSupport with TestData
           credId, "Written"
         ))
       val actual = await(repository.findByCredId(credId))
-      actual shouldBe Some(RaldUserAnswers(credId, property, whatTypeOfAgreement = Some("Written")))
+      actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, whatTypeOfAgreement = Some("Written")))
     }
     "credId doesn't exist in mongoDB" in {
       val actual = await(repository.findByCredId(credId))

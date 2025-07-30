@@ -23,6 +23,7 @@ import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
+import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.RaldUserAnswers
 import uk.gov.hmrc.ngrraldfrontend.views.html.TellUsAboutYourAgreementView
 
@@ -52,6 +53,12 @@ class TellUsAboutYourNewAgreementControllerSpec extends ControllerSpecSupport {
     "method submit" must {
       "Return OK and the correct view" in {
         val result = controller.submit()(authenticatedFakeRequest())
+        when(mockRaldRepo.upsertRaldUserAnswers(
+          raldUserAnswers = RaldUserAnswers(credId,
+            NewAgreement,
+            property,
+            None)
+        )).thenReturn(Future.successful(true))
         status(result) mustBe SEE_OTHER
         redirectLocation(result) shouldBe Some(routes.TellUsAboutYourNewAgreementController.show.url)
       }
