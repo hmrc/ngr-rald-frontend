@@ -62,7 +62,7 @@ class TellUsAboutYourRenewedAgreementController @Inject()(view: TellUsAboutYourA
           )
         )
       )
-        Future.successful(Redirect(routes.TellUsAboutYourNewAgreementController.show.url))
+        Future.successful(Redirect(routes.WhatTypeOfLeaseRenewalController.show.url))
       }
   }
 }                                                     

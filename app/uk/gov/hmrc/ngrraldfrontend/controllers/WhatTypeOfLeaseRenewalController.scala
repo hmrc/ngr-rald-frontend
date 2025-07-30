@@ -24,29 +24,33 @@ import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.NGRRadio
 import uk.gov.hmrc.ngrraldfrontend.models.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
-import uk.gov.hmrc.ngrraldfrontend.models.forms.TypeOfLeaseRenewalForm
-import uk.gov.hmrc.ngrraldfrontend.models.forms.TypeOfLeaseRenewalForm.form
-import uk.gov.hmrc.ngrraldfrontend.views.html.TypeOfLeaseRenewalView
+import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatTypeOfLeaseRenewalForm
+import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatTypeOfLeaseRenewalForm.{RenewedAgreement, SurrenderAndRenewal, form}
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
+import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
+import uk.gov.hmrc.ngrraldfrontend.utils.Constants.{renewedAgreement, surrenderAndRenewal}
+import uk.gov.hmrc.ngrraldfrontend.views.html.WhatTypeOfLeaseRenewalView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TypeOfLeaseRenewalController @Inject()(typeOfLeaseRenewalView: TypeOfLeaseRenewalView,
-                                             authenticate: AuthRetrievals,
-                                             hasLinkedProperties: PropertyLinkingAction,
-                                             mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
+class WhatTypeOfLeaseRenewalController @Inject()(whatTypeOfLeaseRenewalView: WhatTypeOfLeaseRenewalView,
+                                                 authenticate: AuthRetrievals,
+                                                 hasLinkedProperties: PropertyLinkingAction,
+                                                 raldRepo: RaldRepo,
+                                                 mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport {
 
 
   def show: Action[AnyContent] = {
     (authenticate andThen hasLinkedProperties).async { implicit request =>
       request.propertyLinking.map(property =>
-      Future.successful(Ok(typeOfLeaseRenewalView(
+      Future.successful(Ok(whatTypeOfLeaseRenewalView(
         form = form,
         navigationBarContent = createDefaultNavBar,
-        radios = buildRadios(form, TypeOfLeaseRenewalForm.ngrRadio),
+        radios = buildRadios(form, WhatTypeOfLeaseRenewalForm.ngrRadio),
         propertyAddress = property.addressFull,
       )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
     }
@@ -57,18 +61,23 @@ class TypeOfLeaseRenewalController @Inject()(typeOfLeaseRenewalView: TypeOfLease
       form.bindFromRequest().fold(
         formWithErrors => {
           request.propertyLinking.map(property =>
-              Future.successful(BadRequest(typeOfLeaseRenewalView(
-                form = formWithErrors,
-                navigationBarContent = createDefaultNavBar,
-                radios = buildRadios(formWithErrors, TypeOfLeaseRenewalForm.ngrRadio),
-                propertyAddress = property.addressFull
-              )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
+            Future.successful(BadRequest(whatTypeOfLeaseRenewalView(
+              form = formWithErrors,
+              navigationBarContent = createDefaultNavBar,
+              radios = buildRadios(formWithErrors, WhatTypeOfLeaseRenewalForm.ngrRadio),
+              propertyAddress = property.addressFull
+            )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
         },
-         answers =>
-           Future.successful(NotImplemented)
+        radioValue =>
+          val typeOfLeaseRenewal = radioValue match
+            case RenewedAgreement => renewedAgreement
+            case SurrenderAndRenewal => surrenderAndRenewal
+          raldRepo.insertTypeOfRenewal(
+            credId = CredId(request.credId.getOrElse("")),
+            whatTypeOfRenewal = typeOfLeaseRenewal
+          )
+          Future.successful(Redirect(routes.WhatTypeOfLeaseRenewalController.show.url))
       )
     }
-
-
 }
 

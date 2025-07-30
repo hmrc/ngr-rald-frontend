@@ -20,40 +20,42 @@ import play.api.data.Forms.single
 import play.api.data.format.Formatter
 import play.api.data.{Form, FormError, Forms}
 import uk.gov.hmrc.ngrraldfrontend.models.{NGRRadio, NGRRadioButtons, NGRRadioName, RadioEntry}
+import uk.gov.hmrc.ngrraldfrontend.utils.Constants
+import uk.gov.hmrc.ngrraldfrontend.utils.Constants.{renewedAgreement, surrenderAndRenewal}
 
-sealed trait TypeOfLeaseRenewalForm extends RadioEntry
+sealed trait WhatTypeOfLeaseRenewalForm extends RadioEntry
 
-object TypeOfLeaseRenewalForm {
+object WhatTypeOfLeaseRenewalForm {
   val formName = "type-of-renewal"
 
-  case object RenewedAgreement extends TypeOfLeaseRenewalForm
+  case object RenewedAgreement extends WhatTypeOfLeaseRenewalForm
 
-  case object SurrenderAndRenewal extends TypeOfLeaseRenewalForm
+  case object SurrenderAndRenewal extends WhatTypeOfLeaseRenewalForm
 
-  val values: Set[TypeOfLeaseRenewalForm] = Set(RenewedAgreement, SurrenderAndRenewal)
+  val values: Set[WhatTypeOfLeaseRenewalForm] = Set(RenewedAgreement, SurrenderAndRenewal)
 
-  implicit val formatter: Formatter[TypeOfLeaseRenewalForm] = new Formatter[TypeOfLeaseRenewalForm] {
-    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], TypeOfLeaseRenewalForm] = {
+  implicit val formatter: Formatter[WhatTypeOfLeaseRenewalForm] = new Formatter[WhatTypeOfLeaseRenewalForm] {
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], WhatTypeOfLeaseRenewalForm] = {
       data.get(key).collectFirst {
-        case "RenewedAgreement" => RenewedAgreement
-        case "SurrenderAndRenewal" => SurrenderAndRenewal
+        case Constants.renewedAgreement => RenewedAgreement
+        case Constants.surrenderAndRenewal => SurrenderAndRenewal
       }.toRight(Seq(FormError(key, "typeOfLeaseRenewal.required.error")))
     }
 
-    override def unbind(key: String, value: TypeOfLeaseRenewalForm): Map[String, String] = Map(
+    override def unbind(key: String, value: WhatTypeOfLeaseRenewalForm): Map[String, String] = Map(
       key -> (value match {
-        case RenewedAgreement => "RenewedAgreement"
-        case SurrenderAndRenewal => "SurrenderAndRenewal"
+        case RenewedAgreement => renewedAgreement
+        case SurrenderAndRenewal => surrenderAndRenewal
       })
     )
   }
 
   private val renewedAgreementButton: NGRRadioButtons = NGRRadioButtons("typeOfLeaseRenewal.option1", RenewedAgreement)
   private val surrenderAndRenewalButton: NGRRadioButtons = NGRRadioButtons("typeOfLeaseRenewal.option2", SurrenderAndRenewal)
-  val ngrRadio: NGRRadio = NGRRadio(NGRRadioName(TypeOfLeaseRenewalForm.formName), Seq(renewedAgreementButton, surrenderAndRenewalButton))
+  val ngrRadio: NGRRadio = NGRRadio(NGRRadioName(WhatTypeOfLeaseRenewalForm.formName), Seq(renewedAgreementButton, surrenderAndRenewalButton))
 
 
-  def form: Form[TypeOfLeaseRenewalForm] = Form(
-    single(formName -> Forms.of[TypeOfLeaseRenewalForm])
+  def form: Form[WhatTypeOfLeaseRenewalForm] = Form(
+    single(formName -> Forms.of[WhatTypeOfLeaseRenewalForm])
   )
 }

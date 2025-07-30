@@ -16,18 +16,18 @@
 
 package uk.gov.hmrc.ngrraldfrontend.controllers
 
-import play.api.http.Status.{BAD_REQUEST, NOT_IMPLEMENTED, OK}
+import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, status}
+import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import uk.gov.hmrc.http.{HeaderNames, NotFoundException}
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
-import uk.gov.hmrc.ngrraldfrontend.models.forms.TypeOfLeaseRenewalForm
-import uk.gov.hmrc.ngrraldfrontend.views.html.TypeOfLeaseRenewalView
+import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatTypeOfLeaseRenewalForm
+import uk.gov.hmrc.ngrraldfrontend.views.html.WhatTypeOfLeaseRenewalView
 
-class TypeOfLeaseRenewalControllerSpec extends ControllerSpecSupport {
+class WhatTypeOfLeaseRenewalControllerSpec extends ControllerSpecSupport {
   val pageTitle = "What type of lease renewal is it?"
-  val view: TypeOfLeaseRenewalView = inject[TypeOfLeaseRenewalView]
-  val controller: TypeOfLeaseRenewalController = new TypeOfLeaseRenewalController(view, mockAuthJourney, mockPropertyLinkingAction, mcc)(mockConfig)
+  val view: WhatTypeOfLeaseRenewalView = inject[WhatTypeOfLeaseRenewalView]
+  val controller: WhatTypeOfLeaseRenewalController = new WhatTypeOfLeaseRenewalController(view, mockAuthJourney, mockPropertyLinkingAction, mockRaldRepo, mcc)(mockConfig)
 
   "TypeOfLeaseRenewalController" must {
     "method show" must {
@@ -48,17 +48,18 @@ class TypeOfLeaseRenewalControllerSpec extends ControllerSpecSupport {
 
     "method submit" must {
       "Return OK and the correct view" in {
-        val fakePostRequest =  FakeRequest(routes.TypeOfLeaseRenewalController.submit)
-          .withFormUrlEncodedBody((TypeOfLeaseRenewalForm.formName, "RenewedAgreement"))
+        val fakePostRequest =  FakeRequest(routes.WhatTypeOfLeaseRenewalController.submit)
+          .withFormUrlEncodedBody((WhatTypeOfLeaseRenewalForm.formName, "RenewedAgreement"))
           .withHeaders(HeaderNames.authorisation -> "Bearer 1")
         
         val result = controller.submit()(authenticatedFakeRequest(fakePostRequest))
-        status(result) mustBe NOT_IMPLEMENTED
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.WhatTypeOfLeaseRenewalController.show.url)
       }
       "Return BAD_REQUEST for missing input and the correct view" in {
         mockRequest()
-        val fakePostRequest = FakeRequest(routes.TypeOfLeaseRenewalController.submit)
-          .withFormUrlEncodedBody((TypeOfLeaseRenewalForm.formName, ""))
+        val fakePostRequest = FakeRequest(routes.WhatTypeOfLeaseRenewalController.submit)
+          .withFormUrlEncodedBody((WhatTypeOfLeaseRenewalForm.formName, ""))
           .withHeaders(HeaderNames.authorisation -> "Bearer 1")
 
         val result = controller.submit()(authenticatedFakeRequest(fakePostRequest))
@@ -66,11 +67,11 @@ class TypeOfLeaseRenewalControllerSpec extends ControllerSpecSupport {
       }
       "Return Exception if no address is in the mongo" in {
         mockRequestWithoutProperty()
-        val fakePostRequest = FakeRequest(routes.TypeOfLeaseRenewalController.submit)
-          .withFormUrlEncodedBody((TypeOfLeaseRenewalForm.formName, ""))
+        val fakePostRequest = FakeRequest(routes.WhatTypeOfLeaseRenewalController.submit)
+          .withFormUrlEncodedBody((WhatTypeOfLeaseRenewalForm.formName, ""))
           .withHeaders(HeaderNames.authorisation -> "Bearer 1")
         val exception = intercept[NotFoundException] {
-          await( controller.submit()(authenticatedFakeRequest(fakePostRequest)))
+          await(controller.submit()(authenticatedFakeRequest(fakePostRequest)))
         }
         exception.getMessage contains "Couldn't find property in mongo" mustBe true
       }

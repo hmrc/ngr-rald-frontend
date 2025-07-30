@@ -22,12 +22,12 @@ import play.api.data.Form
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.Radios
 import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
 import uk.gov.hmrc.ngrraldfrontend.models.NGRRadio.buildRadios
-import uk.gov.hmrc.ngrraldfrontend.models.forms.TypeOfLeaseRenewalForm
+import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatTypeOfLeaseRenewalForm
 import uk.gov.hmrc.ngrraldfrontend.models.{NGRRadio, NGRRadioButtons, NGRRadioName}
-import uk.gov.hmrc.ngrraldfrontend.views.html.TypeOfLeaseRenewalView
+import uk.gov.hmrc.ngrraldfrontend.views.html.WhatTypeOfLeaseRenewalView
 
 class TypeOfLeaseRenewalViewSpec extends ViewBaseSpec {
-  lazy val view: TypeOfLeaseRenewalView = inject[TypeOfLeaseRenewalView]
+  lazy val view: WhatTypeOfLeaseRenewalView = inject[WhatTypeOfLeaseRenewalView]
   val address = "5 Brixham Marina, Berry Head Road, Brixham, Devon, TQ5 9BW"
 
 
@@ -36,10 +36,10 @@ class TypeOfLeaseRenewalViewSpec extends ViewBaseSpec {
   val radio1 = "A renewed agreement"
   val radio2 = "A surrender and renewal"
 
-  private val firstButton: NGRRadioButtons = NGRRadioButtons("typeOfLeaseRenewal.option1", TypeOfLeaseRenewalForm.RenewedAgreement)
-  private val secondButton: NGRRadioButtons = NGRRadioButtons("typeOfLeaseRenewal.option2", TypeOfLeaseRenewalForm.SurrenderAndRenewal)
+  private val firstButton: NGRRadioButtons = NGRRadioButtons("typeOfLeaseRenewal.option1", WhatTypeOfLeaseRenewalForm.RenewedAgreement)
+  private val secondButton: NGRRadioButtons = NGRRadioButtons("typeOfLeaseRenewal.option2", WhatTypeOfLeaseRenewalForm.SurrenderAndRenewal)
   private val ngrRadio: NGRRadio = NGRRadio(NGRRadioName("connection-to-property-radio"), Seq(firstButton, secondButton))
-  val form: Form[TypeOfLeaseRenewalForm] = TypeOfLeaseRenewalForm.form.fillAndValidate(TypeOfLeaseRenewalForm.RenewedAgreement)
+  val form: Form[WhatTypeOfLeaseRenewalForm] = WhatTypeOfLeaseRenewalForm.form.fillAndValidate(WhatTypeOfLeaseRenewalForm.RenewedAgreement)
 
   val radio: Radios = buildRadios(form, ngrRadio)
 

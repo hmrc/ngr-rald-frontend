@@ -20,28 +20,28 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.FormError
 
-class TypeOfLeaseRenewalFormSpec extends AnyWordSpec with Matchers {
+class WhatTypeOfLeaseRenewalFormSpec extends AnyWordSpec with Matchers {
   "TypeOfLeaseRenewalForm" should {
 
     "bind successfully with a valid input value 'RenewedAgreement'" in {
       val data = Map("type-of-renewal" -> "RenewedAgreement")
-      val boundForm = TypeOfLeaseRenewalForm.form.bind(data)
+      val boundForm = WhatTypeOfLeaseRenewalForm.form.bind(data)
 
       boundForm.hasErrors shouldBe false
-      boundForm.value shouldBe Some(TypeOfLeaseRenewalForm.RenewedAgreement)
+      boundForm.value shouldBe Some(WhatTypeOfLeaseRenewalForm.RenewedAgreement)
     }
 
     "bind successfully with a valid input value 'SurrenderAndRenewal'" in {
       val data = Map("type-of-renewal" -> "SurrenderAndRenewal")
-      val boundForm = TypeOfLeaseRenewalForm.form.bind(data)
+      val boundForm = WhatTypeOfLeaseRenewalForm.form.bind(data)
 
       boundForm.hasErrors shouldBe false
-      boundForm.value shouldBe Some(TypeOfLeaseRenewalForm.SurrenderAndRenewal)
+      boundForm.value shouldBe Some(WhatTypeOfLeaseRenewalForm.SurrenderAndRenewal)
     }
 
     "fail to bind when input is missing" in {
       val data = Map.empty[String, String]
-      val boundForm = TypeOfLeaseRenewalForm.form.bind(data)
+      val boundForm = WhatTypeOfLeaseRenewalForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
       boundForm.errors should contain(FormError("type-of-renewal", List("typeOfLeaseRenewal.required.error")))
