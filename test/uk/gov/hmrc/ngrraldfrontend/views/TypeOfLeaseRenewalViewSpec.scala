@@ -21,9 +21,9 @@ import org.jsoup.nodes.Document
 import play.api.data.Form
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.Radios
 import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
-import uk.gov.hmrc.ngrraldfrontend.models.NGRRadio.buildRadios
+import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
+import uk.gov.hmrc.ngrraldfrontend.models.components.{NGRRadio, NGRRadioButtons, NGRRadioName}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatTypeOfLeaseRenewalForm
-import uk.gov.hmrc.ngrraldfrontend.models.{NGRRadio, NGRRadioButtons, NGRRadioName}
 import uk.gov.hmrc.ngrraldfrontend.views.html.WhatTypeOfLeaseRenewalView
 
 class TypeOfLeaseRenewalViewSpec extends ViewBaseSpec {

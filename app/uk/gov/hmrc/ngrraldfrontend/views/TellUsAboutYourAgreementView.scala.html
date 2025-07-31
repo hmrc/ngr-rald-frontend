@@ -29,6 +29,46 @@
 
 @(navigationBarContent: NavigationBarContent, selectedPropertyAddress: String, agreement:AgreementType)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
+@heading = {
+    @if(agreement == AgreementType.NewAgreement){
+        @messages("tellUsAboutYourNewAgreement.title")
+    }else if(agreement == AgreementType.RenewedAgreement){
+        @messages("tellUsAboutYourRenewedAgreement.title")
+    }else{
+        @messages("tellUsAboutRent.title")
+    }
+}
+
+@p1 = {
+    @if(agreement == AgreementType.NewAgreement){
+        @messages("tellUsAboutYourNewAgreement.p1")
+    }else if(agreement == AgreementType.RenewedAgreement){
+        @messages("tellUsAboutYourRenewedAgreement.p1")
+    }else{
+        @messages("tellUsAboutRent.p1")
+    }
+}
+
+@bullet2 = {
+    @if(agreement == AgreementType.RentAgreement){
+        @messages("tellUsAboutRent.bullet.2")
+    }else{
+        @messages("tellUsAboutYourNewAgreement.bullet.2")
+    }
+}
+
+@bullet5 = {
+    @if(agreement == AgreementType.NewAgreement){
+    <li>
+        @messages("tellUsAboutYourNewAgreement.bullet.5")
+    </li>
+    }else if(agreement == AgreementType.RentAgreement){
+    <li>
+        @messages("tellUsAboutRent.bullet.5")
+    </li>
+    }
+}
+
 @layout(pageTitle = Some(messages("tellUsAboutYourNewAgreement.title")), showBackLink = true, fullWidth = true, navigationBarContent = Some(navigationBarContent)) {
 
  @formHelper(action =
@@ -42,35 +82,19 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <span class="govuk-caption-m">@selectedPropertyAddress</span>
-      <h1 class="govuk-heading-l">
-          @if(agreement == AgreementType.NewAgreement){
-            @messages("tellUsAboutYourNewAgreement.title")
-          }else if(agreement == AgreementType.RenewedAgreement){
-            @messages("tellUsAboutYourRenewedAgreement.title")
-          }else{
-            @messages("tellUsAboutRent.title")
-          }
-      </h1>
-      <p class="govuk-body">
-          @if(agreement == AgreementType.NewAgreement){
-            @messages("tellUsAboutYourNewAgreement.p1")
-          }else if(agreement == AgreementType.RenewedAgreement){
-            @messages("tellUsAboutYourRenewedAgreement.p1")
-          }else{
-          @messages("tellUsAboutRent.p1")
-          }
-      </p>
+      <h1 class="govuk-heading-l">@heading</h1>
+      <p class="govuk-body">@p1</p>
       <h1 class="govuk-heading-m">
           @messages("tellUsAboutYourNewAgreement.subTitle")
       </h1>
       <p class="govuk-body">
           @messages("tellUsAboutYourNewAgreement.p2")
       </p>
-        @if(agreement == AgreementType.RentAgreement){
-            <p class="govuk-body">
-                @messages("tellUsAboutRent.p2.5")
-            </p>
-        }
+      @if(agreement == AgreementType.RentAgreement){
+        <p class="govuk-body">
+            @messages("tellUsAboutRent.p2.5")
+        </p>
+      }
       <p class="govuk-body">
           @messages("tellUsAboutYourNewAgreement.p3")
       </p>
@@ -78,30 +102,16 @@
             <li>
                 @messages("tellUsAboutYourNewAgreement.bullet.1")
             </li>
-            @if(agreement == AgreementType.RentAgreement){
-                <li>
-                    @messages("tellUsAboutRent.bullet.2")
-                </li>
-            }else{
-                <li>
-                    @messages("tellUsAboutYourNewAgreement.bullet.2")
-                </li>
-            }
+            <li>
+                @bullet2
+            </li>
             <li>
                 @messages("tellUsAboutYourNewAgreement.bullet.3")
             </li>
             <li>
                 @messages("tellUsAboutYourNewAgreement.bullet.4")
             </li>
-            @if(agreement == AgreementType.NewAgreement){
-                <li>
-                    @messages("tellUsAboutYourNewAgreement.bullet.5")
-                </li>
-            }else if(agreement == AgreementType.RentAgreement){
-                <li>
-                    @messages("tellUsAboutRent.bullet.5")
-                </li>
-            }
+            @bullet5
         </ul>
       <h1 class="govuk-heading-m">@messages("tellUsAboutYourNewAgreement.subTitle.2")</h1>
       <p class="govuk-body">@messages("tellUsAboutYourNewAgreement.p4")</p>

@@ -19,7 +19,7 @@ package uk.gov.hmrc.ngrraldfrontend.models.forms
 import play.api.data.Forms.single
 import play.api.data.format.Formatter
 import play.api.data.{Form, FormError, Forms}
-import uk.gov.hmrc.ngrraldfrontend.models.{NGRRadio, NGRRadioButtons, NGRRadioName, RadioEntry}
+import uk.gov.hmrc.ngrraldfrontend.models.components.{NGRRadio, NGRRadioButtons, NGRRadioName, RadioEntry}
 import uk.gov.hmrc.ngrraldfrontend.utils.Constants
 import uk.gov.hmrc.ngrraldfrontend.utils.Constants.{renewedAgreement, surrenderAndRenewal}
 

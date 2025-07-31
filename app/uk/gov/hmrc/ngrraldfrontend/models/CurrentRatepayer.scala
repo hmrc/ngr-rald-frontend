@@ -16,10 +16,7 @@
 
 package uk.gov.hmrc.ngrraldfrontend.models
 
-import play.api.libs.json.{Format, Json, OFormat}
-import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
-
-import java.time.LocalDate
+import play.api.libs.json.{Json, OFormat}
 
 final case class CurrentRatepayer(isBeforeApril: Boolean, becomeRatepayerDate: Option[String])
 

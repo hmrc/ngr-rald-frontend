@@ -17,7 +17,6 @@
 package uk.gov.hmrc.ngrraldfrontend.repo
 
 import com.google.inject.Singleton
-import org.mongodb.scala.SingleObservableFuture
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.*
 import org.mongodb.scala.model.Filters.equal
