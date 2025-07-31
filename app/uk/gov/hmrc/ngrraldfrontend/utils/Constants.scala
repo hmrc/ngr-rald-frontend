@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.ngrraldfrontend.models
+package uk.gov.hmrc.ngrraldfrontend.utils
 
-trait RadioEntry
+object Constants {
+
+  val renewedAgreement = "RenewedAgreement"
+  val surrenderAndRenewal = "SurrenderAndRenewal"
 
 
+}

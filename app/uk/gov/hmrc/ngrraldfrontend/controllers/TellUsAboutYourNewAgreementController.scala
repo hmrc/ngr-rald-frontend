@@ -21,8 +21,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-import uk.gov.hmrc.ngrraldfrontend.connectors.NGRConnector
-import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.{NewAgreement, RenewedAgreement}
+import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.{RaldUserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
@@ -37,7 +36,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class TellUsAboutYourNewAgreementController @Inject()(view: TellUsAboutYourAgreementView,
                                                       authenticate: AuthRetrievals,
                                                       hasLinkedProperties: PropertyLinkingAction,
-                                                      ngrConnector: NGRConnector,
                                                       raldRepo: RaldRepo,
                                                       mcc: MessagesControllerComponents
                                                      )(implicit appConfig: AppConfig, ec:ExecutionContext)  extends FrontendController(mcc) with I18nSupport {

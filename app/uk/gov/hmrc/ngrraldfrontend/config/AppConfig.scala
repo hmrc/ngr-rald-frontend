@@ -37,7 +37,7 @@ class FrontendAppConfig @Inject()(config: Configuration, servicesConfig: Service
   override val nextGenerationRatesHost: String = servicesConfig.baseUrl("next-generation-rates")
   override val ngrLoginRegistrationHost: String = servicesConfig.baseUrl("ngr-login-register-frontend")
   override val timeToLive: String = servicesConfig.getString("time-to-live.time")
-  override val ngrDashboardUrl: String = s"$dashboardHost/ngr-dashboard-frontend"
+  override val ngrDashboardUrl: String = s"$dashboardHost/ngr-dashboard-frontend/dashboard"
   override val ngrLogoutUrl: String = s"$dashboardHost/ngr-dashboard-frontend/signout"
 
   def getString(key: String): String =

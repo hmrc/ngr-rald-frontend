@@ -8,7 +8,7 @@ GET        /tell-us-about-your-renewed-agreement uk.gov.hmrc.ngrraldfrontend.con
 POST       /tell-us-about-your-renewed-agreement uk.gov.hmrc.ngrraldfrontend.controllers.TellUsAboutYourRenewedAgreementController.submit
 GET        /tell-us-about-rent-review            uk.gov.hmrc.ngrraldfrontend.controllers.TellUsAboutRentController.show
 POST       /tell-us-about-rent-review            uk.gov.hmrc.ngrraldfrontend.controllers.TellUsAboutRentController.submit
-GET        /rald-lease-renewal-type              uk.gov.hmrc.ngrraldfrontend.controllers.TypeOfLeaseRenewalController.show
-POST       /rald-lease-renewal-type              uk.gov.hmrc.ngrraldfrontend.controllers.TypeOfLeaseRenewalController.submit
+GET        /what-type-of-lease-renewal-is-it       uk.gov.hmrc.ngrraldfrontend.controllers.WhatTypeOfLeaseRenewalController.show
+POST       /what-type-of-lease-renewal-is-it       uk.gov.hmrc.ngrraldfrontend.controllers.WhatTypeOfLeaseRenewalController.submit
 GET        /what-type-of-agreement-do-you-have   uk.gov.hmrc.ngrraldfrontend.controllers.WhatTypeOfAgreementController.show
 POST       /what-type-of-agreement-do-you-have   uk.gov.hmrc.ngrraldfrontend.controllers.WhatTypeOfAgreementController.submit

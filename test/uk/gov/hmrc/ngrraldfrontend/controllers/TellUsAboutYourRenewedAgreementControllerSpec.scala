@@ -23,6 +23,7 @@ import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
+import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.RenewedAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.RaldUserAnswers
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.views.html.TellUsAboutYourAgreementView
@@ -32,7 +33,7 @@ import scala.concurrent.Future
 class TellUsAboutYourRenewedAgreementControllerSpec extends ControllerSpecSupport {
   val pageTitle = "Tell us about your renewed agreement"
   val view: TellUsAboutYourAgreementView = inject[TellUsAboutYourAgreementView]
-  val controller: TellUsAboutYourRenewedAgreementController = new TellUsAboutYourRenewedAgreementController(view, mockAuthJourney, mockPropertyLinkingAction, mockNgrConnector, mockRaldRepo, mcc)(mockConfig)
+  val controller: TellUsAboutYourRenewedAgreementController = new TellUsAboutYourRenewedAgreementController(view, mockAuthJourney, mockPropertyLinkingAction, mockRaldRepo, mcc)(mockConfig)
 
   "Tell us about your new agreement controller" must {
     "method show" must {
@@ -55,7 +56,7 @@ class TellUsAboutYourRenewedAgreementControllerSpec extends ControllerSpecSuppor
       "Return OK and the correct view" in {
         val result = controller.submit()(authenticatedFakeRequest())
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.TellUsAboutYourNewAgreementController.show.url)
+        redirectLocation(result) shouldBe Some(routes.WhatTypeOfLeaseRenewalController.show.url)
       }
     }
   }

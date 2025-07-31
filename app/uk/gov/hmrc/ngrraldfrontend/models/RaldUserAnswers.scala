@@ -24,7 +24,8 @@ final case class RaldUserAnswers(
                                   credId: CredId,
                                   agreementType: AgreementType,
                                   selectedProperty: VMVProperty,
-                                  whatTypeOfAgreement: Option[String] = None
+                                  whatTypeOfAgreement: Option[String] = None,
+                                  whatTypeOfRenewal: Option[String] = None
                                 )
 
 

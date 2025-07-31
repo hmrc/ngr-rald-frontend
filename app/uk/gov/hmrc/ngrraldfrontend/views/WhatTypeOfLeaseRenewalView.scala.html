@@ -20,7 +20,7 @@
 @import uk.gov.hmrc.ngrraldfrontend.viewmodels.govuk.all._
 @import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 @import uk.gov.hmrc.ngrraldfrontend.models.components.NavigationBarContent
-@import uk.gov.hmrc.ngrraldfrontend.models.forms.TypeOfLeaseRenewalForm
+@import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatTypeOfLeaseRenewalForm
 
 @this(
     layout: Layout,
@@ -30,10 +30,10 @@
     saveAndContinueButton: saveAndContinueButton
 )
 
-@(form:Form[TypeOfLeaseRenewalForm], navigationBarContent: NavigationBarContent, radios: Radios, propertyAddress: String)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+@(form:Form[WhatTypeOfLeaseRenewalForm], navigationBarContent: NavigationBarContent, radios: Radios, propertyAddress: String)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
 @layout(pageTitle = Some(messages("typeOfLeaseRenewal.title")), showBackLink = true, fullWidth = true, navigationBarContent = Some(navigationBarContent)) {
-    @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.TypeOfLeaseRenewalController.submit, Symbol("autoComplete") -> "off") {
+    @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatTypeOfLeaseRenewalController.submit, Symbol("autoComplete") -> "off") {
         @if(form.errors.nonEmpty) {
          @govukErrorSummary(ErrorSummaryViewModel(form))
         }

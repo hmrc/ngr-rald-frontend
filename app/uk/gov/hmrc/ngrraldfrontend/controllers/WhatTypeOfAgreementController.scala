@@ -16,13 +16,11 @@
 
 package uk.gov.hmrc.ngrraldfrontend.controllers
 
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, Messages}
+import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-import uk.gov.hmrc.ngrraldfrontend.models.RaldUserAnswers
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
@@ -48,37 +46,37 @@ class WhatTypeOfAgreementController @Inject()(view: WhatTypeOfAgreementView,
   def show: Action[AnyContent] = {
     (authenticate andThen hasLinkedProperties).async { implicit request =>
       request.propertyLinking.map(property =>
-          Future.successful(Ok(
-            view(
-              navigationBarContent = createDefaultNavBar,
-              selectedPropertyAddress = property.addressFull,
-              form = form,
-              ngrRadio = buildRadios(form, WhatTypeOfAgreementForm.ngrRadio(form))
-            )
-          ))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
+        Future.successful(Ok(
+          view(
+            navigationBarContent = createDefaultNavBar,
+            selectedPropertyAddress = property.addressFull,
+            form = form,
+            ngrRadio = buildRadios(form, WhatTypeOfAgreementForm.ngrRadio(form))
+          )
+        ))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
     }
   }
 
-    def submit: Action[AnyContent] = {
-      (authenticate andThen hasLinkedProperties).async { implicit request =>
-        form
-          .bindFromRequest()
-          .fold(
-            formWithErrors =>
-              request.propertyLinking.map(property =>
+  def submit: Action[AnyContent] = {
+    (authenticate andThen hasLinkedProperties).async { implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors =>
+            request.propertyLinking.map(property =>
               Future.successful(BadRequest(view(
                 createDefaultNavBar,
                 selectedPropertyAddress = property.addressFull,
                 formWithErrors,
                 buildRadios(formWithErrors, WhatTypeOfAgreementForm.ngrRadio(formWithErrors))
-                )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo")),
-            whatTypeOfAgreementForm =>
-              raldRepo.insertTypeOfAgreement(
-                credId = CredId(request.credId.getOrElse("")),
-                whatTypeOfAgreement = whatTypeOfAgreementForm.radioValue
-              )
-              Future.successful(Redirect(routes.WhatTypeOfAgreementController.show.url))
-          )
-      }
+              )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo")),
+          whatTypeOfAgreementForm =>
+            raldRepo.insertTypeOfAgreement(
+              credId = CredId(request.credId.getOrElse("")),
+              whatTypeOfAgreement = whatTypeOfAgreementForm.radioValue
+            )
+            Future.successful(Redirect(routes.WhatTypeOfAgreementController.show.url))
+        )
+    }
   }
 }

@@ -1,4 +1,4 @@
-service.name = ngr-rald-frontend
+service.name = Manage your business rates valuation
 service.text = This is your new service
 service.base.title = {0} - GOV.UK
 
