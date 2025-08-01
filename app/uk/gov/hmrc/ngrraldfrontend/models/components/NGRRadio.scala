@@ -28,27 +28,38 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.Radios
 trait RadioEntry
 
 sealed trait YesNoItem extends RadioEntry
-
 case object Yes extends YesNoItem
-
 case object No extends YesNoItem
 
 sealed trait TypeOfAgreement extends RadioEntry
-
 case object LeaseOrTenancy extends TypeOfAgreement
-
 case object Written extends TypeOfAgreement
-
 case object Verbal extends TypeOfAgreement
+
+sealed trait Landlord extends RadioEntry
+case object LandLordAndTennant extends Landlord
+case object FamilyMember extends Landlord
+case object CompanyPensionFund extends Landlord
+case object BusinessPartnerOrSharedDirector extends Landlord
+case object OtherRelationship extends Landlord
 
 
 case class NGRRadioName(key: String)
 
-case class NGRRadioButtons(radioContent: String, radioValue: RadioEntry, buttonHint: Option[String] = None, conditionalHtml: Option[Html] = None)
+case class NGRRadioButtons(radioContent: String,
+                           radioValue: RadioEntry,
+                           buttonHint: Option[String] = None,
+                           conditionalCharacterCount: Option[CharacterCount] = None,
+                           conditionalHtml: Option[Html] = None)
 
-case class NGRRadioHeader(title: String, classes: String, isPageHeading: Boolean)
+case class NGRRadioHeader(title: String,
+                          classes: String,
+                          isPageHeading: Boolean)
 
-case class NGRRadio(radioGroupName: NGRRadioName, NGRRadioButtons: Seq[NGRRadioButtons], ngrTitle: Option[NGRRadioHeader] = None, hint: Option[String] = None)
+case class NGRRadio(radioGroupName: NGRRadioName,
+                    NGRRadioButtons: Seq[NGRRadioButtons],
+                    ngrTitle: Option[NGRRadioHeader] = None,
+                    hint: Option[String] = None)
 
 object NGRRadio {
 
@@ -81,7 +92,6 @@ object NGRRadio {
       },
       classes = "govuk-radios",
       errorMessage = form(NGRRadios.radioGroupName.key).error.map(err => ErrorMessage(content = Text(messages(err.message)))),
-
     )
   }
 }

@@ -28,6 +28,7 @@ import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 import uk.gov.hmrc.ngrraldfrontend.config.FrontendAppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.RaldUserAnswers
+import uk.gov.hmrc.ngrraldfrontend.models.components.Landlord
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 
 import java.time.Instant
@@ -97,6 +98,11 @@ case class RaldRepo @Inject()(mongo: MongoComponent,
   
   def insertTypeOfAgreement(credId: CredId, whatTypeOfAgreement: String): Future[Option[RaldUserAnswers]] = {
     findAndUpdateByCredId(credId, Updates.set("whatTypeOfAgreement", whatTypeOfAgreement))
+  }
+  
+  def insertLandlord(credId: CredId, landlordName: String, landLordType:String): Future[Option[RaldUserAnswers]] = {
+    findAndUpdateByCredId(credId = credId, Updates.set("landlordName",landlordName))
+    findAndUpdateByCredId(credId = credId, Updates.set("landLordType",landLordType))
   }
 
   def findByCredId(credId: CredId): Future[Option[RaldUserAnswers]] = {

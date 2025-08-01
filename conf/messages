@@ -49,3 +49,15 @@ typeOfLeaseRenewal.title = What type of lease renewal is it?
 typeOfLeaseRenewal.option1 = A renewed agreement
 typeOfLeaseRenewal.option2 = A surrender and renewal
 typeOfLeaseRenewal.required.error = Select what type of lease renewal it is
+
+#landlord
+landlord.title = Landlord
+landlord.p1 = What is the landlord's full name?
+landlord.p2 = What is your relationship with the landlord?
+landlord.radio1 = Landlord and tenant relationship only
+landlord.radio2 = Family member
+landlord.radio3 = Company pension fund
+landlord.radio4 = Business partner or shared director
+landlord.radio5 = Other relationship
+landlord.radio5.dropdown = Can you tell us what your relationship with the landlord is?
+landlord.name.empty.error = Enter the landlord's full name
