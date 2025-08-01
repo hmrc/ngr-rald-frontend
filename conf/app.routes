@@ -12,3 +12,5 @@ GET        /what-type-of-lease-renewal-is-it       uk.gov.hmrc.ngrraldfrontend.c
 POST       /what-type-of-lease-renewal-is-it       uk.gov.hmrc.ngrraldfrontend.controllers.WhatTypeOfLeaseRenewalController.submit
 GET        /what-type-of-agreement-do-you-have   uk.gov.hmrc.ngrraldfrontend.controllers.WhatTypeOfAgreementController.show
 POST       /what-type-of-agreement-do-you-have   uk.gov.hmrc.ngrraldfrontend.controllers.WhatTypeOfAgreementController.submit
+GET        /landlord                             uk.gov.hmrc.ngrraldfrontend.controllers.landlordController.show
+POST        /landlord                             uk.gov.hmrc.ngrraldfrontend.controllers.landlordController.submit
