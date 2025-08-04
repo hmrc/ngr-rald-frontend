@@ -99,9 +99,17 @@ case class RaldRepo @Inject()(mongo: MongoComponent,
     findAndUpdateByCredId(credId, Updates.set("whatTypeOfAgreement", whatTypeOfAgreement))
   }
   
-  def insertLandlord(credId: CredId, landlordName: String, landLordType:String): Future[Option[RaldUserAnswers]] = {
-    findAndUpdateByCredId(credId = credId, Updates.set("landlordName",landlordName))
-    findAndUpdateByCredId(credId = credId, Updates.set("landLordType",landLordType))
+  def insertLandlord(credId: CredId, landlordName: String, landLordType:String, landlordOther:Option[String]): Future[Option[RaldUserAnswers]] = {
+    val name = Seq(Updates.set("landlordName", landlordName))
+    val landlord = Updates.set("landLordType", landLordType)
+
+    val radio = landlordOther match {
+      case Some(otherDesc) =>
+        name :+ landlord :+ Updates.set("landlordOtherDesc", otherDesc)
+      case None =>
+        name :+ landlord
+    }
+    findAndUpdateByCredId(credId = credId, radio: _*)
   }
 
   def insertTypeOfRenewal(credId: CredId, whatTypeOfRenewal: String): Future[Option[RaldUserAnswers]] = {

@@ -59,7 +59,6 @@ class landlordController @Inject()(view: LandlordView,
 
   def submit: Action[AnyContent] = {
     (authenticate andThen hasLinkedProperties).async { implicit request =>
-      println(Console.GREEN_B + "Controller Submit Hit" + Console.RESET)
       form
         .bindFromRequest()
         .fold(
@@ -71,10 +70,12 @@ class landlordController @Inject()(view: LandlordView,
               formWithErrors,
               buildRadios(formWithErrors, LandlordForm.ngrRadio(formWithErrors))
             )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo")),
-            landlordForm => raldRepo.insertLandlord(
+            landlordForm =>
+              raldRepo.insertLandlord(
               CredId(request.credId.getOrElse("")),
               landlordForm.landlordName,
-              landlordForm.landlordRelationship
+              landlordForm.landLordType,
+              landlordForm.landlordOther
             )
         )
       Future.successful(Redirect(routes.TellUsAboutRentController.show.url))

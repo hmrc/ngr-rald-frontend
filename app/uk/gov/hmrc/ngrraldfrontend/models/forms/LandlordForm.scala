@@ -24,8 +24,8 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.{ErrorMessage, Label, Text}
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.{BusinessPartnerOrSharedDirector, CompanyPensionFund, FamilyMember, LandLordAndTennant, NGRRadioButtons, OtherRelationship}
 
-final case class LandlordForm(landlordName: String, landlordRelationship: String, landlordOther: Option[String]) {
-  override def toString: String = Seq(landlordRelationship, landlordName).mkString(",")
+final case class LandlordForm(landlordName: String, landLordType: String, landlordOther: Option[String]) {
+  override def toString: String = Seq(landlordName, landLordType ,landlordOther).mkString(",")
 }
 
 object LandlordForm extends CommonFormValidators  {
@@ -43,12 +43,11 @@ object LandlordForm extends CommonFormValidators  {
   val lang: Lang = Lang.defaultLang
   val messages: Messages = MessagesImpl(lang, messagesApi)
 
-  def unapply(landlordForm: LandlordForm): Option[(String, String, Option[String])] = Some((landlordForm.landlordName, landlordForm.landlordRelationship, landlordForm.landlordOther))
+  def unapply(landlordForm: LandlordForm): Option[(String, String, Option[String])] = Some((landlordForm.landlordName, landlordForm.landLordType, landlordForm.landlordOther))
   def form: Form[LandlordForm] = {
     Form(
       mapping(
         landlord -> text()
-          .transform[String](_.strip(), identity)
           .verifying(
             firstError(
               isNotEmpty(landlord, landlordNameEmptyError)
@@ -74,7 +73,7 @@ object LandlordForm extends CommonFormValidators  {
       ngrCharacterCount = NGRCharacterCount(
         id = "landlord-otherRelationship",
         name ="landlord-otherRelationship",
-        label = Label(content = Text("landlord.radio5.dropdown")),
+        label = Label(content = Text("landlord.radio5.dropdown"), classes = "govuk-label--m" , isPageHeading = true),
         errorMessage = Some(ErrorMessage(content = Text("")))))
     )
   )
