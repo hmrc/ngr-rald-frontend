@@ -15,23 +15,21 @@
  *@
 
 @import uk.gov.hmrc.ngrraldfrontend.models.components.NGRCharacterCount
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
-@(ngrCharacterCount :NGRCharacterCount)(implicit messages: Messages)
+@this(govukCharacterCount: GovukCharacterCount)
 
-<div class="govuk-form-group govuk-character-count" data-module="govuk-character-count" data-maxlength="200">
-  <h1 class="govuk-label-wrapper">
-   <label class="govuk-label govuk-label--m" for="landlord-radio-other">
-    @messages("landlord.radio5.dropdown")
-   </label>
-  </h1>
-  @if(ngrCharacterCount.hint.nonEmpty){
-   <div id="landlord-radio-other-hint" class="govuk-hint">
-     ngrCharacterCount.hint
-   </div>
-  }
-  <textarea class="govuk-textarea govuk-js-character-count" id="landlord-radio-other" name="landlord-radio-other" rows="5" aria-describedby="with-hint-info landlord-radio-other-hint"></textarea>
-  <div id="landlord-radio-other-info" class="govuk-hint govuk-character-count__message">
-   You can enter up to 200 characters
-  </div>
-</div>
+@(form:Form[_], ngrCharacterCount: NGRCharacterCount)
+
+@govukCharacterCount(CharacterCount(
+    id = ngrCharacterCount.id,
+    name = ngrCharacterCount.name,
+    maxWords = ngrCharacterCount.maxWords,
+    value = form(ngrCharacterCount.name).value,
+    label = ngrCharacterCount.label,
+    errorMessage = form.errors(ngrCharacterCount.name) match {
+    case Nil => None
+    case errors => ngrCharacterCount.errorMessage
+    }
+))
 

@@ -16,23 +16,26 @@
 
 package uk.gov.hmrc.ngrraldfrontend.controllers
 
-import play.api.i18n.I18nSupport
+import play.api.data.Form
+import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.govukfrontend.views.Aliases.{ErrorMessage, Label, Text}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.connectors.NGRConnector
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.RentAgreement
-import uk.gov.hmrc.ngrraldfrontend.models.RaldUserAnswers
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
-import uk.gov.hmrc.ngrraldfrontend.models.components.{BusinessPartnerOrSharedDirector, CompanyPensionFund, FamilyMember, LandLordAndTennant, NGRRadioButtons, OtherRelationship, Written}
 import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
+import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.forms.LandlordForm
+import uk.gov.hmrc.ngrraldfrontend.models.forms.LandlordForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
+import uk.gov.hmrc.ngrraldfrontend.models.components.{NGRRadio, NGRRadioHeader, NGRRadioName}
 import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
 import uk.gov.hmrc.ngrraldfrontend.views.html.LandlordView
+import uk.gov.hmrc.ngrraldfrontend.views.html.components.NGRCharacterCountComponent
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.ngrraldfrontend.models.forms.LandlordForm.form
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,9 +44,41 @@ class landlordController @Inject()(view: LandlordView,
                                    authenticate: AuthRetrievals,
                                    ngrConnector: NGRConnector,
                                    hasLinkedProperties: PropertyLinkingAction,
+                                   ngrCharacterCountComponent: NGRCharacterCountComponent,
                                    raldRepo: RaldRepo,
                                    mcc: MessagesControllerComponents
                                   )(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
+
+  def otherRelationship(form: Form[LandlordForm])(implicit messages: Messages): NGRRadioButtons = NGRRadioButtons(
+    radioContent = "landlord.radio5",
+    radioValue = OtherRelationship,
+    conditionalHtml = Some(ngrCharacterCountComponent(form,
+      NGRCharacterCount(
+        id = "landlord-radio-other",
+        name = "landlord-radio-other",
+        label = Label(
+                  classes = "govuk-label govuk-label--m",
+                  content = Text("landlord.radio5.dropdown")
+                ),
+        errorMessage = Some(ErrorMessage(
+          id = Some("radio-other-error"),
+          content = Text("landlord.radio.other.empty.error")
+      ))
+    ))
+    )
+  )
+
+  def ngrRadio(form: Form[LandlordForm])(implicit messages: Messages): NGRRadio =
+    val landLordAndTennant: NGRRadioButtons = NGRRadioButtons(radioContent = "landlord.radio1", radioValue = LandLordAndTennant)
+    val familyMember: NGRRadioButtons = NGRRadioButtons(radioContent = "landlord.radio2", radioValue = FamilyMember)
+    val companyPensionFund: NGRRadioButtons = NGRRadioButtons(radioContent = "landlord.radio3", radioValue = CompanyPensionFund)
+    val businessPartnerOrSharedDirector: NGRRadioButtons = NGRRadioButtons(radioContent = "landlord.radio4", radioValue = BusinessPartnerOrSharedDirector)
+    NGRRadio(
+      NGRRadioName("landlord-radio"),
+      ngrTitle = Some(NGRRadioHeader(title = "landlord.p2", classes = "govuk-label govuk-label--m", isPageHeading = true)),
+      NGRRadioButtons = Seq(landLordAndTennant, familyMember, companyPensionFund, businessPartnerOrSharedDirector, otherRelationship(form))
+    )
+
   def show: Action[AnyContent] = {
     (authenticate andThen hasLinkedProperties).async { implicit request =>
       request.propertyLinking.map(property =>
@@ -51,7 +86,7 @@ class landlordController @Inject()(view: LandlordView,
             navigationBarContent = createDefaultNavBar,
             selectedPropertyAddress = property.addressFull,
             form,
-            buildRadios(form, LandlordForm.ngrRadio(form))
+            buildRadios(form, ngrRadio(form))
           )))
         ).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
     }
@@ -63,12 +98,22 @@ class landlordController @Inject()(view: LandlordView,
         .bindFromRequest()
         .fold(
           formWithErrors =>
+
+            val correctedFormErrors = formWithErrors.errors.map { formError =>
+              (formError.key, formError.messages) match
+                case ("", messages) if messages.contains("landlord.radio.other.empty.error") =>
+                  formError.copy(key = "landlord-radio-other")
+                case _ =>
+                  formError
+            }
+            val formWithCorrectedErrors = formWithErrors.copy(errors = correctedFormErrors)
+
             request.propertyLinking.map(property =>
               Future.successful(BadRequest(view(
                 createDefaultNavBar,
                 selectedPropertyAddress = property.addressFull,
-              formWithErrors,
-              buildRadios(formWithErrors, LandlordForm.ngrRadio(formWithErrors))
+                formWithCorrectedErrors,
+              buildRadios(formWithErrors, ngrRadio(formWithCorrectedErrors))
             )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo")),
             landlordForm =>
               raldRepo.insertLandlord(
@@ -77,8 +122,9 @@ class landlordController @Inject()(view: LandlordView,
               landlordForm.landLordType,
               landlordForm.landlordOther
             )
+              Future.successful(Redirect(routes.TellUsAboutRentController.show.url))
         )
-      Future.successful(Redirect(routes.TellUsAboutRentController.show.url))
+
     }
   }
 }

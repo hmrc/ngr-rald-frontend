@@ -23,6 +23,7 @@ import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.govukfrontend.views.Aliases.{ErrorMessage, Label, Text}
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.{BusinessPartnerOrSharedDirector, CompanyPensionFund, FamilyMember, LandLordAndTennant, NGRRadioButtons, OtherRelationship}
+import uk.gov.hmrc.ngrraldfrontend.views.html.components.NGRCharacterCountComponent
 
 final case class LandlordForm(landlordName: String, landLordType: String, landlordOther: Option[String]) {
   override def toString: String = Seq(landlordName, landLordType ,landlordOther).mkString(",")
@@ -33,6 +34,7 @@ object LandlordForm extends CommonFormValidators  {
 
   private lazy val landlordNameEmptyError = "landlord.name.empty.error"
   private lazy val radioUnselectedError = "whatTypeOfAgreement.error.required"
+  private lazy val otherRadioEmptyError = "landlord.radio.other.empty.error"
 
   private val landlord = "landlord-name-value"
   private val landlordRadio = "landlord-radio"
@@ -43,46 +45,24 @@ object LandlordForm extends CommonFormValidators  {
   val lang: Lang = Lang.defaultLang
   val messages: Messages = MessagesImpl(lang, messagesApi)
 
-  def unapply(landlordForm: LandlordForm): Option[(String, String, Option[String])] = Some((landlordForm.landlordName, landlordForm.landLordType, landlordForm.landlordOther))
+
+  def unapply(landlordForm: LandlordForm): Option[(String, String, Option[String])] =
+    Some((landlordForm.landlordName, landlordForm.landLordType, landlordForm.landlordOther))
+
   def form: Form[LandlordForm] = {
     Form(
       mapping(
         landlord -> text()
           .verifying(
-            firstError(
               isNotEmpty(landlord, landlordNameEmptyError)
-            )
           ),
-        landlordRadio -> text(),
+        landlordRadio -> text().verifying(
+          isNotEmpty(landlord, landlordNameEmptyError)
+        ),
         landlordOther -> optional(text)
       )(LandlordForm.apply)(LandlordForm.unapply)
-    )
+        .verifying(otherRadioEmptyError, landlordForm =>
+          landlordForm.landLordType != "OtherRelationship" || landlordForm.landlordOther.exists(_.trim.nonEmpty)
+          ))
   }
-
-
-
-  private val landLordAndTennant: NGRRadioButtons = NGRRadioButtons(radioContent = "landlord.radio1", radioValue = LandLordAndTennant)
-  private val familyMember: NGRRadioButtons = NGRRadioButtons(radioContent = "landlord.radio2", radioValue = FamilyMember)
-  private val companyPensionFund: NGRRadioButtons = NGRRadioButtons(radioContent = "landlord.radio3", radioValue = CompanyPensionFund)
-  private val businessPartnerOrSharedDirector: NGRRadioButtons = NGRRadioButtons(radioContent = "landlord.radio4", radioValue = BusinessPartnerOrSharedDirector)
-  def otherRelationship()(implicit messages: Messages): NGRRadioButtons = NGRRadioButtons(
-    radioContent = "landlord.radio5",
-    radioValue = OtherRelationship,
-    conditionalHtml = Some(NGRCharacterCount.buildCharacterCount(
-      form,
-      ngrCharacterCount = NGRCharacterCount(
-        id = "landlord-otherRelationship",
-        name ="landlord-otherRelationship",
-        label = Label(content = Text("landlord.radio5.dropdown"), classes = "govuk-label--m" , isPageHeading = true),
-        errorMessage = Some(ErrorMessage(content = Text("")))))
-    )
-  )
-
-  def ngrRadio(form: Form[LandlordForm])(implicit messages: Messages): NGRRadio =
-    NGRRadio(
-      NGRRadioName("landlord-radio"),
-      ngrTitle = Some(NGRRadioHeader(title = "landlord.p2", classes = "govuk-label govuk-label--m",isPageHeading = true)),
-      NGRRadioButtons = Seq(landLordAndTennant, familyMember, companyPensionFund, businessPartnerOrSharedDirector, otherRelationship())
-    )
-
 }
