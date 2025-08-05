@@ -119,7 +119,7 @@ class LandlordController @Inject()(view: LandlordView,
               landlordForm.landLordType,
               landlordForm.landlordOther
             )
-              Future.successful(Redirect(routes.TellUsAboutRentController.show.url))
+              Future.successful(Redirect(routes.WhatTypeOfAgreementController.show.url))
         )
 
     }

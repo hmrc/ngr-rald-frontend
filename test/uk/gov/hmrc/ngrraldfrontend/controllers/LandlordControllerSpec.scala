@@ -71,7 +71,7 @@ class LandlordControllerSpec extends ControllerSpecSupport {
           result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/landlord")
         })
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.TellUsAboutRentController.show.url)
+        redirectLocation(result) mustBe Some(routes.WhatTypeOfAgreementController.show.url)
       }
       "Return OK and the correct view after submitting with name and other radio button selected with description added" in {
         when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(Some(RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property))))
@@ -87,7 +87,7 @@ class LandlordControllerSpec extends ControllerSpecSupport {
           result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/landlord")
         })
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.TellUsAboutRentController.show.url)
+        redirectLocation(result) mustBe Some(routes.WhatTypeOfAgreementController.show.url)
       }
       "Return Form with Errors when no name is input" in {
         mockRequest(hasCredId = true)
