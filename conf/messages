@@ -61,4 +61,5 @@ landlord.radio4 = Business partner or shared director
 landlord.radio5 = Other relationship
 landlord.radio5.dropdown = Can you tell us what your relationship with the landlord is?
 landlord.name.empty.error = Enter the landlord's full name
+landlord.name.empty.tooLong.error = Landlord's full name must be 50 characters or less
 landlord.radio.other.empty.error = Tell us what your relationship with the landlord is

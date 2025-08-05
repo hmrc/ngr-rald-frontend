@@ -27,6 +27,7 @@ object LandlordForm extends CommonFormValidators  {
   implicit val format: OFormat[LandlordForm] = Json.format[LandlordForm]
 
   private lazy val landlordNameEmptyError = "landlord.name.empty.error"
+  private lazy val landlordNameTooLongError = "landlord.name.empty.tooLong.error"
   private lazy val radioUnselectedError = "whatTypeOfAgreement.error.required"
   private lazy val otherRadioEmptyError = "landlord.radio.other.empty.error"
 
@@ -48,7 +49,8 @@ object LandlordForm extends CommonFormValidators  {
       mapping(
         landlord -> text()
           .verifying(
-              isNotEmpty(landlord, landlordNameEmptyError)
+              isNotEmpty(landlord, landlordNameEmptyError),
+              maxLength(50, landlordNameTooLongError)
           ),
         landlordRadio -> text().verifying(
           isNotEmpty(landlord, landlordNameEmptyError)

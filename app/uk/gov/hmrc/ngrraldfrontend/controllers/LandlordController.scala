@@ -52,6 +52,7 @@ class LandlordController @Inject()(view: LandlordView,
       NGRCharacterCount(
         id = "landlord-radio-other",
         name = "landlord-radio-other",
+        maxLength = Some(250),
         label = Label(
                   classes = "govuk-label govuk-label--m",
                   content = Text(Messages("landlord.radio5.dropdown"))
