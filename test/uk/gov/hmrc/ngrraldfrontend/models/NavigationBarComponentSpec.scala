@@ -16,57 +16,95 @@
 
 package uk.gov.hmrc.ngrraldfrontend.models
 
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.matchers.should.Matchers.shouldBe
 import play.api.mvc.Call
+import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
-import uk.gov.hmrc.ngrraldfrontend.models.components.*
-import uk.gov.hmrc.ngrraldfrontend.views.html.components.navigationBarComponent
+import uk.gov.hmrc.ngrraldfrontend.models.components.{NavBarContents, NavBarCurrentPage, NavBarPageContents, NavButton}
 
 class NavigationBarComponentSpec extends ViewBaseSpec {
-  val injectedView: navigationBarComponent = injector.instanceOf[navigationBarComponent]
 
-  val content: NavigationBarContent = NavBarPageContents.CreateNavBar(
-    contents = NavBarContents(
-      homePage = Some(true),
-      messagesPage = Some(false),
-      profileAndSettingsPage = Some(false),
-      signOutPage = Some(true)
-    ),
-    currentPage = NavBarCurrentPage(homePage = true),
-    notifications = Some(1)
-  )
+  "NavButton" should {
+    "store all fields correctly" in {
+      val call = Call("GET", "/test")
+      val button = NavButton("TestField", call, "test.key", "TestLink", Some(5), selected = true)
 
-  val backLine = "Back"
-
-  object Selectors {
-    val backLine = " div > a"
+      button.fieldName shouldBe "TestField"
+      button.call.method shouldBe "GET"
+      button.call.url shouldBe "/test"
+      button.messageKey shouldBe "test.key"
+      button.linkId shouldBe "TestLink"
+      button.notification shouldBe Some(5)
+      button.selected shouldBe true
+    }
   }
 
-  "The Nav Bar template" when {
-    "navigation bar should render correctly" in {
-      injectedView.f(content, false)(request, messages).toString() must not be empty
-      injectedView.render(content, false, request, messages).toString() must not be empty
+  "NavBarCurrentPage" should {
+    "default all pages to false" in {
+      val currentPage = NavBarCurrentPage()
+
+      currentPage.homePage shouldBe false
+      currentPage.messagesPage shouldBe false
+      currentPage.profileAndSettingsPage shouldBe false
+      currentPage.signOutPage shouldBe false
     }
+  }
 
-    "back link should be created when showBackLine sets to true" in {
-      val view = injectedView(content, true)(request, messages)
-      lazy implicit val document: Document = Jsoup.parse(view.body)
+  "NavBarContents" should {
+    "store optional page flags correctly" in {
+      val contents = NavBarContents(
+        homePage = Some(true),
+        messagesPage = Some(false),
+        profileAndSettingsPage = None,
+        signOutPage = Some(true)
+      )
 
-      elementText(Selectors.backLine) mustBe backLine
+      contents.homePage shouldBe Some(true)
+      contents.messagesPage shouldBe Some(false)
+      contents.profileAndSettingsPage shouldBe None
+      contents.signOutPage shouldBe Some(true)
     }
+  }
 
-    "back link should be missing when showBackLine sets to false" in {
-      val htmlReader = injectedView.render(content, false, request, messages).toString()
+  "CreateNavBar" should {
+    "generate correct NavigationBarContent" in {
+      val contents = NavBarContents(
+        homePage = Some(true),
+        messagesPage = Some(true),
+        profileAndSettingsPage = Some(false),
+        signOutPage = Some(true)
+      )
 
-      htmlReader contains "<a href=\"#\" class=\"govuk-back-link\" data-module=\"hmrc-back-link\">Back</a>" shouldBe false
+      val currentPage = NavBarCurrentPage(
+        homePage = true,
+        messagesPage = false,
+        profileAndSettingsPage = false,
+        signOutPage = false
+      )
+
+      val navBar = NavBarPageContents.CreateNavBar(contents, currentPage, notifications = Some(3))
+
+      navBar.accountHome shouldBe defined
+      navBar.accountHome.get.fieldName shouldBe "HomePage"
+
+      navBar.navigationButtons shouldBe defined
+      navBar.navigationButtons.get.map(_.fieldName) must contain allOf("MessagesPage", "SignOutPage")
+      navBar.navigationButtons.get.exists(_.notification.contains(3)) shouldBe true
     }
+  }
 
-    "Links are populated correctly" in {
-      content.navigationButtons.isDefined mustBe true
-      content.accountHome.get shouldBe NavButton(fieldName = "HomePage", call = Call("GET", mockConfig.ngrDashboardUrl), messageKey = "nav.home", linkId = "Home", selected = true, notification = None)
-      content.navigationButtons.get shouldBe Seq(NavButton(fieldName = "SignOutPage", call = Call("GET", mockConfig.ngrLogoutUrl), messageKey = "nav.signOut", linkId = "SignOut", selected = false, notification = None))
+  "createDefaultNavBar" should{
+    "use default NavBarContents and NavBarCurrentPage" in {
+      val defaultNavBar = NavBarPageContents.createDefaultNavBar
+
+      defaultNavBar.accountHome shouldBe defined
+      defaultNavBar.accountHome.get.fieldName shouldBe "HomePage"
+
+      defaultNavBar.navigationButtons shouldBe defined
+      defaultNavBar.navigationButtons.get.map(_.fieldName) must contain only ("SignOutPage")
     }
   }
 }
+

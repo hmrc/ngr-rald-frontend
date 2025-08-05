@@ -37,7 +37,7 @@
 
 @layout(pageTitle = Some(messages("landlord.title")), showBackLink = true, fullWidth = true, navigationBarContent = Some(navigationBarContent)) {
 
- @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.landlordController.submit, Symbol("autoComplete") -> "off") {
+ @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.LandlordController.submit, Symbol("autoComplete") -> "off") {
     @if(form.errors.nonEmpty) {
       @govukErrorSummary(ErrorSummaryViewModel(form))
     }

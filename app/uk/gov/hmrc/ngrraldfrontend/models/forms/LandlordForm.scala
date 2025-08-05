@@ -18,16 +18,10 @@ package uk.gov.hmrc.ngrraldfrontend.models.forms
 
 import play.api.data.Form
 import play.api.data.Forms.{mapping, optional, text}
-import play.api.i18n.{DefaultMessagesApi, Lang, Messages, MessagesApi, MessagesImpl}
+import play.api.i18n.*
 import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.govukfrontend.views.Aliases.{ErrorMessage, Label, Text}
-import uk.gov.hmrc.ngrraldfrontend.models.components.*
-import uk.gov.hmrc.ngrraldfrontend.models.components.{BusinessPartnerOrSharedDirector, CompanyPensionFund, FamilyMember, LandLordAndTennant, NGRRadioButtons, OtherRelationship}
-import uk.gov.hmrc.ngrraldfrontend.views.html.components.NGRCharacterCountComponent
 
-final case class LandlordForm(landlordName: String, landLordType: String, landlordOther: Option[String]) {
-  override def toString: String = Seq(landlordName, landLordType ,landlordOther).mkString(",")
-}
+final case class LandlordForm(landlordName: String, landLordType: String, landlordOther: Option[String])
 
 object LandlordForm extends CommonFormValidators  {
   implicit val format: OFormat[LandlordForm] = Json.format[LandlordForm]

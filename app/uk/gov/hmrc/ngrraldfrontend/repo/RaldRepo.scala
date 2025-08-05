@@ -91,10 +91,6 @@ case class RaldRepo @Inject()(mongo: MongoComponent,
       .toFutureOption()
   }
 
-  def insertProperty(credId: CredId, property: String): Future[Option[RaldUserAnswers]] = {
-    findAndUpdateByCredId(credId, Updates.set("selectedProperty", property))
-  }
-  
   def insertTypeOfAgreement(credId: CredId, whatTypeOfAgreement: String): Future[Option[RaldUserAnswers]] = {
     findAndUpdateByCredId(credId, Updates.set("whatTypeOfAgreement", whatTypeOfAgreement))
   }

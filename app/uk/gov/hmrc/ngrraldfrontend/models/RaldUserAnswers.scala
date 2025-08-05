@@ -29,6 +29,7 @@ final case class RaldUserAnswers(
                                   whatTypeOfAgreement: Option[String] = None,
                                   landlordName: Option[String] = None,
                                   landLordType: Option[String] = None,
+                                  landlordOtherDesc: Option[String] = None
                                 )
 
 

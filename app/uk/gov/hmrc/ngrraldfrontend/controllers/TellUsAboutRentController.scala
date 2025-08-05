@@ -62,7 +62,7 @@ class TellUsAboutRentController @Inject()(view: TellUsAboutYourAgreementView,
           )
         )
       )
-      Future.successful(Redirect(routes.TellUsAboutRentController.show.url))
+      Future.successful(Redirect(routes.LandlordController.show.url))
     }
   }
 }

@@ -23,15 +23,12 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.{ErrorMessage, Label, Text}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-import uk.gov.hmrc.ngrraldfrontend.connectors.NGRConnector
-import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.RentAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.forms.LandlordForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.LandlordForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.models.components.{NGRRadio, NGRRadioHeader, NGRRadioName}
 import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
 import uk.gov.hmrc.ngrraldfrontend.views.html.LandlordView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.NGRCharacterCountComponent
@@ -40,12 +37,11 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class landlordController @Inject()(view: LandlordView,
+class LandlordController @Inject()(view: LandlordView,
                                    authenticate: AuthRetrievals,
-                                   ngrConnector: NGRConnector,
                                    hasLinkedProperties: PropertyLinkingAction,
-                                   ngrCharacterCountComponent: NGRCharacterCountComponent,
                                    raldRepo: RaldRepo,
+                                   ngrCharacterCountComponent: NGRCharacterCountComponent,
                                    mcc: MessagesControllerComponents
                                   )(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
@@ -58,11 +54,11 @@ class landlordController @Inject()(view: LandlordView,
         name = "landlord-radio-other",
         label = Label(
                   classes = "govuk-label govuk-label--m",
-                  content = Text("landlord.radio5.dropdown")
+                  content = Text(Messages("landlord.radio5.dropdown"))
                 ),
         errorMessage = Some(ErrorMessage(
           id = Some("radio-other-error"),
-          content = Text("landlord.radio.other.empty.error")
+          content = Text(Messages("landlord.radio.other.empty.error"))
       ))
     ))
     )
