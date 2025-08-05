@@ -46,6 +46,6 @@ object WhatTypeOfAgreementForm extends Mappings {
   private val verbal: NGRRadioButtons = NGRRadioButtons(radioContent = "whatTypeOfAgreement.verbal", radioValue = Verbal)
 
   def ngrRadio(form: Form[WhatTypeOfAgreementForm])(implicit messages: Messages): NGRRadio =
-    NGRRadio(NGRRadioName("what-type-of-agreement-radio"), Seq(leaseOrTenancy, written, verbal))
+    NGRRadio(NGRRadioName("what-type-of-agreement-radio"),NGRRadioButtons = Seq(leaseOrTenancy, written, verbal))
 
 }

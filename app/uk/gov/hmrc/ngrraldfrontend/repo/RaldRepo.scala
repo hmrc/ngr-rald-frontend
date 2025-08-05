@@ -27,6 +27,7 @@ import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 import uk.gov.hmrc.ngrraldfrontend.config.FrontendAppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.RaldUserAnswers
+import uk.gov.hmrc.ngrraldfrontend.models.components.Landlord
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 
 import java.time.Instant
@@ -90,12 +91,21 @@ case class RaldRepo @Inject()(mongo: MongoComponent,
       .toFutureOption()
   }
 
-  def insertProperty(credId: CredId, property: String): Future[Option[RaldUserAnswers]] = {
-    findAndUpdateByCredId(credId, Updates.set("selectedProperty", property))
-  }
-  
   def insertTypeOfAgreement(credId: CredId, whatTypeOfAgreement: String): Future[Option[RaldUserAnswers]] = {
     findAndUpdateByCredId(credId, Updates.set("whatTypeOfAgreement", whatTypeOfAgreement))
+  }
+  
+  def insertLandlord(credId: CredId, landlordName: String, landLordType:String, landlordOther:Option[String]): Future[Option[RaldUserAnswers]] = {
+    val name = Seq(Updates.set("landlordName", landlordName))
+    val landlord = Updates.set("landLordType", landLordType)
+
+    val radio = landlordOther match {
+      case Some(otherDesc) =>
+        name :+ landlord :+ Updates.set("landlordOtherDesc", otherDesc)
+      case None =>
+        name :+ landlord
+    }
+    findAndUpdateByCredId(credId = credId, radio: _*)
   }
 
   def insertTypeOfRenewal(credId: CredId, whatTypeOfRenewal: String): Future[Option[RaldUserAnswers]] = {

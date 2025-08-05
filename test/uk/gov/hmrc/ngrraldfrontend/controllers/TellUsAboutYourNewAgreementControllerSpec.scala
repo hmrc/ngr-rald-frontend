@@ -60,7 +60,7 @@ class TellUsAboutYourNewAgreementControllerSpec extends ControllerSpecSupport {
             None)
         )).thenReturn(Future.successful(true))
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.TellUsAboutYourNewAgreementController.show.url)
+        redirectLocation(result) shouldBe Some(routes.LandlordController.show.url)
       }
     }
   }

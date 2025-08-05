@@ -25,7 +25,10 @@ final case class RaldUserAnswers(
                                   agreementType: AgreementType,
                                   selectedProperty: VMVProperty,
                                   whatTypeOfAgreement: Option[String] = None,
-                                  whatTypeOfRenewal: Option[String] = None
+                                  whatTypeOfRenewal: Option[String] = None,
+                                  landlordName: Option[String] = None,
+                                  landLordType: Option[String] = None,
+                                  landlordOtherDesc: Option[String] = None
                                 )
 
 

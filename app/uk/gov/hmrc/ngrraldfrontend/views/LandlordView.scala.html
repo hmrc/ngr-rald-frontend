@@ -1,0 +1,59 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
+
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.ngrraldfrontend.models.components.NavigationBarContent
+@import uk.gov.hmrc.ngrraldfrontend.viewmodels.govuk.all._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.ngrraldfrontend.views.html.components._
+@import uk.gov.hmrc.ngrraldfrontend.models.forms.LandlordForm
+
+@this(
+ layout: Layout,
+ formHelper: FormWithCSRF,
+ govukErrorSummary: GovukErrorSummary,
+ inputText: components.InputText,
+ govukRadios : GovukRadios,
+ saveAndContinueButton: saveAndContinueButton
+)
+
+@(navigationBarContent: NavigationBarContent, selectedPropertyAddress: String, form: Form[LandlordForm], ngrRadio: Radios)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+
+@layout(pageTitle = Some(messages("landlord.title")), showBackLink = true, fullWidth = true, navigationBarContent = Some(navigationBarContent)) {
+
+ @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.LandlordController.submit, Symbol("autoComplete") -> "off") {
+    @if(form.errors.nonEmpty) {
+      @govukErrorSummary(ErrorSummaryViewModel(form))
+    }
+    <span class="govuk-caption-m">@selectedPropertyAddress</span>
+    <h1 class="govuk-heading-l">@messages("landlord.title")</h1>
+    @inputText(
+        form  =   form,
+        id    =  "landlord-name-value",
+        name  =  "landlord-name-value",
+        label =   messages("landlord.p1"),
+        isPageHeading = true,
+        hint  =   None,
+        isVisible = true,
+        classes = Some("govuk-!-width-two-thirds")
+    )
+    @govukRadios(ngrRadio)
+    @saveAndContinueButton(msg = messages("service.continue"), isStartButton = false)
+ }
+}

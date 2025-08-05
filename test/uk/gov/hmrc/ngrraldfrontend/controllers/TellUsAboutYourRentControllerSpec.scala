@@ -48,7 +48,7 @@ class TellUsAboutYourRentControllerSpec extends ControllerSpecSupport {
       "Return OK and the correct view" in {
         val result = controller.submit()(authenticatedFakeRequest())
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.TellUsAboutRentController.show.url)
+        redirectLocation(result) shouldBe Some(routes.LandlordController.show.url)
       }
     }
   }

@@ -52,6 +52,7 @@ class RaldRepoSpec extends TestSupport with TestData
         exception.getMessage contains "Rald user answers has not been inserted" shouldBe true
       }
     }
+    
     "insert type of agreement successfully" in {
       val initialize = await(
         repository.upsertRaldUserAnswers(RaldUserAnswers(
@@ -68,11 +69,49 @@ class RaldRepoSpec extends TestSupport with TestData
       val actual = await(repository.findByCredId(credId))
       actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, whatTypeOfAgreement = Some("Written")))
     }
+
+    "insert landlord with other description" in {
+      val initialize = await(
+        repository.upsertRaldUserAnswers(RaldUserAnswers(
+          credId,
+          NewAgreement,
+          property,
+          None
+        )))
+
+      val landlordName = "John Doe"
+      val landlordType = "OtherRelationship"
+      val landlordOther = Some("Other description")
+
+      val isSuccessful = await(repository.insertLandlord(credId, landlordName = landlordName, landLordType = landlordType, landlordOther = landlordOther))
+      val actual = await(repository.findByCredId(credId))
+      actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, landlordName = Some("John Doe"), landLordType = Some("OtherRelationship"), landlordOtherDesc = Some("Other description")))
+    }
+
+    "insert landlord without other description" in {
+      val initialize = await(
+        repository.upsertRaldUserAnswers(RaldUserAnswers(
+          credId,
+          NewAgreement,
+          property,
+          None
+        )))
+
+      val landlordName = "John Doe"
+      val landlordType = "OtherRelationship"
+
+      val isSuccessful = await(repository.insertLandlord(credId, landlordName = landlordName, landLordType = landlordType, landlordOther = None))
+      val actual = await(repository.findByCredId(credId))
+      actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, landlordName = Some("John Doe"), landLordType = Some("OtherRelationship")))
+    }
+
+
     "credId doesn't exist in mongoDB" in {
       val actual = await(repository.findByCredId(credId))
       actual mustBe None
     }
   }
 }
+
 
 
