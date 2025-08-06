@@ -70,7 +70,7 @@ class RaldRepoSpec extends TestSupport with TestData
       actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, whatTypeOfAgreement = Some("Written")))
     }
 
-    "insert landlord with other description" in {
+    "insert landlord with other description successfully" in {
       val initialize = await(
         repository.upsertRaldUserAnswers(RaldUserAnswers(
           credId,
@@ -88,7 +88,7 @@ class RaldRepoSpec extends TestSupport with TestData
       actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, landlordName = Some("John Doe"), landLordType = Some("OtherRelationship"), landlordOtherDesc = Some("Other description")))
     }
 
-    "insert landlord without other description" in {
+    "insert landlord without other description successfully" in {
       val initialize = await(
         repository.upsertRaldUserAnswers(RaldUserAnswers(
           credId,
@@ -103,6 +103,22 @@ class RaldRepoSpec extends TestSupport with TestData
       val isSuccessful = await(repository.insertLandlord(credId, landlordName = landlordName, landLordType = landlordType, landlordOther = None))
       val actual = await(repository.findByCredId(credId))
       actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, landlordName = Some("John Doe"), landLordType = Some("OtherRelationship")))
+    }
+
+    "insert rent amount successfully" in {
+      val initialize = await(
+        repository.upsertRaldUserAnswers(RaldUserAnswers(
+          credId,
+          NewAgreement,
+          property,
+          None
+        )))
+
+      val annualRent = 10000
+
+      val isSuccessful = await(repository.insertAnnualRent(credId, annualRent))
+      val actual = await(repository.findByCredId(credId))
+      actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, rentAmount = Some(10000)))
     }
 
 
