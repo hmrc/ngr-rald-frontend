@@ -31,6 +31,7 @@ object LandlordForm extends CommonFormValidators with Mappings{
   private lazy val landlordNameTooLongError = "landlord.name.empty.tooLong.error"
   private lazy val radioUnselectedError = "landlord.radio.empty.error"
   private lazy val otherRadioEmptyError = "landlord.radio.other.empty.error"
+  private lazy val otherRadioTooLongError = "landlord.radio.other.tooLong.error"
 
   private val landlord = "landlord-name-value"
   private val landlordRadio = "landlord-radio"
@@ -60,6 +61,13 @@ object LandlordForm extends CommonFormValidators with Mappings{
           landlordForm.landLordType != "OtherRelationship" ||
             landlordForm.landlordOther.exists(_.trim.nonEmpty)
         )
+        .verifying(
+          otherRadioTooLongError,
+          landlordForm =>
+            landlordForm.landLordType != "OtherRelationship" ||
+              landlordForm.landlordOther.forall(_.length <= 250)
+        )
+
     )
   }
 }

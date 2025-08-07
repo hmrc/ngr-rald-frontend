@@ -67,6 +67,7 @@ landlord.name.empty.error = Enter the landlord''s full name
 landlord.name.empty.tooLong.error = Landlord''s full name must be 50 characters or less
 landlord.radio.empty.error = Select what your relationship with the landlord is
 landlord.radio.other.empty.error = Tell us what your relationship with the landlord is
+landlord.radio.other.tooLong.error = Maximum character allowed is 250
 
 #WhatIsYourRentBasedOn
 whatIsYourRentBasedOn.title = What is your rent based on?
