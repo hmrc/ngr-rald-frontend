@@ -5,6 +5,8 @@ service.base.title = {0} - GOV.UK
 #service
 service.continue = Continue
 service.saveAndContinue = Save and continue
+service.yes = Yes
+service.no = No
 
 #NavigationBar
 nav.home=Account home
@@ -53,7 +55,7 @@ typeOfLeaseRenewal.required.error = Select what type of lease renewal it is
 
 #landlord
 landlord.title = Landlord
-landlord.p1 = What is the landlord's full name?
+landlord.p1 = What is the landlord''s full name?
 landlord.p2 = What is your relationship with the landlord?
 landlord.radio1 = Landlord and tenant relationship only
 landlord.radio2 = Family member
@@ -61,8 +63,9 @@ landlord.radio3 = Company pension fund
 landlord.radio4 = Business partner or shared director
 landlord.radio5 = Other relationship
 landlord.radio5.dropdown = Can you tell us what your relationship with the landlord is?
-landlord.name.empty.error = Enter the landlord's full name
-landlord.name.empty.tooLong.error = Landlord's full name must be 50 characters or less
+landlord.name.empty.error = Enter the landlord''s full name
+landlord.name.empty.tooLong.error = Landlord''s full name must be 50 characters or less
+landlord.radio.empty.error = Select what your relationship with the landlord is
 landlord.radio.other.empty.error = Tell us what your relationship with the landlord is
 
 #WhatIsYourRentBasedOn
@@ -95,3 +98,8 @@ howMuchIsTotalAnnualRent.p2 = For example, you get a rent free period of 3 month
 howMuchIsTotalAnnualRent.empty.error = Enter your new total annual rent, in pounds
 howMuchIsTotalAnnualRent.tooLarge.error = New total annual rent must be £9,999,999.99 or less
 howMuchIsTotalAnnualRent.format.error = New total annual rent must be a number, like 30,000
+
+#agreedRentChange
+ agreedRentChange.title = Have you agreed in advance with the landlord when and by how much rent goes up?
+ agreedRentChange.p1 = For example, the agreement says that the rent will increase from £5,000 to £7,000 a year after 12 months. This is often known as a stepped rent.
+ agreedRentChange.empty.error = Select yes if you have agreed with your landlord in advance when and by how much rent goes up

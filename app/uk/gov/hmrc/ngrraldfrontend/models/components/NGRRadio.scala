@@ -59,32 +59,26 @@ case class NGRRadioButtons(radioContent: String,
                            radioValue: RadioEntry,
                            buttonHint: Option[String] = None,
                            conditionalCharacterCount: Option[CharacterCount] = None,
-                           conditionalHtml: Option[Html] = None)
+                           conditionalHtml: Option[Html] = None) {
 
-case class NGRRadioHeader(title: String,
-                          classes: String,
-                          isPageHeading: Boolean)
+}
 
 case class NGRRadio(radioGroupName: NGRRadioName,
                     NGRRadioButtons: Seq[NGRRadioButtons],
-                    ngrTitle: Option[NGRRadioHeader] = None,
+                    ngrTitle: Option[Legend] = None,
                     hint: Option[String] = None)
 
 object NGRRadio {
+
+  val yesButton: NGRRadioButtons = NGRRadioButtons(radioContent = "service.yes", radioValue = Yes)
+  val noButton: NGRRadioButtons = NGRRadioButtons(radioContent = "service.no", radioValue = No)
 
   def buildRadios[A](
                       form: Form[A],
                       NGRRadios: NGRRadio
                     )(implicit messages: Messages): Radios = {
     Radios(
-      fieldset = NGRRadios.ngrTitle.map(header =>
-        Fieldset(
-          legend = Some(Legend(
-            content = Text(Messages(header.title)),
-            classes = header.classes,
-            isPageHeading = header.isPageHeading
-          ))
-        )),
+      fieldset = NGRRadios.ngrTitle.map(header => Fieldset(legend = NGRRadios.ngrTitle)),
       hint = NGRRadios.hint.map { hint =>
         Hint(content = Text(Messages(hint)))
       },

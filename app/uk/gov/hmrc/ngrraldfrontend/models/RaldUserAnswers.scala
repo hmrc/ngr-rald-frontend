@@ -28,7 +28,8 @@ final case class RaldUserAnswers(
                                   whatTypeOfRenewal: Option[String] = None,
                                   landlord: Option[Landlord] = None,
                                   rentBasedOn: Option[RentBasedOn] = None,
-                                  rentAmount:Option[String] = None
+                                  rentAmount:Option[String] = None,
+                                  agreedRentChange: Option[String] = None
                                 )
 
 

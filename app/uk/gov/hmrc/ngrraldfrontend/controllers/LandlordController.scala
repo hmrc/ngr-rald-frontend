@@ -67,8 +67,8 @@ class LandlordController @Inject()(view: LandlordView,
     val businessPartnerOrSharedDirector: NGRRadioButtons = NGRRadioButtons(radioContent = "landlord.radio4", radioValue = BusinessPartnerOrSharedDirector)
     NGRRadio(
       NGRRadioName("landlord-radio"),
-      ngrTitle = Some(NGRRadioHeader(title = "landlord.p2", classes = "govuk-label govuk-label--m", isPageHeading = true)),
-      NGRRadioButtons = Seq(landLordAndTenant, familyMember, companyPensionFund, businessPartnerOrSharedDirector, otherRelationship(form))
+      ngrTitle = Some(Legend(content = Text(messages("landlord.p2")), classes = "govuk-fieldset__legend--m", isPageHeading = true)),
+      NGRRadioButtons = Seq(landLordAndTennant, familyMember, companyPensionFund, businessPartnerOrSharedDirector, otherRelationship(form))
     )
 
   def show: Action[AnyContent] = {

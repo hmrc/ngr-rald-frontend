@@ -20,15 +20,16 @@ import play.api.data.Form
 import play.api.data.Forms.{mapping, optional, text}
 import play.api.i18n.*
 import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 
 final case class LandlordForm(landlordName: String, landLordType: String, landlordOther: Option[String])
 
-object LandlordForm extends CommonFormValidators {
+object LandlordForm extends CommonFormValidators with Mappings{
   implicit val format: OFormat[LandlordForm] = Json.format[LandlordForm]
 
   private lazy val landlordNameEmptyError = "landlord.name.empty.error"
   private lazy val landlordNameTooLongError = "landlord.name.empty.tooLong.error"
-  private lazy val radioUnselectedError = "whatTypeOfAgreement.error.required"
+  private lazy val radioUnselectedError = "landlord.radio.empty.error"
   private lazy val otherRadioEmptyError = "landlord.radio.other.empty.error"
 
   private val landlord = "landlord-name-value"
@@ -44,21 +45,21 @@ object LandlordForm extends CommonFormValidators {
   def unapply(landlordForm: LandlordForm): Option[(String, String, Option[String])] =
     Some((landlordForm.landlordName, landlordForm.landLordType, landlordForm.landlordOther))
 
+
   def form: Form[LandlordForm] = {
     Form(
       mapping(
-        landlord -> text()
+        landlord -> text(landlordNameEmptyError)
           .verifying(
-            isNotEmpty(landlord, landlordNameEmptyError),
             maxLength(50, landlordNameTooLongError)
           ),
-        landlordRadio -> text().verifying(
-          isNotEmpty(landlord, landlordNameEmptyError)
-        ),
-        landlordOther -> optional(text)
+        landlordRadio -> text(radioUnselectedError),
+        landlordOther -> optional(text())
       )(LandlordForm.apply)(LandlordForm.unapply)
         .verifying(otherRadioEmptyError, landlordForm =>
-          landlordForm.landLordType != "OtherRelationship" || landlordForm.landlordOther.exists(_.trim.nonEmpty)
-        ))
+          landlordForm.landLordType != "OtherRelationship" ||
+            landlordForm.landlordOther.exists(_.trim.nonEmpty)
+        )
+    )
   }
 }
