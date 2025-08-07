@@ -20,6 +20,7 @@ package uk.gov.hmrc.ngrraldfrontend.models.forms
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import play.api.data.{Form, FormError}
+import play.api.libs.json.Json
 
 class HowMuchIsTotalAnnualRentFormSpec extends AnyFlatSpec with Matchers {
 
@@ -62,7 +63,31 @@ class HowMuchIsTotalAnnualRentFormSpec extends AnyFlatSpec with Matchers {
     boundForm.value shouldBe Some(HowMuchIsTotalAnnualRentForm(BigDecimal("9999999.99")))
   }
 
+  it should "serialize to JSON correctly" in {
+    val form = HowMuchIsTotalAnnualRentForm(BigDecimal("9999999.99"))
+    val json = Json.toJson(form)
 
+    json shouldBe Json.obj(
+      "annualRent" -> 9999999.99
+    )
+  }
+
+  it should "deserialize from JSON correctly" in {
+    val json = Json.obj(
+      "annualRent" -> 9999999.99
+    )
+    val result = json.validate[HowMuchIsTotalAnnualRentForm]
+
+    result.isSuccess shouldBe true
+    result.get shouldBe HowMuchIsTotalAnnualRentForm(BigDecimal("9999999.99"))
+  }
+
+  it should "fail deserialization if value is missing" in {
+    val json = Json.obj()
+    val result = json.validate[HowMuchIsTotalAnnualRentForm]
+
+    result.isError shouldBe true
+  }
 }
 
 

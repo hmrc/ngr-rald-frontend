@@ -84,7 +84,7 @@ whatIsYourRentBasedOn.indexation.hint = The rent is reviewed according to an ind
 whatIsYourRentBasedOn.other.hint = The rent was agreed another way
 whatIsYourRentBasedOn.error.required = Select what your rent is based on
 whatIsYourRentBasedOn.otherText.error.required = Tell us how your rent was agreed
-whatIsYourRentBasedOn.otherText.error.maxLength = Maximum of 250 characters
+whatIsYourRentBasedOn.otherText.error.maxLength = Maximum character allowed is 250
 
 #howMuchIsTotalAnnualRent
 howMuchIsTotalAnnualRent.title = How much is your total annual rent?
