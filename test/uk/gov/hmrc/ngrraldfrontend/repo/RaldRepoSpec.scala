@@ -23,7 +23,7 @@ import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 import uk.gov.hmrc.ngrraldfrontend.helpers.{TestData, TestSupport}
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.models.{RaldUserAnswers, RentBasedOn}
+import uk.gov.hmrc.ngrraldfrontend.models.{Landlord, RaldUserAnswers, RentBasedOn}
 
 class RaldRepoSpec extends TestSupport with TestData
   with DefaultPlayMongoRepositorySupport[RaldUserAnswers] {
@@ -76,7 +76,7 @@ class RaldRepoSpec extends TestSupport with TestData
 
       await(repository.insertLandlord(credId, landlordName = landlordName, landLordType = landlordType, landlordOther = landlordOther))
       val actual = await(repository.findByCredId(credId))
-      actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, landlordName = Some("John Doe"), landLordType = Some("OtherRelationship"), landlordOtherDesc = Some("Other description")))
+      actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, landlord = Some(Landlord("John Doe", "OtherRelationship", Some("Other description")))))
     }
 
     "insert landlord without other description successfully" in {
@@ -85,7 +85,7 @@ class RaldRepoSpec extends TestSupport with TestData
 
       await(repository.insertLandlord(credId, landlordName = landlordName, landLordType = landlordType, landlordOther = None))
       val actual = await(repository.findByCredId(credId))
-      actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, landlordName = Some("John Doe"), landLordType = Some("OtherRelationship")))
+      actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property,  landlord = Some(Landlord("John Doe", "OtherRelationship", None))))
     }
 
     "insert rent based on with other desc successfully" in {

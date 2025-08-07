@@ -95,12 +95,12 @@ case class RaldRepo @Inject()(mongo: MongoComponent,
   }
   
   def insertLandlord(credId: CredId, landlordName: String, landLordType:String, landlordOther:Option[String]): Future[Option[RaldUserAnswers]] = {
-    val name = Seq(Updates.set("landlordName", landlordName))
-    val landlord = Updates.set("landLordType", landLordType)
+    val name = Seq(Updates.set("landlord.landlordName", landlordName))
+    val landlord = Updates.set("landlord.landLordType", landLordType)
 
     val radio = landlordOther match {
       case Some(otherDesc) =>
-        name :+ landlord :+ Updates.set("landlordOtherDesc", otherDesc)
+        name :+ landlord :+ Updates.set("landlord.landlordOtherDesc", otherDesc)
       case None =>
         name :+ landlord
     }
