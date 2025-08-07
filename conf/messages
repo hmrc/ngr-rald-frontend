@@ -4,6 +4,7 @@ service.base.title = {0} - GOV.UK
 
 #service
 service.continue = Continue
+service.saveAndContinue = Save and continue
 
 #NavigationBar
 nav.home=Account home
@@ -63,3 +64,13 @@ landlord.radio5.dropdown = Can you tell us what your relationship with the landl
 landlord.name.empty.error = Enter the landlord's full name
 landlord.name.empty.tooLong.error = Landlord's full name must be 50 characters or less
 landlord.radio.other.empty.error = Tell us what your relationship with the landlord is
+
+#howMuchIsTotalAnnualRent
+howMuchIsTotalAnnualRent.title = How much is your total annual rent?
+howMuchIsTotalAnnualRent.p1 = This is the amount you pay each year (excluding VAT) even if:
+howMuchIsTotalAnnualRent.b1 = you pay monthly or quarterly
+howMuchIsTotalAnnualRent.b2 = you get a rent-free period
+howMuchIsTotalAnnualRent.p2 = For example, you get a rent free period of 3 months and pay £300 a month. Your annual rent is £300 multiplied by 12 months. This is because you ignore the rent-free period.
+howMuchIsTotalAnnualRent.empty.error = Enter your new total annual rent, in pounds
+howMuchIsTotalAnnualRent.tooLarge.error = New total annual rent must be £9,999,999.99 or less
+howMuchIsTotalAnnualRent.format.error = New total annual rent must be a number, like 30,000
