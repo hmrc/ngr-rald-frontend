@@ -110,7 +110,7 @@ class WhatIsYourRentBasedOnController @Inject()(view: WhatIsYourRentBasedOnView,
               rentBasedOnForm.radioValue,
               if (rentBasedOnForm.radioValue.equals("Other")) rentBasedOnForm.rentBasedOnOther else None
             )
-            Future.successful(Redirect(routes.WhatTypeOfAgreementController.show.url))
+            Future.successful(Redirect(routes.HowMuchIsTotalAnnualRentController.show.url))
         )
     }
   }

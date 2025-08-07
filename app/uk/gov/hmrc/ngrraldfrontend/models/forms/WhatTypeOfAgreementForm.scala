@@ -36,7 +36,7 @@ object WhatTypeOfAgreementForm extends Mappings {
   def form: Form[WhatTypeOfAgreementForm] = {
     Form(
       mapping(
-        whatTypeOfAgreementRadio -> radioText(radioUnselectedError)
+        whatTypeOfAgreementRadio -> text(radioUnselectedError)
       )(WhatTypeOfAgreementForm.apply)(WhatTypeOfAgreementForm.unapply)
     )
   }

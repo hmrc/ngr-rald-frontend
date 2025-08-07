@@ -17,7 +17,7 @@
 package uk.gov.hmrc.ngrraldfrontend.models.forms
 
 import play.api.data.Form
-import play.api.data.Forms.{mapping, optional, text}
+import play.api.data.Forms.{mapping, optional}
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.i18n.*
 import play.api.libs.json.{Json, OFormat}
@@ -63,9 +63,9 @@ object WhatIsYourRentBasedOnForm extends CommonFormValidators with Mappings {
   def form: Form[WhatIsYourRentBasedOnForm] = {
     Form(
       mapping(
-        rentBasedOnRadio -> radioText(radioUnselectedError),
+        rentBasedOnRadio -> text(radioUnselectedError),
         rentBasedOnOther -> optional(
-          text
+          play.api.data.Forms.text
             .transform[String](_.strip(), identity)
         )
       )(WhatIsYourRentBasedOnForm.apply)(WhatIsYourRentBasedOnForm.unapply)
