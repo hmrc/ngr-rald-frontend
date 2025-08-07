@@ -53,7 +53,7 @@ class WhatIsYourRentBasedOnViewSpec extends ViewBaseSpec {
   val otherDescLabel = "Can you tell us how your rent was agreed?"
   val saveButton = "Save and continue"
 
-  private val form: Form[WhatIsYourRentBasedOnForm] = WhatIsYourRentBasedOnForm.form.fill(WhatIsYourRentBasedOnForm("Other", None))
+  private val form: Form[WhatIsYourRentBasedOnForm] = WhatIsYourRentBasedOnForm.form.fillAndValidate(WhatIsYourRentBasedOnForm("Other", None))
   private val ngrRadioButtons: Seq[NGRRadioButtons] =
     Seq(
       NGRRadioButtons(radioContent = "whatIsYourRentBasedOn.openMarket", radioValue = OpenMarket, buttonHint = Some("whatIsYourRentBasedOn.openMarket.hint")),

@@ -32,38 +32,34 @@ saveAndContinueButton: saveAndContinueButton
 
 @(form:Form[HowMuchIsTotalAnnualRentForm], navigationBarContent: NavigationBarContent, propertyAddress: String)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
-@layout(pageTitle = Some(messages("typeOfLeaseRenewal.title")), showBackLink = true, fullWidth = true, navigationBarContent = Some(navigationBarContent)) {
+@layout(pageTitle = Some(messages("typeOfLeaseRenewal.title")), showBackLink = true, fullWidth = false, navigationBarContent = Some(navigationBarContent)) {
 @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchIsTotalAnnualRentController.submit, Symbol("autoComplete") -> "off") {
 @if(form.errors.nonEmpty) {
 @govukErrorSummary(ErrorSummaryViewModel(form))
 }
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-        <span class="govuk-caption-m">@propertyAddress</span>
-        <h1 class="govuk-heading-l">@messages("howMuchIsTotalAnnualRent.title")</h1>
-        <p class="govuk-body">@Messages("howMuchIsTotalAnnualRent.p1")</p>
-        <ul class="govuk-list govuk-list--bullet">
-            <li>
-                @messages("howMuchIsTotalAnnualRent.b1")
-            </li>
-            <li>
-                @messages("howMuchIsTotalAnnualRent.b2")
-            </li>
-        </ul>
-        @inputText(
-            form  =   form,
-            id    =  "how–much–is–total–annual–rent-value",
-            name  =  "how–much–is–total–annual–rent-value",
-            label =   messages(""),
-            isPageHeading = false,
-            hint  =   None,
-            isVisible = true,
-            classes = Some("govuk-!-width-two-thirds"),
-            prefix = Some(PrefixOrSuffix(content = Text("£")))
-        )
-        <p class="govuk-body">@Messages("howMuchIsTotalAnnualRent.p2")</p>
-        @saveAndContinueButton(msg = messages("service.saveAndContinue"), isStartButton = false)
-    </div>
-</div>
+<span class="govuk-caption-m">@propertyAddress</span>
+<h1 class="govuk-heading-l">@messages("howMuchIsTotalAnnualRent.title")</h1>
+<p class="govuk-body">@Messages("howMuchIsTotalAnnualRent.p1")</p>
+<ul class="govuk-list govuk-list--bullet">
+    <li>
+        @messages("howMuchIsTotalAnnualRent.b1")
+    </li>
+    <li>
+        @messages("howMuchIsTotalAnnualRent.b2")
+    </li>
+</ul>
+@inputText(
+    form  =   form,
+    id    =  "how–much–is–total–annual–rent-value",
+    name  =  "how–much–is–total–annual–rent-value",
+    label =   messages(""),
+    isPageHeading = false,
+    hint  =   None,
+    isVisible = true,
+    classes = Some("govuk-!-width-two-thirds"),
+    prefix = Some(PrefixOrSuffix(content = Text("£")))
+)
+<p class="govuk-body">@Messages("howMuchIsTotalAnnualRent.p2")</p>
+@saveAndContinueButton(msg = messages("service.saveAndContinue"), isStartButton = false)
 }
 }

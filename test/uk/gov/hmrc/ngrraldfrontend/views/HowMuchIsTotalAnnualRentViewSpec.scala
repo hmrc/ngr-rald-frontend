@@ -36,11 +36,11 @@ class HowMuchIsTotalAnnualRentViewSpec extends ViewBaseSpec {
   }
 
   object Selectors {
-    val heading = "#main-content > div > div > form > div > div > h1"
-    val p1 = "#main-content > div > div > form > div > div > p:nth-child(3)"
-    val b1 = "#main-content > div > div > form > div > div > ul > li:nth-child(1)"
-    val b2 = "#main-content > div > div > form > div > div > ul > li:nth-child(2)"
-    val p2 = "#main-content > div > div > form > div > div > p:nth-child(6)"
+    val heading = "#main-content > div > div.govuk-grid-column-two-thirds > form > h1"
+    val p1 = "#main-content > div > div.govuk-grid-column-two-thirds > form > p:nth-child(3)"
+    val b1 = "#main-content > div > div.govuk-grid-column-two-thirds > form > ul > li:nth-child(1)"
+    val b2 = "#main-content > div > div.govuk-grid-column-two-thirds > form > ul > li:nth-child(2)"
+    val p2 = "#main-content > div > div.govuk-grid-column-two-thirds > form > p:nth-child(6)"
     val saveAndContinue = "#continue"
   }
 
