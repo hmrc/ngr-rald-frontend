@@ -16,25 +16,17 @@
 
 package uk.gov.hmrc.ngrraldfrontend.models.forms
 
-import play.api.data.{Form, Mapping}
-import play.api.data.Forms.{bigDecimal, mapping, number, text}
-import play.api.i18n.Messages
-import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.ngrraldfrontend.models.components.{LeaseOrTenancy, NGRRadio, NGRRadioButtons, NGRRadioName, Verbal, Written}
-import uk.gov.hmrc.ngrraldfrontend.models.forms.LandlordForm.{isNotEmpty, landlord, landlordNameEmptyError, landlordNameTooLongError, maxLength}
-import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
-
-
-import play.api.data._
-import play.api.data.Forms._
+import play.api.data.*
+import play.api.data.Forms.*
 import play.api.data.format.Formatter
-import play.api.data.FormError
+import play.api.libs.json.{Json, OFormat}
+
 import scala.util.Try
 
 
 final case class HowMuchIsTotalAnnualRentForm(annualRent: BigDecimal)
 
-object HowMuchIsTotalAnnualRentForm extends Mappings {
+object HowMuchIsTotalAnnualRentForm {
   implicit val format: OFormat[HowMuchIsTotalAnnualRentForm] = Json.format[HowMuchIsTotalAnnualRentForm]
 
   private lazy val annualRent = "how–much–is–total–annual–rent-value"

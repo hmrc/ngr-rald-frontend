@@ -112,8 +112,8 @@ case class RaldRepo @Inject()(mongo: MongoComponent,
     findAndUpdateByCredId(credId, Updates.set("whatTypeOfRenewal", whatTypeOfRenewal))
   }
   
-  def insertAnnualRent(credId: CredId, rentAmount: Int): Future[Option[RaldUserAnswers]] = {
-    findAndUpdateByCredId(credId, Updates.set("rentAmount", rentAmount))
+  def insertAnnualRent(credId: CredId, rentAmount: BigDecimal): Future[Option[RaldUserAnswers]] = {
+    findAndUpdateByCredId(credId, Updates.set("rentAmount", rentAmount.toString()))
   }
   
   def findByCredId(credId: CredId): Future[Option[RaldUserAnswers]] = {

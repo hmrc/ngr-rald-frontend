@@ -18,12 +18,10 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
+import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import uk.gov.hmrc.http.{HeaderNames, NotFoundException}
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
-import uk.gov.hmrc.ngrraldfrontend.models.forms.{HowMuchIsTotalAnnualRentForm, WhatTypeOfLeaseRenewalForm}
-import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import uk.gov.hmrc.ngrraldfrontend.views.html.{HowMuchIsTotalAnnualRentView, WhatTypeOfLeaseRenewalView}
+import uk.gov.hmrc.ngrraldfrontend.views.html.HowMuchIsTotalAnnualRentView
 
 class HowMuchIsTotalAnnualRentControllerSpec extends ControllerSpecSupport {
   val pageTitle = "How much is your total annual rent?"

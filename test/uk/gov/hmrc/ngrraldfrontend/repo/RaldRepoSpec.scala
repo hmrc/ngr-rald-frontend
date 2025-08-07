@@ -114,11 +114,11 @@ class RaldRepoSpec extends TestSupport with TestData
           None
         )))
 
-      val annualRent = 10000
+      val annualRent = 10000.99
 
       val isSuccessful = await(repository.insertAnnualRent(credId, annualRent))
       val actual = await(repository.findByCredId(credId))
-      actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, rentAmount = Some(10000)))
+      actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, rentAmount = Some("10000.99")))
     }
 
 
