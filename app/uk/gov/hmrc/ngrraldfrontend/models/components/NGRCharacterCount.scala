@@ -16,20 +16,9 @@
 
 package uk.gov.hmrc.ngrraldfrontend.models.components
 
-import play.api.data.Form
-import play.api.i18n.Messages
-import play.twirl.api.Html
-import uk.gov.hmrc.govukfrontend.views.Aliases.{HtmlContent, Text, Value}
-import uk.gov.hmrc.govukfrontend.views.html.components.GovukCharacterCount
-import uk.gov.hmrc.govukfrontend.views.viewmodels.FormGroup
-import uk.gov.hmrc.govukfrontend.views.viewmodels.charactercount.CharacterCount
 import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage
 import uk.gov.hmrc.govukfrontend.views.viewmodels.hint.Hint
 import uk.gov.hmrc.govukfrontend.views.viewmodels.label.Label
-import uk.gov.hmrc.ngrraldfrontend.models.forms.LandlordForm
-import uk.gov.hmrc.ngrraldfrontend.views.html.components.NGRCharacterCountComponent
-
-import javax.inject.Inject
 
 case class NGRCharacterCount(
                               id: String = "",
@@ -39,4 +28,4 @@ case class NGRCharacterCount(
                               label: Label = Label(),
                               hint: Option[Hint] = None,
                               errorMessage: Option[ErrorMessage] = None,
-                         )
+                            )

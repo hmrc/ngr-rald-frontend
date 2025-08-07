@@ -16,15 +16,14 @@
 
 package uk.gov.hmrc.ngrraldfrontend.connectors
 
-import play.api.http.Status.CREATED
 import play.api.libs.json.Json
 import play.api.libs.ws.JsonBodyWritables.*
 import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse, NotFoundException, StringContextOps}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, NotFoundException, StringContextOps}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-import uk.gov.hmrc.ngrraldfrontend.models.{PropertyLinkingUserAnswers, RaldUserAnswers}
-import uk.gov.hmrc.ngrraldfrontend.models.registration.{CredId, RatepayerRegistrationValuation}
+import uk.gov.hmrc.ngrraldfrontend.models.PropertyLinkingUserAnswers
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.vmvProperty.VMVProperty
 import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
 
@@ -36,8 +35,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class NGRConnector @Inject()(http: HttpClientV2,
                              appConfig: AppConfig,
                              raldRepo: RaldRepo
-                             )
-                            (implicit ec: ExecutionContext){
+                            )
+                            (implicit ec: ExecutionContext) {
 
   private def url(path: String): URL = url"${appConfig.nextGenerationRatesHost}/next-generation-rates/$path"
 

@@ -29,8 +29,8 @@ import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.ngrraldfrontend.helpers.{TestData, TestSupport}
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
-import uk.gov.hmrc.ngrraldfrontend.models.{PropertyLinkingUserAnswers, RaldUserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.registration.*
+import uk.gov.hmrc.ngrraldfrontend.models.{PropertyLinkingUserAnswers, RaldUserAnswers}
 
 import scala.concurrent.Future
 

@@ -22,8 +22,6 @@ import uk.gov.hmrc.ngrraldfrontend.helpers.TestSupport
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.vmvProperty.VMVProperty
 
-import java.time.LocalDate
-
 class PropertyLinkingUserAnswersSpec extends TestSupport {
   implicit val credIdFormat: OFormat[CredId] = Json.format[CredId]
   implicit val vmvPropertyFormat: OFormat[VMVProperty] = Json.format[VMVProperty]

@@ -19,10 +19,8 @@ package uk.gov.hmrc.ngrraldfrontend.models.forms
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.matchers.should.Matchers.{should, shouldBe}
 import org.scalatest.wordspec.AnyWordSpec
-import play.api.data.{Form, FormError}
-import play.api.data.Forms.mapping
-import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
+import play.api.data.FormError
+import play.api.libs.json.Json
 
 class WhatTypeOfAgreementFormSpec extends AnyWordSpec with Matchers {
 

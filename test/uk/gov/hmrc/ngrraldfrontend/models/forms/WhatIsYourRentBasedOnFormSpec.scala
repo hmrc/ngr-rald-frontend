@@ -42,8 +42,8 @@ class WhatIsYourRentBasedOnFormSpec extends AnyWordSpec with Matchers {
       boundForm.value shouldBe Some(WhatIsYourRentBasedOnForm("Other", Some("The rent was agreed")))
     }
 
-    "bind successfully with a valid input value 'PercentageTurnover' and Other description is empty" in {
-      val data = Map("rent-based-on-radio" -> "PercentageTurnover",
+    "bind successfully with a valid input value 'TotalOccupancyCost' and Other description is empty" in {
+      val data = Map("rent-based-on-radio" -> "TotalOccupancyCost",
         "rent-based-on-other-desc" -> "")
       val boundForm = WhatIsYourRentBasedOnForm.form.bind(data)
 

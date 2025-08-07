@@ -16,13 +16,13 @@
 
 package uk.gov.hmrc.ngrraldfrontend.config
 
-import javax.inject.{Inject, Singleton}
 import play.api.i18n.MessagesApi
 import play.api.mvc.RequestHeader
 import play.twirl.api.Html
-import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import uk.gov.hmrc.ngrraldfrontend.views.html.ErrorTemplate
+import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton

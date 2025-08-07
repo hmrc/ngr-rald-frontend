@@ -16,19 +16,18 @@
 
 package uk.gov.hmrc.ngrraldfrontend.controllers
 
-import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
-import uk.gov.hmrc.ngrraldfrontend.views.html.LandlordView
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import play.api.test.Helpers.{contentAsString, status}
-import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
-import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, RaldUserAnswers}
-import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.FakeRequest
+import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import uk.gov.hmrc.auth.core.Nino
 import uk.gov.hmrc.http.{HeaderNames, NotFoundException}
+import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
+import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
+import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, RaldUserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.views.html.LandlordView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.NGRCharacterCountComponent
 
 import scala.concurrent.Future
@@ -37,7 +36,7 @@ class LandlordControllerSpec extends ControllerSpecSupport {
   val pageTitle = "Landlord"
   val view: LandlordView = inject[LandlordView]
   val mockNGRCharacterCountComponent: NGRCharacterCountComponent = inject[NGRCharacterCountComponent]
-  val controller: LandlordController = new LandlordController(view, mockAuthJourney, mockPropertyLinkingAction, mockRaldRepo, mockNGRCharacterCountComponent,  mcc)(mockConfig, ec)
+  val controller: LandlordController = new LandlordController(view, mockAuthJourney, mockPropertyLinkingAction, mockRaldRepo, mockNGRCharacterCountComponent, mcc)(mockConfig, ec)
 
   "Tell us about your new agreement controller" must {
     "method show" must {
@@ -64,7 +63,7 @@ class LandlordControllerSpec extends ControllerSpecSupport {
         val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
           .withFormUrlEncodedBody(
             "landlord-name-value" -> "Bob",
-            "landlord-radio" ->  "LandLordAndTenant"
+            "landlord-radio" -> "LandLordAndTenant"
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -93,8 +92,8 @@ class LandlordControllerSpec extends ControllerSpecSupport {
         mockRequest(hasCredId = true)
         val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
           .withFormUrlEncodedBody(
-            "landlord-name-value"-> "",
-            "landlord-radio" ->  "LandLordAndTenant"
+            "landlord-name-value" -> "",
+            "landlord-radio" -> "LandLordAndTenant"
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {

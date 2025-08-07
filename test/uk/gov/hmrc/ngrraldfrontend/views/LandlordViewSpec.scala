@@ -23,8 +23,8 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{ErrorMessage, Label, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.Radios
 import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
+import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
-import uk.gov.hmrc.ngrraldfrontend.models.components.{BusinessPartnerOrSharedDirector, CompanyPensionFund, FamilyMember, LandLordAndTenant, LeaseOrTenancy, NGRCharacterCount, NGRRadio, NGRRadioButtons, NGRRadioName, OtherRelationship}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.LandlordForm
 import uk.gov.hmrc.ngrraldfrontend.views.html.LandlordView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.NGRCharacterCountComponent

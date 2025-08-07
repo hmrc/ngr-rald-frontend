@@ -27,7 +27,6 @@ import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 import uk.gov.hmrc.ngrraldfrontend.config.FrontendAppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.RaldUserAnswers
-import uk.gov.hmrc.ngrraldfrontend.models.components.Landlord
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 
 import java.time.Instant
@@ -108,9 +107,9 @@ case class RaldRepo @Inject()(mongo: MongoComponent,
     findAndUpdateByCredId(credId = credId, radio: _*)
   }
 
-  def insertRentBased(credId: CredId, rentBasedOn: String, rentBasedOnOtherText:Option[String]): Future[Option[RaldUserAnswers]] = {
-    val updates = Seq(Updates.set("whatIsYourRentBasedOn.rentBasedOn", rentBasedOn),
-      Updates.set("whatIsYourRentBasedOn.otherDesc", rentBasedOnOtherText.getOrElse(null)))
+  def insertRentBased(credId: CredId, rentBased: String, rentBasedOtherText:Option[String]): Future[Option[RaldUserAnswers]] = {
+    val updates = Seq(Updates.set("rentBasedOn.rentBased", rentBased),
+      Updates.set("rentBasedOn.otherDesc", rentBasedOtherText.getOrElse(null)))
     findAndUpdateByCredId(credId, updates: _*)
   }
 

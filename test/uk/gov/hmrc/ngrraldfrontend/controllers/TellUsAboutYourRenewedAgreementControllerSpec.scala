@@ -16,19 +16,12 @@
 
 package uk.gov.hmrc.ngrraldfrontend.controllers
 
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.shouldBe
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
-import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.RenewedAgreement
-import uk.gov.hmrc.ngrraldfrontend.models.RaldUserAnswers
-import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.views.html.TellUsAboutYourAgreementView
-
-import scala.concurrent.Future
 
 class TellUsAboutYourRenewedAgreementControllerSpec extends ControllerSpecSupport {
   val pageTitle = "Tell us about your renewed agreement"

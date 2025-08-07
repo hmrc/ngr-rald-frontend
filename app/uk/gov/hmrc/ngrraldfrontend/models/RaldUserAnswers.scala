@@ -29,6 +29,7 @@ final case class RaldUserAnswers(
                                   landlordName: Option[String] = None,
                                   landLordType: Option[String] = None,
                                   landlordOtherDesc: Option[String] = None,
+                                  rentBasedOn: Option[RentBasedOn] = None,
                                   rentAmount:Option[String] = None
                                 )
 
