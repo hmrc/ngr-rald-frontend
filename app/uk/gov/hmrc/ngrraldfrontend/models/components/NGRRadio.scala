@@ -37,12 +37,21 @@ case object Written extends TypeOfAgreement
 case object Verbal extends TypeOfAgreement
 
 sealed trait Landlord extends RadioEntry
-case object LandLordAndTennant extends Landlord
+case object LandLordAndTenant extends Landlord
 case object FamilyMember extends Landlord
 case object CompanyPensionFund extends Landlord
 case object BusinessPartnerOrSharedDirector extends Landlord
 case object OtherRelationship extends Landlord
 
+
+sealed trait RentBasedOn extends RadioEntry
+case object OpenMarket extends RentBasedOn
+case object PercentageOpenMarket extends RentBasedOn
+case object Turnover extends RentBasedOn
+case object PercentageTurnover extends RentBasedOn
+case object TotalOccupancyCost extends RentBasedOn
+case object Indexation extends RentBasedOn
+case object Other extends RentBasedOn
 
 case class NGRRadioName(key: String)
 

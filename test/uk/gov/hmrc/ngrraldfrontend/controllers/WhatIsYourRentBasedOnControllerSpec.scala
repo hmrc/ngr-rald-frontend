@@ -16,34 +16,34 @@
 
 package uk.gov.hmrc.ngrraldfrontend.controllers
 
-import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
-import uk.gov.hmrc.ngrraldfrontend.views.html.LandlordView
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import play.api.test.Helpers.{contentAsString, status}
-import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
-import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, RaldUserAnswers}
-import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.FakeRequest
+import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, headers, redirectLocation, status}
 import uk.gov.hmrc.auth.core.Nino
 import uk.gov.hmrc.http.{HeaderNames, NotFoundException}
+import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
+import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
+import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, RaldUserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.views.html.{LandlordView, WhatIsYourRentBasedOnView}
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.NGRCharacterCountComponent
 
+import scala.collection.immutable.TreeMap
 import scala.concurrent.Future
 
-class LandlordControllerSpec extends ControllerSpecSupport {
-  val pageTitle = "Landlord"
-  val view: LandlordView = inject[LandlordView]
+class WhatIsYourRentBasedOnControllerSpec extends ControllerSpecSupport {
+  val pageTitle = "What is your rent based on?"
+  val view: WhatIsYourRentBasedOnView = inject[WhatIsYourRentBasedOnView]
   val mockNGRCharacterCountComponent: NGRCharacterCountComponent = inject[NGRCharacterCountComponent]
-  val controller: LandlordController = new LandlordController(view, mockAuthJourney, mockPropertyLinkingAction, mockRaldRepo, mockNGRCharacterCountComponent,  mcc)(mockConfig, ec)
+  val controller: WhatIsYourRentBasedOnController = new WhatIsYourRentBasedOnController(view, mockAuthJourney, mockPropertyLinkingAction, mockRaldRepo, mockNGRCharacterCountComponent,  mcc)(mockConfig, ec)
 
-  "Tell us about your new agreement controller" must {
+  "What is your rent based on controller" must {
     "method show" must {
       "Return OK and the correct view" in {
         when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(Some(RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property))))
-        val result = controller.show()(authenticatedFakeRequest())
+        val result = controller.show(authenticatedFakeRequest())
         status(result) mustBe OK
         val content = contentAsString(result)
         content must include(pageTitle)
@@ -58,34 +58,26 @@ class LandlordControllerSpec extends ControllerSpecSupport {
     }
 
     "method submit" must {
-      "Return OK and the correct view after submitting with name and radio button selected" in {
+      "Return SEE_OTHER and the correct view when radio button selected" in {
         when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(Some(RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property))))
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controller.submit(AuthenticatedUserRequest(FakeRequest(routes.WhatIsYourRentBasedOnController.submit)
           .withFormUrlEncodedBody(
-            "landlord-name-value" -> "Bob",
-            "landlord-radio" ->  "LandLordAndTenant"
+            "rent-based-on-radio" -> "PercentageTurnover"
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
-        result.map(result => {
-          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/landlord")
-        })
+        headers(result) mustBe TreeMap("Location" -> "/ngr-rald-frontend/what-type-of-agreement-do-you-have")
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.WhatTypeOfAgreementController.show.url)
       }
-      "Return OK and the correct view after submitting with name and other radio button selected with description added" in {
+      "Return SEE_OTHER and the correct view  when radio button selected Other and description has been entered" in {
         when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(Some(RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property))))
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controller.submit(AuthenticatedUserRequest(FakeRequest(routes.WhatIsYourRentBasedOnController.submit)
           .withFormUrlEncodedBody(
-            "landlord-name-value" -> "Bob",
-            "landlord-radio" -> "LandLordAndTenant",
-            "landlordOther" -> "Description of other",
+            "rent-based-on-radio" -> "Other",
+            "rent-based-on-other-desc" -> "The rent was agreed"
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
-        result.map(result => {
-          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/landlord")
-        })
+        headers(result) mustBe TreeMap("Location" -> "/ngr-rald-frontend/what-type-of-agreement-do-you-have")
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.WhatTypeOfAgreementController.show.url)
       }
@@ -94,7 +86,7 @@ class LandlordControllerSpec extends ControllerSpecSupport {
         val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
           .withFormUrlEncodedBody(
             "landlord-name-value"-> "",
-            "landlord-radio" ->  "LandLordAndTenant"
+            "landlord-radio" ->  "LandLordAndTennant"
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {

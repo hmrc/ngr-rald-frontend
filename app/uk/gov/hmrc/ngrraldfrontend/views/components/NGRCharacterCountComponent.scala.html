@@ -19,7 +19,7 @@
 
 @this(govukCharacterCount: GovukCharacterCount)
 
-@(form:Form[_], ngrCharacterCount: NGRCharacterCount)
+@(form:Form[_], ngrCharacterCount: NGRCharacterCount)(implicit messages: Messages)
 
 @govukCharacterCount(CharacterCount(
     id = ngrCharacterCount.id,
@@ -29,8 +29,8 @@
     value = form(ngrCharacterCount.name).value,
     label = ngrCharacterCount.label,
     errorMessage = form.errors(ngrCharacterCount.name) match {
-    case Nil => None
-    case errors => ngrCharacterCount.errorMessage
+        case Nil => None
+        case errors => Some(ErrorMessage(content = HtmlContent(errors.map(err => messages(err.message)).mkString("<br>"))))
     }
 ))
 

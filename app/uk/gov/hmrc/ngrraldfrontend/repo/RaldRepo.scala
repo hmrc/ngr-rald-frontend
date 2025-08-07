@@ -108,6 +108,12 @@ case class RaldRepo @Inject()(mongo: MongoComponent,
     findAndUpdateByCredId(credId = credId, radio: _*)
   }
 
+  def insertRentBased(credId: CredId, rentBasedOn: String, rentBasedOnOtherText:Option[String]): Future[Option[RaldUserAnswers]] = {
+    val updates = Seq(Updates.set("whatIsYourRentBasedOn.rentBasedOn", rentBasedOn),
+      Updates.set("whatIsYourRentBasedOn.otherDesc", rentBasedOnOtherText.getOrElse(null)))
+    findAndUpdateByCredId(credId, updates: _*)
+  }
+
   def insertTypeOfRenewal(credId: CredId, whatTypeOfRenewal: String): Future[Option[RaldUserAnswers]] = {
     findAndUpdateByCredId(credId, Updates.set("whatTypeOfRenewal", whatTypeOfRenewal))
   }
