@@ -58,7 +58,7 @@ class WhatIsYourRentBasedOnControllerSpec extends ControllerSpecSupport {
     }
 
     "method submit" must {
-      "Return SEE_OTHER and the correct view when radio button selected" in {
+      "Return SEE_OTHER and redirect HowMuchIsTotalAnnualRent view when radio button selected PercentageTurnover" in {
         when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(Some(RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property))))
         val result = controller.submit(AuthenticatedUserRequest(FakeRequest(routes.WhatIsYourRentBasedOnController.submit)
           .withFormUrlEncodedBody(
@@ -77,9 +77,9 @@ class WhatIsYourRentBasedOnControllerSpec extends ControllerSpecSupport {
             "rent-based-on-other-desc" -> "The rent was agreed"
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
-        headers(result) mustBe TreeMap("Location" -> "/ngr-rald-frontend/how-much-is-total-annual-rent")
+        headers(result) mustBe TreeMap("Location" -> "/ngr-rald-frontend/what-type-of-agreement-do-you-have")
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.HowMuchIsTotalAnnualRentController.show.url)
+        redirectLocation(result) mustBe Some(routes.WhatTypeOfAgreementController.show.url)
       }
       "Return Form with Errors when no radio button is selected" in {
         mockRequest()
