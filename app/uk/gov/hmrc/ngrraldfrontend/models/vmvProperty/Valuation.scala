@@ -17,6 +17,7 @@
 package uk.gov.hmrc.ngrraldfrontend.models.vmvProperty
 
 import play.api.libs.json.{Format, Json}
+
 import java.time.LocalDate
 
 case class Valuation(

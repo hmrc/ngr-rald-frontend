@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.ngrraldfrontend.models.forms.mappings
+package uk.gov.hmrc.ngrraldfrontend.models
 
-import play.api.data.FieldMapping
-import play.api.data.Forms.of
+import play.api.libs.json.{Json, OFormat}
 
-trait Mappings extends Formatters {
-  protected def text(errorKey: String = "error.required", args: Seq[String] = Seq.empty): FieldMapping[String] =
-    of(stringFormatter(errorKey, args))
+final case class RentBasedOn(rentBased: String, otherDesc: Option[String])
+
+object RentBasedOn {
+  implicit val format: OFormat[RentBasedOn] = Json.format[RentBasedOn]
 }

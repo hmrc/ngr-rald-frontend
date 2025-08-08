@@ -26,7 +26,7 @@ import uk.gov.hmrc.ngrraldfrontend.views.html.TellUsAboutYourAgreementView
 class TellUsAboutYourRentControllerSpec extends ControllerSpecSupport {
   val pageTitle = "Tell us about your rent review"
   val view: TellUsAboutYourAgreementView = inject[TellUsAboutYourAgreementView]
-  val controller: TellUsAboutRentController = new TellUsAboutRentController(view, mockAuthJourney, mockNgrConnector, mockPropertyLinkingAction,  mockRaldRepo, mcc)(mockConfig)
+  val controller: TellUsAboutRentController = new TellUsAboutRentController(view, mockAuthJourney, mockPropertyLinkingAction, mockRaldRepo, mcc)(mockConfig)
 
   "Tell us about your rent controller" must {
     "method show" must {

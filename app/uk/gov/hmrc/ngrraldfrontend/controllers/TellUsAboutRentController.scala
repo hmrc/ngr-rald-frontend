@@ -21,9 +21,8 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-import uk.gov.hmrc.ngrraldfrontend.connectors.NGRConnector
-import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.{RenewedAgreement, RentAgreement}
-import uk.gov.hmrc.ngrraldfrontend.models.{RaldUserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.RentAgreement
+import uk.gov.hmrc.ngrraldfrontend.models.RaldUserAnswers
 import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
@@ -36,7 +35,6 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class TellUsAboutRentController @Inject()(view: TellUsAboutYourAgreementView,
                                           authenticate: AuthRetrievals,
-                                          ngrConnector: NGRConnector,
                                           hasLinkedProperties: PropertyLinkingAction,
                                           raldRepo: RaldRepo,
                                           mcc: MessagesControllerComponents
@@ -49,7 +47,7 @@ class TellUsAboutRentController @Inject()(view: TellUsAboutYourAgreementView,
         .getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
     }
   }
-  
+
   def submit: Action[AnyContent] = {
     (authenticate andThen hasLinkedProperties).async { implicit request =>
       request.propertyLinking.map(property =>

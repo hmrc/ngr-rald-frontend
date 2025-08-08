@@ -25,7 +25,6 @@ import uk.gov.hmrc.http.StringContextOps
 import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 import uk.gov.hmrc.ngrraldfrontend.helpers.TestSupport
 
-
 import scala.concurrent.Future
 
 trait MockHttpV2 extends TestSupport with BeforeAndAfterEach {

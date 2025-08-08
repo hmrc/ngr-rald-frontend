@@ -40,7 +40,7 @@ class WhatTypeOfAgreementControllerSpec extends ControllerSpecSupport {
   "Tell us about your new agreement controller" must {
     "method show" must {
       "Return OK and the correct view" in {
-        when(mockRaldRepo.findByCredId(any()))thenReturn(Future.successful(Some(RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property))))
+        when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(Some(RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property))))
         val result = controller.show()(authenticatedFakeRequest())
         status(result) mustBe OK
         val content = contentAsString(result)

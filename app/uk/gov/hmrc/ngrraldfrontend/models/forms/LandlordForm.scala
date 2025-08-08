@@ -23,7 +23,7 @@ import play.api.libs.json.{Json, OFormat}
 
 final case class LandlordForm(landlordName: String, landLordType: String, landlordOther: Option[String])
 
-object LandlordForm extends CommonFormValidators  {
+object LandlordForm extends CommonFormValidators {
   implicit val format: OFormat[LandlordForm] = Json.format[LandlordForm]
 
   private lazy val landlordNameEmptyError = "landlord.name.empty.error"
@@ -49,8 +49,8 @@ object LandlordForm extends CommonFormValidators  {
       mapping(
         landlord -> text()
           .verifying(
-              isNotEmpty(landlord, landlordNameEmptyError),
-              maxLength(50, landlordNameTooLongError)
+            isNotEmpty(landlord, landlordNameEmptyError),
+            maxLength(50, landlordNameTooLongError)
           ),
         landlordRadio -> text().verifying(
           isNotEmpty(landlord, landlordNameEmptyError)
@@ -59,6 +59,6 @@ object LandlordForm extends CommonFormValidators  {
       )(LandlordForm.apply)(LandlordForm.unapply)
         .verifying(otherRadioEmptyError, landlordForm =>
           landlordForm.landLordType != "OtherRelationship" || landlordForm.landlordOther.exists(_.trim.nonEmpty)
-          ))
+        ))
   }
 }

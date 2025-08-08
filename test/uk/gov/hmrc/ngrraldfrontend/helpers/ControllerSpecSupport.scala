@@ -23,7 +23,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.connectors.NGRConnector
 import uk.gov.hmrc.ngrraldfrontend.models.AuthenticatedUserRequest
-import uk.gov.hmrc.ngrraldfrontend.views.html.components.NGRCharacterCountComponent
 
 import scala.concurrent.{ExecutionContext, Future}
 

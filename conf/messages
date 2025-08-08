@@ -65,6 +65,27 @@ landlord.name.empty.error = Enter the landlord's full name
 landlord.name.empty.tooLong.error = Landlord's full name must be 50 characters or less
 landlord.radio.other.empty.error = Tell us what your relationship with the landlord is
 
+#WhatIsYourRentBasedOn
+whatIsYourRentBasedOn.title = What is your rent based on?
+whatIsYourRentBasedOn.openMarket = Open market value
+whatIsYourRentBasedOn.percentageOpenMarket = A percentage of open market value
+whatIsYourRentBasedOn.turnover = Turnover top-up
+whatIsYourRentBasedOn.percentageTurnover = A percentage of expected turnover
+whatIsYourRentBasedOn.totalOccupancyCost = Total Occupancy Cost leases (TOCs)
+whatIsYourRentBasedOn.indexation = Indexation
+whatIsYourRentBasedOn.other = Other
+whatIsYourRentBasedOn.other.desc.label = Can you tell us how your rent was agreed?
+whatIsYourRentBasedOn.openMarket.hint = This is the rent a landlord could rent the property for if, it was available to anyone
+whatIsYourRentBasedOn.percentageOpenMarket.hint = This is a percentage of the rent a landlord could rent the property for if, it was available to anyone
+whatIsYourRentBasedOn.turnover.hint = The rent is a fixed base rent with an additional payment based on a percentage of your turnover
+whatIsYourRentBasedOn.percentageTurnover.hint = The rent paid is based on a percentage of turnover
+whatIsYourRentBasedOn.totalOccupancyCost.hint = The rent is the total cost of leasing the property. It includes base rent, business rates, insurance and utilities. It also includes common area maintenance and tenant improvements
+whatIsYourRentBasedOn.indexation.hint = The rent is reviewed according to an index (such as Retail Price Index)
+whatIsYourRentBasedOn.other.hint = The rent was agreed another way
+whatIsYourRentBasedOn.error.required = Select what your rent is based on
+whatIsYourRentBasedOn.otherText.error.required = Tell us how your rent was agreed
+whatIsYourRentBasedOn.otherText.error.maxLength = Maximum character allowed is 250
+
 #howMuchIsTotalAnnualRent
 howMuchIsTotalAnnualRent.title = How much is your total annual rent?
 howMuchIsTotalAnnualRent.p1 = This is the amount you pay each year (excluding VAT) even if:
