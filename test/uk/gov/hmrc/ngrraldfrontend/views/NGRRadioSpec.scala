@@ -31,7 +31,7 @@ class NGRRadioSpec extends TestSupport {
       val ngrButton1 = NGRRadioButtons("Yes", Yes)
       val ngrButton2 = NGRRadioButtons("No", No)
       val ngrRadioName = NGRRadioName("radioName")
-      val testnNgrTitle = Some(NGRRadioHeader(title = "radioName", classes = "", isPageHeading = true))
+      val testnNgrTitle = Some(Legend(content = Text(messages("radioName")), classes = "", isPageHeading = true))
       val ngrRadios = NGRRadio(radioGroupName = ngrRadioName, NGRRadioButtons = Seq(ngrButton1,ngrButton2), ngrTitle = testnNgrTitle)
 
       lazy val form: Form[WhatTypeOfLeaseRenewalForm] =  WhatTypeOfLeaseRenewalForm.form
@@ -49,7 +49,7 @@ class NGRRadioSpec extends TestSupport {
       val ngrButton1 = NGRRadioButtons("Yes", Yes)
       val ngrButton2 = NGRRadioButtons("No", No)
       val ngrRadioName = NGRRadioName("radioName")
-      val testnNgrTitle = Some(NGRRadioHeader(title = "radioName", classes = "", isPageHeading = true))
+      val testnNgrTitle = Some(Legend(content = Text(messages("radioName")), classes = "", isPageHeading = true))
       val ngrRadios = NGRRadio(radioGroupName = ngrRadioName, NGRRadioButtons = Seq(ngrButton1, ngrButton2), ngrTitle = testnNgrTitle)
 
       lazy val form: Form[WhatTypeOfLeaseRenewalForm] =  WhatTypeOfLeaseRenewalForm.form.withError("radioName", "error message")

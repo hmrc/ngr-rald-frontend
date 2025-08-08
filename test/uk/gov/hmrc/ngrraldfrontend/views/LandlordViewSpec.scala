@@ -35,7 +35,7 @@ class LandlordViewSpec extends ViewBaseSpec {
 
   object Strings {
     val heading = "Landlord"
-    val textInputLabel = "What is the landlords full name?"
+    val textInputLabel = "What is the landlord's full name?"
     val radioLabel = "What is your relationship with the landlord?"
     val radio1 = "Landlord and tenant relationship only"
     val radio2 = "Family member"

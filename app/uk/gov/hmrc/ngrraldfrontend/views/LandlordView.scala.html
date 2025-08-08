@@ -35,12 +35,14 @@
 
 @(navigationBarContent: NavigationBarContent, selectedPropertyAddress: String, form: Form[LandlordForm], ngrRadio: Radios)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
-@layout(pageTitle = Some(messages("landlord.title")), showBackLink = true, fullWidth = true, navigationBarContent = Some(navigationBarContent)) {
+@layout(pageTitle = Some(messages("landlord.title")), showBackLink = true, fullWidth = false, navigationBarContent = Some(navigationBarContent)) {
 
  @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.LandlordController.submit, Symbol("autoComplete") -> "off") {
+
     @if(form.errors.nonEmpty) {
       @govukErrorSummary(ErrorSummaryViewModel(form))
     }
+
     <span class="govuk-caption-m">@selectedPropertyAddress</span>
     <h1 class="govuk-heading-l">@messages("landlord.title")</h1>
     @inputText(
@@ -51,9 +53,9 @@
         isPageHeading = true,
         hint  =   None,
         isVisible = true,
-        classes = Some("govuk-!-width-two-thirds")
+        classes = None
     )
     @govukRadios(ngrRadio)
-    @saveAndContinueButton(msg = messages("service.continue"), isStartButton = false)
+    @saveAndContinueButton(msg = messages("service.saveAndContinue"), isStartButton = false)
  }
 }

@@ -18,3 +18,5 @@ GET        /what-is-your-rent-based-on             uk.gov.hmrc.ngrraldfrontend.c
 POST       /what-is-your-rent-based-on             uk.gov.hmrc.ngrraldfrontend.controllers.WhatIsYourRentBasedOnController.submit
 GET        /how-much-is-total-annual-rent          uk.gov.hmrc.ngrraldfrontend.controllers.HowMuchIsTotalAnnualRentController.show
 POST       /how-much-is-total-annual-rent          uk.gov.hmrc.ngrraldfrontend.controllers.HowMuchIsTotalAnnualRentController.submit
+GET        /have-you-agreed-rent-changes-with-landlord  uk.gov.hmrc.ngrraldfrontend.controllers.AgreedRentChangeController.show
+POST       /have-you-agreed-rent-changes-with-landlord  uk.gov.hmrc.ngrraldfrontend.controllers.AgreedRentChangeController.submit
