@@ -18,14 +18,20 @@ package uk.gov.hmrc.ngrraldfrontend.models.forms
 
 import play.api.data.validation.{Constraint, Invalid, Valid}
 
-import java.util.regex.Pattern
+trait CommonFormValidators {
+  protected def firstError[A](constraints: Constraint[A]*): Constraint[A] =
+    Constraint { input =>
+      constraints
+        .map(_.apply(input))
+        .find(_ != Valid)
+        .getOrElse(Valid)
+    }
 
-trait CommonFormValidators  {
   protected def maxLength(maximum: Int, errorKey: String): Constraint[String] =
     Constraint {
       case str if str.length <= maximum =>
         Valid
-      case _                            =>
+      case _ =>
         Invalid(errorKey, maximum)
     }
 }

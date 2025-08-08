@@ -17,17 +17,13 @@
 package uk.gov.hmrc.ngrraldfrontend.models.forms
 
 
-import org.scalatest.matchers.must.Matchers
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.matchers.should.Matchers.{should, shouldBe}
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.FormError
 import play.api.libs.json.Json
-import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatest.matchers.should.Matchers
-import play.api.data.{Form, FormError}
-import play.api.libs.json.Json
 
-class HowMuchIsTotalAnnualRentFormSpec extends AnyFlatSpec with Matchers {
+class HowMuchIsTotalAnnualRentFormSpec extends AnyWordSpec with Matchers {
 
   "AnnualRentForm" should {
 
@@ -71,7 +67,7 @@ class HowMuchIsTotalAnnualRentFormSpec extends AnyFlatSpec with Matchers {
     }
   }
 
-  it should "serialize to JSON correctly" in {
+  "serialize to JSON correctly" in {
     val form = HowMuchIsTotalAnnualRentForm(BigDecimal("9999999.99"))
     val json = Json.toJson(form)
 
@@ -80,7 +76,7 @@ class HowMuchIsTotalAnnualRentFormSpec extends AnyFlatSpec with Matchers {
     )
   }
 
-  it should "deserialize from JSON correctly" in {
+  "deserialize from JSON correctly" in {
     val json = Json.obj(
       "annualRent" -> 9999999.99
     )
@@ -90,7 +86,7 @@ class HowMuchIsTotalAnnualRentFormSpec extends AnyFlatSpec with Matchers {
     result.get shouldBe HowMuchIsTotalAnnualRentForm(BigDecimal("9999999.99"))
   }
 
-  it should "fail deserialization if value is missing" in {
+  "fail deserialization if value is missing" in {
     val json = Json.obj()
     val result = json.validate[HowMuchIsTotalAnnualRentForm]
 

@@ -19,7 +19,7 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.govukfrontend.views.Aliases.{Label, Text}
+import uk.gov.hmrc.govukfrontend.views.Aliases.*
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
@@ -54,21 +54,23 @@ class LandlordController @Inject()(view: LandlordView,
         name = "landlord-radio-other",
         maxLength = Some(250),
         label = Label(
-          classes = "govuk-label govuk-label--m",
+          classes = "govuk-label govuk-label--s",
           content = Text(Messages("landlord.radio5.dropdown"))
         )
       )))
   )
 
   def ngrRadio(form: Form[LandlordForm])(implicit messages: Messages): NGRRadio =
-    val landLordAndTenant: NGRRadioButtons = NGRRadioButtons(radioContent = "landlord.radio1", radioValue = LandLordAndTenant)
-    val familyMember: NGRRadioButtons = NGRRadioButtons(radioContent = "landlord.radio2", radioValue = FamilyMember)
-    val companyPensionFund: NGRRadioButtons = NGRRadioButtons(radioContent = "landlord.radio3", radioValue = CompanyPensionFund)
-    val businessPartnerOrSharedDirector: NGRRadioButtons = NGRRadioButtons(radioContent = "landlord.radio4", radioValue = BusinessPartnerOrSharedDirector)
+    val ngrRadioButtons: Seq[NGRRadioButtons] = Seq(
+      NGRRadioButtons(radioContent = "landlord.radio1", radioValue = LandLordAndTenant),
+      NGRRadioButtons(radioContent = "landlord.radio2", radioValue = FamilyMember),
+      NGRRadioButtons(radioContent = "landlord.radio3", radioValue = CompanyPensionFund),
+      NGRRadioButtons(radioContent = "landlord.radio4", radioValue = BusinessPartnerOrSharedDirector)
+    )
     NGRRadio(
       NGRRadioName("landlord-radio"),
       ngrTitle = Some(Legend(content = Text(messages("landlord.p2")), classes = "govuk-fieldset__legend--m", isPageHeading = true)),
-      NGRRadioButtons = Seq(landLordAndTennant, familyMember, companyPensionFund, businessPartnerOrSharedDirector, otherRelationship(form))
+      NGRRadioButtons = ngrRadioButtons :+ otherRelationship(form)
     )
 
   def show: Action[AnyContent] = {
@@ -95,6 +97,8 @@ class LandlordController @Inject()(view: LandlordView,
               (formError.key, formError.messages) match
                 case ("", messages) if messages.contains("landlord.radio.other.empty.error") =>
                   formError.copy(key = "landlord-radio-other")
+                case ("", messages) if messages.contains("landlord.radio.other.tooLong.error") =>
+                  formError.copy(key = "landlord-radio-other")
                 case _ =>
                   formError
             }
@@ -116,7 +120,6 @@ class LandlordController @Inject()(view: LandlordView,
             )
             Future.successful(Redirect(routes.WhatTypeOfAgreementController.show.url))
         )
-
     }
   }
 }
