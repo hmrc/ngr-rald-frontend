@@ -20,7 +20,7 @@ import play.api.data.Form
 import play.api.data.Forms.mapping
 import play.api.i18n.Messages
 import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.ngrraldfrontend.models.components.{LeaseOrTenancy, NGRRadio, NGRRadioButtons, NGRRadioName, No, Verbal, Written, Yes}
+import uk.gov.hmrc.ngrraldfrontend.models.components.{NGRRadio, NGRRadioButtons, NGRRadioName}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatTypeOfAgreementForm.text
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 
