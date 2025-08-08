@@ -18,9 +18,11 @@ package uk.gov.hmrc.ngrraldfrontend.actions
 
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{spy, when}
+import org.scalatest.matchers.should.Matchers.shouldBe
 import play.api.Application
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.libs.json.Json
 import play.api.mvc.Results.Ok
 import play.api.mvc.{AnyContent, Request, Result}
 import play.api.test.FakeRequest
@@ -29,7 +31,9 @@ import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.ngrraldfrontend.helpers.{TestData, TestSupport}
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
+import uk.gov.hmrc.ngrraldfrontend.models.{CurrentRatepayer, PropertyLinkingUserAnswers, RaldUserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.registration.*
+import uk.gov.hmrc.ngrraldfrontend.models.vmvProperty.VMVProperty
 import uk.gov.hmrc.ngrraldfrontend.models.{PropertyLinkingUserAnswers, RaldUserAnswers}
 
 import scala.concurrent.Future
