@@ -18,6 +18,7 @@ package uk.gov.hmrc.ngrraldfrontend.views
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import play.api.libs.json.Json
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.Radios
 import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{buildRadios, noButton, yesButton}
@@ -25,7 +26,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.components.{LeaseOrTenancy, NGRRadio, 
 import uk.gov.hmrc.ngrraldfrontend.models.forms.{AgreedRentChangeForm, WhatTypeOfAgreementForm}
 import uk.gov.hmrc.ngrraldfrontend.views.html.AgreedRentChangeView
 
-class AgreedRentChangeViewSpecextends extends ViewBaseSpec {
+class AgreedRentChangeViewSpec extends ViewBaseSpec {
   lazy val view:  AgreedRentChangeView = inject[ AgreedRentChangeView]
 
   object Strings {
@@ -37,10 +38,10 @@ class AgreedRentChangeViewSpecextends extends ViewBaseSpec {
   }
 
   object Selectors {
-    val heading = "#main-content > div > div > form > div > div > h1"
-    val p1 = "#main-content > div > div > form > div > div > p"
-    val radio1 = "#main-content > div > div > form > div > div > div > div > div:nth-child(1) > label"
-    val radio2 = "#main-content > div > div > form > div > div > div > div > div:nth-child(2) > label"
+    val heading = "#main-content > div > div.govuk-grid-column-two-thirds > form > h1"
+    val p1 = "#main-content > div > div.govuk-grid-column-two-thirds > form > p"
+    val radio1 = "#main-content > div > div.govuk-grid-column-two-thirds > form > div > div > div:nth-child(1) > label"
+    val radio2 = "#main-content > div > div.govuk-grid-column-two-thirds > form > div > div > div:nth-child(2) > label"
     val continue = "#continue"
   }
 
@@ -93,6 +94,32 @@ class AgreedRentChangeViewSpecextends extends ViewBaseSpec {
 
     "show correct continue button" in {
       elementText(Selectors.continue) mustBe Strings.continue
+    }
+
+    "serialize to JSON correctly" in {
+      val form = AgreedRentChangeForm(radioValue = "yes")
+      val json = Json.toJson(form)
+
+      json mustBe Json.obj(
+        "radioValue" -> "yes",
+      )
+    }
+
+    "deserialize from JSON correctly" in {
+      val json = Json.obj(
+        "radioValue" -> "yes",
+      )
+      val result = json.validate[AgreedRentChangeForm]
+
+      result.isSuccess mustBe true
+      result.get mustBe AgreedRentChangeForm("yes")
+    }
+
+    "fail deserialization if value is missing" in {
+      val json = Json.obj()
+      val result = json.validate[AgreedRentChangeForm]
+
+      result.isError mustBe true
     }
   }
 }

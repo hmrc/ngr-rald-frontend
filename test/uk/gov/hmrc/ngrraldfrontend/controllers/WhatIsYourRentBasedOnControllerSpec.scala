@@ -77,9 +77,9 @@ class WhatIsYourRentBasedOnControllerSpec extends ControllerSpecSupport {
             "rent-based-on-other-desc" -> "The rent was agreed"
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
-        headers(result) mustBe TreeMap("Location" -> "/ngr-rald-frontend/what-type-of-agreement-do-you-have")
+        headers(result) mustBe TreeMap("Location" -> "/ngr-rald-frontend/have-you-agreed-rent-changes-with-landlord")
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.WhatTypeOfAgreementController.show.url)
+        redirectLocation(result) mustBe Some(routes.AgreedRentChangeController.show.url)
       }
       "Return Form with Errors when no radio button is selected" in {
         mockRequest()

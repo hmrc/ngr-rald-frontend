@@ -32,19 +32,15 @@
 
 @(form:Form[AgreedRentChangeForm], navigationBarContent: NavigationBarContent, radios: Radios, propertyAddress: String)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
-@layout(pageTitle = Some(messages("agreedRentChange.title")), showBackLink = true, fullWidth = true, navigationBarContent = Some(navigationBarContent)) {
+@layout(pageTitle = Some(messages("agreedRentChange.title")), showBackLink = true, fullWidth = false, navigationBarContent = Some(navigationBarContent)) {
     @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.AgreedRentChangeController.submit, Symbol("autoComplete") -> "off") {
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <span class="govuk-caption-m">@propertyAddress</span>
-                <h1 class="govuk-heading-l">@messages("agreedRentChange.title")</h1>
-                <p class="govuk-body">@messages("agreedRentChange.p1")</p>
-                @govukRadios(radios)
-                @saveAndContinueButton(msg = messages("service.saveAndContinue"), isStartButton = false)
-            </div>
-        </div>
+        <span class="govuk-caption-m">@propertyAddress</span>
+        <h1 class="govuk-heading-l">@messages("agreedRentChange.title")</h1>
+        <p class="govuk-body">@messages("agreedRentChange.p1")</p>
+        @govukRadios(radios)
+        @saveAndContinueButton(msg = messages("service.saveAndContinue"), isStartButton = false)
     }
 }

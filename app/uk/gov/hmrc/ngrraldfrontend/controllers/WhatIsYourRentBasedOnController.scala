@@ -114,7 +114,7 @@ class WhatIsYourRentBasedOnController @Inject()(view: WhatIsYourRentBasedOnView,
               case "PercentageTurnover" =>
                 Future.successful(Redirect(routes.HowMuchIsTotalAnnualRentController.show.url))
               case _ =>
-                Future.successful(Redirect(routes.WhatTypeOfAgreementController.show.url))
+                Future.successful(Redirect(routes.AgreedRentChangeController.show.url))
         )
     }
   }
