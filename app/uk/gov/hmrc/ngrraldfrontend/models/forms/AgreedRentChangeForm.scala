@@ -29,7 +29,7 @@ case class AgreedRentChangeForm(radioValue: String)
 object AgreedRentChangeForm extends Mappings {
   implicit val format: OFormat[AgreedRentChangeForm] = Json.format[AgreedRentChangeForm]
 
-  private lazy val radioUnselectedError = "typeOfLeaseRenewal.required.error"
+  private lazy val radioUnselectedError = " agreedRentChange.empty.error"
   val agreedRentChangeRadio    = "agreed-rent-change-radio"
 
   def unapply(agreedRentChangeForm: AgreedRentChangeForm): Option[String] = Some(agreedRentChangeForm.radioValue)

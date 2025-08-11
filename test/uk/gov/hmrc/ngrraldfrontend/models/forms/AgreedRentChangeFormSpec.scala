@@ -23,7 +23,7 @@ import play.api.data.FormError
 class AgreedRentChangeFormSpec extends AnyWordSpec with Matchers {
 
   val fieldName = "agreed-rent-change-radio"
-  val requiredError = "typeOfLeaseRenewal.required.error"
+  val requiredError = "agreedRentChange.empty.error"
 
   "AgreedRentChangeForm" should {
     "bind successfully with a valid value yes" in {
