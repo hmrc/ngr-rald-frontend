@@ -26,6 +26,7 @@ case class NGRCharacterCount(
                               maxWords: Option[Int] = None,
                               maxLength: Option[Int] = None,
                               label: Label = Label(),
+                              classes: String = "",
                               hint: Option[Hint] = None,
                               errorMessage: Option[ErrorMessage] = None,
                             )

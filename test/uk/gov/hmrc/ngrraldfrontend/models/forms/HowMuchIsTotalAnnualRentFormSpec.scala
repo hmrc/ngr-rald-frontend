@@ -17,53 +17,57 @@
 package uk.gov.hmrc.ngrraldfrontend.models.forms
 
 
-import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
-import play.api.data.{Form, FormError}
+import org.scalatest.matchers.should.Matchers.{should, shouldBe}
+import org.scalatest.wordspec.AnyWordSpec
+import play.api.data.FormError
 import play.api.libs.json.Json
 
-class HowMuchIsTotalAnnualRentFormSpec extends AnyFlatSpec with Matchers {
+class HowMuchIsTotalAnnualRentFormSpec extends AnyWordSpec with Matchers {
 
-  val form: Form[HowMuchIsTotalAnnualRentForm] = HowMuchIsTotalAnnualRentForm.form
-  private lazy val annualRent = "how–much–is–total–annual–rent-value"
-  "AnnualRentForm" should "bind valid input" in {
-    val data = Map(annualRent -> "123456.78")
-    val boundForm = form.bind(data)
+  "AnnualRentForm" should {
 
-    boundForm.errors shouldBe empty
-    boundForm.value shouldBe Some(HowMuchIsTotalAnnualRentForm(BigDecimal("123456.78")))
+    "bind valid input" in {
+      val data = Map("how–much–is–total–annual–rent-value" -> "123456.78")
+      val boundForm = HowMuchIsTotalAnnualRentForm.form.bind(data)
+
+      boundForm.hasErrors shouldBe false
+      boundForm.value shouldBe Some(HowMuchIsTotalAnnualRentForm(BigDecimal("123456.78")))
+    }
+
+    "fail to bind empty input" in {
+      val data = Map.empty[String, String]
+      val boundForm = HowMuchIsTotalAnnualRentForm.form.bind(data)
+
+      boundForm.hasErrors shouldBe true
+      boundForm.errors should contain(FormError("how–much–is–total–annual–rent-value", "howMuchIsTotalAnnualRent.empty.error"))
+    }
+
+    "fail to bind non-numeric input" in {
+      val data = Map("how–much–is–total–annual–rent-value" -> "abc")
+      val boundForm = HowMuchIsTotalAnnualRentForm.form.bind(data)
+
+      boundForm.errors should contain(FormError("how–much–is–total–annual–rent-value", "howMuchIsTotalAnnualRent.format.error"))
+    }
+
+    "fail to bind input greater than 9999999.99" in {
+      val data = Map("how–much–is–total–annual–rent-value" -> "10000000.00")
+      val boundForm = HowMuchIsTotalAnnualRentForm.form.bind(data)
+
+      boundForm.hasErrors shouldBe true
+      boundForm.errors should contain(FormError("how–much–is–total–annual–rent-value", "howMuchIsTotalAnnualRent.tooLarge.error"))
+    }
+
+    "bind edge case of exactly 9999999.99" in {
+      val data = Map("how–much–is–total–annual–rent-value" -> "9999999.99")
+      val boundForm = HowMuchIsTotalAnnualRentForm.form.bind(data)
+
+      boundForm.hasErrors shouldBe false
+      boundForm.value shouldBe Some(HowMuchIsTotalAnnualRentForm(BigDecimal("9999999.99")))
+    }
   }
 
-  it should "fail to bind empty input" in {
-    val data = Map(annualRent -> "")
-    val boundForm = form.bind(data)
-
-    boundForm.errors should contain(FormError(annualRent, "howMuchIsTotalAnnualRent.empty.error"))
-  }
-
-  it should "fail to bind non-numeric input" in {
-    val data = Map(annualRent -> "abc")
-    val boundForm = form.bind(data)
-
-    boundForm.errors should contain(FormError(annualRent, "howMuchIsTotalAnnualRent.format.error"))
-  }
-
-  it should "fail to bind input greater than 9999999.99" in {
-    val data = Map(annualRent -> "10000000.00")
-    val boundForm = form.bind(data)
-
-    boundForm.errors should contain(FormError(annualRent, "howMuchIsTotalAnnualRent.tooLarge.error"))
-  }
-
-  it should "bind edge case of exactly 9999999.99" in {
-    val data = Map(annualRent -> "9999999.99")
-    val boundForm = form.bind(data)
-
-    boundForm.errors shouldBe empty
-    boundForm.value shouldBe Some(HowMuchIsTotalAnnualRentForm(BigDecimal("9999999.99")))
-  }
-
-  it should "serialize to JSON correctly" in {
+  "serialize to JSON correctly" in {
     val form = HowMuchIsTotalAnnualRentForm(BigDecimal("9999999.99"))
     val json = Json.toJson(form)
 
@@ -72,7 +76,7 @@ class HowMuchIsTotalAnnualRentFormSpec extends AnyFlatSpec with Matchers {
     )
   }
 
-  it should "deserialize from JSON correctly" in {
+  "deserialize from JSON correctly" in {
     val json = Json.obj(
       "annualRent" -> 9999999.99
     )
@@ -82,7 +86,7 @@ class HowMuchIsTotalAnnualRentFormSpec extends AnyFlatSpec with Matchers {
     result.get shouldBe HowMuchIsTotalAnnualRentForm(BigDecimal("9999999.99"))
   }
 
-  it should "fail deserialization if value is missing" in {
+  "fail deserialization if value is missing" in {
     val json = Json.obj()
     val result = json.validate[HowMuchIsTotalAnnualRentForm]
 

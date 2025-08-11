@@ -28,6 +28,7 @@
     maxLength = ngrCharacterCount.maxLength,
     value = form(ngrCharacterCount.name).value,
     label = ngrCharacterCount.label,
+    classes = ngrCharacterCount.classes,
     errorMessage = form.errors(ngrCharacterCount.name) match {
         case Nil => None
         case errors => Some(ErrorMessage(content = HtmlContent(errors.map(err => messages(err.message)).mkString("<br>"))))
