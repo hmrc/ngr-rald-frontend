@@ -83,7 +83,7 @@ class WhatIsYourRentBasedOnControllerSpec extends ControllerSpecSupport {
       }
       "Return Form with Errors when no radio button is selected" in {
         mockRequest()
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.WhatIsYourRentBasedOnController.submit)
           .withFormUrlEncodedBody(
             "rent-based-on-radio" -> ""
           )
@@ -95,7 +95,7 @@ class WhatIsYourRentBasedOnControllerSpec extends ControllerSpecSupport {
         content must include("Select what your rent is based on")
       }
       "Return Form with Errors when radio button Other is selected but no other description is given" in {
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.WhatIsYourRentBasedOnController.submit)
           .withFormUrlEncodedBody(
             "rent-based-on-radio" -> "Other",
             "rent-based-on-other-desc" -> ""
@@ -108,7 +108,7 @@ class WhatIsYourRentBasedOnControllerSpec extends ControllerSpecSupport {
       }
       "Return Form with Errors when radio button Other is selected but other description is over 250 characters" in {
         val over250Characters = "Bug Me Not PVT LTD, RODLEY LANE, RODLEY, LEEDS, BH1 1HU What is your rent based on?Open market value This is the rent a landlord could rent the property for if, it was available to anyoneA percentage of open market value This is a percentage of the rent a landlord could rent the property for if, it was available to anyoneTurnover top-up The rent is a fixed base rent with an additional payment based on a percentage of your turnoverA percentage of expected turnover The rent paid is based on a percentage of turnoverTotal Occupancy Cost leases (TOCs)The rent is the total cost of leasing the property. It includes base rent, business rates, insurance and utilities. It also includes common area maintenance and tenant improvements Indexation The rent is reviewed according to an index (such as Retail Price Index)Other The rent was agreed another way Can you tell us how your rent was agreed?"
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.WhatIsYourRentBasedOnController.submit)
           .withFormUrlEncodedBody(
             "rent-based-on-radio" -> "Other",
             "rent-based-on-other-desc" -> over250Characters
@@ -122,7 +122,7 @@ class WhatIsYourRentBasedOnControllerSpec extends ControllerSpecSupport {
       "Return Exception if no address is in the mongo" in {
         mockRequestWithoutProperty()
         val exception = intercept[NotFoundException] {
-          await(controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+          await(controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.WhatIsYourRentBasedOnController.submit)
             .withFormUrlEncodedBody(("rent-based-on-radio" -> "Other"))
             .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some("")))))
         }

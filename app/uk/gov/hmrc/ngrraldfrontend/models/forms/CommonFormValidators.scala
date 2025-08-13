@@ -16,7 +16,10 @@
 
 package uk.gov.hmrc.ngrraldfrontend.models.forms
 
-import play.api.data.validation.{Constraint, Invalid, Valid}
+import play.api.data.validation.{Constraint, Invalid, Valid, ValidationResult}
+import uk.gov.hmrc.ngrraldfrontend.models.{DateErrorKeys, Day, DayAndMonth, DayAndYear, Month, MonthAndYear, NGRDate, Required, Year}
+
+import scala.util.Try
 
 trait CommonFormValidators {
   protected def firstError[A](constraints: Constraint[A]*): Constraint[A] =
@@ -34,4 +37,32 @@ trait CommonFormValidators {
       case _ =>
         Invalid(errorKey, maximum)
     }
+
+  protected def isDateEmpty[A](errorKeys: Map[DateErrorKeys, String]): Constraint[A] =
+    Constraint((input: A) =>
+      dateEmptyValidation(input.asInstanceOf[NGRDate], errorKeys)
+  )
+
+  protected def isDateValid[A](errorKey: String): Constraint[A] =
+    Constraint((input: A) =>
+      val date = input.asInstanceOf[NGRDate]
+      dateValidation(date, errorKey)
+    )
+
+  protected def dateEmptyValidation(date: NGRDate, errorKeys: Map[DateErrorKeys, String]): ValidationResult =
+    (date.day.isEmpty, date.month.isEmpty, date.year.isEmpty) match
+      case (true, true, true) => Invalid(errorKeys.get(Required).getOrElse(""))
+      case (true, true, false) => Invalid(errorKeys.get(DayAndMonth).getOrElse(""))
+      case (true, false, true) => Invalid(errorKeys.get(DayAndYear).getOrElse(""))
+      case (false, true, true) => Invalid(errorKeys.get(MonthAndYear).getOrElse(""))
+      case (true, false, false) => Invalid(errorKeys.get(Day).getOrElse(""))
+      case (false, true, false) => Invalid(errorKeys.get(Month).getOrElse(""))
+      case (false, false, true) => Invalid(errorKeys.get(Year).getOrElse(""))
+      case (_, _, _) => Valid
+      
+  protected def dateValidation(date: NGRDate, errorKey: String) =
+    if (Try(date.ngrDate).isFailure)
+      Invalid(errorKey)
+    else
+      Valid  
 }

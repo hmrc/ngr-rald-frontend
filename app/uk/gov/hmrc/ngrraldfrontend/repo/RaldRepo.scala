@@ -125,6 +125,13 @@ case class RaldRepo @Inject()(mongo: MongoComponent,
     findAndUpdateByCredId(credId, Updates.set("rentAmount", rentAmount.toString()))
   }
 
+  def insertAgreementVerbal(credId: CredId, startDate: String, openEnded: Boolean, endDate: Option[String]): Future[Option[RaldUserAnswers]] = {
+    val updates = Seq(Updates.set("agreementVerbal.startDate", startDate),
+      Updates.set("agreementVerbal.openEnded", openEnded),
+      Updates.set("agreementVerbal.endDate", endDate.getOrElse(null)))
+    findAndUpdateByCredId(credId, updates: _*)
+  }
+
   def findByCredId(credId: CredId): Future[Option[RaldUserAnswers]] = {
     collection.find(
       equal("credId.value", credId.value)

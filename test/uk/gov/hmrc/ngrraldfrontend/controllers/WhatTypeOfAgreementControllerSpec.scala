@@ -68,6 +68,18 @@ class WhatTypeOfAgreementControllerSpec extends ControllerSpecSupport {
         status(result) mustBe SEE_OTHER
         redirectLocation(result) shouldBe Some(routes.WhatTypeOfAgreementController.show.url)
       }
+      "Return OK and the correct view after submitting with verbal radio button" in {
+        when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(Some(RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property))))
+        mockRequest(hasCredId = true)
+        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.WhatTypeOfAgreementController.submit)
+          .withFormUrlEncodedBody(("what-type-of-agreement-radio", "Verbal"))
+          .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
+        result.map(result => {
+          result.header.headers.get("Location") shouldBe Some("/ngr-rald-frontend/agreement-verbal")
+        })
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(routes.AgreementVerbalController.show.url)
+      }
       "Return Form with Errors when no radio button is selected" in {
         mockRequest(hasCredId = true)
         val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.WhatTypeOfAgreementController.submit)

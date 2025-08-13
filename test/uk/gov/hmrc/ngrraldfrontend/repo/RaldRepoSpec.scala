@@ -23,7 +23,7 @@ import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 import uk.gov.hmrc.ngrraldfrontend.helpers.{TestData, TestSupport}
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.models.{Landlord, RaldUserAnswers, RentBasedOn}
+import uk.gov.hmrc.ngrraldfrontend.models.{AgreementVerbal, Landlord, RaldUserAnswers, RentBasedOn}
 
 class RaldRepoSpec extends TestSupport with TestData
   with DefaultPlayMongoRepositorySupport[RaldUserAnswers] {
@@ -114,6 +114,26 @@ class RaldRepoSpec extends TestSupport with TestData
       await(repository.insertAnnualRent(credId, annualRent))
       val actual = await(repository.findByCredId(credId))
       actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, rentAmount = Some("10000.99")))
+    }
+
+    "insert agreement verbal with end date successfully" in {
+      await(
+        repository.insertAgreementVerbal(
+          credId, "2025-10-30", true, Some("2027-11-30")
+        ))
+      val actual = await(repository.findByCredId(credId))
+      actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, agreementVerbal = Some(AgreementVerbal("2025-10-30", true, Some("2027-11-30")))))
+    }
+
+    "insert agreement verbal without end date successfully" in {
+      await(repository.insertAgreementVerbal(credId, "2025-10-30", true, Some("2027-11-30")))
+      //Testing if end date value has been deleted
+      await(
+        repository.insertAgreementVerbal(
+          credId, "2025-10-30", false, None
+        ))
+      val actual = await(repository.findByCredId(credId))
+      actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, agreementVerbal = Some(AgreementVerbal("2025-10-30", false, None))))
     }
 
     "credId doesn't exist in mongoDB" in {
