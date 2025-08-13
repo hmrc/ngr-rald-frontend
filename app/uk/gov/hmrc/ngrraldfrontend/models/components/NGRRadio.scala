@@ -53,6 +53,12 @@ case object TotalOccupancyCost extends RentBasedOn
 case object Indexation extends RentBasedOn
 case object Other extends RentBasedOn
 
+sealed trait Agreement extends RadioEntry
+case object YesOpenEnded extends Agreement
+case object NoOpenEnded extends Agreement
+case object YesBreakClause extends Agreement
+case object NoBreakClause extends Agreement
+
 case class NGRRadioName(key: String)
 
 case class NGRRadioButtons(radioContent: String,

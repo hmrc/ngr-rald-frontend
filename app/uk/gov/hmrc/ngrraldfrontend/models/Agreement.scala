@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,18 +12,20 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+package uk.gov.hmrc.ngrraldfrontend.models
 
-@this(govukDateInput: GovukDateInput)
-@(form: Form[_], dateInput: DateInput)(implicit messages: Messages)
+import play.api.libs.json.{Json, OFormat}
 
-@govukDateInput(DateInput(
-    id = dateInput.id,
-    namePrefix = None,
-    fieldset = dateInput.fieldset,
-    hint = dateInput.hint,
-    errorMessage = form(dateInput.id).error.map(e => ErrorMessage.errorMessageWithDefaultStringsTranslated(content = Text(messages(e.message, e.args:_*))))
-).withDayMonthYearFormField(form(dateInput.id)))
+case class Agreement(
+                      agreementStart : String,
+                      isOpenEnded: String,
+                      openEndedDate:Option[String],
+                      haveBreakClause: String,
+                      breakClauseInfo:Option[String]
+                    )
+
+object Agreement {
+  implicit val format: OFormat[Agreement] = Json.format[Agreement]
+}

@@ -79,7 +79,7 @@ class WhatTypeOfAgreementController @Inject()(view: WhatTypeOfAgreementView,
               case "Verbal" =>
                 Future.successful(Redirect(routes.AgreementVerbalController.show.url))
               case _ =>
-                Future.successful(Redirect(routes.WhatTypeOfAgreementController.show.url))
+                Future.successful(Redirect(routes.AgreementController.show.url))
         )
     }
   }
