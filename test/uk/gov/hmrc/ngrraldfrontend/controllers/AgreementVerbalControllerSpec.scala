@@ -137,7 +137,7 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
         status(result) mustBe BAD_REQUEST
         val content = contentAsString(result)
         content must include(pageTitle)
-        content must include("<a href=\"#agreementEndDate\">Date your agreement ended must be a real date</a>")
+        content must include("<a href=\"#agreementEndDate\">Date your agreement ends must be a real date</a>")
       }
       "Return Form with Errors when start date is missing day" in {
         val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit)
@@ -196,7 +196,7 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
         status(result) mustBe BAD_REQUEST
         val content = contentAsString(result)
         content must include(pageTitle)
-        content must include("<a href=\"#agreementEndDate.day\">Date your agreement ended must include a day</a>")
+        content must include("<a href=\"#agreementEndDate.day\">Date your agreement ends must include a day</a>")
       }
       "Return Form with Errors when end date is missing month" in {
         val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit)
@@ -213,7 +213,7 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
         status(result) mustBe BAD_REQUEST
         val content = contentAsString(result)
         content must include(pageTitle)
-        content must include("<a href=\"#agreementEndDate.month\">Date your agreement ended must include a month</a>")
+        content must include("<a href=\"#agreementEndDate.month\">Date your agreement ends must include a month</a>")
       }
       "Return Form with Errors when end date is missing year" in {
         val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit)
@@ -230,7 +230,7 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
         status(result) mustBe BAD_REQUEST
         val content = contentAsString(result)
         content must include(pageTitle)
-        content must include("<a href=\"#agreementEndDate.year\">Date your agreement ended must include a year</a>")
+        content must include("<a href=\"#agreementEndDate.year\">Date your agreement ends must include a year</a>")
       }
       "Return Exception if no address is in the mongo" in {
         mockRequestWithoutProperty()
