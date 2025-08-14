@@ -1,24 +1,26 @@
 # microservice specific routes
 
-->         /hmrc-frontend                               hmrcfrontend.Routes
-GET        /assets/*file                                controllers.Assets.versioned(path = "/public", file: Asset)
-GET        /tell-us-about-your-new-agreement            uk.gov.hmrc.ngrraldfrontend.controllers.TellUsAboutYourNewAgreementController.show
-POST       /tell-us-about-your-new-agreement            uk.gov.hmrc.ngrraldfrontend.controllers.TellUsAboutYourNewAgreementController.submit
-GET        /tell-us-about-your-renewed-agreement        uk.gov.hmrc.ngrraldfrontend.controllers.TellUsAboutYourRenewedAgreementController.show
-POST       /tell-us-about-your-renewed-agreement        uk.gov.hmrc.ngrraldfrontend.controllers.TellUsAboutYourRenewedAgreementController.submit
-GET        /tell-us-about-rent-review                   uk.gov.hmrc.ngrraldfrontend.controllers.TellUsAboutRentController.show
-POST       /tell-us-about-rent-review                   uk.gov.hmrc.ngrraldfrontend.controllers.TellUsAboutRentController.submit
-GET        /what-type-of-lease-renewal-is-it            uk.gov.hmrc.ngrraldfrontend.controllers.WhatTypeOfLeaseRenewalController.show
-POST       /what-type-of-lease-renewal-is-it            uk.gov.hmrc.ngrraldfrontend.controllers.WhatTypeOfLeaseRenewalController.submit
-GET        /what-type-of-agreement-do-you-have          uk.gov.hmrc.ngrraldfrontend.controllers.WhatTypeOfAgreementController.show
-POST       /what-type-of-agreement-do-you-have          uk.gov.hmrc.ngrraldfrontend.controllers.WhatTypeOfAgreementController.submit
-GET        /landlord                                    uk.gov.hmrc.ngrraldfrontend.controllers.LandlordController.show
-POST       /landlord                                    uk.gov.hmrc.ngrraldfrontend.controllers.LandlordController.submit
-GET        /what-is-your-rent-based-on                  uk.gov.hmrc.ngrraldfrontend.controllers.WhatIsYourRentBasedOnController.show
-POST       /what-is-your-rent-based-on                  uk.gov.hmrc.ngrraldfrontend.controllers.WhatIsYourRentBasedOnController.submit
-GET        /how-much-is-total-annual-rent               uk.gov.hmrc.ngrraldfrontend.controllers.HowMuchIsTotalAnnualRentController.show
-POST       /how-much-is-total-annual-rent               uk.gov.hmrc.ngrraldfrontend.controllers.HowMuchIsTotalAnnualRentController.submit
+->         /hmrc-frontend                          hmrcfrontend.Routes
+GET        /assets/*file                           controllers.Assets.versioned(path = "/public", file: Asset)
+GET        /tell-us-about-your-new-agreement       uk.gov.hmrc.ngrraldfrontend.controllers.TellUsAboutYourNewAgreementController.show
+POST       /tell-us-about-your-new-agreement       uk.gov.hmrc.ngrraldfrontend.controllers.TellUsAboutYourNewAgreementController.submit
+GET        /tell-us-about-your-renewed-agreement   uk.gov.hmrc.ngrraldfrontend.controllers.TellUsAboutYourRenewedAgreementController.show
+POST       /tell-us-about-your-renewed-agreement   uk.gov.hmrc.ngrraldfrontend.controllers.TellUsAboutYourRenewedAgreementController.submit
+GET        /tell-us-about-rent-review              uk.gov.hmrc.ngrraldfrontend.controllers.TellUsAboutRentController.show
+POST       /tell-us-about-rent-review              uk.gov.hmrc.ngrraldfrontend.controllers.TellUsAboutRentController.submit
+GET        /what-type-of-lease-renewal-is-it       uk.gov.hmrc.ngrraldfrontend.controllers.WhatTypeOfLeaseRenewalController.show
+POST       /what-type-of-lease-renewal-is-it       uk.gov.hmrc.ngrraldfrontend.controllers.WhatTypeOfLeaseRenewalController.submit
+GET        /what-type-of-agreement-do-you-have     uk.gov.hmrc.ngrraldfrontend.controllers.WhatTypeOfAgreementController.show
+POST       /what-type-of-agreement-do-you-have     uk.gov.hmrc.ngrraldfrontend.controllers.WhatTypeOfAgreementController.submit
+GET        /landlord                               uk.gov.hmrc.ngrraldfrontend.controllers.LandlordController.show
+POST       /landlord                               uk.gov.hmrc.ngrraldfrontend.controllers.LandlordController.submit
+GET        /what-is-your-rent-based-on             uk.gov.hmrc.ngrraldfrontend.controllers.WhatIsYourRentBasedOnController.show
+POST       /what-is-your-rent-based-on             uk.gov.hmrc.ngrraldfrontend.controllers.WhatIsYourRentBasedOnController.submit
+GET        /how-much-is-total-annual-rent          uk.gov.hmrc.ngrraldfrontend.controllers.HowMuchIsTotalAnnualRentController.show
+POST       /how-much-is-total-annual-rent          uk.gov.hmrc.ngrraldfrontend.controllers.HowMuchIsTotalAnnualRentController.submit
 GET        /have-you-agreed-rent-changes-with-landlord  uk.gov.hmrc.ngrraldfrontend.controllers.AgreedRentChangeController.show
 POST       /have-you-agreed-rent-changes-with-landlord  uk.gov.hmrc.ngrraldfrontend.controllers.AgreedRentChangeController.submit
 GET        /agreement-verbal                            uk.gov.hmrc.ngrraldfrontend.controllers.AgreementVerbalController.show
 POST       /agreement-verbal                            uk.gov.hmrc.ngrraldfrontend.controllers.AgreementVerbalController.submit
+GET        /do-you-have-a-rent-free-period         uk.gov.hmrc.ngrraldfrontend.controllers.CheckRentFreePeriodController.show
+POST       /do-you-have-a-rent-free-period         uk.gov.hmrc.ngrraldfrontend.controllers.CheckRentFreePeriodController.submit

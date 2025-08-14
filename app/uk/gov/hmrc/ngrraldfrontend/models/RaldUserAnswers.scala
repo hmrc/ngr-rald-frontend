@@ -30,7 +30,8 @@ final case class RaldUserAnswers(
                                   rentBasedOn: Option[RentBasedOn] = None,
                                   rentAmount:Option[String] = None,
                                   agreedRentChange: Option[String] = None,
-                                  agreementVerbal: Option[AgreementVerbal] = None
+                                  agreementVerbal: Option[AgreementVerbal] = None,
+                                  hasRentFreePeriod: Option[Boolean] = None
                                 )
 
 
