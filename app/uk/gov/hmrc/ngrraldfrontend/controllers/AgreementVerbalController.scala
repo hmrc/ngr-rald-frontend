@@ -104,12 +104,12 @@ class AgreementVerbalController @Inject()(view: AgreementVerbalView,
               .getOrElse(throw new NotFoundException("Couldn't find property in mongo")),
           agreementVerbalForm =>
             val openEnded: Boolean = agreementVerbalForm.radioValue.equals("Yes")
-                        raldRepo.insertAgreementVerbal(
-                          CredId(request.credId.getOrElse("")),
-                          agreementVerbalForm.agreementStartDate.makeString,
-                          openEnded,
-                          if (openEnded) None else agreementVerbalForm.agreementEndDate.map(_.makeString)
-                        )
+            raldRepo.insertAgreementVerbal(
+              CredId(request.credId.getOrElse("")),
+              agreementVerbalForm.agreementStartDate.makeString,
+              openEnded,
+              if (openEnded) None else agreementVerbalForm.agreementEndDate.map(_.makeString)
+            )
             Future.successful(Redirect(routes.HowMuchIsTotalAnnualRentController.show.url))
         )
     }
