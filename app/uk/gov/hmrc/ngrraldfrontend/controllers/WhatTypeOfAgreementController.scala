@@ -75,7 +75,11 @@ class WhatTypeOfAgreementController @Inject()(view: WhatTypeOfAgreementView,
               credId = CredId(request.credId.getOrElse("")),
               whatTypeOfAgreement = whatTypeOfAgreementForm.radioValue
             )
-            Future.successful(Redirect(routes.WhatTypeOfAgreementController.show.url))
+            whatTypeOfAgreementForm.radioValue match
+              case "Verbal" =>
+                Future.successful(Redirect(routes.AgreementVerbalController.show.url))
+              case _ =>
+                Future.successful(Redirect(routes.WhatTypeOfAgreementController.show.url))
         )
     }
   }

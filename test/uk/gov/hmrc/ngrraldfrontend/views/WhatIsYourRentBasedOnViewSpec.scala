@@ -44,7 +44,7 @@ class WhatIsYourRentBasedOnViewSpec extends ViewBaseSpec {
   val radio6 = "Indexation"
   val radio7 = "Other"
   val radio1Hint = "This is the rent a landlord could rent the property for if, it was available to anyone"
-  val radio2Hint = "This is a percentage of the rent a landlord could rent the property for if, it was available to anyone"
+  val radio2Hint = "This is a percentage of the rent a landlord could rent the property for, if it was available to anyone"
   val radio3Hint = "The rent is a fixed base rent with an additional payment based on a percentage of your turnover"
   val radio4Hint = "The rent paid is based on a percentage of turnover"
   val radio5Hint = "The rent is the total cost of leasing the property. It includes base rent, business rates, insurance and utilities. It also includes common area maintenance and tenant improvements"
