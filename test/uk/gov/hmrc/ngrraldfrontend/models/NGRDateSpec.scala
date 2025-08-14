@@ -16,8 +16,12 @@
 
 package uk.gov.hmrc.ngrraldfrontend.models
 
+import play.api.data.Form
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.ngrraldfrontend.helpers.TestSupport
+import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreementForm.dateMapping
+
+import java.time.LocalDate
 
 class NGRDateSpec extends TestSupport {
 
@@ -39,6 +43,32 @@ class NGRDateSpec extends TestSupport {
     }
     "serialize to json" in {
       ngrDateJson.as[NGRDate] mustBe ngrDate
+    }
+    "convert to LocalDate correctly" in {
+      val date = NGRDate("15", "08", "2025")
+      date.ngrDate mustBe LocalDate.of(2025, 8, 15)
+    }
+
+    "format date as string correctly" in {
+      val date = NGRDate("01", "12", "2023")
+      date.makeString mustBe "2023-12-01"
+    }
+
+    "serialize and deserialize to/from JSON" in {
+      val date = NGRDate("10", "11", "2022")
+      val json = Json.toJson(date)
+      json.toString must include("2022")
+      val parsed = json.as[NGRDate]
+      parsed mustBe date
+    }
+  }
+
+  "DateMappings" should {
+    "bind valid form data to Date" in {
+      val formData = Map("day" -> "05", "month" -> "09", "year" -> "2024")
+      val boundForm = Form(dateMapping).bind(formData)
+      boundForm.hasErrors mustBe false
+      boundForm.value mustBe Some(NGRDate("05", "09", "2024"))
     }
   }
 }

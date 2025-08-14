@@ -19,15 +19,15 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.govukfrontend.views.Aliases.{Fieldset, Hint, Label, Legend, Text}
+import uk.gov.hmrc.govukfrontend.views.Aliases.*
 import uk.gov.hmrc.govukfrontend.views.html.components.ErrorMessage
 import uk.gov.hmrc.govukfrontend.views.viewmodels.dateinput.DateInput
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
+import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
-import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreementForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreementForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
@@ -156,39 +156,39 @@ class AgreementController @Inject()(view: AgreementView,
           formWithErrors =>
             val correctedFormErrors = formWithErrors.errors.map { formError =>
               (formError.key, formError.messages) match
-                case ("", messages) if messages.contains("agreement.startDate.empty.error") =>
+                case ("", messages) if messages.contains("agreement.startDate.required.error") =>
                   formError.copy(key = "agreementStartDate")
                 case ("", messages) if messages.contains("agreement.startDate.format.error") =>
                   formError.copy(key = "agreementStartDate")
-                case ("", messages) if messages.contains("agreement.startDate.day.month.empty.error") =>
+                case ("", messages) if messages.contains("agreement.startDate.day.month.required.error") =>
                   formError.copy(key = "agreementStartDate")
-                case ("", messages) if messages.contains("agreement.startDate.day.year.empty.error") =>
+                case ("", messages) if messages.contains("agreement.startDate.day.year.required.error") =>
                   formError.copy(key = "agreementStartDate")
-                case ("", messages) if messages.contains("agreement.startDate.month.year.empty.error") =>
+                case ("", messages) if messages.contains("agreement.startDate.month.year.required.error") =>
                   formError.copy(key = "agreementStartDate")
-                case ("", messages) if messages.contains("agreement.startDate.day.empty.error") =>
+                case ("", messages) if messages.contains("agreement.startDate.day.required.error") =>
                   formError.copy(key = "agreementStartDate")
-                case ("", messages) if messages.contains("agreement.startDate.month.empty.error") =>
+                case ("", messages) if messages.contains("agreement.startDate.month.required.error") =>
                   formError.copy(key = "agreementStartDate")
-                case ("", messages) if messages.contains("agreement.startDate.year.empty.error") =>
+                case ("", messages) if messages.contains("agreement.startDate.year.required.error") =>
                   formError.copy(key = "agreementStartDate")
-                case ("", messages) if messages.contains("agreement.endDate.empty.error") =>
+                case ("", messages) if messages.contains("agreement.endDate.required.error") =>
                   formError.copy(key = "agreementEndDate")
                 case ("", messages) if messages.contains("agreement.endDate.format.error") =>
                   formError.copy(key = "agreementEndDate")
-                case ("", messages) if messages.contains("agreement.endDate.day.month.empty.error") =>
+                case ("", messages) if messages.contains("agreement.endDate.day.month.required.error") =>
                   formError.copy(key = "agreementEndDate")
-                case ("", messages) if messages.contains("agreement.endDate.day.year.empty.error") =>
+                case ("", messages) if messages.contains("agreement.endDate.day.year.required.error") =>
                   formError.copy(key = "agreementEndDate")
-                case ("", messages) if messages.contains("agreement.endDate.month.year.empty.error") =>
+                case ("", messages) if messages.contains("agreement.endDate.month.year.required.error") =>
                   formError.copy(key = "agreementEndDate")
-                case ("", messages) if messages.contains("agreement.endDate.day.empty.error") =>
+                case ("", messages) if messages.contains("agreement.endDate.day.required.error") =>
                   formError.copy(key = "agreementEndDate")
-                case ("", messages) if messages.contains("agreement.endDate.month.empty.error") =>
+                case ("", messages) if messages.contains("agreement.endDate.month.required.error") =>
                   formError.copy(key = "agreementEndDate")
-                case ("", messages) if messages.contains("agreement.endDate.year.empty.error") =>
+                case ("", messages) if messages.contains("agreement.endDate.year.required.error") =>
                   formError.copy(key = "agreementEndDate")
-                case ("", messages) if messages.contains("agreement.radio.breakClause.empty.error") =>
+                case ("", messages) if messages.contains("agreement.radio.breakClause.required.error") =>
                   formError.copy(key = "about-break-clause")
                 case ("", messages) if messages.contains("agreement.radio.breakClause.tooLong.error") =>
                   formError.copy(key = "about-break-clause")
