@@ -108,7 +108,7 @@ class AgreementVerbalController @Inject()(view: AgreementVerbalView,
                           CredId(request.credId.getOrElse("")),
                           agreementVerbalForm.agreementStartDate.makeString,
                           openEnded,
-                          if (openEnded) agreementVerbalForm.agreementEndDate.map(_.makeString) else None
+                          if (openEnded) None else agreementVerbalForm.agreementEndDate.map(_.makeString)
                         )
             Future.successful(Redirect(routes.HowMuchIsTotalAnnualRentController.show.url))
         )
