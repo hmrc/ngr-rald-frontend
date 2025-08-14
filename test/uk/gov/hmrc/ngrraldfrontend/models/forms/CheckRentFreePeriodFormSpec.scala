@@ -19,13 +19,23 @@ package uk.gov.hmrc.ngrraldfrontend.models.forms
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.FormError
+import play.api.libs.json.{JsValue, Json}
 
 class CheckRentFreePeriodFormSpec extends AnyWordSpec with Matchers {
   
   val fieldName = "check-rent-period-radio"
   val requiredError = "checkRentPeriod.empty.error"
-  
+  val checkRentPeriodModel: CheckRentFreePeriodForm = CheckRentFreePeriodForm("Yes")
+  val checkRentPeriodJson: JsValue = Json.parse("""{"radioValue":"Yes"}
+                                                  |""".stripMargin)
+
   "CheckRentPeriod" should {
+    "serialize into json" in {
+      Json.toJson(checkRentPeriodModel) shouldBe checkRentPeriodJson
+    }
+    "deserialize from json" in {
+      checkRentPeriodJson.as[CheckRentFreePeriodForm] shouldBe checkRentPeriodModel
+    }
     "bind successfully with a valid value yes" in {
       val data = Map(fieldName -> "yes")
       val boundForm = CheckRentFreePeriodForm.form.bind(data)

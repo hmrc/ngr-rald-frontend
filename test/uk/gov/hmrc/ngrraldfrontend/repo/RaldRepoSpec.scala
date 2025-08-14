@@ -149,7 +149,7 @@ class RaldRepoSpec extends TestSupport with TestData
 
       await(repository.insertHasRentFreePeriod(credId, hasRentFreePeriod))
       val actual = await(repository.findByCredId(credId))
-      actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, hasRentFreePeriod = Some("Yes")))
+      actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, hasRentFreePeriod = Some(true)))
     }
 
     "credId doesn't exist in mongoDB" in {

@@ -122,7 +122,11 @@ case class RaldRepo @Inject()(mongo: MongoComponent,
   }
 
   def insertHasRentFreePeriod(credId: CredId, hasRentFreePeriod: String): Future[Option[RaldUserAnswers]] = {
-    findAndUpdateByCredId(credId, Updates.set("hasRentFreePeriod", hasRentFreePeriod))
+    hasRentFreePeriod match {
+      case "Yes" => findAndUpdateByCredId(credId, Updates.set("hasRentFreePeriod", true))
+      case _ => findAndUpdateByCredId(credId, Updates.set("hasRentFreePeriod", false))
+    }
+    
   }
 
   def insertAnnualRent(credId: CredId, rentAmount: BigDecimal): Future[Option[RaldUserAnswers]] = {
