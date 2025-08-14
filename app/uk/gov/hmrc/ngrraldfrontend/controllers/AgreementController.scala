@@ -156,42 +156,12 @@ class AgreementController @Inject()(view: AgreementView,
           formWithErrors =>
             val correctedFormErrors = formWithErrors.errors.map { formError =>
               (formError.key, formError.messages) match
-                case ("", messages) if messages.contains("agreement.startDate.required.error") =>
-                  formError.copy(key = "agreementStartDate")
-                case ("", messages) if messages.contains("agreement.startDate.format.error") =>
-                  formError.copy(key = "agreementStartDate")
-                case ("", messages) if messages.contains("agreement.startDate.day.month.required.error") =>
-                  formError.copy(key = "agreementStartDate")
-                case ("", messages) if messages.contains("agreement.startDate.day.year.required.error") =>
-                  formError.copy(key = "agreementStartDate")
-                case ("", messages) if messages.contains("agreement.startDate.month.year.required.error") =>
-                  formError.copy(key = "agreementStartDate")
-                case ("", messages) if messages.contains("agreement.startDate.day.required.error") =>
-                  formError.copy(key = "agreementStartDate")
-                case ("", messages) if messages.contains("agreement.startDate.month.required.error") =>
-                  formError.copy(key = "agreementStartDate")
-                case ("", messages) if messages.contains("agreement.startDate.year.required.error") =>
-                  formError.copy(key = "agreementStartDate")
-                case ("", messages) if messages.contains("agreement.endDate.required.error") =>
-                  formError.copy(key = "agreementEndDate")
-                case ("", messages) if messages.contains("agreement.endDate.format.error") =>
-                  formError.copy(key = "agreementEndDate")
-                case ("", messages) if messages.contains("agreement.endDate.day.month.required.error") =>
-                  formError.copy(key = "agreementEndDate")
-                case ("", messages) if messages.contains("agreement.endDate.day.year.required.error") =>
-                  formError.copy(key = "agreementEndDate")
-                case ("", messages) if messages.contains("agreement.endDate.month.year.required.error") =>
-                  formError.copy(key = "agreementEndDate")
-                case ("", messages) if messages.contains("agreement.endDate.day.required.error") =>
-                  formError.copy(key = "agreementEndDate")
-                case ("", messages) if messages.contains("agreement.endDate.month.required.error") =>
-                  formError.copy(key = "agreementEndDate")
-                case ("", messages) if messages.contains("agreement.endDate.year.required.error") =>
-                  formError.copy(key = "agreementEndDate")
                 case ("", messages) if messages.contains("agreement.radio.breakClause.required.error") =>
                   formError.copy(key = "about-break-clause")
                 case ("", messages) if messages.contains("agreement.radio.breakClause.tooLong.error") =>
                   formError.copy(key = "about-break-clause")
+                case ("", messages) =>
+                  formError.copy(key = "agreementEndDate")
                 case _ =>
                   formError
             }

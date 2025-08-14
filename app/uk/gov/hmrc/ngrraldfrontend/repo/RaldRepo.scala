@@ -108,20 +108,19 @@ case class RaldRepo @Inject()(mongo: MongoComponent,
   }
 
   def insertAgreement(credId: CredId, agreementStart: String, openEndedRadio: String, openEndedDate: Option[String], breakClauseRadio: String, breakClauseInfo:Option[String]): Future[Option[RaldUserAnswers]] = {
-    val startDate = Seq(Updates.set("agreement.agreementStart", agreementStart))
-    val openEnded = Updates.set("agreement.isOpenEnded", openEndedRadio)
-    val breakClause = Updates.set("agreement.haveBreakClause", breakClauseRadio)
+    val startDate = Updates.set("agreement.agreementStart", agreementStart)
+    val openEnded = Updates.set("agreement.isOpenEnded", openEndedRadio match{
+      case answer if(answer == "YesOpenEnded") => true
+      case _ => false
+    })
+    val breakClause = Updates.set("agreement.haveBreakClause", breakClauseRadio match {
+      case openEndedRadio if(openEndedRadio == "YesBreakClause") => true
+      case _ => false
+    })
+    val openEndedDateAnswer = Updates.set("agreement.openEndedDate", openEndedDate.orNull)
+    val breakClauseInfoAnswer = Updates.set("agreement.breakClauseInfo", breakClauseInfo.orNull)
 
-    val answers = (openEndedDate, breakClauseInfo) match {
-      case (Some(openEndedDate), Some(breakClauseInfo)) =>
-        startDate :+ openEnded :+ breakClause :+ Updates.set("agreement.openEndedDate", openEndedDate) :+ Updates.set("agreement.breakClauseInfo", breakClauseInfo)
-      case (Some(openEndedDate), None) =>
-        startDate :+ openEnded :+ breakClause :+ Updates.set("agreement.openEndedDate", openEndedDate)
-      case (None, Some(breakClauseInfo)) =>
-        startDate :+ openEnded :+ breakClause :+ Updates.set("agreement.breakClauseInfo", breakClauseInfo)
-      case (None, None) =>
-        startDate :+ openEnded :+ breakClause
-    }
+    val answers = Seq(startDate , openEnded , openEndedDateAnswer , breakClause , breakClauseInfoAnswer)
     findAndUpdateByCredId(credId = credId, answers: _*)
   }
 

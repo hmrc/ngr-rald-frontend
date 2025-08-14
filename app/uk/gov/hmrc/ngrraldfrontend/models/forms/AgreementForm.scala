@@ -39,9 +39,9 @@ object AgreementForm extends CommonFormValidators with Mappings with DateMapping
 
   private def errorKeys(whichDate: String): Map[DateErrorKeys, String] = Map(
     Required -> s"agreement.$whichDate.required.error",
-    DayAndMonth -> s"agreement.$whichDate.dayAndMonth.required.error",
-    DayAndYear -> s"agreement.$whichDate.dayAndYear.required.error",
-    MonthAndYear -> s"agreement.$whichDate.monthAndYear.required.error",
+    DayAndMonth -> s"agreement.$whichDate.day.month.required.error",
+    DayAndYear -> s"agreement.$whichDate.day.year.required.error",
+    MonthAndYear -> s"agreement.$whichDate.month.year.required.error",
     Day -> s"agreement.$whichDate.day.required.error",
     Month -> s"agreement.$whichDate.month.required.error",
     Year -> s"agreement.$whichDate.year.required.error"
@@ -49,16 +49,16 @@ object AgreementForm extends CommonFormValidators with Mappings with DateMapping
 
   private def isEndDateEmpty[A](errorKeys: Map[DateErrorKeys, String]): Constraint[A] = {
     Constraint((input: A) =>
-      val agreementVerbalForm = input.asInstanceOf[AgreementForm]
-      val date = agreementVerbalForm.openEndedDate.getOrElse(NGRDate("", "", ""))
-      if (agreementVerbalForm.openEndedDate.equals("NoOpenEnded"))
+      val agreementForm = input.asInstanceOf[AgreementForm]
+      val date = agreementForm.openEndedDate.getOrElse(NGRDate("", "", ""))
+      if (agreementForm.openEndedRadio.equals("NoOpenEnded"))
         dateEmptyValidation(date, errorKeys)
       else
         Valid
     )
   }
 
-    private def isEndDateValid[A](errorKey: String): Constraint[A] =
+  private def isEndDateValid[A](errorKey: String): Constraint[A] =
       Constraint((input: A) =>
         val agreementForm = input.asInstanceOf[AgreementForm]
         val date = agreementForm.openEndedDate.getOrElse(NGRDate("", "", ""))

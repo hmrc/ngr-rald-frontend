@@ -20,9 +20,9 @@ import play.api.libs.json.{Json, OFormat}
 
 case class Agreement(
                       agreementStart : String,
-                      isOpenEnded: String,
+                      isOpenEnded: Boolean,
                       openEndedDate:Option[String],
-                      haveBreakClause: String,
+                      haveBreakClause: Boolean,
                       breakClauseInfo:Option[String]
                     )
 

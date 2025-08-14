@@ -124,9 +124,9 @@ class RaldRepoSpec extends TestSupport with TestData
               Some(
                 Agreement(
                   agreementStart = agreementStart,
-                  isOpenEnded = openEndedRadio,
+                  isOpenEnded = false,
                   openEndedDate = openEndedDate,
-                  haveBreakClause = breakClauseRadio,
+                  haveBreakClause = true,
                   breakClauseInfo = breakClauseInfo
                 )
               )
@@ -162,9 +162,9 @@ class RaldRepoSpec extends TestSupport with TestData
               Some(
                 Agreement(
                   agreementStart = agreementStart,
-                  isOpenEnded = openEndedRadio,
+                  isOpenEnded = false,
                   openEndedDate = openEndedDate,
-                  haveBreakClause = breakClauseRadio,
+                  haveBreakClause = false,
                   breakClauseInfo = None
                 )
               )
@@ -200,9 +200,9 @@ class RaldRepoSpec extends TestSupport with TestData
               Some(
                 Agreement(
                   agreementStart = agreementStart,
-                  isOpenEnded = openEndedRadio,
+                  isOpenEnded = true,
                   openEndedDate = None,
-                  haveBreakClause = breakClauseRadio,
+                  haveBreakClause = true,
                   breakClauseInfo = breakClauseInfo
                 )
               )
@@ -238,9 +238,9 @@ class RaldRepoSpec extends TestSupport with TestData
               Some(
                 Agreement(
                   agreementStart = agreementStart,
-                  isOpenEnded = openEndedRadio,
+                  isOpenEnded = true,
                   openEndedDate = None,
-                  haveBreakClause = breakClauseRadio,
+                  haveBreakClause = false,
                   breakClauseInfo = None
                 )
               )
