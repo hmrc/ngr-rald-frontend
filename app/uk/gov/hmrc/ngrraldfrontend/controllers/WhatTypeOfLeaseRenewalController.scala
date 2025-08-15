@@ -75,7 +75,7 @@ class WhatTypeOfLeaseRenewalController @Inject()(whatTypeOfLeaseRenewalView: Wha
             credId = CredId(request.credId.getOrElse("")),
             whatTypeOfRenewal = typeOfLeaseRenewal
           )
-          Future.successful(Redirect(routes.WhatTypeOfLeaseRenewalController.show.url))
+          Future.successful(Redirect(routes.LandlordController.show.url))
       )
     }
 }
