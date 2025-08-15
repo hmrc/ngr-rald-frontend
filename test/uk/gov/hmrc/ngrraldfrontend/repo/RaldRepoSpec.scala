@@ -23,7 +23,7 @@ import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 import uk.gov.hmrc.ngrraldfrontend.helpers.{TestData, TestSupport}
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.models.{AgreementVerbal, Landlord, RaldUserAnswers, RentBasedOn}
+import uk.gov.hmrc.ngrraldfrontend.models.{Agreement, AgreementVerbal, Landlord, RaldUserAnswers, RentBasedOn}
 
 class RaldRepoSpec extends TestSupport with TestData
   with DefaultPlayMongoRepositorySupport[RaldUserAnswers] {
@@ -86,6 +86,166 @@ class RaldRepoSpec extends TestSupport with TestData
       await(repository.insertLandlord(credId, landlordName = landlordName, landLordType = landlordType, landlordOther = None))
       val actual = await(repository.findByCredId(credId))
       actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property,  landlord = Some(Landlord("John Doe", "OtherRelationship", None))))
+    }
+
+    "insert agreed rent change successfully" in {
+      val agreedValue = "Yes"
+
+      await(repository.insertAgreedRentChange(credId, agreedRentChange = agreedValue))
+      val actual = await(repository.findByCredId(credId))
+      actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, agreedRentChange = Some(agreedValue)))
+    }
+
+    "insert agreement with open end date and break clause info successfully" in {
+      val agreementStart = "12-12-2026"
+      val openEndedRadio = "NoOpenEnded"
+      val openEndedDate = Some("12-12-2026")
+      val breakClauseRadio = "YesBreakClause"
+      val breakClauseInfo = Some("break clause info")
+
+
+      await(repository.insertAgreement(
+        credId,
+        agreementStart = agreementStart,
+        openEndedRadio = openEndedRadio,
+        openEndedDate = openEndedDate,
+        breakClauseRadio = breakClauseRadio,
+        breakClauseInfo = breakClauseInfo,
+      ))
+
+      val actual = await(repository.findByCredId(credId))
+      actual shouldBe
+        Some(
+          RaldUserAnswers(
+            credId,
+            NewAgreement,
+            property,
+            agreement =
+              Some(
+                Agreement(
+                  agreementStart = agreementStart,
+                  isOpenEnded = false,
+                  openEndedDate = openEndedDate,
+                  haveBreakClause = true,
+                  breakClauseInfo = breakClauseInfo
+                )
+              )
+            )
+        )
+    }
+
+    "insert agreement with open end date successfully" in {
+      val agreementStart = "12-12-2026"
+      val openEndedRadio = "NoOpenEnded"
+      val openEndedDate = Some("12-12-2026")
+      val breakClauseRadio = "NoBreakClause"
+
+
+
+      await(repository.insertAgreement(
+        credId,
+        agreementStart = agreementStart,
+        openEndedRadio = openEndedRadio,
+        openEndedDate = openEndedDate,
+        breakClauseRadio = breakClauseRadio,
+        breakClauseInfo = None
+      ))
+
+      val actual = await(repository.findByCredId(credId))
+      actual shouldBe
+        Some(
+          RaldUserAnswers(
+            credId,
+            NewAgreement,
+            property,
+            agreement =
+              Some(
+                Agreement(
+                  agreementStart = agreementStart,
+                  isOpenEnded = false,
+                  openEndedDate = openEndedDate,
+                  haveBreakClause = false,
+                  breakClauseInfo = None
+                )
+              )
+          )
+        )
+    }
+
+    "insert agreement with break clause info successfully" in {
+      val agreementStart = "12-12-2026"
+      val openEndedRadio = "YesOpenEnded"
+      val openEndedDate = None
+      val breakClauseRadio = "YesBreakClause"
+      val breakClauseInfo = Some("break clause info")
+
+
+      await(repository.insertAgreement(
+        credId,
+        agreementStart = agreementStart,
+        openEndedRadio = openEndedRadio,
+        openEndedDate = None,
+        breakClauseRadio = breakClauseRadio,
+        breakClauseInfo = breakClauseInfo,
+      ))
+
+      val actual = await(repository.findByCredId(credId))
+      actual shouldBe
+        Some(
+          RaldUserAnswers(
+            credId,
+            NewAgreement,
+            property,
+            agreement =
+              Some(
+                Agreement(
+                  agreementStart = agreementStart,
+                  isOpenEnded = true,
+                  openEndedDate = None,
+                  haveBreakClause = true,
+                  breakClauseInfo = breakClauseInfo
+                )
+              )
+          )
+        )
+    }
+
+    "insert agreement with no break clause info and no open end date successfully" in {
+      val agreementStart = "12-12-2026"
+      val openEndedRadio = "YesOpenEnded"
+      val openEndedDate = None
+      val breakClauseRadio = "NoBreakClause"
+      val breakClauseInfo = None
+
+
+      await(repository.insertAgreement(
+        credId,
+        agreementStart = agreementStart,
+        openEndedRadio = openEndedRadio,
+        openEndedDate = None,
+        breakClauseRadio = breakClauseRadio,
+        breakClauseInfo = breakClauseInfo,
+      ))
+
+      val actual = await(repository.findByCredId(credId))
+      actual shouldBe
+        Some(
+          RaldUserAnswers(
+            credId,
+            NewAgreement,
+            property,
+            agreement =
+              Some(
+                Agreement(
+                  agreementStart = agreementStart,
+                  isOpenEnded = true,
+                  openEndedDate = None,
+                  haveBreakClause = false,
+                  breakClauseInfo = None
+                )
+              )
+          )
+        )
     }
 
     "insert rent based on with other desc successfully" in {

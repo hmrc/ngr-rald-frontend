@@ -107,6 +107,23 @@ case class RaldRepo @Inject()(mongo: MongoComponent,
     findAndUpdateByCredId(credId = credId, radio: _*)
   }
 
+  def insertAgreement(credId: CredId, agreementStart: String, openEndedRadio: String, openEndedDate: Option[String], breakClauseRadio: String, breakClauseInfo:Option[String]): Future[Option[RaldUserAnswers]] = {
+    val startDate = Updates.set("agreement.agreementStart", agreementStart)
+    val openEnded = Updates.set("agreement.isOpenEnded", openEndedRadio match{
+      case answer if(answer == "YesOpenEnded") => true
+      case _ => false
+    })
+    val breakClause = Updates.set("agreement.haveBreakClause", breakClauseRadio match {
+      case openEndedRadio if(openEndedRadio == "YesBreakClause") => true
+      case _ => false
+    })
+    val openEndedDateAnswer = Updates.set("agreement.openEndedDate", openEndedDate.orNull)
+    val breakClauseInfoAnswer = Updates.set("agreement.breakClauseInfo", breakClauseInfo.orNull)
+
+    val answers = Seq(startDate , openEnded , openEndedDateAnswer , breakClause , breakClauseInfoAnswer)
+    findAndUpdateByCredId(credId = credId, answers: _*)
+  }
+
   def insertRentBased(credId: CredId, rentBased: String, rentBasedOtherText:Option[String]): Future[Option[RaldUserAnswers]] = {
     val updates = Seq(Updates.set("rentBasedOn.rentBased", rentBased),
       Updates.set("rentBasedOn.otherDesc", rentBasedOtherText.getOrElse(null)))

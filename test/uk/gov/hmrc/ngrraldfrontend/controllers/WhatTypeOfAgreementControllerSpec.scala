@@ -66,7 +66,7 @@ class WhatTypeOfAgreementControllerSpec extends ControllerSpecSupport {
           result.header.headers.get("Location") shouldBe Some("/ngr-rald-frontend/what-type-of-agreement-do-you-have ")
         })
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.WhatTypeOfAgreementController.show.url)
+        redirectLocation(result) shouldBe Some(routes.AgreementController.show.url)
       }
       "Return OK and the correct view after submitting with verbal radio button" in {
         when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(Some(RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property))))
