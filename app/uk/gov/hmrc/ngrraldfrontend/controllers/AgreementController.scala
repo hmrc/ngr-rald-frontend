@@ -156,9 +156,9 @@ class AgreementController @Inject()(view: AgreementView,
           formWithErrors =>
             val correctedFormErrors = formWithErrors.errors.map { formError =>
               (formError.key, formError.messages) match
-                case ("", messages) if messages.contains("agreement.radio.breakClause.required.error") =>
+                case ("", messages) if messages.contains("agreement.radio.conditional.breakClause.required.error") =>
                   formError.copy(key = "about-break-clause")
-                case ("", messages) if messages.contains("agreement.radio.breakClause.tooLong.error") =>
+                case ("", messages) if messages.contains("agreement.radio.conditional.breakClause.tooLong.error") =>
                   formError.copy(key = "about-break-clause")
                 case ("", messages) =>
                   formError.copy(key = "agreementEndDate")
