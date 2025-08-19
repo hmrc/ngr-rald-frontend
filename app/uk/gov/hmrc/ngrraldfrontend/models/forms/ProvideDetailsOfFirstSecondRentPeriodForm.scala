@@ -16,138 +16,166 @@
 
 package uk.gov.hmrc.ngrraldfrontend.models.forms
 
-import play.api.data.Form
-import play.api.data.Forms.{mapping, optional}
+import play.api.data.Forms.{mapping, of}
+import play.api.data.format.Formatter
 import play.api.data.validation.{Constraint, Invalid, Valid}
+import play.api.data.{Form, FormError}
 import play.api.i18n.*
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.ngrraldfrontend.models.*
-import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreementVerbalForm.{dateValidation, firstError, isDateEmpty, isDateValid}
-import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatIsYourRentBasedOnForm.firstError
+import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreementVerbalForm.{isDateEmpty, isDateValid}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 
-final case class AgreementForm(
-                                agreementStart: NGRDate,
-                                openEndedRadio: String,
-                                openEndedDate: Option[NGRDate],
-                                breakClauseRadio: String,
-                                breakClauseInfo: Option[String]
+import scala.util.Try
+
+final case class ProvideDetailsOfFirstSecondRentPeriodForm(
+                                firstDateStartInput: NGRDate,
+                                firstDateEndInput: NGRDate,
+                                firstRentPeriodRadio: String,
+                                firstRentPeriodAmount: Option[BigDecimal],
+                                secondDateStartInput: NGRDate,
+                                secondDateEndInput: NGRDate,
+                                secondHowMuchIsRent: BigDecimal,
                               )
 
-object AgreementForm extends CommonFormValidators with Mappings with DateMappings{
-  implicit val format: OFormat[AgreementForm] = Json.format[AgreementForm]
+object ProvideDetailsOfFirstSecondRentPeriodForm extends CommonFormValidators with Mappings with DateMappings{
+  implicit val format: OFormat[ProvideDetailsOfFirstSecondRentPeriodForm] = Json.format[ProvideDetailsOfFirstSecondRentPeriodForm]
 
   private def errorKeys(whichDate: String): Map[DateErrorKeys, String] = Map(
-    Required -> s"agreement.$whichDate.required.error",
-    DayAndMonth -> s"agreement.$whichDate.day.month.required.error",
-    DayAndYear -> s"agreement.$whichDate.day.year.required.error",
-    MonthAndYear -> s"agreement.$whichDate.month.year.required.error",
-    Day -> s"agreement.$whichDate.day.required.error",
-    Month -> s"agreement.$whichDate.month.required.error",
-    Year -> s"agreement.$whichDate.year.required.error"
+    Required -> s"provideDetailsOfFirstSecondRentPeriod.$whichDate.required.error",
+    DayAndMonth -> s"provideDetailsOfFirstSecondRentPeriod.$whichDate.day.month.required.error",
+    DayAndYear -> s"provideDetailsOfFirstSecondRentPeriod.$whichDate.day.year.required.error",
+    MonthAndYear -> s"provideDetailsOfFirstSecondRentPeriod.$whichDate.month.year.required.error",
+    Day -> s"provideDetailsOfFirstSecondRentPeriod.$whichDate.day.required.error",
+    Month -> s"provideDetailsOfFirstSecondRentPeriod.$whichDate.month.required.error",
+    Year -> s"provideDetailsOfFirstSecondRentPeriod.$whichDate.year.required.error"
   )
-
-  private def isEndDateEmpty[A](errorKeys: Map[DateErrorKeys, String]): Constraint[A] = {
-    Constraint((input: A) =>
-      val agreementForm = input.asInstanceOf[AgreementForm]
-      val date = agreementForm.openEndedDate.getOrElse(NGRDate("", "", ""))
-      if (agreementForm.openEndedRadio.equals("NoOpenEnded"))
-        dateEmptyValidation(date, errorKeys)
-      else
-        Valid
-    )
-  }
-
-  private def isEndDateValid[A](errorKey: String): Constraint[A] =
-      Constraint((input: A) =>
-        val agreementForm = input.asInstanceOf[AgreementForm]
-        val date = agreementForm.openEndedDate.getOrElse(NGRDate("", "", ""))
-        if (agreementForm.openEndedRadio.equals("NoOpenEnded"))
-          dateValidation(date, errorKey)
-        else
-          Valid
-      )
 
   private val radioUnselectedError = "agreementVerbal.radio.unselected.error"
   private val agreementVerbalRadio = "agreement-verbal-radio"
 
-  private lazy val radioOpenEndedUnselectedError = "agreement.radio.openEnded.required.error"
-  private lazy val radioBreakClauseUnselectedError = "agreement.radio.breakClause.required.error"
+  private lazy val radioFirstPeriodRequiredError = "provideDetailsOfFirstSecondRentPeriod.firstPeriod.radio.error.required"
+  private lazy val radioBreakFirstPeriodAmountRequiredError = "provideDetailsOfFirstSecondRentPeriod.secondPeriod.amount.error.required"
 
   private lazy val isBreakClauseEmptyError = "agreement.radio.conditional.breakClause.required.error"
   private lazy val isBreakClauseTooLongError = "agreement.radio.conditional.breakClause.tooLong.error"
 
-  private val agreemenrStartDate = "agreementStartDate"
-  private val openEndedRadio = "agreement-radio-openEnded"
-  private val endDate = "agreementEndDate"
+  private val firstDateStartInput = "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date"
+  private val firstDateEndInput = "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date"
+
+  private val firstRentPeriodRadio = "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio"
+  private val RentPeriodAmount = "RentPeriodAmount"
+  private val SecondRentPeriodAmount = "SecondRentPeriodAmount"
+  private val secondDateStartInput = "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date"
+  private val secondDateEndInput = "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date"
+
   private val breakClauseRadio = "agreement-breakClause-radio"
   private val aboutBreakClause = "about-break-clause"
+  private lazy val annualRentEmptyError = "howMuchIsTotalAnnualRent.empty.error"
+  private lazy val annualRentMaxError = "howMuchIsTotalAnnualRent.tooLarge.error"
+  private lazy val provideDetailsOfFirstSecondRentPeriodSecondPeriodAmountFormatError = "provideDetailsOfFirstSecondRentPeriod.secondPeriod.amount.error.required"
 
 
   val messagesApi: MessagesApi = new DefaultMessagesApi()
   val lang: Lang = Lang.defaultLang
   val messages: Messages = MessagesImpl(lang, messagesApi)
 
-  def unapply(agreementForm: AgreementForm): Option[(NGRDate, String, Option[NGRDate], String, Option[String])] =
+  def unapply(provideDetailsOfFirstSecondRentPeriodForm: ProvideDetailsOfFirstSecondRentPeriodForm): Option[(
+    NGRDate, NGRDate, String, Option[BigDecimal], NGRDate, NGRDate, BigDecimal)] =
     Some(
-      (agreementForm.agreementStart,
-       agreementForm.openEndedRadio,
-       agreementForm.openEndedDate,
-       agreementForm.breakClauseRadio,
-       agreementForm.breakClauseInfo)
+      (provideDetailsOfFirstSecondRentPeriodForm.firstDateStartInput,
+        provideDetailsOfFirstSecondRentPeriodForm.firstDateEndInput,
+        provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodRadio,
+        provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodAmount,
+        provideDetailsOfFirstSecondRentPeriodForm.secondDateStartInput,
+        provideDetailsOfFirstSecondRentPeriodForm.secondDateEndInput,
+        provideDetailsOfFirstSecondRentPeriodForm.secondHowMuchIsRent,
+      )
     )
 
-  private def isBreakClauseTextEmpty[A]: Constraint[A] =
+
+  def bigDecimalWithFormatError: Formatter[BigDecimal] = new Formatter[BigDecimal] {
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], BigDecimal] = {
+      data.get(key).filter(_.nonEmpty) match {
+        case Some(value) =>
+          Try(BigDecimal(value)).toEither.left.map(_ =>
+            Seq(FormError(key, annualRentEmptyError))
+          )
+        case None =>
+          Left(Seq(FormError(key, annualRentEmptyError)))
+      }
+    }
+    override def unbind(key: String, value: BigDecimal): Map[String, String] =
+      Map(key -> value.toString())
+  }
+
+  def optionalBigDecimalWithFormatError: Formatter[Option[BigDecimal]] = new Formatter[Option[BigDecimal]] {
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[BigDecimal]] = {
+      data.get(key).map(_.trim).filter(_.nonEmpty) match {
+        case Some(value) =>
+          Try(BigDecimal(value)).toEither match {
+            case Right(parsed) => Right(Some(parsed))
+            case Left(_) => Left(Seq(FormError(key, provideDetailsOfFirstSecondRentPeriodSecondPeriodAmountFormatError)))
+          }
+        case None => Right(None) // Field is optional and not provided
+      }
+    }
+
+    override def unbind(key: String, value: Option[BigDecimal]): Map[String, String] =
+      value.map(v => Map(key -> v.toString)).getOrElse(Map.empty)
+  }
+
+
+  private def isOptionalBigDecimalEmptyOrInvalid[A]: Constraint[A] =
     Constraint((input: A) =>
-      val agreementForm = input.asInstanceOf[AgreementForm]
-      if (agreementForm.breakClauseRadio.equals("YesBreakClause") && agreementForm.breakClauseInfo.getOrElse("").isBlank)
-        Invalid(isBreakClauseEmptyError)
+      val provideDetailsOfFirstSecondRentPeriodForm = input.asInstanceOf[ProvideDetailsOfFirstSecondRentPeriodForm]
+      if (provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodRadio.equals("yesPayedRent") && provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodAmount.getOrElse(None) == None)
+        Invalid(radioBreakFirstPeriodAmountRequiredError)
       else
         Valid
     )
 
-  private def otherTextMaxLength[A]: Constraint[A] =
-    Constraint((input: A) =>
-      val agreementForm = input.asInstanceOf[AgreementForm]
-      if (agreementForm.breakClauseRadio.equals("YesBreakClause") && agreementForm.breakClauseInfo.getOrElse("").length > 250)
-        Invalid(isBreakClauseTooLongError)
-      else
-        Valid
-    )
 
-  def form: Form[AgreementForm] = {
+  def form: Form[ProvideDetailsOfFirstSecondRentPeriodForm] = {
     Form(
       mapping(
-        agreemenrStartDate -> dateMapping
+        firstDateStartInput -> dateMapping
           .verifying(
             firstError(
-              isDateEmpty(errorKeys("startDate")),
-              isDateValid("agreement.startDate.format.error")
+              isDateEmpty(errorKeys("first.startDate")),
+              isDateValid("provideDetailsOfFirstSecondRentPeriod.startDate.format.error")
             )
           ),
-        openEndedRadio -> text(radioOpenEndedUnselectedError),
-        endDate -> optional(
-          dateMapping
-        ),
-        breakClauseRadio -> text(radioBreakClauseUnselectedError),
-        aboutBreakClause -> optional(
-          play.api.data.Forms.text
-            .transform[String](_.strip(), identity)
-        )
-      )(AgreementForm.apply)(AgreementForm.unapply)
+        firstDateEndInput -> dateMapping
+          .verifying(
+            firstError(
+              isDateEmpty(errorKeys("first.endDate")),
+              isDateValid("provideDetailsOfFirstSecondRentPeriod.endDate.format.error")
+            )
+          ),
+        firstRentPeriodRadio -> text(radioFirstPeriodRequiredError),
+        RentPeriodAmount -> of(optionalBigDecimalWithFormatError),
+        secondDateStartInput -> dateMapping
+          .verifying(
+            firstError(
+              isDateEmpty(errorKeys("second.startDate")),
+              isDateValid("provideDetailsOfFirstSecondRentPeriod.startDate.format.error")
+            )
+          ),
+        secondDateEndInput -> dateMapping
+          .verifying(
+            firstError(
+              isDateEmpty(errorKeys("second.endDate")),
+              isDateValid("provideDetailsOfFirstSecondRentPeriod.endDate.format.error")
+            )
+          ),
+        SecondRentPeriodAmount -> of(bigDecimalWithFormatError)
+      )(ProvideDetailsOfFirstSecondRentPeriodForm.apply)(ProvideDetailsOfFirstSecondRentPeriodForm.unapply)
         .verifying(
           firstError(
-            isBreakClauseTextEmpty,
-            otherTextMaxLength
+            isOptionalBigDecimalEmptyOrInvalid
           )
         )
-        .verifying(
-          firstError(
-            isEndDateEmpty(errorKeys("endDate")),
-            isEndDateValid("agreement.endDate.format.error")
-          )
-        )
-
     )
   }
 }

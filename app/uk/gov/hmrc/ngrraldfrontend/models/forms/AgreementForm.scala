@@ -25,6 +25,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.*
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreementVerbalForm.{dateValidation, firstError, isDateEmpty, isDateValid}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatIsYourRentBasedOnForm.firstError
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
+import scala.util.Try
 
 final case class AgreementForm(
                                 agreementStart: NGRDate,
@@ -147,7 +148,6 @@ object AgreementForm extends CommonFormValidators with Mappings with DateMapping
             isEndDateValid("agreement.endDate.format.error")
           )
         )
-
     )
   }
 }
