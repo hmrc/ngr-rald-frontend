@@ -1,0 +1,3 @@
+package uk.gov.hmrc.ngrraldfrontend.controllers
+
+class ProvideDetailsOfFirstSecondRentPeriodController
