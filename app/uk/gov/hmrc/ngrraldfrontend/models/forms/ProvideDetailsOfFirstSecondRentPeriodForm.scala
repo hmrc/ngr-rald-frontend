@@ -51,29 +51,16 @@ object ProvideDetailsOfFirstSecondRentPeriodForm extends CommonFormValidators wi
     Year -> s"provideDetailsOfFirstSecondRentPeriod.$whichDate.year.required.error"
   )
 
-  private val radioUnselectedError = "agreementVerbal.radio.unselected.error"
-  private val agreementVerbalRadio = "agreement-verbal-radio"
-
   private lazy val radioFirstPeriodRequiredError = "provideDetailsOfFirstSecondRentPeriod.firstPeriod.radio.error.required"
-  private lazy val radioBreakFirstPeriodAmountRequiredError = "provideDetailsOfFirstSecondRentPeriod.secondPeriod.amount.error.required"
-
-  private lazy val isBreakClauseEmptyError = "agreement.radio.conditional.breakClause.required.error"
-  private lazy val isBreakClauseTooLongError = "agreement.radio.conditional.breakClause.tooLong.error"
-
   private val firstDateStartInput = "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date"
   private val firstDateEndInput = "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date"
-
   private val firstRentPeriodRadio = "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio"
   private val RentPeriodAmount = "RentPeriodAmount"
   private val SecondRentPeriodAmount = "SecondRentPeriodAmount"
   private val secondDateStartInput = "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date"
   private val secondDateEndInput = "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date"
-
-  private val breakClauseRadio = "agreement-breakClause-radio"
-  private val aboutBreakClause = "about-break-clause"
-  private lazy val annualRentEmptyError = "howMuchIsTotalAnnualRent.empty.error"
-  private lazy val annualRentMaxError = "howMuchIsTotalAnnualRent.tooLarge.error"
-  private lazy val provideDetailsOfFirstSecondRentPeriodSecondPeriodAmountFormatError = "provideDetailsOfFirstSecondRentPeriod.secondPeriod.amount.error.required"
+  private lazy val annualRentEmptyError = "provideDetailsOfFirstSecondRentPeriod.secondPeriod.amount.error.required"
+  private lazy val provideDetailsOfFirstSecondRentPeriodSecondPeriodAmountFormatError = "provideDetailsOfFirstSecondRentPeriod.firstPeriod.amount.error.required"
 
 
   val messagesApi: MessagesApi = new DefaultMessagesApi()
@@ -109,13 +96,13 @@ object ProvideDetailsOfFirstSecondRentPeriodForm extends CommonFormValidators wi
       Map(key -> value.toString())
   }
 
-  def optionalBigDecimalWithFormatError: Formatter[Option[BigDecimal]] = new Formatter[Option[BigDecimal]] {
+  private def optionalBigDecimalWithFormatError: Formatter[Option[BigDecimal]] = new Formatter[Option[BigDecimal]] {
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[BigDecimal]] = {
       data.get(key).map(_.trim).filter(_.nonEmpty) match {
         case Some(value) =>
           Try(BigDecimal(value)).toEither match {
             case Right(parsed) => Right(Some(parsed))
-            case Left(_) => Left(Seq(FormError(key, provideDetailsOfFirstSecondRentPeriodSecondPeriodAmountFormatError)))
+            case Left(_) => Left(Seq(FormError(key, "provideDetailsOfFirstSecondRentPeriod.firstPeriod.amount.error.required")))
           }
         case None => Right(None) // Field is optional and not provided
       }
@@ -130,7 +117,7 @@ object ProvideDetailsOfFirstSecondRentPeriodForm extends CommonFormValidators wi
     Constraint((input: A) =>
       val provideDetailsOfFirstSecondRentPeriodForm = input.asInstanceOf[ProvideDetailsOfFirstSecondRentPeriodForm]
       if (provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodRadio.equals("yesPayedRent") && provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodAmount.getOrElse(None) == None)
-        Invalid(radioBreakFirstPeriodAmountRequiredError)
+        Invalid(provideDetailsOfFirstSecondRentPeriodSecondPeriodAmountFormatError)
       else
         Valid
     )

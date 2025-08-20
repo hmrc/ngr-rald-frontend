@@ -23,6 +23,7 @@ import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingActio
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
+import uk.gov.hmrc.ngrraldfrontend.models.components.Yes
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreedRentChangeForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreedRentChangeForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
@@ -71,7 +72,11 @@ class AgreedRentChangeController @Inject()(agreedRentChangeView: AgreedRentChang
             credId = CredId(request.credId.getOrElse("")),
             agreedRentChange = radioValue.radioValue
           )
-          Future.successful(Redirect(routes.WhatTypeOfLeaseRenewalController.show.url))
+          if(radioValue.radioValue == "Yes"){
+            Future.successful(Redirect(routes.ProvideDetailsOfFirstSecondRentPeriodController.show.url))
+          }else {
+            Future.successful(Redirect(routes.WhatTypeOfLeaseRenewalController.show.url))
+          }
       )
     }
 }

@@ -227,4 +227,5 @@ provideDetailsOfFirstSecondRentPeriod.second.endDate.year.required.error = Date 
 provideDetailsOfFirstSecondRentPeriod.second.endDate.format.error = Date you will start paying rent must be a real date.
 
 provideDetailsOfFirstSecondRentPeriod.firstPeriod.radio.error.required = Select yes if you pay rent in this period.
-provideDetailsOfFirstSecondRentPeriod.secondPeriod.amount.error.required = Enter the rent for the first rent period, in pounds.
+provideDetailsOfFirstSecondRentPeriod.firstPeriod.amount.error.required = Enter the rent for the first rent period, in pounds.
+provideDetailsOfFirstSecondRentPeriod.secondPeriod.amount.error.required = Enter the rent for the second rent period, in pounds.
