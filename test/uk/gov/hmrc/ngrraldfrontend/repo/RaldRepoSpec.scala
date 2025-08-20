@@ -280,7 +280,7 @@ class RaldRepoSpec extends TestSupport with TestData
 
       result mustBe actual
     }
-    
+
     "insert rent based on with other desc successfully" in {
       await(
         repository.insertRentBased(
@@ -343,6 +343,22 @@ class RaldRepoSpec extends TestSupport with TestData
       await(repository.insertHasRentFreePeriod(credId, hasRentFreePeriod))
       val actual = await(repository.findByCredId(credId))
       actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, hasRentFreePeriod = Some(true)))
+    }
+
+    "insert Did You Agree Rent With Landlord successfully with true" in {
+      val yes = "YesTheLandlord"
+
+      await(repository.insertDidYouAgreeRentWithLandlord(credId, yes))
+      val actual = await(repository.findByCredId(credId))
+      actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, didYouAgreeRentWithLandlord = Some(true)))
+    }
+
+    "insert Did You Agree Rent With Landlord successfully with false" in {
+      val no = "NoACourtSet"
+
+      await(repository.insertDidYouAgreeRentWithLandlord(credId, no))
+      val actual = await(repository.findByCredId(credId))
+      actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, didYouAgreeRentWithLandlord = Some(false)))
     }
 
     "insert hasRentFreePeriod successfully with No" in {
