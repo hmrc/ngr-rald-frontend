@@ -1,29 +1,49 @@
+/*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package uk.gov.hmrc.ngrraldfrontend.controllers
 
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redirectLocation, status}
+import play.api.test.FakeRequest
+import play.api.test.Helpers.status
 import uk.gov.hmrc.auth.core.Nino
 import uk.gov.hmrc.http.{HeaderNames, NotFoundException}
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
-import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, RaldUserAnswers}
-import uk.gov.hmrc.ngrraldfrontend.views.html.components.{DateTextFields, InputText, NGRCharacterCountComponent}
-import uk.gov.hmrc.ngrraldfrontend.views.html.{AgreementView, ProvideDetailsOfFirstSecondRentPeriodView}
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
+import uk.gov.hmrc.ngrraldfrontend.views.html.ProvideDetailsOfFirstSecondRentPeriodView
+import uk.gov.hmrc.ngrraldfrontend.views.html.components.{DateTextFields, InputText}
 
 import scala.concurrent.Future
 
 class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
-  val pageTitle = "Agreement"
+  val pageTitle = "Provide details of each rent period"
   val view: ProvideDetailsOfFirstSecondRentPeriodView = inject[ProvideDetailsOfFirstSecondRentPeriodView]
-  val mockNGRCharacterCountComponent: NGRCharacterCountComponent = inject[NGRCharacterCountComponent]
-  val mockDateTextFieldsComponent: DateTextFields = inject[DateTextFields]
   val mockInputText: InputText = inject[InputText]
-  val controller: AgreementController = new AgreementController(view, mockAuthJourney,mockDateTextFieldsComponent, mockInputText, mockPropertyLinkingAction, mockRaldRepo, mockNGRCharacterCountComponent, mcc)(mockConfig, ec)
-  val over250Characters = "Bug Me Not PVT LTD, RODLEY LANE, RODLEY, LEEDS, BH1 1HU What is your rent based on?Open market value This is the rent a landlord could rent the property for if, it was available to anyoneA percentage of open market value This is a percentage of the rent a landlord could rent the property for if, it was available to anyoneTurnover top-up The rent is a fixed base rent with an additional payment based on a percentage of your turnoverA percentage of expected turnover The rent paid is based on a percentage of turnoverTotal Occupancy Cost leases (TOCs)The rent is the total cost of leasing the property. It includes base rent, business rates, insurance and utilities. It also includes common area maintenance and tenant improvements Indexation The rent is reviewed according to an index (such as Retail Price Index)Other The rent was agreed another way Can you tell us how your rent was agreed?"
+  val controller: ProvideDetailsOfFirstSecondRentPeriodController = new ProvideDetailsOfFirstSecondRentPeriodController(
+    view,
+    mockAuthJourney,
+    mockInputText,
+    mockPropertyLinkingAction,
+    mockRaldRepo, mcc
+  )(mockConfig, ec)
 
   "Agreement controller" must {
     "method show" must {
@@ -44,17 +64,26 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
     }
 
     "method submit" must {
-      "Return OK and the correct view after submitting with start date, yes radio button selected for open ended " +
-        "and no radio button selected for break clause" in {
+      "Return OK and the correct view after submitting with first start date, first end date no radio button selected for first rent period" +
+        "and second rent date start, end and amount is added" in {
         when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(Some(RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property))))
         mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.ProvideDetailsOfFirstSecondRentPeriodController.submit)
           .withFormUrlEncodedBody(
-            "agreementStartDate.day" -> "12",
-            "agreementStartDate.month" -> "12",
-            "agreementStartDate.year" -> "2026",
-            "agreement-radio-openEnded" -> "YesOpenEnded",
-            "agreement-breakClause-radio" -> "NoBreakClause",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "noRentPayed",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.year" -> "2026",
+            "SecondRentPeriodAmount" -> "10000.00",
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -63,46 +92,27 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.WhatIsYourRentBasedOnController.show.url)
       }
-      "Return OK and the correct view after submitting with start date, no radio button selected for open ended" +
-        "with an end date added in the conditional field and no radio button selected for break clause" in {
-        when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(
-          Some(RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property))
-        ))
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
-          .withFormUrlEncodedBody(
-            "agreementStartDate.day" -> "12",
-            "agreementStartDate.month" -> "12",
-            "agreementStartDate.year" -> "2026",
-            "agreement-radio-openEnded" -> "NoOpenEnded",
-            "agreementEndDate.day" -> "12",
-            "agreementEndDate.month" -> "12",
-            "agreementEndDate.year" -> "2026",
-            "agreement-breakClause-radio" -> "NoBreakClause",
-          )
-          .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
-        result.map(result => {
-          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/what-is-your-rent-based-on")
-        })
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.WhatIsYourRentBasedOnController.show.url)
-      }
-      "Return OK and the correct view after submitting with start date, no radio button selected for open ended" +
-        "with an end date added in the conditional field and yes radio button selected for break clause with" +
-        "reason in the conditional text box" in {
+      "Return OK and the correct view after submitting with first start date, first end date yes radio button selected for first rent period with first rent amount" +
+        "and second rent date start, end and amount is added" in {
         when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(Some(RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property))))
         mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.ProvideDetailsOfFirstSecondRentPeriodController.submit)
           .withFormUrlEncodedBody(
-            "agreementStartDate.day" -> "12",
-            "agreementStartDate.month" -> "12",
-            "agreementStartDate.year" -> "2026",
-            "agreement-radio-openEnded" -> "NoOpenEnded",
-            "agreementEndDate.day" -> "12",
-            "agreementEndDate.month" -> "12",
-            "agreementEndDate.year" -> "2026",
-            "agreement-breakClause-radio" -> "YesBreakClause",
-            "about-break-clause" -> "Reason...",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "yesPayedRent",
+            "RentPeriodAmount" -> "20000.00",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.year" -> "2026",
+            "SecondRentPeriodAmount" -> "10000.00",
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -111,181 +121,25 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.WhatIsYourRentBasedOnController.show.url)
       }
-      "Return Form with Errors when no day is input for the start date" in {
+      "Return Form with Errors when no day is added to the first periods start date" in {
         mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.ProvideDetailsOfFirstSecondRentPeriodController.submit)
           .withFormUrlEncodedBody(
-            "agreementStartDate.day" -> "",
-            "agreementStartDate.month" -> "12",
-            "agreementStartDate.year" -> "2026",
-            "agreement-radio-openEnded" -> "YesOpenEnded",
-            "agreement-breakClause-radio" -> "NoBreakClause",
-          )
-          .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
-        result.map(result => {
-          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/agreement")
-        })
-        status(result) mustBe BAD_REQUEST
-        val content = contentAsString(result)
-        content must include(pageTitle)
-      }
-      "Return Form with Errors when no month is input for the start date" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
-          .withFormUrlEncodedBody(
-            "agreementStartDate.day" -> "12",
-            "agreementStartDate.month" -> "",
-            "agreementStartDate.year" -> "2026",
-            "agreement-radio-openEnded" -> "YesOpenEnded",
-            "agreement-breakClause-radio" -> "NoBreakClause",
-          )
-          .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
-        result.map(result => {
-          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/agreement")
-        })
-        status(result) mustBe BAD_REQUEST
-        val content = contentAsString(result)
-        content must include(pageTitle)
-      }
-      "Return Form with Errors when no year is input for the start date" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
-          .withFormUrlEncodedBody(
-            "agreementStartDate.day" -> "12",
-            "agreementStartDate.month" -> "12",
-            "agreementStartDate.year" -> "",
-            "agreement-radio-openEnded" -> "YesOpenEnded",
-            "agreement-breakClause-radio" -> "NoBreakClause",
-          )
-          .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
-        result.map(result => {
-          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/agreement")
-        })
-        status(result) mustBe BAD_REQUEST
-        val content = contentAsString(result)
-        content must include(pageTitle)
-      }
-      "Return Form with Errors when no day and month is input for the start date" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
-          .withFormUrlEncodedBody(
-            "agreementStartDate.day" -> "",
-            "agreementStartDate.month" -> "",
-            "agreementStartDate.year" -> "2026",
-            "agreement-radio-openEnded" -> "YesOpenEnded",
-            "agreement-breakClause-radio" -> "NoBreakClause",
-          )
-          .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
-        result.map(result => {
-          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/agreement")
-        })
-        status(result) mustBe BAD_REQUEST
-        val content = contentAsString(result)
-        content must include(pageTitle)
-      }
-      "Return Form with Errors when no month and year is input for the start date" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
-          .withFormUrlEncodedBody(
-            "agreementStartDate.day" -> "12",
-            "agreementStartDate.month" -> "",
-            "agreementStartDate.year" -> "",
-            "agreement-radio-openEnded" -> "YesOpenEnded",
-            "agreement-breakClause-radio" -> "NoBreakClause",
-          )
-          .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
-        result.map(result => {
-          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/agreement")
-        })
-        status(result) mustBe BAD_REQUEST
-        val content = contentAsString(result)
-        content must include(pageTitle)
-      }
-      "Return Form with Errors when no day and year is input for the start date" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
-          .withFormUrlEncodedBody(
-            "agreementStartDate.day" -> "",
-            "agreementStartDate.month" -> "12",
-            "agreementStartDate.year" -> "",
-            "agreement-radio-openEnded" -> "YesOpenEnded",
-            "agreement-breakClause-radio" -> "NoBreakClause",
-          )
-          .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
-        result.map(result => {
-          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/agreement")
-        })
-        status(result) mustBe BAD_REQUEST
-        val content = contentAsString(result)
-        content must include(pageTitle)
-      }
-      "Return Form with Errors when no date is input for the start date" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
-          .withFormUrlEncodedBody(
-            "agreementStartDate.day" -> "",
-            "agreementStartDate.month" -> "",
-            "agreementStartDate.year" -> "",
-            "agreement-radio-openEnded" -> "YesOpenEnded",
-            "agreement-breakClause-radio" -> "NoBreakClause",
-          )
-          .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
-        result.map(result => {
-          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/agreement")
-        })
-        status(result) mustBe BAD_REQUEST
-        val content = contentAsString(result)
-        content must include(pageTitle)
-      }
-      "Return Form with Errors when date is not numbers for the start date" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
-          .withFormUrlEncodedBody(
-            "agreementStartDate.day" -> "one",
-            "agreementStartDate.month" -> "one",
-            "agreementStartDate.year" -> "two",
-            "agreement-radio-openEnded" -> "YesOpenEnded",
-            "agreement-breakClause-radio" -> "NoBreakClause",
-          )
-          .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
-        result.map(result => {
-          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/agreement")
-        })
-        status(result) mustBe BAD_REQUEST
-        val content = contentAsString(result)
-        content must include(pageTitle)
-      }
-      "Return Form with Errors when no open ended radio is selected" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
-          .withFormUrlEncodedBody(
-            "agreementStartDate.day" -> "12",
-            "agreementStartDate.month" -> "12",
-            "agreementStartDate.year" -> "2026",
-            "agreement-radio-openEnded" -> "",
-            "agreement-breakClause-radio" -> "NoBreakClause",
-          )
-          .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
-        result.map(result => {
-          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/agreement")
-        })
-        status(result) mustBe BAD_REQUEST
-        val content = contentAsString(result)
-        content must include(pageTitle)
-      }
-      "Return Form with Errors when open ended radio is selected and no date is input" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
-          .withFormUrlEncodedBody(
-            "agreementStartDate.day" -> "12",
-            "agreementStartDate.month" -> "12",
-            "agreementStartDate.year" -> "2026",
-            "agreement-radio-openEnded" -> "NoOpenEnded",
-            "agreementEndDate.day" -> "",
-            "agreementEndDate.month" -> "",
-            "agreementEndDate.year" -> "",
-            "agreement-breakClause-radio" -> "YesBreakClause",
-            "about-break-clause" -> "Reason...",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.day" -> "",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "yesPayedRent",
+            "RentPeriodAmount" -> "20000.00",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.year" -> "2026",
+            "SecondRentPeriodAmount" -> "10000.00",
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -295,19 +149,25 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
         val content = contentAsString(result)
         content must include(pageTitle)
       }
-      "Return Form with Errors when open ended radio is selected and incorrect date format is input" in {
+      "Return Form with Errors when no month is added to the first periods start date" in {
         mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.ProvideDetailsOfFirstSecondRentPeriodController.submit)
           .withFormUrlEncodedBody(
-            "agreementStartDate.day" -> "12",
-            "agreementStartDate.month" -> "12",
-            "agreementStartDate.year" -> "2026",
-            "agreement-radio-openEnded" -> "NoOpenEnded",
-            "agreementEndDate.day" -> "one",
-            "agreementEndDate.month" -> "one",
-            "agreementEndDate.year" -> "two",
-            "agreement-breakClause-radio" -> "YesBreakClause",
-            "about-break-clause" -> "Reason...",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.month" -> "",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "yesPayedRent",
+            "RentPeriodAmount" -> "20000.00",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.year" -> "2026",
+            "SecondRentPeriodAmount" -> "10000.00",
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -317,19 +177,25 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
         val content = contentAsString(result)
         content must include(pageTitle)
       }
-      "Return Form with Errors when open ended radio is selected and no day is input" in {
+      "Return Form with Errors when no year is added to the first periods start date" in {
         mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.ProvideDetailsOfFirstSecondRentPeriodController.submit)
           .withFormUrlEncodedBody(
-            "agreementStartDate.day" -> "12",
-            "agreementStartDate.month" -> "12",
-            "agreementStartDate.year" -> "2026",
-            "agreement-radio-openEnded" -> "NoOpenEnded",
-            "agreementEndDate.day" -> "",
-            "agreementEndDate.month" -> "12",
-            "agreementEndDate.year" -> "2026",
-            "agreement-breakClause-radio" -> "YesBreakClause",
-            "about-break-clause" -> "Reason...",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.year" -> "",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "yesPayedRent",
+            "RentPeriodAmount" -> "20000.00",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.year" -> "2026",
+            "SecondRentPeriodAmount" -> "10000.00",
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -339,19 +205,25 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
         val content = contentAsString(result)
         content must include(pageTitle)
       }
-      "Return Form with Errors when open ended radio is selected and no month is input" in {
+      "Return Form with Errors when no day is added to the first periods end date" in {
         mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.ProvideDetailsOfFirstSecondRentPeriodController.submit)
           .withFormUrlEncodedBody(
-            "agreementStartDate.day" -> "12",
-            "agreementStartDate.month" -> "12",
-            "agreementStartDate.year" -> "2026",
-            "agreement-radio-openEnded" -> "NoOpenEnded",
-            "agreementEndDate.day" -> "12",
-            "agreementEndDate.month" -> "",
-            "agreementEndDate.year" -> "2026",
-            "agreement-breakClause-radio" -> "YesBreakClause",
-            "about-break-clause" -> "Reason...",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.day" -> "",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "yesPayedRent",
+            "RentPeriodAmount" -> "20000.00",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.year" -> "2026",
+            "SecondRentPeriodAmount" -> "10000.00",
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -361,19 +233,25 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
         val content = contentAsString(result)
         content must include(pageTitle)
       }
-      "Return Form with Errors when open ended radio is selected and no year is input" in {
+      "Return Form with Errors when no month is added to the first periods end date" in {
         mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.ProvideDetailsOfFirstSecondRentPeriodController.submit)
           .withFormUrlEncodedBody(
-            "agreementStartDate.day" -> "12",
-            "agreementStartDate.month" -> "12",
-            "agreementStartDate.year" -> "2026",
-            "agreement-radio-openEnded" -> "NoOpenEnded",
-            "agreementEndDate.day" -> "12",
-            "agreementEndDate.month" -> "12",
-            "agreementEndDate.year" -> "",
-            "agreement-breakClause-radio" -> "YesBreakClause",
-            "about-break-clause" -> "Reason...",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.month" -> "",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "yesPayedRent",
+            "RentPeriodAmount" -> "20000.00",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.year" -> "2026",
+            "SecondRentPeriodAmount" -> "10000.00",
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -383,19 +261,26 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
         val content = contentAsString(result)
         content must include(pageTitle)
       }
-      "Return Form with Errors when open ended radio is selected and no month and year is input" in {
+
+      "Return Form with Errors when no year is added to the first periods end date" in {
         mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.ProvideDetailsOfFirstSecondRentPeriodController.submit)
           .withFormUrlEncodedBody(
-            "agreementStartDate.day" -> "12",
-            "agreementStartDate.month" -> "12",
-            "agreementStartDate.year" -> "2026",
-            "agreement-radio-openEnded" -> "NoOpenEnded",
-            "agreementEndDate.day" -> "12",
-            "agreementEndDate.month" -> "",
-            "agreementEndDate.year" -> "",
-            "agreement-breakClause-radio" -> "YesBreakClause",
-            "about-break-clause" -> "Reason...",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.year" -> "",
+            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "yesPayedRent",
+            "RentPeriodAmount" -> "20000.00",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.year" -> "2026",
+            "SecondRentPeriodAmount" -> "10000.00",
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -405,19 +290,25 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
         val content = contentAsString(result)
         content must include(pageTitle)
       }
-      "Return Form with Errors when open ended radio is selected and no day and year is input" in {
+      "Return Form with Errors when no day is added to the second period start date" in {
         mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.ProvideDetailsOfFirstSecondRentPeriodController.submit)
           .withFormUrlEncodedBody(
-            "agreementStartDate.day" -> "12",
-            "agreementStartDate.month" -> "12",
-            "agreementStartDate.year" -> "2026",
-            "agreement-radio-openEnded" -> "NoOpenEnded",
-            "agreementEndDate.day" -> "",
-            "agreementEndDate.month" -> "12",
-            "agreementEndDate.year" -> "",
-            "agreement-breakClause-radio" -> "YesBreakClause",
-            "about-break-clause" -> "Reason...",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "yesPayedRent",
+            "RentPeriodAmount" -> "20000.00",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.day" -> "",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.year" -> "2026",
+            "SecondRentPeriodAmount" -> "10000.00",
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -427,19 +318,26 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
         val content = contentAsString(result)
         content must include(pageTitle)
       }
-      "Return Form with Errors when open ended radio is selected and no day and month is input" in {
+
+      "Return Form with Errors when no month is added to the second period start date" in {
         mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.ProvideDetailsOfFirstSecondRentPeriodController.submit)
           .withFormUrlEncodedBody(
-            "agreementStartDate.day" -> "12",
-            "agreementStartDate.month" -> "12",
-            "agreementStartDate.year" -> "2026",
-            "agreement-radio-openEnded" -> "NoOpenEnded",
-            "agreementEndDate.day" -> "",
-            "agreementEndDate.month" -> "",
-            "agreementEndDate.year" -> "2026",
-            "agreement-breakClause-radio" -> "YesBreakClause",
-            "about-break-clause" -> "Reason...",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "yesPayedRent",
+            "RentPeriodAmount" -> "20000.00",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.month" -> "",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.year" -> "2026",
+            "SecondRentPeriodAmount" -> "10000.00",
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -449,18 +347,25 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
         val content = contentAsString(result)
         content must include(pageTitle)
       }
-      "Return Form with Errors when break clause radio is not selected" in {
+      "Return Form with Errors when no year is added to the second period start date" in {
         mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.ProvideDetailsOfFirstSecondRentPeriodController.submit)
           .withFormUrlEncodedBody(
-            "agreementStartDate.day" -> "12",
-            "agreementStartDate.month" -> "12",
-            "agreementStartDate.year" -> "2026",
-            "agreement-radio-openEnded" -> "NoOpenEnded",
-            "agreementEndDate.day" -> "",
-            "agreementEndDate.month" -> "",
-            "agreementEndDate.year" -> "2026",
-            "agreement-breakClause-radio" -> ""
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "yesPayedRent",
+            "RentPeriodAmount" -> "20000.00",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.year" -> "",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.year" -> "2026",
+            "SecondRentPeriodAmount" -> "10000.00",
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -470,19 +375,25 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
         val content = contentAsString(result)
         content must include(pageTitle)
       }
-      "Return Form with Errors when break clause radio is selected as yes and no reason is input" in {
+      "Return Form with Errors when no day is added to the second period end date" in {
         mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.ProvideDetailsOfFirstSecondRentPeriodController.submit)
           .withFormUrlEncodedBody(
-            "agreementStartDate.day" -> "12",
-            "agreementStartDate.month" -> "12",
-            "agreementStartDate.year" -> "2026",
-            "agreement-radio-openEnded" -> "NoOpenEnded",
-            "agreementEndDate.day" -> "12",
-            "agreementEndDate.month" -> "12",
-            "agreementEndDate.year" -> "2026",
-            "agreement-breakClause-radio" -> "YesBreakClause",
-            "about-break-clause" -> "",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "yesPayedRent",
+            "RentPeriodAmount" -> "20000.00",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.day" -> "",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.year" -> "2026",
+            "SecondRentPeriodAmount" -> "10000.00",
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -492,19 +403,221 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
         val content = contentAsString(result)
         content must include(pageTitle)
       }
-      "Return Form with Errors when break clause radio is selected as yes and reason input is too long" in {
+      "Return Form with Errors when no month is added to the second period end date" in {
         mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.ProvideDetailsOfFirstSecondRentPeriodController.submit)
           .withFormUrlEncodedBody(
-            "agreementStartDate.day" -> "12",
-            "agreementStartDate.month" -> "12",
-            "agreementStartDate.year" -> "2026",
-            "agreement-radio-openEnded" -> "NoOpenEnded",
-            "agreementEndDate.day" -> "12",
-            "agreementEndDate.month" -> "12",
-            "agreementEndDate.year" -> "2026",
-            "agreement-breakClause-radio" -> "YesBreakClause",
-            "about-break-clause" -> over250Characters,
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "yesPayedRent",
+            "RentPeriodAmount" -> "20000.00",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.month" -> "",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.year" -> "2026",
+            "SecondRentPeriodAmount" -> "10000.00",
+          )
+          .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
+        result.map(result => {
+          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/landlord")
+        })
+        status(result) mustBe BAD_REQUEST
+        val content = contentAsString(result)
+        content must include(pageTitle)
+      }
+      "Return Form with Errors when no year is added to the second period end date" in {
+        mockRequest(hasCredId = true)
+        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.ProvideDetailsOfFirstSecondRentPeriodController.submit)
+          .withFormUrlEncodedBody(
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "yesPayedRent",
+            "RentPeriodAmount" -> "20000.00",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.year" -> "",
+            "SecondRentPeriodAmount" -> "10000.00",
+          )
+          .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
+        result.map(result => {
+          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/landlord")
+        })
+        status(result) mustBe BAD_REQUEST
+        val content = contentAsString(result)
+        content must include(pageTitle)
+      }
+      "Return Form with Errors when no first rent period radio is selected" in {
+        mockRequest(hasCredId = true)
+        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.ProvideDetailsOfFirstSecondRentPeriodController.submit)
+          .withFormUrlEncodedBody(
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "",
+            "RentPeriodAmount" -> "20000.00",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.year" -> "2026",
+            "SecondRentPeriodAmount" -> "10000.00",
+          )
+          .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
+        result.map(result => {
+          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/landlord")
+        })
+        status(result) mustBe BAD_REQUEST
+        val content = contentAsString(result)
+        content must include(pageTitle)
+      }
+      "Return Form with Errors when no rent period amount is added and firstRentPeriodRadio has yesPayedRent selected" in {
+        mockRequest(hasCredId = true)
+        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.ProvideDetailsOfFirstSecondRentPeriodController.submit)
+          .withFormUrlEncodedBody(
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "yesPayedRent",
+            "RentPeriodAmount" -> "",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.year" -> "2026",
+            "SecondRentPeriodAmount" -> "10000.00",
+          )
+          .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
+        result.map(result => {
+          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/landlord")
+        })
+        status(result) mustBe BAD_REQUEST
+        val content = contentAsString(result)
+        content must include(pageTitle)
+      }
+      "Return Form with Errors when no rent second period amount is added" in {
+        mockRequest(hasCredId = true)
+        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.ProvideDetailsOfFirstSecondRentPeriodController.submit)
+          .withFormUrlEncodedBody(
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "yesPayedRent",
+            "RentPeriodAmount" -> "20000.00",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.year" -> "2026",
+            "SecondRentPeriodAmount" -> "",
+          )
+          .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
+        result.map(result => {
+          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/landlord")
+        })
+        status(result) mustBe BAD_REQUEST
+        val content = contentAsString(result)
+        content must include(pageTitle)
+      }
+      "Return Form with Errors when no radio is selected for first rent" in {
+        mockRequest(hasCredId = true)
+        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.ProvideDetailsOfFirstSecondRentPeriodController.submit)
+          .withFormUrlEncodedBody(
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "",
+            "RentPeriodAmount" -> "20000.00",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.year" -> "2026",
+            "SecondRentPeriodAmount" -> "10000",
+          )
+          .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
+        result.map(result => {
+          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/landlord")
+        })
+        status(result) mustBe BAD_REQUEST
+        val content = contentAsString(result)
+        content must include(pageTitle)
+      }
+      "Return Form with Errors when format is wrong for RentPeriodAmount" in {
+        mockRequest(hasCredId = true)
+        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.ProvideDetailsOfFirstSecondRentPeriodController.submit)
+          .withFormUrlEncodedBody(
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "yesPayedRent",
+            "RentPeriodAmount" -> "hello",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.year" -> "2026",
+            "SecondRentPeriodAmount" -> "10000",
+          )
+          .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
+        result.map(result => {
+          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/landlord")
+        })
+        status(result) mustBe BAD_REQUEST
+        val content = contentAsString(result)
+        content must include(pageTitle)
+      }
+      "Return Form with Errors when format is wrong for SecondRentPeriodAmount" in {
+        mockRequest(hasCredId = true)
+        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.ProvideDetailsOfFirstSecondRentPeriodController.submit)
+          .withFormUrlEncodedBody(
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "yesPayedRent",
+            "RentPeriodAmount" -> "20000.00",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.year" -> "2026",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.day" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.month" -> "12",
+            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.year" -> "2026",
+            "SecondRentPeriodAmount" -> "hello",
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {

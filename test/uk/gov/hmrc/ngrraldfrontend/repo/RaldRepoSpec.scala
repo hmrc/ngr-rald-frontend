@@ -23,7 +23,7 @@ import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 import uk.gov.hmrc.ngrraldfrontend.helpers.{TestData, TestSupport}
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.models.{Agreement, AgreementVerbal, Landlord, RaldUserAnswers, RentBasedOn}
+import uk.gov.hmrc.ngrraldfrontend.models.*
 
 class RaldRepoSpec extends TestSupport with TestData
   with DefaultPlayMongoRepositorySupport[RaldUserAnswers] {
@@ -213,7 +213,6 @@ class RaldRepoSpec extends TestSupport with TestData
     "insert agreement with no break clause info and no open end date successfully" in {
       val agreementStart = "12-12-2026"
       val openEndedRadio = "YesOpenEnded"
-      val openEndedDate = None
       val breakClauseRadio = "NoBreakClause"
       val breakClauseInfo = None
 
@@ -248,6 +247,40 @@ class RaldRepoSpec extends TestSupport with TestData
         )
     }
 
+    "handle non-yesPayedRent value correctly by setting boolean to false" in {
+      val result = await(repository.insertProvideDetailsOfFirstSecondRentPeriod(
+        credId = credId,
+        firstDateStart = "2025-01-01",
+        firstDateEnd = "2025-01-31",
+        firstRentPeriodRadio = "noRentPaid",
+        firstRentPeriodAmount = None,
+        secondDateStart = "2025-02-01",
+        secondDateEnd = "2025-02-28",
+        secondHowMuchIsRent = BigDecimal(1000)
+      ))
+
+      val actual = await(repository.findByCredId(credId))
+
+     result mustBe actual
+    }
+
+    "handle yesPayedRent value correctly by setting boolean to true and take first rent period amount" in {
+      val result = await(repository.insertProvideDetailsOfFirstSecondRentPeriod(
+        credId = credId,
+        firstDateStart = "2025-01-01",
+        firstDateEnd = "2025-01-31",
+        firstRentPeriodRadio = "yesPayedRent",
+        firstRentPeriodAmount = Some(1000),
+        secondDateStart = "2025-02-01",
+        secondDateEnd = "2025-02-28",
+        secondHowMuchIsRent = BigDecimal(1000)
+      ))
+
+      val actual = await(repository.findByCredId(credId))
+
+      result mustBe actual
+    }
+    
     "insert rent based on with other desc successfully" in {
       await(
         repository.insertRentBased(
@@ -304,12 +337,20 @@ class RaldRepoSpec extends TestSupport with TestData
       actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, agreedRentChange = Some("Yes")))
     }
 
-    "insert hasRentFreePeriod successfully" in {
+    "insert hasRentFreePeriod successfully with Yes" in {
       val hasRentFreePeriod = "Yes"
 
       await(repository.insertHasRentFreePeriod(credId, hasRentFreePeriod))
       val actual = await(repository.findByCredId(credId))
       actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, hasRentFreePeriod = Some(true)))
+    }
+
+    "insert hasRentFreePeriod successfully with No" in {
+      val hasRentFreePeriod = "No"
+
+      await(repository.insertHasRentFreePeriod(credId, hasRentFreePeriod))
+      val actual = await(repository.findByCredId(credId))
+      actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, hasRentFreePeriod = Some(false)))
     }
 
     "credId doesn't exist in mongoDB" in {

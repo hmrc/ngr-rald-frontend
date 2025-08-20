@@ -25,14 +25,15 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.dateinput.DateInput
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
+import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
-import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.forms.ProvideDetailsOfFirstSecondRentPeriodForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.ProvideDetailsOfFirstSecondRentPeriodForm.form
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
 import uk.gov.hmrc.ngrraldfrontend.views.html.ProvideDetailsOfFirstSecondRentPeriodView
-import uk.gov.hmrc.ngrraldfrontend.views.html.components.{DateTextFields, InputText, NGRCharacterCountComponent}
+import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject
@@ -40,11 +41,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ProvideDetailsOfFirstSecondRentPeriodController @Inject()(view: ProvideDetailsOfFirstSecondRentPeriodView,
                                                                 authenticate: AuthRetrievals,
-                                                                dateTextFields: DateTextFields,
                                                                 inputText: InputText,
                                                                 hasLinkedProperties: PropertyLinkingAction,
                                                                 raldRepo: RaldRepo,
-                                                                ngrCharacterCountComponent: NGRCharacterCountComponent,
                                                                 mcc: MessagesControllerComponents
                                                                )(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
@@ -141,19 +140,6 @@ class ProvideDetailsOfFirstSecondRentPeriodController @Inject()(view: ProvideDet
     ))
   )
 
-  def secondHowMuchIsRent()(implicit messages: Messages): Html = inputText(
-    form = form,
-    id = "SecondRentPeriodAmount",
-    name = "SecondRentPeriodAmount",
-    label = messages("provideDetailsOfFirstSecondRentPeriod.firstPeriod.radio.conditional.hint.bold"),
-    isVisible = true,
-    hint = Some(Hint(
-      content = Text(messages("provideDetailsOfFirstSecondRentPeriod.firstPeriod.radio.conditional.hint"))
-    )),
-    classes = Some("govuk-input--width-10"),
-    prefix = Some(PrefixOrSuffix(content = Text("£")))
-  )
-
   def show: Action[AnyContent] = {
     (authenticate andThen hasLinkedProperties).async { implicit request =>
       request.propertyLinking.map(property =>
@@ -165,8 +151,7 @@ class ProvideDetailsOfFirstSecondRentPeriodController @Inject()(view: ProvideDet
           firstDateEndInput(),
           buildRadios(form, firstRentPeriodRadio(form)),
           secondDateStartInput(),
-          secondDateEndInput(),
-          secondHowMuchIsRent()
+          secondDateEndInput()
         )))
       ).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
     }
@@ -180,12 +165,8 @@ class ProvideDetailsOfFirstSecondRentPeriodController @Inject()(view: ProvideDet
           formWithErrors =>
             val correctedFormErrors = formWithErrors.errors.map { formError =>
               (formError.key, formError.messages) match
-                case ("", messages) if messages.contains("agreement.radio.breakClause.required.error") =>
-                  formError.copy(key = "about-break-clause")
-                case ("", messages) if messages.contains("agreement.radio.breakClause.tooLong.error") =>
-                  formError.copy(key = "about-break-clause")
                 case ("", messages) =>
-                  formError.copy(key = "agreementEndDate")
+                  formError.copy(key = "RentPeriodAmount")
                 case _ =>
                   formError
             }
@@ -200,18 +181,19 @@ class ProvideDetailsOfFirstSecondRentPeriodController @Inject()(view: ProvideDet
                 firstDateEndInput(),
                 buildRadios(formWithErrors, firstRentPeriodRadio(formWithCorrectedErrors)),
                 secondDateStartInput(),
-                secondDateEndInput(),
-                secondHowMuchIsRent()
+                secondDateEndInput()
               )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo")),
-          agreementForm =>
-//            raldRepo.insertAgreement(
-//              CredId(request.credId.getOrElse("")),
-//              agreementForm.agreementStart.makeString,
-//              agreementForm.openEndedRadio,
-//              agreementForm.openEndedDate.map(value => value.makeString),
-//              agreementForm.breakClauseRadio,
-//              agreementForm.breakClauseInfo,
-//            )
+          provideDetailsOfFirstSecondRentPeriodForm =>
+            raldRepo.insertProvideDetailsOfFirstSecondRentPeriod(
+              CredId(request.credId.getOrElse("")),
+              provideDetailsOfFirstSecondRentPeriodForm.firstDateStartInput.makeString,
+              provideDetailsOfFirstSecondRentPeriodForm.firstDateEndInput.makeString,
+              provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodRadio,
+              provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodAmount,
+              provideDetailsOfFirstSecondRentPeriodForm.secondDateStartInput.makeString,
+              provideDetailsOfFirstSecondRentPeriodForm.secondDateEndInput.makeString,
+              provideDetailsOfFirstSecondRentPeriodForm.secondHowMuchIsRent,
+            )
             Future.successful(Redirect(routes.WhatIsYourRentBasedOnController.show.url))
         )
     }

@@ -34,20 +34,20 @@
 )(implicit messages: Messages)
 
 @govukInput(Input(
- id,
- name,
- classes = classes.fold("")(x => x),
- label = Label(
-  content = Text(messages(label, headingMessageArgs: _*)),
-  isPageHeading = isPageHeading,
-  classes = if(isVisible && isPageHeading) "govuk-label--m " else if(isVisible) "govuk-label" else "govuk-visually-hidden"
- ),
- hint = hint,
- prefix = prefix,
- value = if(populateField) form(name).value else None,
- errorMessage = form.errors(name) match {
-case Nil => None
-case errors => Some(ErrorMessage(content = HtmlContent(errors.map(err => messages(err.message)).mkString("<br>"))))
-},
- autocomplete = Some(autoComplete)
+  id,
+  name,
+  classes = classes.fold("")(x => x),
+  label = Label(
+   content = Text(messages(label, headingMessageArgs: _*)),
+   isPageHeading = isPageHeading,
+   classes = if(isVisible && isPageHeading) "govuk-label--m " else if(isVisible) "govuk-label" else "govuk-visually-hidden"
+  ),
+  hint = hint,
+  prefix = prefix,
+  value = if(populateField) form(name).value else None,
+  errorMessage = form.errors(name) match {
+  case Nil => None
+  case errors => Some(ErrorMessage(content = HtmlContent(errors.map(err => messages(err.message)).mkString("<br>"))))
+  },
+  autocomplete = Some(autoComplete)
 ))

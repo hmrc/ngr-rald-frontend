@@ -29,8 +29,8 @@ layout: Layout,
 formHelper: FormWithCSRF,
 govukErrorSummary: GovukErrorSummary,
 dateInputField: DateTextFields,
-inputText: components.InputComponent,
 govukRadios : GovukRadios,
+inputText: components.InputText,
 saveAndContinueButton: saveAndContinueButton
 )
 
@@ -42,8 +42,8 @@ saveAndContinueButton: saveAndContinueButton
     firstDateEndInput:DateInput,
     openEndedRadio: Radios,
     secondDateStartInput: DateInput,
-    secondDateEndInput: DateInput,
-    secondHowMuchIsRent: Html)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+    secondDateEndInput: DateInput
+)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
 @layout(pageTitle = Some(messages("provideDetailsOfFirstSecondRentPeriod.title")), showBackLink = true, fullWidth = false, navigationBarContent = Some(navigationBarContent)) {
 
@@ -63,7 +63,19 @@ saveAndContinueButton: saveAndContinueButton
         <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
         @dateInputField(form, secondDateStartInput)
         @dateInputField(form, secondDateEndInput)
-        @secondHowMuchIsRent
+        @inputText(
+            form  =   form,
+            id    =  "SecondRentPeriodAmount",
+            name  =  "SecondRentPeriodAmount",
+            label =   messages("provideDetailsOfFirstSecondRentPeriod.firstPeriod.radio.conditional.hint.bold"),
+            isPageHeading = false,
+            hint = Some(Hint(
+                content = Text(messages("provideDetailsOfFirstSecondRentPeriod.firstPeriod.radio.conditional.hint"))
+            )),
+            isVisible = true,
+            classes = Some("govuk-input--width-10"),
+            prefix = Some(PrefixOrSuffix(content = Text("£")))
+        )
         @saveAndContinueButton(msg = messages("service.saveAndContinue"), isStartButton = false)
     }
 }
