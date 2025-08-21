@@ -22,7 +22,9 @@ GET        /have-you-agreed-rent-changes-with-landlord  uk.gov.hmrc.ngrraldfront
 POST       /have-you-agreed-rent-changes-with-landlord  uk.gov.hmrc.ngrraldfrontend.controllers.AgreedRentChangeController.submit
 GET        /agreement-verbal                            uk.gov.hmrc.ngrraldfrontend.controllers.AgreementVerbalController.show
 POST       /agreement-verbal                            uk.gov.hmrc.ngrraldfrontend.controllers.AgreementVerbalController.submit
-GET        /do-you-have-a-rent-free-period         uk.gov.hmrc.ngrraldfrontend.controllers.CheckRentFreePeriodController.show
-POST       /do-you-have-a-rent-free-period         uk.gov.hmrc.ngrraldfrontend.controllers.CheckRentFreePeriodController.submit
-GET        /agreement                                   uk.gov.hmrc.ngrraldfrontend.controllers.AgreementController.show
-POST       /agreement                                   uk.gov.hmrc.ngrraldfrontend.controllers.AgreementController.submit
+GET        /do-you-have-a-rent-free-period                  uk.gov.hmrc.ngrraldfrontend.controllers.CheckRentFreePeriodController.show
+POST       /do-you-have-a-rent-free-period                  uk.gov.hmrc.ngrraldfrontend.controllers.CheckRentFreePeriodController.submit
+GET        /agreement                                       uk.gov.hmrc.ngrraldfrontend.controllers.AgreementController.show
+POST       /agreement                                       uk.gov.hmrc.ngrraldfrontend.controllers.AgreementController.submit
+GET        /provide-details-of-first-second-rent-period     uk.gov.hmrc.ngrraldfrontend.controllers.ProvideDetailsOfFirstSecondRentPeriodController.show
+POST       /provide-details-of-first-second-rent-period     uk.gov.hmrc.ngrraldfrontend.controllers.ProvideDetailsOfFirstSecondRentPeriodController.submit

@@ -47,13 +47,13 @@ whatTypeOfAgreement.written = Licence or other type of written agreement
 whatTypeOfAgreement.verbal = Verbal agreement
 whatTypeOfAgreement.error.required = Select what type of agreement you have
 
-#typeOfLeaseRenewal
+#TypeOfLeaseRenewal
 typeOfLeaseRenewal.title = What type of lease renewal is it?
 typeOfLeaseRenewal.option1 = A renewed agreement
 typeOfLeaseRenewal.option2 = A surrender and renewal
 typeOfLeaseRenewal.required.error = Select what type of lease renewal it is
 
-#landlord
+#Landlord
 landlord.title = Landlord
 landlord.p1 = What is the landlord''s full name?
 landlord.p2 = What is your relationship with the landlord?
@@ -90,7 +90,7 @@ whatIsYourRentBasedOn.error.required = Select what your rent is based on
 whatIsYourRentBasedOn.otherText.error.required = Tell us how your rent was agreed
 whatIsYourRentBasedOn.otherText.error.maxLength = Maximum character allowed is 250
 
-#howMuchIsTotalAnnualRent
+#HowMuchIsTotalAnnualRent
 howMuchIsTotalAnnualRent.title = How much is your total annual rent?
 howMuchIsTotalAnnualRent.p1 = This is the amount you pay each year (excluding VAT) even if:
 howMuchIsTotalAnnualRent.b1 = you pay monthly or quarterly
@@ -100,7 +100,7 @@ howMuchIsTotalAnnualRent.empty.error = Enter your new total annual rent, in poun
 howMuchIsTotalAnnualRent.tooLarge.error = New total annual rent must be £9,999,999.99 or less
 howMuchIsTotalAnnualRent.format.error = New total annual rent must be a number, like 30,000
 
-#agreedRentChange
+#AgreedRentChange
  agreedRentChange.title = Have you agreed in advance with the landlord when and by how much rent goes up?
  agreedRentChange.p1 = For example, the agreement says that the rent will increase from £5,000 to £7,000 a year after 12 months. This is often known as a stepped rent.
  agreedRentChange.empty.error = Select yes if you have agreed with your landlord in advance when and by how much rent goes up
@@ -134,12 +134,12 @@ agreementVerbal.endDate.monthAndYear.required.error = Date your agreement ends m
 agreementVerbal.endDate.invalid.error = Date your agreement ends must be a real date
 agreementVerbal.endDate.isBefore.startDate.error = Date your agreement ends must be after agreement started
 
-#checkRentPeriod
+#CheckRentPeriod
 checkRentPeriod.title = Do you have a rent-free period at the start of your agreement?
 checkRentPeriod.p1 = A rent-free period is when you do not pay any rent
 checkRentPeriod.empty.error = Select yes if you have a rent-free period at the start of your agreement.
 
-#agreement
+#Agreement
 agreement.title = Agreement
 agreement.subheading.1 = When did your agreement start?
 agreement.hint.1 = For example, 27 6 2026
@@ -173,3 +173,61 @@ agreement.radio.openEnded.required.error = Select yes if your agreement is open-
 agreement.radio.breakClause.required.error = Select yes if your agreement has a break clause
 agreement.radio.conditional.breakClause.required.error = Tell us about your break clause or clauses
 agreement.radio.conditional.breakClause.tooLong.error = Maximum character allowed is 250
+
+#ProvideDetailsOfFirstSecondRentPeriod
+provideDetailsOfFirstSecondRentPeriod.title = Provide details of each rent period
+provideDetailsOfFirstSecondRentPeriod.firstPeriod.subheading = First rent period
+provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.label = Start date
+provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.hint = For example, 27 6 2026
+provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.label = End date
+provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.hint = For example, 27 6 2026
+provideDetailsOfFirstSecondRentPeriod.firstPeriod.radio.label = Do you pay rent in this period?
+provideDetailsOfFirstSecondRentPeriod.firstPeriod.radio.conditional.hint.bold = How much is the rent for this period (excluding VAT)?
+provideDetailsOfFirstSecondRentPeriod.firstPeriod.radio.conditional.hint = Enter the amount you pay each year (excluding VAT) even if the period is for more or less than a year.
+provideDetailsOfFirstSecondRentPeriod.firstPeriod.radio.yes = Yes
+provideDetailsOfFirstSecondRentPeriod.firstPeriod.radio.no = No, this is a rent-free period
+provideDetailsOfFirstSecondRentPeriod.secondPeriod.subheading.1 = Second rent period
+provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.label = Start date
+provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.hint = For example, 27 6 2026
+provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.label = End date
+provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.hint = For example, 27 6 2026
+provideDetailsOfFirstSecondRentPeriod.secondPeriod.subheading.2 = How much is the rent for this period (excluding VAT)?
+provideDetailsOfFirstSecondRentPeriod.secondPeriod.hint = Enter the amount you pay each year (excluding VAT) even if the period is for more or less than a year
+
+provideDetailsOfFirstSecondRentPeriod.first.startDate.required.error = Date you will start paying rent must be a real date.
+provideDetailsOfFirstSecondRentPeriod.first.startDate.day.month.required.error = Date you will start paying rent must be a real date.
+provideDetailsOfFirstSecondRentPeriod.first.startDate.day.year.required.error = Date you will start paying rent must be a real date.
+provideDetailsOfFirstSecondRentPeriod.first.startDate.month.year.required.error = Date you will start paying rent must be a real date.
+provideDetailsOfFirstSecondRentPeriod.first.startDate.day.required.error = Date you will start paying rent must be a real date.
+provideDetailsOfFirstSecondRentPeriod.first.startDate.month.required.error = Date you will start paying rent must be a real date.
+provideDetailsOfFirstSecondRentPeriod.first.startDate.year.required.error = Date you will start paying rent must be a real date.
+provideDetailsOfFirstSecondRentPeriod.first.startDate.format.error = Date you will start paying rent must be a real date.
+provideDetailsOfFirstSecondRentPeriod.first.endDate.required.error = Date you will start paying rent must be a real date.
+provideDetailsOfFirstSecondRentPeriod.first.endDate.day.month.required.error = Date you will start paying rent must be a real date.
+provideDetailsOfFirstSecondRentPeriod.first.endDate.day.year.required.error = Date you will start paying rent must be a real date.
+provideDetailsOfFirstSecondRentPeriod.first.endDate.month.year.required.error = Date you will start paying rent must be a real date.
+provideDetailsOfFirstSecondRentPeriod.first.endDate.day.required.error = Date you will start paying rent must be a real date.
+provideDetailsOfFirstSecondRentPeriod.first.endDate.month.required.error = Date you will start paying rent must be a real date.
+provideDetailsOfFirstSecondRentPeriod.first.endDate.year.required.error = Date you will start paying rent must be a real date.
+provideDetailsOfFirstSecondRentPeriod.first.endDate.format.error = Date you will start paying rent must be a real date.
+provideDetailsOfFirstSecondRentPeriod.second.startDate.required.error = Date you will start paying rent must be a real date.
+provideDetailsOfFirstSecondRentPeriod.second.startDate.day.required.error = Date you will start paying rent must be a real date.
+provideDetailsOfFirstSecondRentPeriod.second.startDate.day.month.required.error = Date you will start paying rent must be a real date.
+provideDetailsOfFirstSecondRentPeriod.second.startDate.day.year.required.error = Date you will start paying rent must be a real date.
+provideDetailsOfFirstSecondRentPeriod.second.startDate.month.year.required.error = Date you will start paying rent must be a real date.
+provideDetailsOfFirstSecondRentPeriod.second.startDate.day.required.error = Date you will start paying rent must be a real date.
+provideDetailsOfFirstSecondRentPeriod.second.startDate.month.required.error = Date you will start paying rent must be a real date.
+provideDetailsOfFirstSecondRentPeriod.second.startDate.year.required.error = Date you will start paying rent must be a real date.
+provideDetailsOfFirstSecondRentPeriod.second.startDate.format.error = Date you will start paying rent must be a real date.
+provideDetailsOfFirstSecondRentPeriod.second.endDate.required.error = Date you will start paying rent must be a real date.
+provideDetailsOfFirstSecondRentPeriod.second.endDate.day.month.required.error = Date you will start paying rent must be a real date.
+provideDetailsOfFirstSecondRentPeriod.second.endDate.day.year.required.error = Date you will start paying rent must be a real date.
+provideDetailsOfFirstSecondRentPeriod.second.endDate.month.year.required.error = Date you will start paying rent must be a real date.
+provideDetailsOfFirstSecondRentPeriod.second.endDate.day.required.error = Date you will start paying rent must be a real date.
+provideDetailsOfFirstSecondRentPeriod.second.endDate.month.required.error = Date you will start paying rent must be a real date.
+provideDetailsOfFirstSecondRentPeriod.second.endDate.year.required.error = Date you will start paying rent must be a real date.
+provideDetailsOfFirstSecondRentPeriod.second.endDate.format.error = Date you will start paying rent must be a real date.
+
+provideDetailsOfFirstSecondRentPeriod.firstPeriod.radio.error.required = Select yes if you pay rent in this period.
+provideDetailsOfFirstSecondRentPeriod.firstPeriod.amount.error.required = Enter the rent for the first rent period, in pounds.
+provideDetailsOfFirstSecondRentPeriod.secondPeriod.amount.error.required = Enter the rent for the second rent period, in pounds.

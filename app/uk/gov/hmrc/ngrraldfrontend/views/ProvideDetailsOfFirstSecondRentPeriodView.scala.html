@@ -1,0 +1,82 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
+
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.ngrraldfrontend.models.components.NavigationBarContent
+@import uk.gov.hmrc.ngrraldfrontend.viewmodels.govuk.all._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.ngrraldfrontend.views.html.components._
+@import uk.gov.hmrc.ngrraldfrontend.models.forms.ProvideDetailsOfFirstSecondRentPeriodForm
+
+@this(
+layout: Layout,
+formHelper: FormWithCSRF,
+govukErrorSummary: GovukErrorSummary,
+dateInputField: DateTextFields,
+govukRadios : GovukRadios,
+inputText: components.InputText,
+saveAndContinueButton: saveAndContinueButton
+)
+
+@(
+    navigationBarContent: NavigationBarContent,
+    selectedPropertyAddress: String,
+    form: Form[ProvideDetailsOfFirstSecondRentPeriodForm],
+    firstDateStartInput: DateInput,
+    firstDateEndInput:DateInput,
+    openEndedRadio: Radios,
+    secondDateStartInput: DateInput,
+    secondDateEndInput: DateInput
+)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+
+@layout(pageTitle = Some(messages("provideDetailsOfFirstSecondRentPeriod.title")), showBackLink = true, fullWidth = false, navigationBarContent = Some(navigationBarContent)) {
+
+    @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfFirstSecondRentPeriodController.submit, Symbol("autoComplete") -> "off") {
+
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form))
+        }
+
+        <span class="govuk-caption-m">@selectedPropertyAddress</span>
+        <h1 class="govuk-heading-l">@messages("provideDetailsOfFirstSecondRentPeriod.title")</h1>
+        <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+        <p1 class="govuk-heading-m">@messages("provideDetailsOfFirstSecondRentPeriod.firstPeriod.subheading")</p1>
+        @dateInputField(form, firstDateStartInput)
+        @dateInputField(form, firstDateEndInput)
+        @govukRadios(openEndedRadio)
+        <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+        <p1 class="govuk-heading-m">@messages("provideDetailsOfFirstSecondRentPeriod.secondPeriod.subheading.1")</p1>
+        @dateInputField(form, secondDateStartInput)
+        @dateInputField(form, secondDateEndInput)
+        @inputText(
+            form  =   form,
+            id    =  "SecondRentPeriodAmount",
+            name  =  "SecondRentPeriodAmount",
+            label =   messages("provideDetailsOfFirstSecondRentPeriod.firstPeriod.radio.conditional.hint.bold"),
+            isPageHeading = true,
+            hint = Some(Hint(
+                content = Text(messages("provideDetailsOfFirstSecondRentPeriod.firstPeriod.radio.conditional.hint"))
+            )),
+            isVisible = true,
+            classes = Some("govuk-input--width-10"),
+            prefix = Some(PrefixOrSuffix(content = Text("£")))
+        )
+        @saveAndContinueButton(msg = messages("service.saveAndContinue"), isStartButton = false)
+    }
+}

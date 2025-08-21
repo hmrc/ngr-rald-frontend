@@ -59,6 +59,10 @@ case object NoOpenEnded extends Agreement
 case object YesBreakClause extends Agreement
 case object NoBreakClause extends Agreement
 
+sealed trait firstRentPeriod extends RadioEntry
+case object yesPayedRent extends RadioEntry
+case object noRentPayed extends RadioEntry
+
 case class NGRRadioName(key: String)
 
 case class NGRRadioButtons(radioContent: String,

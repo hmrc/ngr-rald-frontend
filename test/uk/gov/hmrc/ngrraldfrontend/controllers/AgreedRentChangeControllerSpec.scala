@@ -53,7 +53,7 @@ class AgreedRentChangeControllerSpec extends ControllerSpecSupport {
 
         val result = controller.submit()(authenticatedFakeRequest(fakePostRequest))
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.WhatTypeOfLeaseRenewalController.show.url)
+        redirectLocation(result) mustBe Some(routes.ProvideDetailsOfFirstSecondRentPeriodController.show.url)
       }
       "Return BAD_REQUEST for missing input and the correct view" in {
         mockRequest()
