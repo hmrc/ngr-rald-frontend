@@ -61,6 +61,7 @@ saveAndContinueButton: saveAndContinueButton
         @dateInputField(form, firstDateEndInput)
         @govukRadios(openEndedRadio)
         <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+        <p1 class="govuk-heading-m">@messages("provideDetailsOfFirstSecondRentPeriod.secondPeriod.subheading.1")</p1>
         @dateInputField(form, secondDateStartInput)
         @dateInputField(form, secondDateEndInput)
         @inputText(
@@ -68,7 +69,7 @@ saveAndContinueButton: saveAndContinueButton
             id    =  "SecondRentPeriodAmount",
             name  =  "SecondRentPeriodAmount",
             label =   messages("provideDetailsOfFirstSecondRentPeriod.firstPeriod.radio.conditional.hint.bold"),
-            isPageHeading = false,
+            isPageHeading = true,
             hint = Some(Hint(
                 content = Text(messages("provideDetailsOfFirstSecondRentPeriod.firstPeriod.radio.conditional.hint"))
             )),
