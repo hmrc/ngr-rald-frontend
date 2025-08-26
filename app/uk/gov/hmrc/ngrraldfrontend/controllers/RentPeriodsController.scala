@@ -57,7 +57,7 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
         TableRow(
           content = Text(userAnswers.provideDetailsOfFirstSecondRentPeriod.map{ dates =>
             dates.firstDateStart
-          }.getOrElse("Found Nothing"))
+          }.getOrElse(""))
         )
       ),
       Seq(
