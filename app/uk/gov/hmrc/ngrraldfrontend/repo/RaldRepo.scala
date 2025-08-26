@@ -184,6 +184,11 @@ case class RaldRepo @Inject()(mongo: MongoComponent,
     findAndUpdateByCredId(credId, updates: _*)
   }
 
+  def insertDidYouAgreeRentWithLandlord(credId: CredId, radioValue: String): Future[Option[RaldUserAnswers]] = {
+    findAndUpdateByCredId(credId, Updates.set("didYouAgreeRentWithLandlord", if(radioValue == "YesTheLandlord") true else false))
+  }
+
+
   def findByCredId(credId: CredId): Future[Option[RaldUserAnswers]] = {
     collection.find(
       equal("credId.value", credId.value)

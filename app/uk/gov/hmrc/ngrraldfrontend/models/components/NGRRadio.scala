@@ -63,6 +63,10 @@ sealed trait firstRentPeriod extends RadioEntry
 case object yesPayedRent extends RadioEntry
 case object noRentPayed extends RadioEntry
 
+sealed trait DidYouAgreeRentWithLandlord extends RadioEntry
+case object YesTheLandlord extends DidYouAgreeRentWithLandlord
+case object NoACourtSet    extends DidYouAgreeRentWithLandlord
+
 case class NGRRadioName(key: String)
 
 case class NGRRadioButtons(radioContent: String,

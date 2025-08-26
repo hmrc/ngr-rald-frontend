@@ -174,6 +174,12 @@ agreement.radio.breakClause.required.error = Select yes if your agreement has a 
 agreement.radio.conditional.breakClause.required.error = Tell us about your break clause or clauses
 agreement.radio.conditional.breakClause.tooLong.error = Maximum character allowed is 250
 
+#DidYouAgreeRentWithLandlord
+didYouAgreeRentWithLandlord.title = Did you agree the rent with your landlord or their agent?
+didYouAgreeRentWithLandlord.yes = Yes
+didYouAgreeRentWithLandlord.no = No, a court set the rent
+didYouAgreeRentWithLandlord.error.required = Select yes if you agreed the rent with your landlord or their agent
+
 #ProvideDetailsOfFirstSecondRentPeriod
 provideDetailsOfFirstSecondRentPeriod.title = Provide details of each rent period
 provideDetailsOfFirstSecondRentPeriod.firstPeriod.subheading = First rent period
