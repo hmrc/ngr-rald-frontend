@@ -29,9 +29,10 @@ import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
 import uk.gov.hmrc.ngrraldfrontend.views.html.HowMuchIsTotalAnnualRentView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class HowMuchIsTotalAnnualRentController @Inject()(howMuchIsTotalAnnualRentView: HowMuchIsTotalAnnualRentView,
                                                    authenticate: AuthRetrievals,
                                                    hasLinkedProperties: PropertyLinkingAction,

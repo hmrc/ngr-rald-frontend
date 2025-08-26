@@ -189,6 +189,14 @@ case class RaldRepo @Inject()(mongo: MongoComponent,
   }
 
 
+  def insertRentPeriod(credId: CredId, hasAnotherRentPeriod: String): Future[Option[RaldUserAnswers]] = {
+    hasAnotherRentPeriod match {
+      case "Yes" => findAndUpdateByCredId(credId, Updates.set("hasAnotherRentPeriod", true))
+      case _ => findAndUpdateByCredId(credId, Updates.set("hasAnotherRentPeriod", false))
+    }
+
+  }
+
   def findByCredId(credId: CredId): Future[Option[RaldUserAnswers]] = {
     collection.find(
       equal("credId.value", credId.value)

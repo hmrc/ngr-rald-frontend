@@ -199,7 +199,6 @@ provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.label = End date
 provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.hint = For example, 27 6 2026
 provideDetailsOfFirstSecondRentPeriod.secondPeriod.subheading.2 = How much is the rent for this period (excluding VAT)?
 provideDetailsOfFirstSecondRentPeriod.secondPeriod.hint = Enter the amount you pay each year (excluding VAT) even if the period is for more or less than a year
-
 provideDetailsOfFirstSecondRentPeriod.first.startDate.required.error = Date you will start paying rent must be a real date.
 provideDetailsOfFirstSecondRentPeriod.first.startDate.day.month.required.error = Date you will start paying rent must be a real date.
 provideDetailsOfFirstSecondRentPeriod.first.startDate.day.year.required.error = Date you will start paying rent must be a real date.
@@ -233,7 +232,22 @@ provideDetailsOfFirstSecondRentPeriod.second.endDate.day.required.error = Date y
 provideDetailsOfFirstSecondRentPeriod.second.endDate.month.required.error = Date you will start paying rent must be a real date.
 provideDetailsOfFirstSecondRentPeriod.second.endDate.year.required.error = Date you will start paying rent must be a real date.
 provideDetailsOfFirstSecondRentPeriod.second.endDate.format.error = Date you will start paying rent must be a real date.
-
 provideDetailsOfFirstSecondRentPeriod.firstPeriod.radio.error.required = Select yes if you pay rent in this period.
 provideDetailsOfFirstSecondRentPeriod.firstPeriod.amount.error.required = Enter the rent for the first rent period, in pounds.
 provideDetailsOfFirstSecondRentPeriod.secondPeriod.amount.error.required = Enter the rent for the second rent period, in pounds.
+
+#RentPeriods
+rentPeriods.title = Rent periods
+rentPeriods.first.subheading = First rent period
+rentPeriods.first.startDate = Start date
+rentPeriods.first.endDate = End date
+rentPeriods.first.rentValue = Rent for this period(excluding VAT)
+rentPeriods.first.doYouPay = Do you pay rent in this period?
+rentPeriods.second.subheading = Second rent period
+rentPeriods.second.startDate = Start date
+rentPeriods.second.endDate = End date
+rentPeriods.second.rentValue = Rent for this period(excluding VAT)
+rentPeriods.radio.heading = Do you need to add another rent period?
+rentPeriods.error.required = Select yes if you need to add another rent period.
+rentPeriods.yes = Yes
+rentPeriods.no = No

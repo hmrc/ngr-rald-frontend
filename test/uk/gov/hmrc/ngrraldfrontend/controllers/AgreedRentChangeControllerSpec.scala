@@ -46,7 +46,7 @@ class AgreedRentChangeControllerSpec extends ControllerSpecSupport {
       }
     }
     "method submit" must {
-      "Return OK and the correct view" in {
+      "Return OK and the correct view after submitting Yes" in {
         val fakePostRequest =  FakeRequest(routes.WhatTypeOfLeaseRenewalController.submit)
           .withFormUrlEncodedBody((AgreedRentChangeForm.agreedRentChangeRadio, "Yes"))
           .withHeaders(HeaderNames.authorisation -> "Bearer 1")
@@ -54,6 +54,15 @@ class AgreedRentChangeControllerSpec extends ControllerSpecSupport {
         val result = controller.submit()(authenticatedFakeRequest(fakePostRequest))
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.ProvideDetailsOfFirstSecondRentPeriodController.show.url)
+      }
+      "Return OK and the correct view after submitting No" in {
+        val fakePostRequest = FakeRequest(routes.WhatTypeOfLeaseRenewalController.submit)
+          .withFormUrlEncodedBody((AgreedRentChangeForm.agreedRentChangeRadio, "No"))
+          .withHeaders(HeaderNames.authorisation -> "Bearer 1")
+
+        val result = controller.submit()(authenticatedFakeRequest(fakePostRequest))
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.WhatTypeOfLeaseRenewalController.show.url)
       }
       "Return BAD_REQUEST for missing input and the correct view" in {
         mockRequest()
