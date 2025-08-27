@@ -47,7 +47,6 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
                                      )(implicit appConfig: AppConfig, ec:ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
   def firstTable(userAnswers: RaldUserAnswers)(implicit messages:Messages): Table =
-    println(Console.MAGENTA_B + userAnswers + Console.RESET)
     Table(
     rows = Seq(
       Seq(
