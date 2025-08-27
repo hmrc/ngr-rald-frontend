@@ -55,4 +55,3 @@ class AgreedRentChangeFormSpec extends AnyWordSpec with Matchers {
     }
   }
 }
-

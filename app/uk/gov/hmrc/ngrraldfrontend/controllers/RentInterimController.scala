@@ -23,32 +23,31 @@ import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingActio
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
-import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreedRentChangeForm
-import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreedRentChangeForm.form
+import uk.gov.hmrc.ngrraldfrontend.models.forms.RentInterimForm
+import uk.gov.hmrc.ngrraldfrontend.models.forms.RentInterimForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
-import uk.gov.hmrc.ngrraldfrontend.views.html.AgreedRentChangeView
+import uk.gov.hmrc.ngrraldfrontend.views.html.RentInterimView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-@Singleton
-class AgreedRentChangeController @Inject()(agreedRentChangeView: AgreedRentChangeView,
-                                           authenticate: AuthRetrievals,
-                                           hasLinkedProperties: PropertyLinkingAction,
-                                           raldRepo: RaldRepo,
-                                           mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
+class RentInterimController @Inject()(rentInterimView: RentInterimView,
+                                       authenticate: AuthRetrievals,
+                                       hasLinkedProperties: PropertyLinkingAction,
+                                       raldRepo: RaldRepo,
+                                       mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport {
 
 
   def show: Action[AnyContent] = {
     (authenticate andThen hasLinkedProperties).async { implicit request =>
       request.propertyLinking.map(property =>
-        Future.successful(Ok(agreedRentChangeView(
+        Future.successful(Ok(rentInterimView(
           form = form,
           navigationBarContent = createDefaultNavBar,
-          radios = buildRadios(form, AgreedRentChangeForm.ngrRadio(form)),
+          radios = buildRadios(form, RentInterimForm.ngrRadio(form)),
           propertyAddress = property.addressFull,
         )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
     }
@@ -59,10 +58,10 @@ class AgreedRentChangeController @Inject()(agreedRentChangeView: AgreedRentChang
       form.bindFromRequest().fold(
         formWithErrors => {
           request.propertyLinking.map(property =>
-            Future.successful(BadRequest(agreedRentChangeView(
+            Future.successful(BadRequest(rentInterimView(
               form = formWithErrors,
               navigationBarContent = createDefaultNavBar,
-              radios = buildRadios(formWithErrors, AgreedRentChangeForm.ngrRadio(formWithErrors)),
+              radios = buildRadios(formWithErrors, RentInterimForm.ngrRadio(formWithErrors)),
               propertyAddress = property.addressFull
             )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
         },
@@ -74,8 +73,9 @@ class AgreedRentChangeController @Inject()(agreedRentChangeView: AgreedRentChang
           if(radioValue.radioValue == "Yes"){
             Future.successful(Redirect(routes.ProvideDetailsOfFirstSecondRentPeriodController.show.url))
           }else {
-            Future.successful(Redirect(routes.WhatTypeOfLeaseRenewalController.show.url))
+            Future.successful(Redirect(routes.CheckRentFreePeriodController.show.url))
           }
       )
     }
 }
+
