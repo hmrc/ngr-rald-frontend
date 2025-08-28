@@ -34,9 +34,10 @@ import uk.gov.hmrc.ngrraldfrontend.views.html.LandlordView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.NGRCharacterCountComponent
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class LandlordController @Inject()(view: LandlordView,
                                    authenticate: AuthRetrievals,
                                    hasLinkedProperties: PropertyLinkingAction,

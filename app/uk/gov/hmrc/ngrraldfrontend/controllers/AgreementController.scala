@@ -36,9 +36,10 @@ import uk.gov.hmrc.ngrraldfrontend.views.html.AgreementView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.{DateTextFields, NGRCharacterCountComponent}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class AgreementController @Inject()(view: AgreementView,
                                     authenticate: AuthRetrievals,
                                     dateTextFields: DateTextFields,

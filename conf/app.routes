@@ -30,3 +30,5 @@ GET        /did-you-agree-rent-with-landlord            uk.gov.hmrc.ngrraldfront
 POST       /did-you-agree-rent-with-landlord            uk.gov.hmrc.ngrraldfrontend.controllers.DidYouAgreeRentWithLandlordController.submit
 GET        /provide-details-of-first-second-rent-period     uk.gov.hmrc.ngrraldfrontend.controllers.ProvideDetailsOfFirstSecondRentPeriodController.show
 POST       /provide-details-of-first-second-rent-period     uk.gov.hmrc.ngrraldfrontend.controllers.ProvideDetailsOfFirstSecondRentPeriodController.submit
+GET        /rent-periods                                    uk.gov.hmrc.ngrraldfrontend.controllers.RentPeriodsController.show
+POST       /rent-periods                                    uk.gov.hmrc.ngrraldfrontend.controllers.RentPeriodsController.submit

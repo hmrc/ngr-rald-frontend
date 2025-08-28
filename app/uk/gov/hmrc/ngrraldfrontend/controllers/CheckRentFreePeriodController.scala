@@ -30,9 +30,10 @@ import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
 import uk.gov.hmrc.ngrraldfrontend.views.html.CheckRentFreePeriodView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class CheckRentFreePeriodController @Inject()(checkRentFreePeriodView: CheckRentFreePeriodView,
                                               authenticate : AuthRetrievals,
                                               hasLinkedProperties: PropertyLinkingAction,
