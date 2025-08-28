@@ -30,6 +30,7 @@ trait AppConfig {
   val ngrLogoutUrl: String
   val timeToLive: String
   def getString(key: String): String
+  val cacheTtl: Long
 }
 
 @Singleton
@@ -40,6 +41,7 @@ class FrontendAppConfig @Inject()(config: Configuration, servicesConfig: Service
   override val timeToLive: String = servicesConfig.getString("time-to-live.time")
   override val ngrDashboardUrl: String = s"$dashboardHost/ngr-dashboard-frontend/dashboard"
   override val ngrLogoutUrl: String = s"$dashboardHost/ngr-dashboard-frontend/signout"
+  override val cacheTtl: Long = config.get[Int]("mongodb.timeToLiveInSeconds")
 
   def getString(key: String): String =
     config.getOptional[String](key).filter(!_.isBlank).getOrElse(throwConfigNotFoundError(key))
