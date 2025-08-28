@@ -24,6 +24,7 @@ import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.RentAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.RaldUserAnswers
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
+import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
 import uk.gov.hmrc.ngrraldfrontend.views.html.TellUsAboutYourAgreementView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -36,6 +37,7 @@ class TellUsAboutRentController @Inject()(view: TellUsAboutYourAgreementView,
                                           authenticate: AuthRetrievals,
                                           hasLinkedProperties: PropertyLinkingAction,
                                           raldRepo: RaldRepo,
+                                          navigator: Navigator,
                                           mcc: MessagesControllerComponents
                                          )(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
