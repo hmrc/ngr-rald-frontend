@@ -21,6 +21,8 @@ import play.api.data.Mapping
 import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 final case class NGRDate(day: String, month: String, year: String) {
   lazy val ngrDate: LocalDate = LocalDate.of(year.toInt, month.toInt, day.toInt)
@@ -32,6 +34,20 @@ final case class NGRDate(day: String, month: String, year: String) {
 
 object NGRDate {
   implicit val format: OFormat[NGRDate] = Json.format[NGRDate]
+
+
+  def formatDate(dateString: String): String = {
+    val parts = dateString.split("-").map(_.toInt)
+    val year = parts(0)
+    val month = f"${parts(1)}%02d"
+    val day = f"${parts(2)}%02d"
+    val paddedDate = s"$year-$month-$day"
+    val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    val outputFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)
+    val date = LocalDate.parse(paddedDate, inputFormatter)
+    date.format(outputFormatter)
+  }
+
 
   def unapply(ngrDate: NGRDate): Option[(String, String, String)] =
     Some(ngrDate.day, ngrDate.month, ngrDate.year)
