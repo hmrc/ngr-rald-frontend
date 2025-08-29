@@ -32,3 +32,5 @@ GET        /provide-details-of-first-second-rent-period     uk.gov.hmrc.ngrraldf
 POST       /provide-details-of-first-second-rent-period     uk.gov.hmrc.ngrraldfrontend.controllers.ProvideDetailsOfFirstSecondRentPeriodController.submit
 GET        /rent-periods                                    uk.gov.hmrc.ngrraldfrontend.controllers.RentPeriodsController.show
 POST       /rent-periods                                    uk.gov.hmrc.ngrraldfrontend.controllers.RentPeriodsController.submit
+GET        /did-the-court-set-an-interim-rent           uk.gov.hmrc.ngrraldfrontend.controllers.RentInterimController.show
+POST       /did-the-court-set-an-interim-rent           uk.gov.hmrc.ngrraldfrontend.controllers.RentInterimController.submit
