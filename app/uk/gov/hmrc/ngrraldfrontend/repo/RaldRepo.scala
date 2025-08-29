@@ -191,6 +191,9 @@ case class RaldRepo @Inject()(mongo: MongoComponent,
     findAndUpdateByCredId(credId, Updates.set("didYouAgreeRentWithLandlord", if(radioValue == "YesTheLandlord") true else false))
   }
 
+  def insertRentDates(credId: CredId, rentDates: String): Future[Option[RaldUserAnswers]] = {
+    findAndUpdateByCredId(credId, Updates.set("agreedRentDate", rentDates))
+  }
 
   def insertRentPeriod(credId: CredId, hasAnotherRentPeriod: String): Future[Option[RaldUserAnswers]] = {
     hasAnotherRentPeriod match {

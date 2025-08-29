@@ -34,3 +34,5 @@ GET        /rent-periods                                    uk.gov.hmrc.ngrraldf
 POST       /rent-periods                                    uk.gov.hmrc.ngrraldfrontend.controllers.RentPeriodsController.submit
 GET        /did-the-court-set-an-interim-rent           uk.gov.hmrc.ngrraldfrontend.controllers.RentInterimController.show
 POST       /did-the-court-set-an-interim-rent           uk.gov.hmrc.ngrraldfrontend.controllers.RentInterimController.submit
+GET        /rent-dates-agree                            uk.gov.hmrc.ngrraldfrontend.controllers.RentDatesAgreeController.show
+POST       /rent-dates-agree                            uk.gov.hmrc.ngrraldfrontend.controllers.RentDatesAgreeController.submit
