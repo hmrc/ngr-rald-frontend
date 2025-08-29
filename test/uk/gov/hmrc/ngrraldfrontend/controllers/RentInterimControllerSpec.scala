@@ -25,7 +25,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.forms.RentInterimForm
 import uk.gov.hmrc.ngrraldfrontend.views.html.RentInterimView
 
 class RentInterimControllerSpec extends ControllerSpecSupport {
-  val pageTitle = "Have you agreed in advance with the landlord when and by how much rent goes up?"
+  val pageTitle = "Did the court also set an interim rent?"
   val view: RentInterimView = inject[RentInterimView]
   val controller: RentInterimController = new RentInterimController(view, mockAuthJourney, mockPropertyLinkingAction, mockRaldRepo, mcc)(mockConfig)
 
