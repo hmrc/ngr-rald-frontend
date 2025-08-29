@@ -55,13 +55,13 @@ class RentPeriodsControllerSpec extends ControllerSpecSupport {
           selectedProperty = property,
           provideDetailsOfFirstSecondRentPeriod =
             Some(ProvideDetailsOfFirstSecondRentPeriod(
-              firstDateStart = "",
-              firstDateEnd = "",
+              firstDateStart = "2016-12-12",
+              firstDateEnd = "2017-12-12",
               firstRentPeriodRadio = true,
-              firstRentPeriodAmount = Some(""),
-              secondDateStart = "",
-              secondDateEnd = "",
-              secondHowMuchIsRent = "")))))
+              firstRentPeriodAmount = Some("10000"),
+              secondDateStart = "2018-12-12",
+              secondDateEnd = "2019-12-12",
+              secondHowMuchIsRent = "10000")))))
         val result = controller.show()(authenticatedFakeRequest())
         status(result) mustBe OK
         val content = contentAsString(result)

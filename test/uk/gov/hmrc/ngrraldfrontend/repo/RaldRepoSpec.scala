@@ -264,8 +264,24 @@ class RaldRepoSpec extends TestSupport with TestData
      result mustBe actual
     }
 
+
     "handle yesPayedRent value correctly by setting boolean to true and take first rent period amount" in {
-      val result = await(repository.insertProvideDetailsOfFirstSecondRentPeriod(
+      val expected = RaldUserAnswers(
+        credId,
+        NewAgreement,
+        property,
+        provideDetailsOfFirstSecondRentPeriod = Some(ProvideDetailsOfFirstSecondRentPeriod(
+          firstDateStart = "2025-01-01",
+          firstDateEnd = "2025-01-31",
+          firstRentPeriodRadio = true,
+          firstRentPeriodAmount = Some("1000"),
+          secondDateStart = "2025-02-01",
+          secondDateEnd = "2025-02-28",
+          secondHowMuchIsRent = "1000"
+        ))
+      )
+
+      await(repository.insertProvideDetailsOfFirstSecondRentPeriod(
         credId = credId,
         firstDateStart = "2025-01-01",
         firstDateEnd = "2025-01-31",
@@ -278,7 +294,7 @@ class RaldRepoSpec extends TestSupport with TestData
 
       val actual = await(repository.findByCredId(credId))
 
-      result mustBe actual
+      actual mustBe Some(expected)
     }
 
     "insert rent based on with other desc successfully" in {

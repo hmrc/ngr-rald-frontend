@@ -136,19 +136,19 @@ case class RaldRepo @Inject()(mongo: MongoComponent,
                              ): Future[Option[RaldUserAnswers]] = {
 
     val updates = Seq(
-      Updates.set("ProvideDetailsOfFirstSecondRentPeriod.firstDateStart", firstDateStart),
-      Updates.set("ProvideDetailsOfFirstSecondRentPeriod.firstDateEnd", firstDateEnd),
-      Updates.set("ProvideDetailsOfFirstSecondRentPeriod.firstRentPeriodRadio", firstRentPeriodRadio match {
+      Updates.set("provideDetailsOfFirstSecondRentPeriod.firstDateStart", firstDateStart),
+      Updates.set("provideDetailsOfFirstSecondRentPeriod.firstDateEnd", firstDateEnd),
+      Updates.set("provideDetailsOfFirstSecondRentPeriod.firstRentPeriodRadio", firstRentPeriodRadio match {
         case answer if (answer == "yesPayedRent") => true
         case _ => false
       }),
-      Updates.set("ProvideDetailsOfFirstSecondRentPeriod.firstRentPeriodAmount", firstRentPeriodAmount match {
+      Updates.set("provideDetailsOfFirstSecondRentPeriod.firstRentPeriodAmount", firstRentPeriodAmount match {
         case Some(value) => value.toString()
         case _ => null
       }),
-      Updates.set("ProvideDetailsOfFirstSecondRentPeriod.secondDateStart", secondDateStart),
-      Updates.set("ProvideDetailsOfFirstSecondRentPeriod.secondDateEnd", secondDateEnd),
-      Updates.set("ProvideDetailsOfFirstSecondRentPeriod.secondHowMuchIsRent", secondHowMuchIsRent.toString)
+      Updates.set("provideDetailsOfFirstSecondRentPeriod.secondDateStart", secondDateStart),
+      Updates.set("provideDetailsOfFirstSecondRentPeriod.secondDateEnd", secondDateEnd),
+      Updates.set("provideDetailsOfFirstSecondRentPeriod.secondHowMuchIsRent", secondHowMuchIsRent.toString)
     )
 
     findAndUpdateByCredId(credId, updates: _*)
