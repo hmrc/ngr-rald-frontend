@@ -19,12 +19,15 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.RenewedAgreement
-import uk.gov.hmrc.ngrraldfrontend.models.RaldUserAnswers
+import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, RaldUserAnswers, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
+import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
+import uk.gov.hmrc.ngrraldfrontend.pages.TellUsAboutYourRenewedAgreementPage
+import uk.gov.hmrc.ngrraldfrontend.repo.{RaldRepo, SessionRepository}
 import uk.gov.hmrc.ngrraldfrontend.views.html.TellUsAboutYourAgreementView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -36,30 +39,26 @@ class TellUsAboutYourRenewedAgreementController @Inject()(view: TellUsAboutYourA
                                                           authenticate: AuthRetrievals,
                                                           hasLinkedProperties: PropertyLinkingAction,
                                                           raldRepo: RaldRepo,
-                                                          mcc: MessagesControllerComponents
-                                                         )(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
+                                                          mcc: MessagesControllerComponents,
+                                                          getData: DataRetrievalAction,
+                                                          sessionRepository: SessionRepository,
+                                                          navigator: Navigator
+                                                     )(implicit appConfig: AppConfig, ec:ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
   def show: Action[AnyContent] = {
     (authenticate andThen hasLinkedProperties).async { implicit request =>
       request.propertyLinking.map(property =>
-          Future.successful(Ok(view(selectedPropertyAddress = property.addressFull, agreement = RenewedAgreement))))
+          Future.successful(Ok(view(navigationBarContent = createDefaultNavBar, selectedPropertyAddress = property.addressFull, agreement = RenewedAgreement))))
         .getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
     }
   }
 
-  def submit: Action[AnyContent] = {
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
-      request.propertyLinking.map(property =>
-        raldRepo.upsertRaldUserAnswers(
-          raldUserAnswers = RaldUserAnswers(
-            credId = CredId(request.credId.getOrElse("")),
-            agreementType = RenewedAgreement,
-            selectedProperty = request.propertyLinking.getOrElse(throw new NotFoundException("failed to find property")),
-            whatTypeOfAgreement = None
-          )
-        )
-      )
-      Future.successful(Redirect(routes.WhatTypeOfLeaseRenewalController.show.url))
-    }
+    def submit: Action[AnyContent]   = {
+      (authenticate andThen getData).async { implicit request =>
+        for {
+          updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(TellUsAboutYourRenewedAgreementPage, RenewedAgreement))
+          _ <- sessionRepository.set(updatedAnswers)
+        } yield Redirect(navigator.nextPage(TellUsAboutYourRenewedAgreementPage, NormalMode, updatedAnswers))
+      }
+      }
   }
-}                                                     

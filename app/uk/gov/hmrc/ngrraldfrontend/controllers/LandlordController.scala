@@ -21,14 +21,17 @@ import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.govukfrontend.views.Aliases.*
 import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
+import uk.gov.hmrc.ngrraldfrontend.models.{Landlord, NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.LandlordForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.LandlordForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
+import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
+import uk.gov.hmrc.ngrraldfrontend.pages.LandlordPage
+import uk.gov.hmrc.ngrraldfrontend.repo.{RaldRepo, SessionRepository}
 import uk.gov.hmrc.ngrraldfrontend.views.html.LandlordView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.NGRCharacterCountComponent
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -42,7 +45,10 @@ class LandlordController @Inject()(view: LandlordView,
                                    hasLinkedProperties: PropertyLinkingAction,
                                    raldRepo: RaldRepo,
                                    ngrCharacterCountComponent: NGRCharacterCountComponent,
-                                   mcc: MessagesControllerComponents
+                                   mcc: MessagesControllerComponents,
+                                   getData : DataRetrievalAction,
+                                   sessionRepository: SessionRepository,
+                                   navigator: Navigator
                                   )(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
   def otherRelationship(form: Form[LandlordForm])(implicit messages: Messages): NGRRadioButtons = NGRRadioButtons(
@@ -86,12 +92,11 @@ class LandlordController @Inject()(view: LandlordView,
   }
 
   def submit: Action[AnyContent] = {
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
+    (authenticate andThen getData).async { implicit request =>
       form
         .bindFromRequest()
         .fold(
           formWithErrors =>
-
             val correctedFormErrors = formWithErrors.errors.map { formError =>
               (formError.key, formError.messages) match
                 case ("", messages) if messages.contains("landlord.radio.other.empty.error") =>
@@ -102,21 +107,17 @@ class LandlordController @Inject()(view: LandlordView,
                   formError
             }
             val formWithCorrectedErrors = formWithErrors.copy(errors = correctedFormErrors)
-
-            request.propertyLinking.map(property =>
               Future.successful(BadRequest(view(
-                selectedPropertyAddress = property.addressFull,
+                selectedPropertyAddress = request.property.addressFull,
                 formWithCorrectedErrors,
                 buildRadios(formWithErrors, ngrRadio(formWithCorrectedErrors))
-              )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo")),
+              ))),
           landlordForm =>
-            raldRepo.insertLandlord(
-              CredId(request.credId.getOrElse("")),
-              landlordForm.landlordName,
-              landlordForm.landLordType,
-              landlordForm.landlordOther
-            )
-            Future.successful(Redirect(routes.WhatTypeOfAgreementController.show.url))
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
+                .set(LandlordPage, Landlord(landlordForm.landlordName, landlordForm.landLordType, landlordForm.landlordOther)))
+              _ <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(LandlordPage, NormalMode, updatedAnswers))
         )
     }
   }

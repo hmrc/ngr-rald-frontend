@@ -19,13 +19,16 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
+import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreedRentChangeForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreedRentChangeForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
+import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
+import uk.gov.hmrc.ngrraldfrontend.pages.AgreedRentChangePage
+import uk.gov.hmrc.ngrraldfrontend.repo.{RaldRepo, SessionRepository}
 import uk.gov.hmrc.ngrraldfrontend.views.html.AgreedRentChangeView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -37,6 +40,9 @@ class AgreedRentChangeController @Inject()(agreedRentChangeView: AgreedRentChang
                                            authenticate: AuthRetrievals,
                                            hasLinkedProperties: PropertyLinkingAction,
                                            raldRepo: RaldRepo,
+                                           getData: DataRetrievalAction,
+                                           sessionRepository: SessionRepository,
+                                           navigator: Navigator,
                                            mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport {
 
@@ -53,26 +59,20 @@ class AgreedRentChangeController @Inject()(agreedRentChangeView: AgreedRentChang
   }
 
   def submit: Action[AnyContent] =
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
+    (authenticate andThen getData).async { implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
-          request.propertyLinking.map(property =>
             Future.successful(BadRequest(agreedRentChangeView(
               form = formWithErrors,
               radios = buildRadios(formWithErrors, AgreedRentChangeForm.ngrRadio(formWithErrors)),
-              propertyAddress = property.addressFull
-            )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
+              propertyAddress = request.property.addressFull
+            )))
         },
         radioValue =>
-          raldRepo.insertAgreedRentChange(
-            credId = CredId(request.credId.getOrElse("")),
-            agreedRentChange = radioValue.radioValue
-          )
-          if (radioValue.radioValue == "Yes") {
-            Future.successful(Redirect(routes.ProvideDetailsOfFirstSecondRentPeriodController.show.url))
-          } else {
-            Future.successful(Redirect(routes.HowMuchIsTotalAnnualRentController.show.url))
-          }
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(AgreedRentChangePage, radioValue.radioValue))
+            _ <- sessionRepository.set(updatedAnswers)
+          } yield Redirect(navigator.nextPage(AgreedRentChangePage, NormalMode, updatedAnswers))
       )
     }
 }
