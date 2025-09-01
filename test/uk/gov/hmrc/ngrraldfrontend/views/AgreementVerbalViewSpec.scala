@@ -50,7 +50,7 @@ class AgreementVerbalViewSpec extends ViewBaseSpec {
   val dayInputLabel = "Day"
   val monthInputLabel = "Month"
   val yearInputLabel = "Year"
-  val saveButton = "Save and continue"
+  val saveButton = "Continue"
 
   private val form: Form[AgreementVerbalForm] = AgreementVerbalForm.form.fillAndValidate(AgreementVerbalForm("No", NGRDate("30", "4", "2025"), None))
   private val ngrRadioButtons: Seq[NGRRadioButtons] =

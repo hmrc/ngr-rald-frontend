@@ -34,7 +34,7 @@ class AgreedRentChangeViewSpec extends ViewBaseSpec {
     val p1 = "For example, the agreement says that the rent will increase from £5,000 to £7,000 a year after 12 months. This is often known as a stepped rent."
     val radio1 = "Yes"
     val radio2 = "No"
-    val continue = "Save and continue"
+    val continue = "Continue"
   }
 
   object Selectors {

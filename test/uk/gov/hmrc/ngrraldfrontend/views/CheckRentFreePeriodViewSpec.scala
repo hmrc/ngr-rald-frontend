@@ -34,7 +34,7 @@ class CheckRentFreePeriodViewSpec extends ViewBaseSpec {
     val hint = "A rent-free period is when you do not pay any rent"
     val radio1 = "Yes"
     val radio2 = "No"
-    val continue = "Save and continue"
+    val continue = "Continue"
   }
 
   object Selectors {

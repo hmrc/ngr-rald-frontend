@@ -32,7 +32,7 @@ class HowMuchIsTotalAnnualRentViewSpec extends ViewBaseSpec {
     val b1 = "you pay monthly or quarterly"
     val b2 = "you get a rent-free period"
     val p2 = "For example, you get a rent free period of 3 months and pay £300 a month. Your annual rent is £300 multiplied by 12 months. This is because you ignore the rent-free period."
-    val saveAndContinue = "Save and continue"
+    val saveAndContinue = "Continue"
   }
 
   object Selectors {
