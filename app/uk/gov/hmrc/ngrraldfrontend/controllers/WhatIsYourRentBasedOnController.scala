@@ -21,14 +21,17 @@ import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Label, Text}
 import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
+import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, RentBasedOn, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatIsYourRentBasedOnForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatIsYourRentBasedOnForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
+import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
+import uk.gov.hmrc.ngrraldfrontend.pages.WhatIsYourRentBasedOnPage
+import uk.gov.hmrc.ngrraldfrontend.repo.{RaldRepo, SessionRepository}
 import uk.gov.hmrc.ngrraldfrontend.views.html.WhatIsYourRentBasedOnView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.NGRCharacterCountComponent
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -42,7 +45,10 @@ class WhatIsYourRentBasedOnController @Inject()(view: WhatIsYourRentBasedOnView,
                                                 hasLinkedProperties: PropertyLinkingAction,
                                                 raldRepo: RaldRepo,
                                                 ngrCharacterCountComponent: NGRCharacterCountComponent,
-                                                mcc: MessagesControllerComponents
+                                                mcc: MessagesControllerComponents,
+                                                getData: DataRetrievalAction,
+                                                navigator: Navigator,
+                                                sessionRepository: SessionRepository,
                                                )(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
   private def otherRadioButton(form: Form[WhatIsYourRentBasedOnForm])(implicit messages: Messages): NGRRadioButtons = NGRRadioButtons(
@@ -84,7 +90,7 @@ class WhatIsYourRentBasedOnController @Inject()(view: WhatIsYourRentBasedOnView,
   }
 
   def submit: Action[AnyContent] = {
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
+    (authenticate andThen getData).async { implicit request =>
       form
         .bindFromRequest()
         .fold(
@@ -99,22 +105,13 @@ class WhatIsYourRentBasedOnController @Inject()(view: WhatIsYourRentBasedOnView,
                   formError
             }
             val formWithCorrectedErrors = formWithErrors.copy(errors = correctedFormErrors)
-
-            request.propertyLinking.map(property =>
-                Future.successful(BadRequest(view(formWithCorrectedErrors,
-                  buildRadios(formWithErrors, ngrRadio(formWithCorrectedErrors)), property.addressFull))))
-              .getOrElse(throw new NotFoundException("Couldn't find property in mongo")),
+                Future.successful(BadRequest(view(createDefaultNavBar, formWithCorrectedErrors,
+                  buildRadios(formWithErrors, ngrRadio(formWithCorrectedErrors)), request.property.addressFull))),
           rentBasedOnForm =>
-            raldRepo.insertRentBased(
-              CredId(request.credId.getOrElse("")),
-              rentBasedOnForm.radioValue,
-              if (rentBasedOnForm.radioValue.equals("Other")) rentBasedOnForm.rentBasedOnOther else None
-            )
-            rentBasedOnForm.radioValue match
-              case "PercentageTurnover" =>
-                Future.successful(Redirect(routes.HowMuchIsTotalAnnualRentController.show.url))
-              case _ =>
-                Future.successful(Redirect(routes.AgreedRentChangeController.show.url))
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(WhatIsYourRentBasedOnPage, RentBasedOn(rentBasedOnForm.radioValue,rentBasedOnForm.rentBasedOnOther)))
+              _ <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(WhatIsYourRentBasedOnPage, NormalMode, updatedAnswers))
         )
     }
   }

@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.ngrraldfrontend.pages
+package uk.gov.hmrc.ngrraldfrontend.models
 
-import play.api.libs.json.JsPath
-import uk.gov.hmrc.ngrraldfrontend.models.{AgreementType, RaldUserAnswers}
-import uk.gov.hmrc.ngrraldfrontend.queries.{Gettable, Settable}
+import play.api.libs.json.{Format, Json}
 
-case object TellUsAboutRentPage extends QuestionPage[AgreementType]{
+case class TypeOfAgreement (value: String)
 
-  override def path: JsPath = JsPath \ toString
-  override def toString: String = "tellUsAboutRent"
+
+object TypeOfAgreement {
+  
+  implicit val format:Format[TypeOfAgreement] = Json.format[TypeOfAgreement]
+  
 }

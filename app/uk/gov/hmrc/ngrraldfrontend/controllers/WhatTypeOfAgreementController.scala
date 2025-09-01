@@ -19,14 +19,17 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
+import uk.gov.hmrc.ngrraldfrontend.models.{AgreementType, Landlord, NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatTypeOfAgreementForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatTypeOfAgreementForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
+import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
+import uk.gov.hmrc.ngrraldfrontend.pages.{LandlordPage, WhatTypeOfAgreementPage}
+import uk.gov.hmrc.ngrraldfrontend.repo.{RaldRepo, SessionRepository}
 import uk.gov.hmrc.ngrraldfrontend.views.html.WhatTypeOfAgreementView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -38,7 +41,10 @@ class WhatTypeOfAgreementController @Inject()(view: WhatTypeOfAgreementView,
                                               authenticate: AuthRetrievals,
                                               hasLinkedProperties: PropertyLinkingAction,
                                               raldRepo: RaldRepo,
-                                              mcc: MessagesControllerComponents)
+                                              mcc: MessagesControllerComponents,
+                                              getData: DataRetrievalAction,
+                                              navigator: Navigator,
+                                              sessionRepository: SessionRepository)
                                              (implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport {
 
@@ -56,27 +62,22 @@ class WhatTypeOfAgreementController @Inject()(view: WhatTypeOfAgreementView,
   }
 
   def submit: Action[AnyContent] = {
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
+    (authenticate andThen getData).async { implicit request =>
       form
         .bindFromRequest()
         .fold(
           formWithErrors =>
-            request.propertyLinking.map(property =>
               Future.successful(BadRequest(view(
-                selectedPropertyAddress = property.addressFull,
+                selectedPropertyAddress = request.property.addressFull,
                 formWithErrors,
                 buildRadios(formWithErrors, WhatTypeOfAgreementForm.ngrRadio(formWithErrors))
-              )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo")),
+              ))),
           whatTypeOfAgreementForm =>
-            raldRepo.insertTypeOfAgreement(
-              credId = CredId(request.credId.getOrElse("")),
-              whatTypeOfAgreement = whatTypeOfAgreementForm.radioValue
-            )
-            whatTypeOfAgreementForm.radioValue match
-              case "Verbal" =>
-                Future.successful(Redirect(routes.AgreementVerbalController.show.url))
-              case _ =>
-                Future.successful(Redirect(routes.AgreementController.show.url))
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
+                .set(WhatTypeOfAgreementPage, whatTypeOfAgreementForm.radioValue))
+              _ <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(WhatTypeOfAgreementPage,NormalMode,updatedAnswers))
         )
     }
   }

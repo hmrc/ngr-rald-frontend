@@ -17,9 +17,9 @@
 package uk.gov.hmrc.ngrraldfrontend.pages
 
 import play.api.libs.json.JsPath
-import uk.gov.hmrc.ngrraldfrontend.models.AgreementType
+import uk.gov.hmrc.ngrraldfrontend.models.{AgreementType, TypeOfAgreement}
 
-case object WhatTypeOfAgreementPage extends QuestionPage[AgreementType] {
+case object WhatTypeOfAgreementPage extends QuestionPage[String] {
 
   override def path: JsPath = JsPath \ toString
 
