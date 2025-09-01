@@ -385,6 +385,14 @@ class RaldRepoSpec extends TestSupport with TestData
       actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, hasRentFreePeriod = Some(false)))
     }
 
+    "insert rent date successfully" in {
+      val rentDate = "2025-4-30"
+
+      await(repository.insertRentDates(credId, rentDate))
+      val actual = await(repository.findByCredId(credId))
+      actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, agreedRentDate = Some(rentDate)))
+    }
+
     "credId doesn't exist in mongoDB" in {
       val actual = await(repository.findByCredId(credId2))
       actual mustBe None
