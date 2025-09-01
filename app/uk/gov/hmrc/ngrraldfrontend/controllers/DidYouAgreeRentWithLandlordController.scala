@@ -19,15 +19,18 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
+import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
 import uk.gov.hmrc.ngrraldfrontend.models.forms.DidYouAgreeRentWithLandlordForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.DidYouAgreeRentWithLandlordForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
+import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
+import uk.gov.hmrc.ngrraldfrontend.pages.{DidYouAgreeRentWithLandlordPage, WhatTypeOfLeaseRenewalPage}
+import uk.gov.hmrc.ngrraldfrontend.repo.{RaldRepo, SessionRepository}
 import uk.gov.hmrc.ngrraldfrontend.views.html.DidYouAgreeRentWithLandlordView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -39,6 +42,9 @@ class DidYouAgreeRentWithLandlordController @Inject()(didYouAgreeRentWithLandlor
                                                       authenticate: AuthRetrievals,
                                                       hasLinkedProperties: PropertyLinkingAction,
                                                       raldRepo: RaldRepo,
+                                                      getData: DataRetrievalAction,
+                                                      sessionRepository: SessionRepository,
+                                                      navigator: Navigator,
                                                       mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport {
 
@@ -56,28 +62,21 @@ class DidYouAgreeRentWithLandlordController @Inject()(didYouAgreeRentWithLandlor
   }
 
   def submit: Action[AnyContent] =
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
+    (authenticate andThen getData).async { implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
-          request.propertyLinking.map(property =>
             Future.successful(BadRequest(didYouAgreeRentWithLandlordView(
               form = formWithErrors,
               navigationBarContent = createDefaultNavBar,
               ngrRadio = buildRadios(formWithErrors, DidYouAgreeRentWithLandlordForm.ngrRadio(formWithErrors)),
-              selectedPropertyAddress = property.addressFull
-            )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
+              selectedPropertyAddress = request.property.addressFull
+            )))
         },
         radioValue =>
-          raldRepo.insertDidYouAgreeRentWithLandlord(
-            credId = CredId(request.credId.getOrElse("")),
-            radioValue = radioValue.toString
-          )
-          if(radioValue.radioValue.toString == "YesTheLandlord"){
-            Future.successful(Redirect(routes.CheckRentFreePeriodController.show.url))
-          }else{
-            //TODO
-            Future.successful(Redirect(routes.CheckRentFreePeriodController.show.url))
-          }
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(DidYouAgreeRentWithLandlordPage, radioValue.toString))
+            _ <- sessionRepository.set(updatedAnswers)
+          } yield Redirect(navigator.nextPage(DidYouAgreeRentWithLandlordPage, NormalMode, updatedAnswers))
 
       )
     }

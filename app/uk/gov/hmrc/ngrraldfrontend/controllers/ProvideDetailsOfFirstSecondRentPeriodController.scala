@@ -23,15 +23,18 @@ import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.Aliases.*
 import uk.gov.hmrc.govukfrontend.views.viewmodels.dateinput.DateInput
 import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
+import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, ProvideDetailsOfFirstSecondRentPeriod, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
 import uk.gov.hmrc.ngrraldfrontend.models.forms.ProvideDetailsOfFirstSecondRentPeriodForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.ProvideDetailsOfFirstSecondRentPeriodForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
+import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
+import uk.gov.hmrc.ngrraldfrontend.pages.{DidYouAgreeRentWithLandlordPage, ProvideDetailsOfFirstSecondRentPeriodPage}
+import uk.gov.hmrc.ngrraldfrontend.repo.{RaldRepo, SessionRepository}
 import uk.gov.hmrc.ngrraldfrontend.views.html.ProvideDetailsOfFirstSecondRentPeriodView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -45,7 +48,10 @@ class ProvideDetailsOfFirstSecondRentPeriodController @Inject()(view: ProvideDet
                                                                 inputText: InputText,
                                                                 hasLinkedProperties: PropertyLinkingAction,
                                                                 raldRepo: RaldRepo,
-                                                                mcc: MessagesControllerComponents
+                                                                mcc: MessagesControllerComponents,
+                                                                getData: DataRetrievalAction,
+                                                                sessionRepository: SessionRepository,
+                                                                navigator: Navigator,
                                                                )(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
   def firstDateStartInput()(implicit messages: Messages) : DateInput = DateInput(
@@ -159,7 +165,7 @@ class ProvideDetailsOfFirstSecondRentPeriodController @Inject()(view: ProvideDet
   }
 
   def submit: Action[AnyContent] = {
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
+    (authenticate andThen getData).async { implicit request =>
       form
         .bindFromRequest()
         .fold(
@@ -172,30 +178,34 @@ class ProvideDetailsOfFirstSecondRentPeriodController @Inject()(view: ProvideDet
                   formError
             }
             val formWithCorrectedErrors = formWithErrors.copy(errors = correctedFormErrors)
-
-            request.propertyLinking.map(property =>
               Future.successful(BadRequest(view(
                 createDefaultNavBar,
-                selectedPropertyAddress = property.addressFull,
+                selectedPropertyAddress = request.property.addressFull,
                 formWithCorrectedErrors,
                 firstDateStartInput(),
                 firstDateEndInput(),
                 buildRadios(formWithErrors, firstRentPeriodRadio(formWithCorrectedErrors)),
                 secondDateStartInput(),
                 secondDateEndInput()
-              )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo")),
+              ))),
           provideDetailsOfFirstSecondRentPeriodForm =>
-            raldRepo.insertProvideDetailsOfFirstSecondRentPeriod(
-              CredId(request.credId.getOrElse("")),
-              provideDetailsOfFirstSecondRentPeriodForm.firstDateStartInput.makeString,
+            val provideDetailsOfFirstSecondRentPeriod: ProvideDetailsOfFirstSecondRentPeriod = ProvideDetailsOfFirstSecondRentPeriod( provideDetailsOfFirstSecondRentPeriodForm.firstDateStartInput.makeString,
               provideDetailsOfFirstSecondRentPeriodForm.firstDateEndInput.makeString,
-              provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodRadio,
-              provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodAmount,
+              provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodRadio match {
+                case "yesPayedRent" => true
+                case _ => false
+              },
+              provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodAmount match {
+                case Some(value) => Some(value.toString())
+                case None => None
+              },
               provideDetailsOfFirstSecondRentPeriodForm.secondDateStartInput.makeString,
               provideDetailsOfFirstSecondRentPeriodForm.secondDateEndInput.makeString,
-              provideDetailsOfFirstSecondRentPeriodForm.secondHowMuchIsRent,
-            )
-            Future.successful(Redirect(routes.WhatIsYourRentBasedOnController.show.url))
+              provideDetailsOfFirstSecondRentPeriodForm.secondHowMuchIsRent.toString())
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(ProvideDetailsOfFirstSecondRentPeriodPage, provideDetailsOfFirstSecondRentPeriod))
+              _ <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(ProvideDetailsOfFirstSecondRentPeriodPage, NormalMode, updatedAnswers))
         )
     }
   }

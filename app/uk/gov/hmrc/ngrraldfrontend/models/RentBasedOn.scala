@@ -18,7 +18,7 @@ package uk.gov.hmrc.ngrraldfrontend.models
 
 import play.api.libs.json.{Json, OFormat}
 
-final case class RentBasedOn(rentBased: String, otherDesc: Option[String])
+final case class RentBasedOn(rentBased: String, otherDesc: Option[String] = None)
 
 object RentBasedOn {
   implicit val format: OFormat[RentBasedOn] = Json.format[RentBasedOn]

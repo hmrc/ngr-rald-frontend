@@ -17,11 +17,12 @@
 package uk.gov.hmrc.ngrraldfrontend.pages
 
 import play.api.libs.json.JsPath
-import uk.gov.hmrc.ngrraldfrontend.models.{AgreementType, RaldUserAnswers}
-import uk.gov.hmrc.ngrraldfrontend.queries.{Gettable, Settable}
+import uk.gov.hmrc.ngrraldfrontend.models.RentBasedOn
 
-case object TellUsAboutRentPage extends QuestionPage[AgreementType]{
-
+case object WhatIsYourRentBasedOnPage extends QuestionPage[RentBasedOn]{
+  
   override def path: JsPath = JsPath \ toString
-  override def toString: String = "tellUsAboutRent"
+
+  override def toString: String = "whatIsYourRentBasedOn"
+
 }
