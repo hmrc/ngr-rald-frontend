@@ -20,7 +20,7 @@ import play.api.mvc.Call
 import uk.gov.hmrc.hmrcfrontend.controllers.routes
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.models.{CheckMode, Mode, NormalMode, ProvideDetailsOfFirstSecondRentPeriod, UserAnswers}
-import uk.gov.hmrc.ngrraldfrontend.pages.{AgreedRentChangePage, DidYouAgreeRentWithLandlordPage, HowMuchIsTotalAnnualRentPage, LandlordPage, Page, ProvideDetailsOfFirstSecondRentPeriodPage, TellUsAboutRentPage, TellUsAboutYourRenewedAgreementPage, WhatIsYourRentBasedOnPage, WhatTypeOfAgreementPage, WhatTypeOfLeaseRenewalPage}
+import uk.gov.hmrc.ngrraldfrontend.pages.{AgreedRentChangePage, DidYouAgreeRentWithLandlordPage, HowMuchIsTotalAnnualRentPage, LandlordPage, Page, ProvideDetailsOfFirstSecondRentPeriodPage, RentPeriodsPage, TellUsAboutRentPage, TellUsAboutYourRenewedAgreementPage, WhatIsYourRentBasedOnPage, WhatTypeOfAgreementPage, WhatTypeOfLeaseRenewalPage}
 
 import java.lang.ProcessBuilder.Redirect
 import javax.inject.{Inject, Singleton}
@@ -74,6 +74,14 @@ class Navigator @Inject()() {
         case None => throw new NotFoundException("Failed to find answers")
       }
     case ProvideDetailsOfFirstSecondRentPeriodPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentPeriodsController.show
+    case RentPeriodsPage => answers =>
+      answers.get(RentPeriodsPage) match {
+        case Some(value) => value match {
+          case "Yes" => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouAgreeRentWithLandlordController.show
+          case _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfFirstSecondRentPeriodController.show
+        }
+        case None => throw new NotFoundException("Failed to find answers")
+      }
   }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = {
