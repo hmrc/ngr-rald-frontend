@@ -23,7 +23,7 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.*
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-import uk.gov.hmrc.ngrraldfrontend.models.{Landlord, NormalMode, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{Landlord, Mode, NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.LandlordForm
@@ -79,19 +79,19 @@ class LandlordController @Inject()(view: LandlordView,
       NGRRadioButtons = ngrRadioButtons :+ otherRelationship(form)
     )
 
-  def show: Action[AnyContent] = {
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
-      request.propertyLinking.map(property =>
-        Future.successful(Ok(view(
-          selectedPropertyAddress = property.addressFull,
-          form,
-          buildRadios(form, ngrRadio(form))
-        )))
-      ).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
+  def show(mode: Mode): Action[AnyContent] = {
+    (authenticate andThen getData).async { implicit request =>
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(LandlordPage) match {
+        case None => form
+        case Some(value) => form.fill(LandlordForm(value.landlordName,value.landLordType,value.landlordOtherDesc))
+      }
+      Future.successful(Ok(view(selectedPropertyAddress = request.property.addressFull, form = preparedForm, ngrRadio =  buildRadios(preparedForm, ngrRadio(form))))
+      )
+
     }
   }
 
-  def submit: Action[AnyContent] = {
+  def submit(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
       form
         .bindFromRequest()
@@ -117,7 +117,7 @@ class LandlordController @Inject()(view: LandlordView,
               updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
                 .set(LandlordPage, Landlord(landlordForm.landlordName, landlordForm.landLordType, landlordForm.landlordOther)))
               _ <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(LandlordPage, NormalMode, updatedAnswers))
+            } yield Redirect(navigator.nextPage(LandlordPage, mode, updatedAnswers))
         )
     }
   }

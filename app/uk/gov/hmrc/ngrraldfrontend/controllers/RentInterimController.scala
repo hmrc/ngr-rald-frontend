@@ -19,13 +19,16 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
+import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentInterimForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentInterimForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
+import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
+import uk.gov.hmrc.ngrraldfrontend.pages.{AgreementVerbalPage, RentInterimPage}
+import uk.gov.hmrc.ngrraldfrontend.repo.{RaldRepo, SessionRepository}
 import uk.gov.hmrc.ngrraldfrontend.views.html.RentInterimView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -33,45 +36,46 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class RentInterimController @Inject()(rentInterimView: RentInterimView,
-                                      authenticate: AuthRetrievals,
-                                      hasLinkedProperties: PropertyLinkingAction,
-                                      raldRepo: RaldRepo,
-                                      mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
+                                       authenticate: AuthRetrievals,
+                                       hasLinkedProperties: PropertyLinkingAction,
+                                       raldRepo: RaldRepo,
+                                      getData: DataRetrievalAction,
+                                      navigator: Navigator,
+                                      sessionRepository: SessionRepository,
+                                       mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport {
 
 
   def show: Action[AnyContent] = {
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
-      request.propertyLinking.map(property =>
+    (authenticate andThen getData).async { implicit request =>
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(RentInterimPage) match {
+        case None => form
+        case Some(value) => form.fill(RentInterimForm(value))
+      }
         Future.successful(Ok(rentInterimView(
-          form = form,
-          radios = buildRadios(form, RentInterimForm.ngrRadio(form)),
-          propertyAddress = property.addressFull,
-        )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
+          form = preparedForm,
+          navigationBarContent = createDefaultNavBar,
+          radios = buildRadios(preparedForm, RentInterimForm.ngrRadio(preparedForm)),
+          propertyAddress = request.property.addressFull,
+        )))
     }
   }
 
   def submit: Action[AnyContent] =
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
+    (authenticate andThen getData).async { implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
-          request.propertyLinking.map(property =>
             Future.successful(BadRequest(rentInterimView(
               form = formWithErrors,
               radios = buildRadios(formWithErrors, RentInterimForm.ngrRadio(formWithErrors)),
-              propertyAddress = property.addressFull
-            )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
+              propertyAddress = request.property.addressFull
+            )))
         },
         radioValue =>
-          raldRepo.insertAgreedRentChange(
-            credId = CredId(request.credId.getOrElse("")),
-            agreedRentChange = radioValue.radioValue
-          )
-          if (radioValue.radioValue == "Yes") {
-            Future.successful(Redirect(routes.InterimRentSetByTheCourtController.show.url))
-          } else {
-            Future.successful(Redirect(routes.CheckRentFreePeriodController.show.url))
-          }
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(RentInterimPage, radioValue.radioValue))
+            _ <- sessionRepository.set(updatedAnswers)
+          } yield Redirect(navigator.nextPage(RentInterimPage, NormalMode, updatedAnswers))
       )
     }
 }

@@ -170,17 +170,20 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
   )
 
   def show: Action[AnyContent] = {
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
-      raldRepo.findByCredId(CredId(request.credId.getOrElse(""))).flatMap {
-        case Some(answers: RaldUserAnswers) =>
+    (authenticate andThen getData).async { implicit request =>
+      request.userAnswers.getOrElse(UserAnswers(request.credId)).get(ProvideDetailsOfFirstSecondRentPeriodPage) match {
+        case Some(value) =>
+          val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(RentPeriodsPage) match {
+            case Some(value) => form.fill(RentPeriodsForm(value))
+            case None => form
+          }
           Future.successful(Ok(view(
-            selectedPropertyAddress = answers.selectedProperty.addressFull,
-            form,
-            firstTable = firstTable(answers),
-            secondTable = secondTable(answers),
-            ngrRadio = buildRadios(form, RentPeriodsForm.ngrRadio(form)))))
-        case None =>
-          throw new NotFoundException("Couldn't find user Answers")
+            selectedPropertyAddress = request.property.addressFull,
+            preparedForm,
+            firstTable = firstTable(value),
+            secondTable = secondTable(value),
+            ngrRadio = buildRadios(preparedForm, RentPeriodsForm.ngrRadio(preparedForm)))))
+        case None => throw new Exception("Not found answers")
       }
     }
   }

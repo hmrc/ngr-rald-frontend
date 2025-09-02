@@ -47,10 +47,8 @@ class TellUsAboutRentController @Inject()(view: TellUsAboutYourAgreementView,
                                          )(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
   def show: Action[AnyContent] = {
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
-      request.propertyLinking.map(property =>
-          Future.successful(Ok(view(selectedPropertyAddress = property.addressFull, agreement = RentAgreement))))
-        .getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
+    (authenticate andThen getData).async { implicit request =>
+      Future.successful(Ok(view(navigationBarContent = createDefaultNavBar, selectedPropertyAddress = request.property.addressFull, agreement = RentAgreement)))
     }
   }
 

@@ -82,10 +82,12 @@ class WhatIsYourRentBasedOnController @Inject()(view: WhatIsYourRentBasedOnView,
     )
 
   def show: Action[AnyContent] = {
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
-      request.propertyLinking.map(property =>
-        Future.successful(Ok(view(form, buildRadios(form, ngrRadio(form)), property.addressFull)))
-      ).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
+    (authenticate andThen getData).async { implicit request =>
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(WhatIsYourRentBasedOnPage) match {
+        case None => form
+        case Some(value) => form.fill(WhatIsYourRentBasedOnForm(value.rentBased,value.otherDesc))
+      }
+      Future.successful(Ok(view(preparedForm, buildRadios(preparedForm, ngrRadio(preparedForm)), request.property.addressFull)))
     }
   }
 

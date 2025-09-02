@@ -48,13 +48,16 @@ class AgreedRentChangeController @Inject()(agreedRentChangeView: AgreedRentChang
 
 
   def show: Action[AnyContent] = {
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
-      request.propertyLinking.map(property =>
+    (authenticate andThen getData).async { implicit request =>
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(AgreedRentChangePage) match {
+        case None => form
+        case Some(value) => form.fill(AgreedRentChangeForm(value))
+      }
         Future.successful(Ok(agreedRentChangeView(
-          form = form,
-          radios = buildRadios(form, AgreedRentChangeForm.ngrRadio(form)),
-          propertyAddress = property.addressFull,
-        )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
+          form = preparedForm,
+          radios = buildRadios(preparedForm, AgreedRentChangeForm.ngrRadio(form)),
+          propertyAddress = request.property.addressFull,
+        )))
     }
   }
 
