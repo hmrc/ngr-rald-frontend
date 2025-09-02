@@ -25,7 +25,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.dateinput.DateInput
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-import uk.gov.hmrc.ngrraldfrontend.models.{NGRDate, NormalMode, ProvideDetailsOfFirstSecondRentPeriod, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{Mode, NGRDate, NormalMode, ProvideDetailsOfFirstSecondRentPeriod, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
@@ -151,7 +151,7 @@ class ProvideDetailsOfFirstSecondRentPeriodController @Inject()(view: ProvideDet
     ))
   )
 
-  def show: Action[AnyContent] = {
+  def show(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(ProvideDetailsOfFirstSecondRentPeriodPage) match {
         case None => form
@@ -172,12 +172,13 @@ class ProvideDetailsOfFirstSecondRentPeriodController @Inject()(view: ProvideDet
           firstDateEndInput(),
           buildRadios(preparedForm, firstRentPeriodRadio(preparedForm)),
           secondDateStartInput(),
-          secondDateEndInput()
+          secondDateEndInput(),
+          mode = mode
         )))
     }
   }
 
-  def submit: Action[AnyContent] = {
+  def submit(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
       form
         .bindFromRequest()
@@ -207,7 +208,8 @@ class ProvideDetailsOfFirstSecondRentPeriodController @Inject()(view: ProvideDet
                 firstDateEndInput(),
                 buildRadios(formWithErrors, firstRentPeriodRadio(formWithCorrectedErrors)),
                 secondDateStartInput(),
-                secondDateEndInput()
+                secondDateEndInput(),
+                mode
               ))),
           provideDetailsOfFirstSecondRentPeriodForm =>
             val provideDetailsOfFirstSecondRentPeriod: ProvideDetailsOfFirstSecondRentPeriod = ProvideDetailsOfFirstSecondRentPeriod(

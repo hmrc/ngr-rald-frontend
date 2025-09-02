@@ -21,7 +21,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-import uk.gov.hmrc.ngrraldfrontend.models.{AgreementType, Landlord, NormalMode, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{AgreementType, Landlord, Mode, NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatTypeOfAgreementForm
@@ -48,7 +48,7 @@ class WhatTypeOfAgreementController @Inject()(view: WhatTypeOfAgreementView,
                                              (implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport {
 
-  def show: Action[AnyContent] = {
+  def show(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(WhatTypeOfAgreementPage) match {
         case None => form
@@ -58,13 +58,14 @@ class WhatTypeOfAgreementController @Inject()(view: WhatTypeOfAgreementView,
           view(
             selectedPropertyAddress = request.property.addressFull,
             form = preparedForm,
-            ngrRadio = buildRadios(preparedForm, WhatTypeOfAgreementForm.ngrRadio(preparedForm))
+            ngrRadio = buildRadios(preparedForm, WhatTypeOfAgreementForm.ngrRadio(preparedForm)),
+            mode
           )
         ))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
     }
   }
 
-  def submit: Action[AnyContent] = {
+  def submit(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
       form
         .bindFromRequest()
@@ -73,14 +74,15 @@ class WhatTypeOfAgreementController @Inject()(view: WhatTypeOfAgreementView,
               Future.successful(BadRequest(view(
                 selectedPropertyAddress = request.property.addressFull,
                 formWithErrors,
-                buildRadios(formWithErrors, WhatTypeOfAgreementForm.ngrRadio(formWithErrors))
+                buildRadios(formWithErrors, WhatTypeOfAgreementForm.ngrRadio(formWithErrors)),
+                mode
               ))),
           whatTypeOfAgreementForm =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
                 .set(WhatTypeOfAgreementPage, whatTypeOfAgreementForm.radioValue))
               _ <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(WhatTypeOfAgreementPage,NormalMode,updatedAnswers))
+            } yield Redirect(navigator.nextPage(WhatTypeOfAgreementPage,mode,updatedAnswers))
         )
     }
   }

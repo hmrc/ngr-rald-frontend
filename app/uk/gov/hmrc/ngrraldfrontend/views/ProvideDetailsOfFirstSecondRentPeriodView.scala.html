@@ -38,12 +38,13 @@ saveAndContinueButton: saveAndContinueButton
     firstDateEndInput:DateInput,
     openEndedRadio: Radios,
     secondDateStartInput: DateInput,
-    secondDateEndInput: DateInput
+    secondDateEndInput: DateInput,
+    mode: Mode
 )(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
 @layout(pageTitle = Some(messages("provideDetailsOfFirstSecondRentPeriod.title")), showBackLink = true, fullWidth = false) {
 
-    @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfFirstSecondRentPeriodController.submit, Symbol("autoComplete") -> "off") {
+    @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfFirstSecondRentPeriodController.submit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, Some("provideDetailsOfFirstSecondRentPeriod"),

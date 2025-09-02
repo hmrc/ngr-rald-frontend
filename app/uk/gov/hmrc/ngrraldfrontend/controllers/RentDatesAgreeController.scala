@@ -24,10 +24,9 @@ import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.RentAgreement
-import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, RaldUserAnswers, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{Mode, NormalMode, RaldUserAnswers, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
-import uk.gov.hmrc.ngrraldfrontend.models.forms.RentDatesAgreeForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentDatesAgreeForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
@@ -68,18 +67,18 @@ class RentDatesAgreeController @Inject()(rentDatesAgreeView: RentDatesAgreeView,
     ))
   )
 
-  def show: Action[AnyContent] = {
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
-      request.propertyLinking.map(property =>
+  def show(mode: Mode): Action[AnyContent] = {
+    (authenticate andThen getData).async { implicit request =>
         Future.successful(Ok(rentDatesAgreeView(
           form = form,
           dateInput = dateInput(),
-          propertyAddress = property.addressFull,
-        )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
+          propertyAddress = request.property.addressFull,
+          mode = mode
+        )))
     }
   }
 
-  def submit: Action[AnyContent] =
+  def submit(mode: Mode): Action[AnyContent] =
     (authenticate andThen getData).async { implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
@@ -98,14 +97,15 @@ class RentDatesAgreeController @Inject()(rentDatesAgreeView: RentDatesAgreeView,
             Future.successful(BadRequest(rentDatesAgreeView(
               form = formWithCorrectedErrors,
               dateInput = dateInput(),
-              propertyAddress = request.property.addressFull
+              propertyAddress = request.property.addressFull,
+              mode = mode
             )))
         },
         dateValue =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(RentDatesAgreePage, dateValue.dateInput.makeString))
             _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(RentDatesAgreePage, NormalMode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(RentDatesAgreePage, mode, updatedAnswers))
       )
     }
 }

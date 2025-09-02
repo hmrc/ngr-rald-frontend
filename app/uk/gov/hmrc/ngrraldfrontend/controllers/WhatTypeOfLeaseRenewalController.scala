@@ -21,7 +21,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{Mode, NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
 import uk.gov.hmrc.ngrraldfrontend.models.forms.{LandlordForm, WhatTypeOfLeaseRenewalForm}
@@ -52,7 +52,7 @@ class WhatTypeOfLeaseRenewalController @Inject()(whatTypeOfLeaseRenewalView: Wha
   extends FrontendController(mcc) with I18nSupport {
 
 
-  def show: Action[AnyContent] = {
+  def show(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
 
       val preparedForm = request.userAnswers
@@ -72,18 +72,20 @@ class WhatTypeOfLeaseRenewalController @Inject()(whatTypeOfLeaseRenewalView: Wha
         navigationBarContent = createDefaultNavBar,
         radios = buildRadios(preparedForm, WhatTypeOfLeaseRenewalForm.ngrRadio),
         propertyAddress = request.property.addressFull,
+        mode = mode
       )))
     }
   }
 
-  def submit: Action[AnyContent] =
+  def submit(mode: Mode): Action[AnyContent] =
     (authenticate andThen getData).async { implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
             Future.successful(BadRequest(whatTypeOfLeaseRenewalView(
               form = formWithErrors,
               radios = buildRadios(formWithErrors, WhatTypeOfLeaseRenewalForm.ngrRadio),
-              propertyAddress = request.property.addressFull
+              propertyAddress = request.property.addressFull,
+              mode
             )))
         },
         radioValue =>
@@ -93,7 +95,7 @@ class WhatTypeOfLeaseRenewalController @Inject()(whatTypeOfLeaseRenewalView: Wha
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(WhatTypeOfLeaseRenewalPage, typeOfLeaseRenewal))
             _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(WhatTypeOfLeaseRenewalPage, NormalMode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(WhatTypeOfLeaseRenewalPage, mode, updatedAnswers))
       )
     }
 }

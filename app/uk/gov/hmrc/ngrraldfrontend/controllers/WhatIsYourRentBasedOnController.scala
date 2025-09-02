@@ -23,7 +23,7 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.{Label, Text}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, RentBasedOn, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{Mode, NormalMode, RentBasedOn, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatIsYourRentBasedOnForm
@@ -87,11 +87,11 @@ class WhatIsYourRentBasedOnController @Inject()(view: WhatIsYourRentBasedOnView,
         case None => form
         case Some(value) => form.fill(WhatIsYourRentBasedOnForm(value.rentBased,value.otherDesc))
       }
-      Future.successful(Ok(view(preparedForm, buildRadios(preparedForm, ngrRadio(preparedForm)), request.property.addressFull)))
+      Future.successful(Ok(view(preparedForm, buildRadios(preparedForm, ngrRadio(preparedForm)), request.property.addressFull, mode)))
     }
   }
 
-  def submit: Action[AnyContent] = {
+  def submit(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
       form
         .bindFromRequest()
@@ -108,12 +108,12 @@ class WhatIsYourRentBasedOnController @Inject()(view: WhatIsYourRentBasedOnView,
             }
             val formWithCorrectedErrors = formWithErrors.copy(errors = correctedFormErrors)
                 Future.successful(BadRequest(view(createDefaultNavBar, formWithCorrectedErrors,
-                  buildRadios(formWithErrors, ngrRadio(formWithCorrectedErrors)), request.property.addressFull))),
+                  buildRadios(formWithErrors, ngrRadio(formWithCorrectedErrors)), request.property.addressFull, mode))),
           rentBasedOnForm =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(WhatIsYourRentBasedOnPage, RentBasedOn(rentBasedOnForm.radioValue,rentBasedOnForm.rentBasedOnOther)))
               _ <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(WhatIsYourRentBasedOnPage, NormalMode, updatedAnswers))
+            } yield Redirect(navigator.nextPage(WhatIsYourRentBasedOnPage, mode, updatedAnswers))
         )
     }
   }

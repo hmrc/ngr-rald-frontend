@@ -29,10 +29,10 @@
     saveAndContinueButton: saveAndContinueButton
 )
 
-@(form:Form[WhatTypeOfLeaseRenewalForm], radios: Radios, propertyAddress: String)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+@(form:Form[WhatTypeOfLeaseRenewalForm], radios: Radios, propertyAddress: String, mode: Mode)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
 @layout(pageTitle = Some(messages("typeOfLeaseRenewal.title")), showBackLink = true, fullWidth = true) {
-    @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatTypeOfLeaseRenewalController.submit, Symbol("autoComplete") -> "off") {
+    @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatTypeOfLeaseRenewalController.submit(mode), Symbol("autoComplete") -> "off") {
         @if(form.errors.nonEmpty) {
          @govukErrorSummary(ErrorSummaryViewModel(form))
         }
