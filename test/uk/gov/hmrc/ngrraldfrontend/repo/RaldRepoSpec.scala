@@ -394,6 +394,18 @@ class RaldRepoSpec extends TestSupport with TestData
       actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, agreedRentDate = Some(rentDate)))
     }
 
+    "insert rent period successfully with yes" in {
+      await(repository.insertRentPeriod(credId, "Yes"))
+      val actual = await(repository.findByCredId(credId))
+      actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property,  hasAnotherRentPeriod = Some(true)))
+    }
+
+    "insert rent period successfully with no" in {
+      await(repository.insertRentPeriod(credId, "No"))
+      val actual = await(repository.findByCredId(credId))
+      actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, hasAnotherRentPeriod = Some(false)))
+    }
+
     "insert what your rent includes with all radios selected as yes" in {
       val radio1yes = livingAccommodationYes
       val radio2yes = rentPartAddressYes

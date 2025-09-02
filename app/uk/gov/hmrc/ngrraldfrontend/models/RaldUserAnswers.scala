@@ -36,6 +36,7 @@ final case class RaldUserAnswers(
                                   provideDetailsOfFirstSecondRentPeriod: Option[ProvideDetailsOfFirstSecondRentPeriod] = None,
                                   didYouAgreeRentWithLandlord: Option[Boolean] = None,
                                   agreedRentDate: Option[String] = None,
+                                  hasAnotherRentPeriod: Option[Boolean] = None,
                                   whatYourRentIncludes: Option[WhatYourRentIncludes] = None
                                 )
 
