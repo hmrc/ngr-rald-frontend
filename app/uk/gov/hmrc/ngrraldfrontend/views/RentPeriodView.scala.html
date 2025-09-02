@@ -31,11 +31,11 @@
  govukTable : GovukTable
 )
 
-@(navigationBarContent: NavigationBarContent, selectedPropertyAddress: String, form: Form[RentPeriodsForm], firstTable: Table, secondTable: Table, ngrRadio: Radios)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+@(navigationBarContent: NavigationBarContent, selectedPropertyAddress: String, form: Form[RentPeriodsForm], firstTable: Table, secondTable: Table, ngrRadio: Radios, mode: Mode)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
 @layout(pageTitle = Some(messages("rentPeriods.title")), showBackLink = true, fullWidth = false, navigationBarContent = Some(navigationBarContent)) {
 
- @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentPeriodsController.submit, Symbol("autoComplete") -> "off") {
+ @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentPeriodsController.submit(mode), Symbol("autoComplete") -> "off") {
   @if(form.errors.nonEmpty) {
    @govukErrorSummary(ErrorSummaryViewModel(form))
   }

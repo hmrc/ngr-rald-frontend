@@ -25,7 +25,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.dateinput.DateInput
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-import uk.gov.hmrc.ngrraldfrontend.models.{Agreement, NGRDate, NormalMode, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{Mode, Agreement, NGRDate, NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
@@ -140,7 +140,7 @@ class AgreementController @Inject()(view: AgreementView,
   }
 
 
-  def show: Action[AnyContent] = {
+  def show(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(AgreementPage) match {
         case None => form
@@ -163,12 +163,13 @@ class AgreementController @Inject()(view: AgreementView,
         preparedForm,
         dateInput(),
         buildRadios(preparedForm, openEndedRadio(preparedForm)),
-        buildRadios(preparedForm, breakClauseRadio(preparedForm))
+        buildRadios(preparedForm, breakClauseRadio(preparedForm)),
+        mode = mode
       )))
     }
   }
 
-  def submit: Action[AnyContent] = {
+  def submit(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
       form
         .bindFromRequest()
@@ -193,7 +194,8 @@ class AgreementController @Inject()(view: AgreementView,
                 formWithCorrectedErrors,
                 dateInput(),
                 buildRadios(formWithErrors, openEndedRadio(formWithCorrectedErrors)),
-                buildRadios(formWithErrors, breakClauseRadio(formWithCorrectedErrors))
+                buildRadios(formWithErrors, breakClauseRadio(formWithCorrectedErrors)),
+                mode = mode
               ))),
           agreementForm =>
             val answers = Agreement(agreementForm.agreementStart.makeString,
@@ -210,7 +212,7 @@ class AgreementController @Inject()(view: AgreementView,
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(AgreementPage, answers))
               _ <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(AgreementPage, NormalMode, updatedAnswers))
+            } yield Redirect(navigator.nextPage(AgreementPage, mode, updatedAnswers))
         )
     }
   }

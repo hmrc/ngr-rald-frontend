@@ -86,7 +86,7 @@ class LandlordController @Inject()(view: LandlordView,
         case None => form
         case Some(value) => form.fill(LandlordForm(value.landlordName,value.landLordType,value.landlordOtherDesc))
       }
-      Future.successful(Ok(view(navigationBarContent = createDefaultNavBar, selectedPropertyAddress = request.property.addressFull, form = preparedForm, ngrRadio =  buildRadios(preparedForm, ngrRadio(form))))
+      Future.successful(Ok(view(navigationBarContent = createDefaultNavBar, selectedPropertyAddress = request.property.addressFull, form = preparedForm, ngrRadio =  buildRadios(preparedForm, ngrRadio(form)), mode))
       )
 
     }
@@ -112,7 +112,8 @@ class LandlordController @Inject()(view: LandlordView,
                 createDefaultNavBar,
                 selectedPropertyAddress = request.property.addressFull,
                 formWithCorrectedErrors,
-                buildRadios(formWithErrors, ngrRadio(formWithCorrectedErrors))
+                buildRadios(formWithErrors, ngrRadio(formWithCorrectedErrors)),
+                mode
               ))),
           landlordForm =>
             for {

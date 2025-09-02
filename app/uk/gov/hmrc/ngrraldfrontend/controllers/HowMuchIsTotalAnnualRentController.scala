@@ -21,7 +21,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{Mode, NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
 import uk.gov.hmrc.ngrraldfrontend.models.forms.HowMuchIsTotalAnnualRentForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.HowMuchIsTotalAnnualRentForm.form
@@ -47,7 +47,7 @@ class HowMuchIsTotalAnnualRentController @Inject()(howMuchIsTotalAnnualRentView:
   extends FrontendController(mcc) with I18nSupport {
 
 
-  def show: Action[AnyContent] = {
+  def show(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(HowMuchIsTotalAnnualRentPage) match {
         case None => form
@@ -57,25 +57,27 @@ class HowMuchIsTotalAnnualRentController @Inject()(howMuchIsTotalAnnualRentView:
           form = preparedForm,
           navigationBarContent = createDefaultNavBar,
           propertyAddress = request.property.addressFull,
+          mode = mode
         )))
     }
   }
 
-  def submit: Action[AnyContent] =
+  def submit(mode: Mode): Action[AnyContent] =
     (authenticate andThen getData).async { implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
             Future.successful(BadRequest(howMuchIsTotalAnnualRentView(
               form = formWithErrors,
               navigationBarContent = createDefaultNavBar,
-              propertyAddress = request.property.addressFull
+              propertyAddress = request.property.addressFull,
+              mode = mode
             )))
         },
         rentAmount =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(HowMuchIsTotalAnnualRentPage, rentAmount.annualRent))
             _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(HowMuchIsTotalAnnualRentPage, NormalMode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(HowMuchIsTotalAnnualRentPage, mode, updatedAnswers))
       )
     }
 }

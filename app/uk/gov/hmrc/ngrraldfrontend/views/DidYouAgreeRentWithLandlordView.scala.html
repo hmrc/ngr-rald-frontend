@@ -29,11 +29,11 @@
     formHelper: FormWithCSRF
 )
 
-@(navigationBarContent: NavigationBarContent, selectedPropertyAddress: String, form: Form[DidYouAgreeRentWithLandlordForm], ngrRadio: Radios)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+@(navigationBarContent: NavigationBarContent, selectedPropertyAddress: String, form: Form[DidYouAgreeRentWithLandlordForm], ngrRadio: Radios, mode: Mode)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
 @layout(pageTitle = Some(messages("didYouAgreeRentWithLandlord.title")), showBackLink = true, fullWidth = false, navigationBarContent = Some(navigationBarContent)) {
 
-    @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouAgreeRentWithLandlordController.submit, Symbol("autoComplete") -> "off") {
+    @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouAgreeRentWithLandlordController.submit(mode), Symbol("autoComplete") -> "off") {
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
