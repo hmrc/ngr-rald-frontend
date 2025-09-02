@@ -28,15 +28,16 @@
     formHelper: FormWithCSRF
 )
 
-@(selectedPropertyAddress: String, form: Form[DidYouAgreeRentWithLandlordForm], ngrRadio: Radios)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+@(selectedPropertyAddress: String, form: Form[DidYouAgreeRentWithLandlordForm], ngrRadio: Radios, mode: Mode)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
 @layout(pageTitle = Some(messages("didYouAgreeRentWithLandlord.title")), showBackLink = true, fullWidth = false) {
 
-    @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouAgreeRentWithLandlordController.submit, Symbol("autoComplete") -> "off") {
+    @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouAgreeRentWithLandlordController.submit(mode), Symbol("autoComplete") -> "off") {
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
         <span class="govuk-caption-m">@selectedPropertyAddress</span>
+        <h1 class="govuk-heading-l">@messages("didYouAgreeRentWithLandlord.title")</h1>
         @govukRadios(ngrRadio)
         @saveAndContinueButton(msg = messages("service.continue"), isStartButton = false)
     }

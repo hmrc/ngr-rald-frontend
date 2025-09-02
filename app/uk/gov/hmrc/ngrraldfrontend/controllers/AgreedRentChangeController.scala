@@ -21,7 +21,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{Mode, NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreedRentChangeForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreedRentChangeForm.form
@@ -47,7 +47,7 @@ class AgreedRentChangeController @Inject()(agreedRentChangeView: AgreedRentChang
   extends FrontendController(mcc) with I18nSupport {
 
 
-  def show: Action[AnyContent] = {
+  def show(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(AgreedRentChangePage) match {
         case None => form
@@ -57,25 +57,27 @@ class AgreedRentChangeController @Inject()(agreedRentChangeView: AgreedRentChang
           form = preparedForm,
           radios = buildRadios(preparedForm, AgreedRentChangeForm.ngrRadio(form)),
           propertyAddress = request.property.addressFull,
+          mode = mode
         )))
     }
   }
 
-  def submit: Action[AnyContent] =
+  def submit(mode: Mode): Action[AnyContent] =
     (authenticate andThen getData).async { implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
             Future.successful(BadRequest(agreedRentChangeView(
               form = formWithErrors,
               radios = buildRadios(formWithErrors, AgreedRentChangeForm.ngrRadio(formWithErrors)),
-              propertyAddress = request.property.addressFull
+              propertyAddress = request.property.addressFull,
+              mode = mode
             )))
         },
         radioValue =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(AgreedRentChangePage, radioValue.radioValue))
             _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(AgreedRentChangePage, NormalMode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(AgreedRentChangePage, mode, updatedAnswers))
       )
     }
 }

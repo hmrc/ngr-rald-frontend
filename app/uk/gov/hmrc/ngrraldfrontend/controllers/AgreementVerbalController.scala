@@ -27,7 +27,7 @@ import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.RentAgreement
-import uk.gov.hmrc.ngrraldfrontend.models.{AgreementVerbal, NGRDate, NormalMode, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{Mode, AgreementVerbal, NGRDate, NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreementVerbalForm
@@ -85,11 +85,11 @@ class AgreementVerbalController @Inject()(view: AgreementVerbalView,
           case None => None
         }))
       }
-        Future.successful(Ok(view(preparedForm, buildRadios(preparedForm, ngrRadio(preparedForm)), request.property.addressFull)))
+        Future.successful(Ok(view(preparedForm, buildRadios(preparedForm, ngrRadio(preparedForm)), request.property.addressFull, mode)))
     }
   }
 
-  def submit: Action[AnyContent] = {
+  def submit(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
       form
         .bindFromRequest()
@@ -116,7 +116,7 @@ class AgreementVerbalController @Inject()(view: AgreementVerbalView,
             }
             val formWithCorrectedErrors = formWithErrors.copy(errors = correctedFormErrors)
                 Future.successful(BadRequest(view(formWithCorrectedErrors,
-                  buildRadios(formWithErrors, ngrRadio(formWithCorrectedErrors)), request.property.addressFull))),
+                  buildRadios(formWithErrors, ngrRadio(formWithCorrectedErrors)), request.property.addressFull, mode))),
           agreementVerbalForm =>
             val openEnded: Boolean = agreementVerbalForm.radioValue.equals("Yes")
             val answers: AgreementVerbal = AgreementVerbal(
@@ -127,7 +127,7 @@ class AgreementVerbalController @Inject()(view: AgreementVerbalView,
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(AgreementVerbalPage, answers))
               _ <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(AgreementVerbalPage, NormalMode, updatedAnswers))
+            } yield Redirect(navigator.nextPage(AgreementVerbalPage, mode, updatedAnswers))
         )
     }
   }

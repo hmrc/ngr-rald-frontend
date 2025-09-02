@@ -21,6 +21,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
+import uk.gov.hmrc.ngrraldfrontend.models.{Landlord, Mode, NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
 import uk.gov.hmrc.ngrraldfrontend.models.forms.{AgreedRentChangeForm, CheckRentFreePeriodForm}
@@ -43,7 +44,7 @@ class CheckRentFreePeriodController @Inject()(checkRentFreePeriodView: CheckRent
                                               mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport {
 
-  def show: Action[AnyContent] = {
+  def show(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(CheckRentFreePeriodPage) match {
         case None => form
@@ -53,18 +54,20 @@ class CheckRentFreePeriodController @Inject()(checkRentFreePeriodView: CheckRent
           form = preparedForm,
           radios = buildRadios(preparedForm, CheckRentFreePeriodForm.ngrRadio(preparedForm)),
           propertyAddress = request.property.addressFull,
+          mode = mode
         )))
     }
   }
 
-  def submit: Action[AnyContent] =
+  def submit(mode: Mode): Action[AnyContent] =
     (authenticate andThen getData).async { implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
             Future.successful(BadRequest(checkRentFreePeriodView(
               form = formWithErrors,
               radios = buildRadios(formWithErrors, CheckRentFreePeriodForm.ngrRadio(formWithErrors)),
-              propertyAddress = request.property.addressFull
+              propertyAddress = request.property.addressFull,
+              mode = mode
             )))
         },
         radioValue =>

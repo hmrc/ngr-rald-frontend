@@ -24,6 +24,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{Table, TableRow}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
+import uk.gov.hmrc.ngrraldfrontend.models.{Mode, NGRDate, NormalMode, ProvideDetailsOfFirstSecondRentPeriod, RaldUserAnswers, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
@@ -169,7 +170,7 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
     firstCellIsHeader = true
   )
 
-  def show: Action[AnyContent] = {
+  def show(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
       request.userAnswers.getOrElse(UserAnswers(request.credId)).get(ProvideDetailsOfFirstSecondRentPeriodPage) match {
         case Some(value) =>
@@ -182,13 +183,14 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
             preparedForm,
             firstTable = firstTable(value),
             secondTable = secondTable(value),
-            ngrRadio = buildRadios(preparedForm, RentPeriodsForm.ngrRadio(preparedForm)))))
+            ngrRadio = buildRadios(preparedForm, RentPeriodsForm.ngrRadio(preparedForm)),
+            mode = mode)))
         case None => throw new Exception("Not found answers")
       }
     }
   }
 
-  def submit: Action[AnyContent]   = {
+  def submit(mode: Mode): Action[AnyContent]   = {
     (authenticate andThen getData).async { implicit request =>
       form
         .bindFromRequest()
@@ -200,14 +202,14 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
                 formWithErrors,
                 firstTable = firstTable(value),
                 secondTable = secondTable(value),
-                buildRadios(formWithErrors, RentPeriodsForm.ngrRadio(formWithErrors)))))
+                buildRadios(formWithErrors, RentPeriodsForm.ngrRadio(formWithErrors)), mode = mode)))
               case None => throw new NotFoundException("Couldn't find user Answers")
             },
           rentPeriodsForm =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(RentPeriodsPage, rentPeriodsForm.radioValue))
               _ <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(RentPeriodsPage, NormalMode, updatedAnswers))
+            } yield Redirect(navigator.nextPage(RentPeriodsPage, mode, updatedAnswers))
         )
     }
   }

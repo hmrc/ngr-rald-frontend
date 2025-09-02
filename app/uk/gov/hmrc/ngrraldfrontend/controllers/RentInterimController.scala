@@ -21,7 +21,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{Mode, NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentInterimForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentInterimForm.form
@@ -46,7 +46,7 @@ class RentInterimController @Inject()(rentInterimView: RentInterimView,
   extends FrontendController(mcc) with I18nSupport {
 
 
-  def show: Action[AnyContent] = {
+  def show(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(RentInterimPage) match {
         case None => form
@@ -57,25 +57,27 @@ class RentInterimController @Inject()(rentInterimView: RentInterimView,
           navigationBarContent = createDefaultNavBar,
           radios = buildRadios(preparedForm, RentInterimForm.ngrRadio(preparedForm)),
           propertyAddress = request.property.addressFull,
+          mode = mode
         )))
     }
   }
 
-  def submit: Action[AnyContent] =
+  def submit(mode: Mode): Action[AnyContent] =
     (authenticate andThen getData).async { implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
             Future.successful(BadRequest(rentInterimView(
               form = formWithErrors,
               radios = buildRadios(formWithErrors, RentInterimForm.ngrRadio(formWithErrors)),
-              propertyAddress = request.property.addressFull
+              propertyAddress = request.property.addressFull,
+              mode = mode
             )))
         },
         radioValue =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(RentInterimPage, radioValue.radioValue))
             _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(RentInterimPage, NormalMode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(RentInterimPage, mode, updatedAnswers))
       )
     }
 }
