@@ -49,13 +49,16 @@ class WhatTypeOfAgreementController @Inject()(view: WhatTypeOfAgreementView,
   extends FrontendController(mcc) with I18nSupport {
 
   def show: Action[AnyContent] = {
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
-      request.propertyLinking.map(property =>
+    (authenticate andThen getData).async { implicit request =>
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(WhatTypeOfAgreementPage) match {
+        case None => form
+        case Some(value) => form.fill(WhatTypeOfAgreementForm(value))
+      }
         Future.successful(Ok(
           view(
-            selectedPropertyAddress = property.addressFull,
-            form = form,
-            ngrRadio = buildRadios(form, WhatTypeOfAgreementForm.ngrRadio(form))
+            selectedPropertyAddress = request.property.addressFull,
+            form = preparedForm,
+            ngrRadio = buildRadios(preparedForm, WhatTypeOfAgreementForm.ngrRadio(preparedForm))
           )
         ))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
     }

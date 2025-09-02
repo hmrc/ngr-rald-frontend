@@ -22,7 +22,8 @@ import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
-import uk.gov.hmrc.ngrraldfrontend.models.forms.CheckRentFreePeriodForm
+import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
+import uk.gov.hmrc.ngrraldfrontend.models.forms.{AgreedRentChangeForm, CheckRentFreePeriodForm}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.CheckRentFreePeriodForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
@@ -34,42 +35,44 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CheckRentFreePeriodController @Inject()(checkRentFreePeriodView: CheckRentFreePeriodView,
-                                              authenticate: AuthRetrievals,
+                                              authenticate : AuthRetrievals,
                                               hasLinkedProperties: PropertyLinkingAction,
-                                              raldRepo: RaldRepo,
+                                              getData: DataRetrievalAction,
+                                              navigator: Navigator,
+                                              sessionRepository: SessionRepository,
                                               mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport {
 
   def show: Action[AnyContent] = {
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
-      request.propertyLinking.map(property =>
+    (authenticate andThen getData).async { implicit request =>
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(CheckRentFreePeriodPage) match {
+        case None => form
+        case Some(value) => form.fill(CheckRentFreePeriodForm(value))
+      }
         Future.successful(Ok(checkRentFreePeriodView(
-          form = form,
-          radios = buildRadios(form, CheckRentFreePeriodForm.ngrRadio(form)),
-          propertyAddress = property.addressFull,
-        )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
+          form = preparedForm,
+          radios = buildRadios(preparedForm, CheckRentFreePeriodForm.ngrRadio(preparedForm)),
+          propertyAddress = request.property.addressFull,
+        )))
     }
   }
 
   def submit: Action[AnyContent] =
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
+    (authenticate andThen getData).async { implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
-          request.propertyLinking.map(property =>
             Future.successful(BadRequest(checkRentFreePeriodView(
               form = formWithErrors,
               radios = buildRadios(formWithErrors, CheckRentFreePeriodForm.ngrRadio(formWithErrors)),
-              propertyAddress = property.addressFull
-            )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
+              propertyAddress = request.property.addressFull
+            )))
         },
         radioValue =>
-          raldRepo.insertHasRentFreePeriod(
-            credId = CredId(request.credId.getOrElse("")),
-            hasRentFreePeriod = radioValue.radioValue
-          )
-          radioValue.radioValue match
-            case "No" => Future.successful(Redirect(routes.RentDatesAgreeStartController.show.url))
-            case _ => Future.successful(Redirect(routes.RentFreePeriodController.show.url))
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
+              .set(CheckRentFreePeriodPage, radioValue.radioValue))
+            _ <- sessionRepository.set(updatedAnswers)
+          } yield Redirect(navigator.nextPage(LandlordPage, NormalMode, updatedAnswers))
       )
     }
 

@@ -23,17 +23,21 @@ import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction,
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
+import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
+import uk.gov.hmrc.ngrraldfrontend.models.forms.{LandlordForm, WhatTypeOfLeaseRenewalForm}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatTypeOfLeaseRenewalForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatTypeOfLeaseRenewalForm.{RenewedAgreement, SurrenderAndRenewal, form}
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
-import uk.gov.hmrc.ngrraldfrontend.pages.WhatTypeOfLeaseRenewalPage
+import uk.gov.hmrc.ngrraldfrontend.pages.{LandlordPage, WhatTypeOfLeaseRenewalPage}
 import uk.gov.hmrc.ngrraldfrontend.repo.{RaldRepo, SessionRepository}
+import uk.gov.hmrc.ngrraldfrontend.utils.Constants
 import uk.gov.hmrc.ngrraldfrontend.utils.Constants.{renewedAgreement, surrenderAndRenewal}
 import uk.gov.hmrc.ngrraldfrontend.views.html.WhatTypeOfLeaseRenewalView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
+import scala.collection.immutable.{AbstractSet, SortedSet}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -49,13 +53,26 @@ class WhatTypeOfLeaseRenewalController @Inject()(whatTypeOfLeaseRenewalView: Wha
 
 
   def show: Action[AnyContent] = {
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
-      request.propertyLinking.map(property =>
-        Future.successful(Ok(whatTypeOfLeaseRenewalView(
-          form = form,
-          radios = buildRadios(form, WhatTypeOfLeaseRenewalForm.ngrRadio),
-          propertyAddress = property.addressFull,
-        )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
+    (authenticate andThen getData).async { implicit request =>
+
+      val preparedForm = request.userAnswers
+        .getOrElse(UserAnswers(request.credId))
+        .get(WhatTypeOfLeaseRenewalPage) match {
+        case None => WhatTypeOfLeaseRenewalForm.form
+        case Some(value) =>
+          val selectedOption = value match {
+            case Constants.renewedAgreement     => WhatTypeOfLeaseRenewalForm.RenewedAgreement
+            case Constants.surrenderAndRenewal => WhatTypeOfLeaseRenewalForm.SurrenderAndRenewal
+          }
+          WhatTypeOfLeaseRenewalForm.form.fill(selectedOption)
+
+    }
+      Future.successful(Ok(whatTypeOfLeaseRenewalView(
+        form = preparedForm,
+        navigationBarContent = createDefaultNavBar,
+        radios = buildRadios(preparedForm, WhatTypeOfLeaseRenewalForm.ngrRadio),
+        propertyAddress = request.property.addressFull,
+      )))
     }
   }
 

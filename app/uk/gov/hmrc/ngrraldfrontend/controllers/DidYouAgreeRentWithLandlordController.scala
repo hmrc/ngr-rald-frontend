@@ -45,14 +45,17 @@ class DidYouAgreeRentWithLandlordController @Inject()(didYouAgreeRentWithLandlor
 
 
   def show: Action[AnyContent] = {
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
-      request.propertyLinking.map(property =>
+    (authenticate andThen getData).async { implicit request =>
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(DidYouAgreeRentWithLandlordPage) match {
+        case None => form
+        case Some(value) => form.fill(DidYouAgreeRentWithLandlordForm(value))
+      }
         Future.successful(Ok(didYouAgreeRentWithLandlordView(
-          selectedPropertyAddress = property.addressFull,
+          selectedPropertyAddress = request.property.addressFull,
           navigationBarContent = createDefaultNavBar,
-          form = form,
-          ngrRadio = buildRadios(form, DidYouAgreeRentWithLandlordForm.ngrRadio(form)),
-        )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
+          form = preparedForm,
+          ngrRadio = buildRadios(preparedForm, DidYouAgreeRentWithLandlordForm.ngrRadio(preparedForm)),
+        )))
     }
   }
 

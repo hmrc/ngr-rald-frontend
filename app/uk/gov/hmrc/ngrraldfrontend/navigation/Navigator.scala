@@ -17,12 +17,11 @@
 package uk.gov.hmrc.ngrraldfrontend.navigation
 
 import play.api.mvc.Call
-import uk.gov.hmrc.hmrcfrontend.controllers.routes
+import controllers.routes
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.models.{CheckMode, Mode, NormalMode, ProvideDetailsOfFirstSecondRentPeriod, UserAnswers}
-import uk.gov.hmrc.ngrraldfrontend.pages.{AgreedRentChangePage, DidYouAgreeRentWithLandlordPage, HowMuchIsTotalAnnualRentPage, LandlordPage, Page, ProvideDetailsOfFirstSecondRentPeriodPage, RentPeriodsPage, TellUsAboutRentPage, TellUsAboutYourRenewedAgreementPage, WhatIsYourRentBasedOnPage, WhatTypeOfAgreementPage, WhatTypeOfLeaseRenewalPage}
+import uk.gov.hmrc.ngrraldfrontend.pages.{AgreedRentChangePage, AgreementPage, AgreementVerbalPage, CheckRentFreePeriodPage, DidYouAgreeRentWithLandlordPage, HowMuchIsTotalAnnualRentPage, LandlordPage, Page, ProvideDetailsOfFirstSecondRentPeriodPage, RentInterimPage, RentPeriodsPage, TellUsAboutRentPage, TellUsAboutYourNewAgreementPage, TellUsAboutYourRenewedAgreementPage, WhatIsYourRentBasedOnPage, WhatTypeOfAgreementPage, WhatTypeOfLeaseRenewalPage}
 
-import java.lang.ProcessBuilder.Redirect
 import javax.inject.{Inject, Singleton}
 
 @Singleton
@@ -31,14 +30,20 @@ class Navigator @Inject()() {
 
 
   private val normalRoutes: Page => UserAnswers => Call = {
-    case TellUsAboutRentPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.LandlordController.show
-    case TellUsAboutYourRenewedAgreementPage =>_ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatTypeOfLeaseRenewalController.show
-    case WhatTypeOfLeaseRenewalPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.LandlordController.show
-    case LandlordPage => answers => (answers.get(TellUsAboutRentPage),answers.get(TellUsAboutYourRenewedAgreementPage)) match {
-      case (Some(_),None) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatIsYourRentBasedOnController.show
-      case (None, Some(_)) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatTypeOfAgreementController.show
-      case (Some(_), Some(_)) => throw new RuntimeException("User should not have all three options")
-      case (None, None) => throw new NotFoundException("Failed to find values")
+    case TellUsAboutRentPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.LandlordController.show()
+    case TellUsAboutYourRenewedAgreementPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatTypeOfLeaseRenewalController.show
+    case TellUsAboutYourNewAgreementPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.LandlordController.show()
+    case WhatTypeOfLeaseRenewalPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.LandlordController.show()
+    case LandlordPage => answers => (
+      answers.get(TellUsAboutRentPage),
+      answers.get(TellUsAboutYourRenewedAgreementPage),
+      answers.get(TellUsAboutYourNewAgreementPage)
+    ) match {
+      case (Some(_),None, None) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatIsYourRentBasedOnController.show
+      case (None, Some(_), None) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatTypeOfAgreementController.show
+      case (None, None, Some(_)) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatTypeOfAgreementController.show
+      case (Some(_), Some(_), Some(_)) => throw new RuntimeException("User should not have all three options")
+      case (None, None, None) => throw new NotFoundException("Failed to find values")
     }
     case WhatTypeOfAgreementPage => answers =>
       answers.get(WhatTypeOfAgreementPage) match {
@@ -48,6 +53,8 @@ class Navigator @Inject()() {
         }
         case None => throw new NotFoundException("Failed to find value from What type of agreement page")
       }
+    case AgreementPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatIsYourRentBasedOnController.show
+    case AgreementVerbalPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchIsTotalAnnualRentController.show
     case WhatIsYourRentBasedOnPage => answers =>
       answers.get(WhatIsYourRentBasedOnPage) match {
         case Some(value) => value.rentBased match {
@@ -64,12 +71,16 @@ class Navigator @Inject()() {
         }
         case None => throw new NotFoundException("Failed to find answers")
       }
-    case HowMuchIsTotalAnnualRentPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouAgreeRentWithLandlordController.show
+    case HowMuchIsTotalAnnualRentPage => answers => (answers.get(TellUsAboutYourRenewedAgreementPage),
+    answers.get(TellUsAboutYourNewAgreementPage)) match {
+      case (Some(_),None) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouAgreeRentWithLandlordController.show
+      case (None,Some(_)) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show
+    }
     case DidYouAgreeRentWithLandlordPage => answers =>
       answers.get(DidYouAgreeRentWithLandlordPage) match {
         case Some(value) => value match {
           case "YesTheLandlord" => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show
-          case _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show
+          case _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentInterimController.show
         }
         case None => throw new NotFoundException("Failed to find answers")
       }
@@ -82,9 +93,28 @@ class Navigator @Inject()() {
         }
         case None => throw new NotFoundException("Failed to find answers")
       }
+      //TODO CHANGE ROUTE TO CORRECT PAGE
+    case CheckRentFreePeriodPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show
+    //TODO CHECK THIS ROUTE
+    case RentInterimPage => answers =>
+      answers.get(RentInterimPage) match {
+        case Some(value) => value match {
+          case "Yes" => uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfFirstSecondRentPeriodController.show
+          case _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show
+        }
+        case None => ???
+      }
   }
 
-  def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = {
-     normalRoutes(page)(userAnswers)
+  //TODO change to check your answers page
+  private val checkRouteMap: Page => UserAnswers => Call = {
+    case _ => _ => ???
+  }
+
+  def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
+    case NormalMode =>
+      normalRoutes(page)(userAnswers)
+    case CheckMode =>
+      checkRouteMap(page)(userAnswers)
   }
 }

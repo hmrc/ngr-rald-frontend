@@ -23,14 +23,17 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.*
 import uk.gov.hmrc.govukfrontend.views.html.components.ErrorMessage
 import uk.gov.hmrc.govukfrontend.views.viewmodels.dateinput.DateInput
 import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
+import uk.gov.hmrc.ngrraldfrontend.models.{Agreement, NGRDate, NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreementForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreementForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
+import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
+import uk.gov.hmrc.ngrraldfrontend.pages.AgreementPage
+import uk.gov.hmrc.ngrraldfrontend.repo.{RaldRepo, SessionRepository}
 import uk.gov.hmrc.ngrraldfrontend.views.html.AgreementView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.{DateTextFields, NGRCharacterCountComponent}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -45,7 +48,10 @@ class AgreementController @Inject()(view: AgreementView,
                                     hasLinkedProperties: PropertyLinkingAction,
                                     raldRepo: RaldRepo,
                                     ngrCharacterCountComponent: NGRCharacterCountComponent,
-                                    mcc: MessagesControllerComponents
+                                    mcc: MessagesControllerComponents,
+                                    getData: DataRetrievalAction,
+                                    navigator: Navigator,
+                                    sessionRepository: SessionRepository
                                    )(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
   def dateInput()(implicit messages: Messages): DateInput = DateInput(
@@ -134,21 +140,34 @@ class AgreementController @Inject()(view: AgreementView,
 
 
   def show: Action[AnyContent] = {
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
-      request.propertyLinking.map(property =>
-        Future.successful(Ok(view(
-          selectedPropertyAddress = property.addressFull,
-          form,
-          dateInput(),
-          buildRadios(form, openEndedRadio(form)),
-          buildRadios(form, breakClauseRadio(form))
-        )))
-      ).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
+    (authenticate andThen getData).async { implicit request =>
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(AgreementPage) match {
+        case None => form
+        case Some(value) => form.fill(AgreementForm(NGRDate.fromString(value.agreementStart), if (value.isOpenEnded) {
+          "YesOpenEnded"
+        } else {
+          "NoOpenEnded"
+        }, value.openEndedDate match {
+          case Some(value) => Some(NGRDate.fromString(value))
+          case None => None
+        }, if (value.haveBreakClause) {
+          "YesBreakClause"
+        } else {
+          "NoBreakClause"
+        }, value.breakClauseInfo))
+      }
+      Future.successful(Ok(view(
+        selectedPropertyAddress = request.property.addressFull,
+        preparedForm,
+        dateInput(),
+        buildRadios(preparedForm, openEndedRadio(preparedForm)),
+        buildRadios(preparedForm, breakClauseRadio(preparedForm))
+      )))
     }
   }
 
   def submit: Action[AnyContent] = {
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
+    (authenticate andThen getData).async { implicit request =>
       form
         .bindFromRequest()
         .fold(
@@ -166,24 +185,29 @@ class AgreementController @Inject()(view: AgreementView,
             }
             val formWithCorrectedErrors = formWithErrors.copy(errors = correctedFormErrors)
 
-            request.propertyLinking.map(property =>
               Future.successful(BadRequest(view(
-                selectedPropertyAddress = property.addressFull,
+                selectedPropertyAddress = request.property.addressFull,
                 formWithCorrectedErrors,
                 dateInput(),
                 buildRadios(formWithErrors, openEndedRadio(formWithCorrectedErrors)),
                 buildRadios(formWithErrors, breakClauseRadio(formWithCorrectedErrors))
-              )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo")),
+              ))),
           agreementForm =>
-            raldRepo.insertAgreement(
-              CredId(request.credId.getOrElse("")),
-              agreementForm.agreementStart.makeString,
-              agreementForm.openEndedRadio,
+            val answers = Agreement(agreementForm.agreementStart.makeString,
+              agreementForm.openEndedRadio match {
+                case answer if(answer == "YesOpenEnded") => true
+                case _ => false
+              },
               agreementForm.openEndedDate.map(value => value.makeString),
-              agreementForm.breakClauseRadio,
-              agreementForm.breakClauseInfo,
-            )
-            Future.successful(Redirect(routes.WhatIsYourRentBasedOnController.show.url))
+              agreementForm.breakClauseRadio match {
+                case openEndedRadio if(openEndedRadio == "YesBreakClause") => true
+                case _ => false
+              },
+              agreementForm.breakClauseInfo)
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(AgreementPage, answers))
+              _ <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(AgreementPage, NormalMode, updatedAnswers))
         )
     }
   }
