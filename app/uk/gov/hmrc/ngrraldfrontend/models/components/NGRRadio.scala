@@ -67,6 +67,21 @@ sealed trait DidYouAgreeRentWithLandlord extends RadioEntry
 case object YesTheLandlord extends DidYouAgreeRentWithLandlord
 case object NoACourtSet    extends DidYouAgreeRentWithLandlord
 
+sealed trait WhatYourRentIncludesRadio extends RadioEntry
+case object livingAccommodationYes extends WhatYourRentIncludesRadio
+case object livingAccommodationNo extends WhatYourRentIncludesRadio
+case object rentPartAddressYes extends WhatYourRentIncludesRadio
+case object rentPartAddressNo extends WhatYourRentIncludesRadio
+case object rentEmptyShellYes extends WhatYourRentIncludesRadio
+case object rentEmptyShellNo extends WhatYourRentIncludesRadio
+case object rentIncBusinessRatesYes extends WhatYourRentIncludesRadio
+case object rentIncBusinessRatesNo extends WhatYourRentIncludesRadio
+case object rentIncWaterChargesYes extends WhatYourRentIncludesRadio
+case object rentIncWaterChargesNo extends WhatYourRentIncludesRadio
+case object rentIncServiceYes extends WhatYourRentIncludesRadio
+case object rentIncServiceNo extends WhatYourRentIncludesRadio
+
+
 case class NGRRadioName(key: String)
 
 case class NGRRadioButtons(radioContent: String,
