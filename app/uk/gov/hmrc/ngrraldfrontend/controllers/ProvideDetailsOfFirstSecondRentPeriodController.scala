@@ -25,7 +25,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.dateinput.DateInput
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, ProvideDetailsOfFirstSecondRentPeriod, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{NGRDate, NormalMode, ProvideDetailsOfFirstSecondRentPeriod, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
@@ -148,19 +148,29 @@ class ProvideDetailsOfFirstSecondRentPeriodController @Inject()(view: ProvideDet
   )
 
   def show: Action[AnyContent] = {
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
-      request.propertyLinking.map(property =>
+    (authenticate andThen getData).async { implicit request =>
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(ProvideDetailsOfFirstSecondRentPeriodPage) match {
+        case None => form
+        case Some(value) => form.fill(ProvideDetailsOfFirstSecondRentPeriodForm(NGRDate.fromString(value.firstDateStart),NGRDate.fromString(value.firstDateEnd),value.firstRentPeriodRadio match {
+          case true => "yesPayedRent"
+          case false => "noRentPayed"
+        }, value.firstRentPeriodAmount match {
+          case Some(value) => Some(BigDecimal(value))
+          case None => None
+        },
+          NGRDate.fromString(value.secondDateStart),NGRDate.fromString(value.secondDateEnd),BigDecimal(value.secondHowMuchIsRent)))
+
+      }
         Future.successful(Ok(view(
           navigationBarContent = createDefaultNavBar,
-          selectedPropertyAddress = property.addressFull,
-          form,
+          selectedPropertyAddress = request.property.addressFull,
+          preparedForm,
           firstDateStartInput(),
           firstDateEndInput(),
-          buildRadios(form, firstRentPeriodRadio(form)),
+          buildRadios(preparedForm, firstRentPeriodRadio(preparedForm)),
           secondDateStartInput(),
           secondDateEndInput()
         )))
-      ).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
     }
   }
 
@@ -189,7 +199,8 @@ class ProvideDetailsOfFirstSecondRentPeriodController @Inject()(view: ProvideDet
                 secondDateEndInput()
               ))),
           provideDetailsOfFirstSecondRentPeriodForm =>
-            val provideDetailsOfFirstSecondRentPeriod: ProvideDetailsOfFirstSecondRentPeriod = ProvideDetailsOfFirstSecondRentPeriod( provideDetailsOfFirstSecondRentPeriodForm.firstDateStartInput.makeString,
+            val provideDetailsOfFirstSecondRentPeriod: ProvideDetailsOfFirstSecondRentPeriod = ProvideDetailsOfFirstSecondRentPeriod(
+              provideDetailsOfFirstSecondRentPeriodForm.firstDateStartInput.makeString,
               provideDetailsOfFirstSecondRentPeriodForm.firstDateEndInput.makeString,
               provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodRadio match {
                 case "yesPayedRent" => true

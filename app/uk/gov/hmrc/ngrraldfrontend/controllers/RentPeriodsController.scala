@@ -136,14 +136,18 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
   def show: Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
       request.userAnswers.getOrElse(UserAnswers(request.credId)).get(ProvideDetailsOfFirstSecondRentPeriodPage) match {
-        case Some(value) => 
+        case Some(value) =>
+          val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(RentPeriodsPage) match {
+            case Some(value) => form.fill(RentPeriodsForm(value))
+            case None => form
+          }
           Future.successful(Ok(view(
             navigationBarContent = createDefaultNavBar,
             selectedPropertyAddress = request.property.addressFull,
-            form,
+            preparedForm,
             firstTable = firstTable(value),
             secondTable = secondTable(value),
-            ngrRadio = buildRadios(form, RentPeriodsForm.ngrRadio(form)))))
+            ngrRadio = buildRadios(preparedForm, RentPeriodsForm.ngrRadio(preparedForm)))))
         case None => throw new Exception("Not found answers")
       }
       }

@@ -14,28 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.ngrraldfrontend.models
+package uk.gov.hmrc.ngrraldfrontend.pages
 
-import play.api.libs.json.{JsString, Writes}
-import play.api.mvc.JavascriptLiteral
+import play.api.libs.json.JsPath
 
-sealed trait Mode
+case object RentDatesAgreePage extends QuestionPage[String] {
 
-case object CheckMode extends Mode
+  override def path: JsPath = JsPath \ toString
 
-case object NormalMode extends Mode
-
-object Mode {
-
-  implicit val jsLiteral: JavascriptLiteral[Mode] = new JavascriptLiteral[Mode] {
-    override def to(value: Mode): String = value match {
-      case NormalMode => "\"NormalMode\""
-      case CheckMode => "\"CheckMode\""
-    }
-  }
-
-  implicit val writes: Writes[Mode] = Writes {
-    case NormalMode => JsString("NormalMode")
-    case CheckMode => JsString("CheckMode")
-  }
+  override def toString: String = "rentDatesAgree"
+  
 }

@@ -48,13 +48,16 @@ class HowMuchIsTotalAnnualRentController @Inject()(howMuchIsTotalAnnualRentView:
 
 
   def show: Action[AnyContent] = {
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
-      request.propertyLinking.map(property =>
+    (authenticate andThen getData).async { implicit request =>
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(HowMuchIsTotalAnnualRentPage) match {
+        case None => form
+        case Some(value) => form.fill(HowMuchIsTotalAnnualRentForm(value))
+      }
         Future.successful(Ok(howMuchIsTotalAnnualRentView(
-          form = form,
+          form = preparedForm,
           navigationBarContent = createDefaultNavBar,
-          propertyAddress = property.addressFull,
-        )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
+          propertyAddress = request.property.addressFull,
+        )))
     }
   }
 
