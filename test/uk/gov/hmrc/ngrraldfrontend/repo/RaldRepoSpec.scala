@@ -24,6 +24,7 @@ import uk.gov.hmrc.ngrraldfrontend.helpers.{TestData, TestSupport}
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.*
+import uk.gov.hmrc.ngrraldfrontend.models.components.*
 
 class RaldRepoSpec extends TestSupport with TestData
   with DefaultPlayMongoRepositorySupport[RaldUserAnswers] {
@@ -391,6 +392,62 @@ class RaldRepoSpec extends TestSupport with TestData
       await(repository.insertRentDates(credId, rentDate))
       val actual = await(repository.findByCredId(credId))
       actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, agreedRentDate = Some(rentDate)))
+    }
+
+    "insert what your rent includes with all radios selected as yes" in {
+      val radio1yes = livingAccommodationYes
+      val radio2yes = rentPartAddressYes
+      val radio3yes = rentEmptyShellYes
+      val radio4yes = rentIncBusinessRatesYes
+      val radio5yes = rentIncWaterChargesYes
+      val radio6yes = rentIncServiceYes
+
+      await(repository.insertWhatYourRentIncludes(
+        credId,
+        radio1yes.toString,
+        radio2yes.toString,
+        radio3yes.toString,
+        radio4yes.toString,
+        radio5yes.toString,
+        radio6yes.toString,
+      ))
+      val actual = await(repository.findByCredId(credId))
+      actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, whatYourRentIncludes = Some(WhatYourRentIncludes(
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ))))
+    }
+
+    "insert what your rent includes with all radios selected as no" in {
+      val radio1yes = livingAccommodationNo
+      val radio2yes = rentPartAddressNo
+      val radio3yes = rentEmptyShellNo
+      val radio4yes = rentIncBusinessRatesNo
+      val radio5yes = rentIncWaterChargesNo
+      val radio6yes = rentIncServiceNo
+
+      await(repository.insertWhatYourRentIncludes(
+        credId,
+        radio1yes.toString,
+        radio2yes.toString,
+        radio3yes.toString,
+        radio4yes.toString,
+        radio5yes.toString,
+        radio6yes.toString,
+      ))
+      val actual = await(repository.findByCredId(credId))
+      actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, whatYourRentIncludes = Some(WhatYourRentIncludes(
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ))))
     }
 
     "credId doesn't exist in mongoDB" in {

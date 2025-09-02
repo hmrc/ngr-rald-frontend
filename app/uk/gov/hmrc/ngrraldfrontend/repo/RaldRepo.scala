@@ -200,7 +200,35 @@ case class RaldRepo @Inject()(mongo: MongoComponent,
       case "Yes" => findAndUpdateByCredId(credId, Updates.set("hasAnotherRentPeriod", true))
       case _ => findAndUpdateByCredId(credId, Updates.set("hasAnotherRentPeriod", false))
     }
+  }
+    
+  def insertWhatYourRentIncludes(
+                                  credId: CredId,
+                                  livingAccommodationRadio: String,
+                                  rentPartAddressRadio: String,
+                                  rentEmptyShellRadio: String,
+                                  rentIncBusinessRatesRadio: String,
+                                  rentIncWaterChargesRadio: String,
+                                  rentIncServiceRadio:String
+                                ): Future[Option[RaldUserAnswers]] = {
+    
+    def radioConvert(value: String): Boolean = {
+      value match {
+        case value if value.contains("Yes") => true
+        case _ => false
+      }
+    }
 
+    val updates = Seq(
+      Updates.set("whatYourRentIncludes.livingAccommodation", radioConvert(livingAccommodationRadio)),
+      Updates.set("whatYourRentIncludes.rentPartAddress", radioConvert(rentPartAddressRadio)),
+      Updates.set("whatYourRentIncludes.rentEmptyShell", radioConvert(rentEmptyShellRadio)),
+      Updates.set("whatYourRentIncludes.rentIncBusinessRates", radioConvert(rentIncBusinessRatesRadio)),
+      Updates.set("whatYourRentIncludes.rentIncWaterCharges", radioConvert(rentIncWaterChargesRadio)),
+      Updates.set("whatYourRentIncludes.rentIncService", radioConvert(rentIncServiceRadio))
+    )
+
+    findAndUpdateByCredId(credId, updates: _*)
   }
 
   def findByCredId(credId: CredId): Future[Option[RaldUserAnswers]] = {

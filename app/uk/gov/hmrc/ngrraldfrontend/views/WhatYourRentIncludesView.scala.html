@@ -1,0 +1,59 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.Aliases._
+@import uk.gov.hmrc.ngrraldfrontend.views.html.components._
+@import uk.gov.hmrc.ngrraldfrontend.viewmodels.govuk.all._
+@import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
+@import uk.gov.hmrc.ngrraldfrontend.models.components.NavigationBarContent
+@import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatYourRentIncludesForm
+
+@this(
+    layout: Layout,
+    govukRadios : GovukRadios,
+    govukInsetText : GovukInsetText,
+    formHelper: FormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    saveAndContinueButton: saveAndContinueButton
+)
+
+@(form:Form[WhatYourRentIncludesForm], navigationBarContent: NavigationBarContent, radios1: Radios, radios2: Radios, radios3: Radios, radios4: Radios, radios5: Radios, radios6: Radios, propertyAddress: String)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+
+@layout(pageTitle = Some(messages("whatYourRentIncludes.title")), showBackLink = true, fullWidth = true, navigationBarContent = Some(navigationBarContent)) {
+    @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatYourRentIncludesController.submit, Symbol("autoComplete") -> "off") {
+    @if(form.errors.nonEmpty) {
+        @govukErrorSummary(ErrorSummaryViewModel(form))
+    }
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-m">@propertyAddress</span>
+            <h1 class="govuk-heading-l">@messages("whatYourRentIncludes.title")</h1>
+            @govukRadios(radios1)
+            <p1 class="govuk-fieldset__legend govuk-fieldset__legend--m">@messages("whatYourRentIncludes.radio.2.title")</p1>
+            @govukInsetText(InsetText(
+                content = Text(propertyAddress)
+            ))
+            @govukRadios(radios2)
+            @govukRadios(radios3)
+            @govukRadios(radios4)
+            @govukRadios(radios5)
+            @govukRadios(radios6)
+            @saveAndContinueButton(msg = messages("service.continue"), isStartButton = false)
+        </div>
+    </div>
+    }
+}
