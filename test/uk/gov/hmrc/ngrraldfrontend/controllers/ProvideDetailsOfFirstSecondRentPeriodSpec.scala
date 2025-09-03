@@ -19,7 +19,7 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redirectLocation, status}
+import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redirectLocation}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.status
 import uk.gov.hmrc.auth.core.Nino
@@ -29,7 +29,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, RaldUserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.views.html.ProvideDetailsOfFirstSecondRentPeriodView
-import uk.gov.hmrc.ngrraldfrontend.views.html.components.{DateTextFields, InputText}
+import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 
 import scala.concurrent.Future
 

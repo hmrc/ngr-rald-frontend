@@ -19,7 +19,7 @@ package uk.gov.hmrc.ngrraldfrontend.connectors
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import uk.gov.hmrc.http.{HttpResponse, NotFoundException}
+import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.helpers.TestData
 import uk.gov.hmrc.ngrraldfrontend.mocks.MockHttpV2
 import uk.gov.hmrc.ngrraldfrontend.models.PropertyLinkingUserAnswers
@@ -30,7 +30,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.vmvProperty.VMVProperty
 import scala.concurrent.Future
 
 class NGRConnectorSpec extends MockHttpV2 with TestData {
-  val ngrConnector: NGRConnector = new NGRConnector(mockHttpClientV2, mockConfig, mockRaldRepo)
+  val ngrConnector: NGRConnector = new NGRConnector(mockHttpClientV2, mockConfig)
   val email: Email = Email("hello@me.com")
   val trn: TRNReferenceNumber = TRNReferenceNumber(TRN, "1234")
 

@@ -22,10 +22,7 @@ import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.i18n.*
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.ngrraldfrontend.models.*
-import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreementVerbalForm.{dateValidation, firstError, isDateEmpty, isDateValid}
-import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatIsYourRentBasedOnForm.firstError
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
-import scala.util.Try
 
 final case class AgreementForm(
                                 agreementStart: NGRDate,
@@ -68,9 +65,6 @@ object AgreementForm extends CommonFormValidators with Mappings with DateMapping
         else
           Valid
       )
-
-  private val radioUnselectedError = "agreementVerbal.radio.unselected.error"
-  private val agreementVerbalRadio = "agreement-verbal-radio"
 
   private lazy val radioOpenEndedUnselectedError = "agreement.radio.openEnded.required.error"
   private lazy val radioBreakClauseUnselectedError = "agreement.radio.breakClause.required.error"

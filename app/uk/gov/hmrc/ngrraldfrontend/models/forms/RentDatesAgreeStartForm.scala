@@ -17,20 +17,17 @@
 package uk.gov.hmrc.ngrraldfrontend.models.forms
 
 import play.api.data.Form
-import play.api.data.Forms.{mapping, optional}
-import play.api.data.validation.{Constraint, Invalid, Valid}
+import play.api.data.Forms.mapping
+import play.api.data.validation.Constraint
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.ngrraldfrontend.models.*
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
-
-import scala.util.Try
 
 final case class RentDatesAgreeStartForm(agreedDate: NGRDate, startPayingDate: NGRDate)
 
 object RentDatesAgreeStartForm extends CommonFormValidators with DateMappings with Mappings {
   implicit val format: OFormat[RentDatesAgreeStartForm] = Json.format[RentDatesAgreeStartForm]
 
-  private val radioUnselectedError = "agreementVerbal.radio.unselected.error"
   private def errorKeys(whichDate: String): Map[DateErrorKeys, String] = Map(
     Required     -> s"rentDatesAgreeStart.$whichDate.required.error",
     DayAndMonth  -> s"rentDatesAgreeStart.$whichDate.dayAndMonth.required.error",

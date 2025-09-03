@@ -21,7 +21,6 @@ import play.api.data.{Form, Forms}
 import play.api.i18n.Messages
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Legend, Text}
-import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{noButton, yesButton}
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.forms.LandlordForm.text
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings

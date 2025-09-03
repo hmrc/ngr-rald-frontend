@@ -22,7 +22,7 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.Radios
 import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{buildRadios, noButton, yesButton}
-import uk.gov.hmrc.ngrraldfrontend.models.components.{NGRRadio, NGRRadioName, NavBarContents, NavBarCurrentPage, NavBarPageContents, NavigationBarContent}
+import uk.gov.hmrc.ngrraldfrontend.models.components.{NGRRadio, NGRRadioName}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.CheckRentFreePeriodForm
 import uk.gov.hmrc.ngrraldfrontend.views.html.CheckRentFreePeriodView
 

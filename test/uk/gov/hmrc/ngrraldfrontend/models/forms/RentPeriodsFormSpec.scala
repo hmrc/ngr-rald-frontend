@@ -19,7 +19,6 @@ package uk.gov.hmrc.ngrraldfrontend.models.forms
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import play.api.data.FormError
-import play.api.libs.json.Json
 
 class RentPeriodsFormSpec extends AnyFlatSpec with Matchers {
 

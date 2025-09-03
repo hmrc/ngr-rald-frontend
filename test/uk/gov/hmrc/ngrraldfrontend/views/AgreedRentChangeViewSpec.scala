@@ -22,8 +22,8 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.Radios
 import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{buildRadios, noButton, yesButton}
-import uk.gov.hmrc.ngrraldfrontend.models.components.{LeaseOrTenancy, NGRRadio, NGRRadioButtons, NGRRadioName, NavBarContents, NavBarCurrentPage, NavBarPageContents, NavigationBarContent, Verbal, Written, Yes}
-import uk.gov.hmrc.ngrraldfrontend.models.forms.{AgreedRentChangeForm, WhatTypeOfAgreementForm}
+import uk.gov.hmrc.ngrraldfrontend.models.components.{NGRRadio, NGRRadioButtons, NGRRadioName}
+import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreedRentChangeForm
 import uk.gov.hmrc.ngrraldfrontend.views.html.AgreedRentChangeView
 
 class AgreedRentChangeViewSpec extends ViewBaseSpec {

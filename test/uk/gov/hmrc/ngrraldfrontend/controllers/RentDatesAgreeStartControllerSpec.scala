@@ -27,8 +27,8 @@ import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, RaldUserAnswers}
-import uk.gov.hmrc.ngrraldfrontend.views.html.components.{DateTextFields, NGRCharacterCountComponent}
-import uk.gov.hmrc.ngrraldfrontend.views.html.{AgreementVerbalView, RentDatesAgreeStartView, WhatIsYourRentBasedOnView}
+import uk.gov.hmrc.ngrraldfrontend.views.html.components.DateTextFields
+import uk.gov.hmrc.ngrraldfrontend.views.html.RentDatesAgreeStartView
 
 import scala.collection.immutable.TreeMap
 import scala.concurrent.Future

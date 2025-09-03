@@ -21,8 +21,8 @@ import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import uk.gov.hmrc.http.{HeaderNames, NotFoundException}
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
-import uk.gov.hmrc.ngrraldfrontend.models.forms.{AgreedRentChangeForm, WhatTypeOfLeaseRenewalForm}
-import uk.gov.hmrc.ngrraldfrontend.views.html.{AgreedRentChangeView, WhatTypeOfLeaseRenewalView}
+import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreedRentChangeForm
+import uk.gov.hmrc.ngrraldfrontend.views.html.AgreedRentChangeView
 
 class AgreedRentChangeControllerSpec extends ControllerSpecSupport {
   val pageTitle = "Have you agreed in advance with the landlord when and by how much rent goes up?"

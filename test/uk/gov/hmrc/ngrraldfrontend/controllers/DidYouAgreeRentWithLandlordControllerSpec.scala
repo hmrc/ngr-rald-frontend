@@ -20,7 +20,6 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.shouldBe
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
 import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import uk.gov.hmrc.auth.core.Nino

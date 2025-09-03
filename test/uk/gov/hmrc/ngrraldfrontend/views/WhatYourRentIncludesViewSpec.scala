@@ -23,7 +23,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.Radios
 import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
-import uk.gov.hmrc.ngrraldfrontend.models.forms.{WhatTypeOfAgreementForm, WhatYourRentIncludesForm}
+import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatYourRentIncludesForm
 import uk.gov.hmrc.ngrraldfrontend.views.html.WhatYourRentIncludesView
 
 class WhatYourRentIncludesViewSpec  extends ViewBaseSpec {
