@@ -22,7 +22,6 @@ import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
-import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatTypeOfLeaseRenewalForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatTypeOfLeaseRenewalForm.{RenewedAgreement, SurrenderAndRenewal, form}
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
@@ -46,12 +45,11 @@ class WhatTypeOfLeaseRenewalController @Inject()(whatTypeOfLeaseRenewalView: Wha
   def show: Action[AnyContent] = {
     (authenticate andThen hasLinkedProperties).async { implicit request =>
       request.propertyLinking.map(property =>
-      Future.successful(Ok(whatTypeOfLeaseRenewalView(
-        form = form,
-        navigationBarContent = createDefaultNavBar,
-        radios = buildRadios(form, WhatTypeOfLeaseRenewalForm.ngrRadio),
-        propertyAddress = property.addressFull,
-      )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
+        Future.successful(Ok(whatTypeOfLeaseRenewalView(
+          form = form,
+          radios = buildRadios(form, WhatTypeOfLeaseRenewalForm.ngrRadio),
+          propertyAddress = property.addressFull,
+        )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
     }
   }
 
@@ -62,7 +60,6 @@ class WhatTypeOfLeaseRenewalController @Inject()(whatTypeOfLeaseRenewalView: Wha
           request.propertyLinking.map(property =>
             Future.successful(BadRequest(whatTypeOfLeaseRenewalView(
               form = formWithErrors,
-              navigationBarContent = createDefaultNavBar,
               radios = buildRadios(formWithErrors, WhatTypeOfLeaseRenewalForm.ngrRadio),
               propertyAddress = property.addressFull
             )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))

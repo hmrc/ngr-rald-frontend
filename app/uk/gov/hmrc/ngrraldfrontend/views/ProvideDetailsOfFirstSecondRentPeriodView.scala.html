@@ -16,9 +16,6 @@
 
 @import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.ngrraldfrontend.models.components.NavigationBarContent
 @import uk.gov.hmrc.ngrraldfrontend.viewmodels.govuk.all._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.ngrraldfrontend.views.html.components._
@@ -35,7 +32,6 @@ saveAndContinueButton: saveAndContinueButton
 )
 
 @(
-    navigationBarContent: NavigationBarContent,
     selectedPropertyAddress: String,
     form: Form[ProvideDetailsOfFirstSecondRentPeriodForm],
     firstDateStartInput: DateInput,
@@ -45,7 +41,7 @@ saveAndContinueButton: saveAndContinueButton
     secondDateEndInput: DateInput
 )(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
-@layout(pageTitle = Some(messages("provideDetailsOfFirstSecondRentPeriod.title")), showBackLink = true, fullWidth = false, navigationBarContent = Some(navigationBarContent)) {
+@layout(pageTitle = Some(messages("provideDetailsOfFirstSecondRentPeriod.title")), showBackLink = true, fullWidth = false) {
 
     @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfFirstSecondRentPeriodController.submit, Symbol("autoComplete") -> "off") {
 

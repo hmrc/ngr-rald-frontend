@@ -23,7 +23,6 @@ import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingActio
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
-import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatTypeOfAgreementForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatTypeOfAgreementForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
@@ -48,7 +47,6 @@ class WhatTypeOfAgreementController @Inject()(view: WhatTypeOfAgreementView,
       request.propertyLinking.map(property =>
         Future.successful(Ok(
           view(
-            navigationBarContent = createDefaultNavBar,
             selectedPropertyAddress = property.addressFull,
             form = form,
             ngrRadio = buildRadios(form, WhatTypeOfAgreementForm.ngrRadio(form))
@@ -65,7 +63,6 @@ class WhatTypeOfAgreementController @Inject()(view: WhatTypeOfAgreementView,
           formWithErrors =>
             request.propertyLinking.map(property =>
               Future.successful(BadRequest(view(
-                createDefaultNavBar,
                 selectedPropertyAddress = property.addressFull,
                 formWithErrors,
                 buildRadios(formWithErrors, WhatTypeOfAgreementForm.ngrRadio(formWithErrors))

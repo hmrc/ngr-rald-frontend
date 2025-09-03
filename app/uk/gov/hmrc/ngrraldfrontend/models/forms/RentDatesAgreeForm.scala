@@ -18,22 +18,15 @@ package uk.gov.hmrc.ngrraldfrontend.models.forms
 
 import play.api.data.Form
 import play.api.data.Forms.mapping
-import play.api.i18n.Messages
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.ngrraldfrontend.models.*
-import uk.gov.hmrc.ngrraldfrontend.models.components.{NGRRadio, NGRRadioButtons, NGRRadioName}
-import uk.gov.hmrc.ngrraldfrontend.models.forms.ProvideDetailsOfFirstSecondRentPeriodForm.{dateMapping, errorKeys, firstError, isDateEmpty, isDateValid}
-import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatTypeOfAgreementForm.text
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 
 case class RentDatesAgreeForm(dateInput: NGRDate)
 
 object RentDatesAgreeForm extends CommonFormValidators with Mappings with DateMappings{
   implicit val format: OFormat[RentDatesAgreeForm] = Json.format[RentDatesAgreeForm]
-
-  private lazy val radioUnselectedError = "agreedRentChange.empty.error"
-
-
+  
   private def errorKeys(whichDate: String): Map[DateErrorKeys, String] = Map(
     Required -> s"rentDatesAgree.$whichDate.required.error",
     DayAndMonth -> s"rentDatesAgree.$whichDate.day.month.required.error",
@@ -45,7 +38,6 @@ object RentDatesAgreeForm extends CommonFormValidators with Mappings with DateMa
   )
 
   private lazy val dateInput = "rentDatesAgreeInput"
-  private val firstDateStartInput = "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date"
 
   def unapply(agreedRentChangeForm: RentDatesAgreeForm): Option[NGRDate] = Some(agreedRentChangeForm.dateInput)
 

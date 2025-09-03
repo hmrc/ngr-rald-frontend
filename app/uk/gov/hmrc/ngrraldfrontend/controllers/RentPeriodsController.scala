@@ -24,13 +24,12 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{Table, TableRow}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-import uk.gov.hmrc.ngrraldfrontend.models.{NGRDate, RaldUserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
-import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentPeriodsForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentPeriodsForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
+import uk.gov.hmrc.ngrraldfrontend.models.{NGRDate, RaldUserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
 import uk.gov.hmrc.ngrraldfrontend.views.html.RentPeriodView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -44,62 +43,64 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
                                       hasLinkedProperties: PropertyLinkingAction,
                                       raldRepo: RaldRepo,
                                       mcc: MessagesControllerComponents
-                                     )(implicit appConfig: AppConfig, ec:ExecutionContext) extends FrontendController(mcc) with I18nSupport {
+                                     )(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
 
-  def firstTable(userAnswers: RaldUserAnswers)(implicit messages:Messages): Table =
+  def firstTable(userAnswers: RaldUserAnswers)(implicit messages: Messages): Table =
     Table(
-    rows = Seq(
-      Seq(
-        TableRow(
-          content = Text(messages("rentPeriods.first.startDate"))
+      rows = Seq(
+        Seq(
+          TableRow(
+            content = Text(messages("rentPeriods.first.startDate"))
+          ),
+          TableRow(
+            content = Text(userAnswers.provideDetailsOfFirstSecondRentPeriod.map { dates =>
+              NGRDate.formatDate(dates.firstDateStart)
+            }.getOrElse(""))
+          )
         ),
-        TableRow(
-          content = Text(userAnswers.provideDetailsOfFirstSecondRentPeriod.map{ dates =>
-            NGRDate.formatDate(dates.firstDateStart)
-          }.getOrElse(""))
+        Seq(
+          TableRow(
+            content = Text(messages("rentPeriods.first.endDate"))
+          ),
+          TableRow(
+            content = Text(userAnswers.provideDetailsOfFirstSecondRentPeriod.map { dates =>
+              NGRDate.formatDate(dates.firstDateEnd)
+            }.getOrElse(""))
+          )
+        ),
+        userAnswers.provideDetailsOfFirstSecondRentPeriod.map { userAnswers =>
+          userAnswers.firstRentPeriodAmount match
+            case Some(answer) => Seq(
+              TableRow(
+                content = Text(messages("rentPeriods.first.rentValue"))
+              ),
+              TableRow(
+                content = Text(answer)
+              )
+            )
+            case None => Seq()
+        }.getOrElse(Seq()),
+        Seq(
+          TableRow(
+            content = Text(messages("rentPeriods.first.doYouPay"))
+          ),
+          TableRow(
+            content = Text(userAnswers.provideDetailsOfFirstSecondRentPeriod.map { dates =>
+              if (dates.firstRentPeriodRadio == true) {
+                "Yes"
+              } else {
+                "No"
+              }
+            }.getOrElse(""))
+          )
         )
       ),
-      Seq(
-        TableRow(
-          content = Text(messages("rentPeriods.first.endDate"))
-        ),
-        TableRow(
-          content = Text(userAnswers.provideDetailsOfFirstSecondRentPeriod.map{ dates =>
-            NGRDate.formatDate(dates.firstDateEnd)
-          }.getOrElse(""))
-        )
-      ),
-      userAnswers.provideDetailsOfFirstSecondRentPeriod.map{ userAnswers =>
-        userAnswers.firstRentPeriodAmount match
-          case Some(answer) =>   Seq(
-                                      TableRow(
-                                        content = Text(messages("rentPeriods.first.rentValue"))
-                                      ),
-                                      TableRow(
-                                        content = Text(answer)
-                                      )
-                                    )
-          case None => Seq()
-      }.getOrElse(Seq()),
-      Seq(
-        TableRow(
-          content = Text(messages("rentPeriods.first.doYouPay"))
-        ),
-        TableRow(
-          content = Text(userAnswers.provideDetailsOfFirstSecondRentPeriod.map{ dates =>
-            if(dates.firstRentPeriodRadio == true){
-              "Yes"
-            }else{"False"}
-          }.getOrElse(""))
-        )
-      )
-    ),
-    head = None,
-    caption = Some(Messages("rentPeriods.first.subheading")),
-    captionClasses = "govuk-table__caption--m",
-    firstCellIsHeader = true
-  )
+      head = None,
+      caption = Some(Messages("rentPeriods.first.subheading")),
+      captionClasses = "govuk-table__caption--m",
+      firstCellIsHeader = true
+    )
 
   def secondTable(userAnswers: RaldUserAnswers)(implicit messages: Messages): Table = Table(
     rows = Seq(
@@ -108,7 +109,7 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
           content = Text(messages("rentPeriods.second.startDate"))
         ),
         TableRow(
-          content = Text(userAnswers.provideDetailsOfFirstSecondRentPeriod.map{ dates =>
+          content = Text(userAnswers.provideDetailsOfFirstSecondRentPeriod.map { dates =>
             NGRDate.formatDate(dates.secondDateStart)
           }.getOrElse(""))
         )
@@ -123,16 +124,16 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
           }.getOrElse(""))
         )
       ),
-        Seq(
-          TableRow(
-            content = Text(messages("rentPeriods.second.rentValue"))
-          ),
-          TableRow(
-            content = Text(userAnswers.provideDetailsOfFirstSecondRentPeriod.map { dates =>
-              dates.secondHowMuchIsRent
-            }.getOrElse(""))
-          )
+      Seq(
+        TableRow(
+          content = Text(messages("rentPeriods.second.rentValue"))
+        ),
+        TableRow(
+          content = Text(userAnswers.provideDetailsOfFirstSecondRentPeriod.map { dates =>
+            dates.secondHowMuchIsRent
+          }.getOrElse(""))
         )
+      )
     ),
     head = None,
     caption = Some(Messages("rentPeriods.first.subheading")),
@@ -142,10 +143,9 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
 
   def show: Action[AnyContent] = {
     (authenticate andThen hasLinkedProperties).async { implicit request =>
-     raldRepo.findByCredId(CredId(request.credId.getOrElse(""))).flatMap {
+      raldRepo.findByCredId(CredId(request.credId.getOrElse(""))).flatMap {
         case Some(answers: RaldUserAnswers) =>
           Future.successful(Ok(view(
-            navigationBarContent = createDefaultNavBar,
             selectedPropertyAddress = answers.selectedProperty.addressFull,
             form,
             firstTable = firstTable(answers),
@@ -157,7 +157,7 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
     }
   }
 
-  def submit: Action[AnyContent]   = {
+  def submit: Action[AnyContent] = {
     (authenticate andThen hasLinkedProperties).async { implicit request =>
       form
         .bindFromRequest()
@@ -166,7 +166,6 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
             raldRepo.findByCredId(CredId(request.credId.getOrElse(""))).flatMap {
               case Some(answers: RaldUserAnswers) =>
                 Future.successful(BadRequest(view(
-                  navigationBarContent = createDefaultNavBar,
                   selectedPropertyAddress = answers.selectedProperty.addressFull,
                   formWithErrors,
                   firstTable = firstTable(answers),

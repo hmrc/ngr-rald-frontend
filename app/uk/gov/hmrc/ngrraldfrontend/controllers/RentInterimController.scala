@@ -22,7 +22,6 @@ import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
-import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentInterimForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentInterimForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
@@ -34,10 +33,10 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class RentInterimController @Inject()(rentInterimView: RentInterimView,
-                                       authenticate: AuthRetrievals,
-                                       hasLinkedProperties: PropertyLinkingAction,
-                                       raldRepo: RaldRepo,
-                                       mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
+                                      authenticate: AuthRetrievals,
+                                      hasLinkedProperties: PropertyLinkingAction,
+                                      raldRepo: RaldRepo,
+                                      mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport {
 
 
@@ -46,7 +45,6 @@ class RentInterimController @Inject()(rentInterimView: RentInterimView,
       request.propertyLinking.map(property =>
         Future.successful(Ok(rentInterimView(
           form = form,
-          navigationBarContent = createDefaultNavBar,
           radios = buildRadios(form, RentInterimForm.ngrRadio(form)),
           propertyAddress = property.addressFull,
         )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
@@ -60,7 +58,6 @@ class RentInterimController @Inject()(rentInterimView: RentInterimView,
           request.propertyLinking.map(property =>
             Future.successful(BadRequest(rentInterimView(
               form = formWithErrors,
-              navigationBarContent = createDefaultNavBar,
               radios = buildRadios(formWithErrors, RentInterimForm.ngrRadio(formWithErrors)),
               propertyAddress = property.addressFull
             )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
@@ -70,9 +67,9 @@ class RentInterimController @Inject()(rentInterimView: RentInterimView,
             credId = CredId(request.credId.getOrElse("")),
             agreedRentChange = radioValue.radioValue
           )
-          if(radioValue.radioValue == "Yes"){
+          if (radioValue.radioValue == "Yes") {
             Future.successful(Redirect(routes.ProvideDetailsOfFirstSecondRentPeriodController.show.url))
-          }else {
+          } else {
             Future.successful(Redirect(routes.CheckRentFreePeriodController.show.url))
           }
       )

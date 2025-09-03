@@ -25,7 +25,6 @@ import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingActio
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
-import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
 import uk.gov.hmrc.ngrraldfrontend.models.forms.LandlordForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.LandlordForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
@@ -78,7 +77,6 @@ class LandlordController @Inject()(view: LandlordView,
     (authenticate andThen hasLinkedProperties).async { implicit request =>
       request.propertyLinking.map(property =>
         Future.successful(Ok(view(
-          navigationBarContent = createDefaultNavBar,
           selectedPropertyAddress = property.addressFull,
           form,
           buildRadios(form, ngrRadio(form))
@@ -107,7 +105,6 @@ class LandlordController @Inject()(view: LandlordView,
 
             request.propertyLinking.map(property =>
               Future.successful(BadRequest(view(
-                createDefaultNavBar,
                 selectedPropertyAddress = property.addressFull,
                 formWithCorrectedErrors,
                 buildRadios(formWithErrors, ngrRadio(formWithCorrectedErrors))

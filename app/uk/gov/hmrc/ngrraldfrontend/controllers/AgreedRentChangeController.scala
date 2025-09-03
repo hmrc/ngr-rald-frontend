@@ -22,7 +22,6 @@ import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
-import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreedRentChangeForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreedRentChangeForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
@@ -47,7 +46,6 @@ class AgreedRentChangeController @Inject()(agreedRentChangeView: AgreedRentChang
       request.propertyLinking.map(property =>
         Future.successful(Ok(agreedRentChangeView(
           form = form,
-          navigationBarContent = createDefaultNavBar,
           radios = buildRadios(form, AgreedRentChangeForm.ngrRadio(form)),
           propertyAddress = property.addressFull,
         )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
@@ -61,7 +59,6 @@ class AgreedRentChangeController @Inject()(agreedRentChangeView: AgreedRentChang
           request.propertyLinking.map(property =>
             Future.successful(BadRequest(agreedRentChangeView(
               form = formWithErrors,
-              navigationBarContent = createDefaultNavBar,
               radios = buildRadios(formWithErrors, AgreedRentChangeForm.ngrRadio(formWithErrors)),
               propertyAddress = property.addressFull
             )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
@@ -71,9 +68,9 @@ class AgreedRentChangeController @Inject()(agreedRentChangeView: AgreedRentChang
             credId = CredId(request.credId.getOrElse("")),
             agreedRentChange = radioValue.radioValue
           )
-          if(radioValue.radioValue == "Yes"){
+          if (radioValue.radioValue == "Yes") {
             Future.successful(Redirect(routes.ProvideDetailsOfFirstSecondRentPeriodController.show.url))
-          }else {
+          } else {
             Future.successful(Redirect(routes.WhatTypeOfLeaseRenewalController.show.url))
           }
       )

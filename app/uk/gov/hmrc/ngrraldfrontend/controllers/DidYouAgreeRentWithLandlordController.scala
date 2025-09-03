@@ -23,7 +23,6 @@ import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingActio
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
-import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
 import uk.gov.hmrc.ngrraldfrontend.models.forms.DidYouAgreeRentWithLandlordForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.DidYouAgreeRentWithLandlordForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
@@ -48,7 +47,6 @@ class DidYouAgreeRentWithLandlordController @Inject()(didYouAgreeRentWithLandlor
       request.propertyLinking.map(property =>
         Future.successful(Ok(didYouAgreeRentWithLandlordView(
           selectedPropertyAddress = property.addressFull,
-          navigationBarContent = createDefaultNavBar,
           form = form,
           ngrRadio = buildRadios(form, DidYouAgreeRentWithLandlordForm.ngrRadio(form)),
         )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
@@ -62,7 +60,6 @@ class DidYouAgreeRentWithLandlordController @Inject()(didYouAgreeRentWithLandlor
           request.propertyLinking.map(property =>
             Future.successful(BadRequest(didYouAgreeRentWithLandlordView(
               form = formWithErrors,
-              navigationBarContent = createDefaultNavBar,
               ngrRadio = buildRadios(formWithErrors, DidYouAgreeRentWithLandlordForm.ngrRadio(formWithErrors)),
               selectedPropertyAddress = property.addressFull
             )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
@@ -72,9 +69,9 @@ class DidYouAgreeRentWithLandlordController @Inject()(didYouAgreeRentWithLandlor
             credId = CredId(request.credId.getOrElse("")),
             radioValue = radioValue.toString
           )
-          if(radioValue.radioValue.toString == "YesTheLandlord"){
+          if (radioValue.radioValue.toString == "YesTheLandlord") {
             Future.successful(Redirect(routes.CheckRentFreePeriodController.show.url))
-          }else{
+          } else {
             //TODO
             Future.successful(Redirect(routes.CheckRentFreePeriodController.show.url))
           }

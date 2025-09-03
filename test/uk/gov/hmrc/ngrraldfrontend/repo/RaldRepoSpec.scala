@@ -176,7 +176,6 @@ class RaldRepoSpec extends TestSupport with TestData
     "insert agreement with break clause info successfully" in {
       val agreementStart = "12-12-2026"
       val openEndedRadio = "YesOpenEnded"
-      val openEndedDate = None
       val breakClauseRadio = "YesBreakClause"
       val breakClauseInfo = Some("break clause info")
 
@@ -262,7 +261,7 @@ class RaldRepoSpec extends TestSupport with TestData
 
       val actual = await(repository.findByCredId(credId))
 
-     result mustBe actual
+      result mustBe actual
     }
 
 
@@ -392,6 +391,15 @@ class RaldRepoSpec extends TestSupport with TestData
       await(repository.insertRentDates(credId, rentDate))
       val actual = await(repository.findByCredId(credId))
       actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, agreedRentDate = Some(rentDate)))
+    }
+
+    "insert rent dates agree and start successfully" in {
+      await(
+        repository.insertRentAgreeStartDates(
+          credId, "2025-10-30", "2027-12-1")
+        )
+      val actual = await(repository.findByCredId(credId))
+      actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, rentDatesAgreeStart = Some(RentDatesAgreeStart("2025-10-30", "2027-12-1"))))
     }
 
     "insert rent period successfully with yes" in {

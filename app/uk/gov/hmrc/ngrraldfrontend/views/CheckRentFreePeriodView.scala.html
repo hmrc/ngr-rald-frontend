@@ -19,7 +19,6 @@
 @import uk.gov.hmrc.ngrraldfrontend.views.html.components._
 @import uk.gov.hmrc.ngrraldfrontend.viewmodels.govuk.all._
 @import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-@import uk.gov.hmrc.ngrraldfrontend.models.components.NavigationBarContent
 @import uk.gov.hmrc.ngrraldfrontend.models.forms.CheckRentFreePeriodForm
 
 
@@ -30,9 +29,9 @@
     govukErrorSummary: GovukErrorSummary,
     saveAndContinueButton: saveAndContinueButton)
 
-@(form:Form[CheckRentFreePeriodForm], navigationBarContent: NavigationBarContent, radios: Radios, propertyAddress: String)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+@(form:Form[CheckRentFreePeriodForm], radios: Radios, propertyAddress: String)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
-@layout(pageTitle = Some(messages("checkRentPeriod.title")), showBackLink = true, fullWidth = false, navigationBarContent = Some(navigationBarContent)) {
+@layout(pageTitle = Some(messages("checkRentPeriod.title")), showBackLink = true, fullWidth = false) {
     @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.submit, Symbol("autoComplete") -> "off") {
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

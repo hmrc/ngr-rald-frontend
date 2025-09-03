@@ -104,11 +104,11 @@ class WhatIsYourRentBasedOnViewSpec extends ViewBaseSpec {
   }
 
   "WhatIsYourRentBasedOnView" must {
-    val rentBasedOnView = view(content, form, radio, address)
+    val rentBasedOnView = view(form, radio, address)
     lazy implicit val document: Document = Jsoup.parse(rentBasedOnView.body)
-    val htmlApply = view.apply(content, form, radio, address).body
-    val htmlRender = view.render(content, form, radio, address, request, messages, mockConfig).body
-    lazy val htmlF = view.f(content, form, radio, address)
+    val htmlApply = view.apply(form, radio, address).body
+    val htmlRender = view.render(form, radio, address, request, messages, mockConfig).body
+    lazy val htmlF = view.f(form, radio, address)
 
     "htmlF is not empty" in {
       htmlF.toString() must not be empty

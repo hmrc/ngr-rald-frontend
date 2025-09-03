@@ -25,7 +25,6 @@ import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.PropertyLinkingUserAnswers
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.vmvProperty.VMVProperty
-import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
 
 import java.net.URL
 import javax.inject.{Inject, Singleton}
@@ -33,8 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class NGRConnector @Inject()(http: HttpClientV2,
-                             appConfig: AppConfig,
-                             raldRepo: RaldRepo
+                             appConfig: AppConfig
                             )
                             (implicit ec: ExecutionContext) {
 

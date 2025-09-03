@@ -27,7 +27,7 @@ import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, RaldUserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.views.html.{LandlordView, WhatYourRentIncludesView}
+import uk.gov.hmrc.ngrraldfrontend.views.html.WhatYourRentIncludesView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.NGRCharacterCountComponent
 
 import scala.concurrent.Future

@@ -19,7 +19,6 @@ package uk.gov.hmrc.ngrraldfrontend.views
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
-import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.forms.HowMuchIsTotalAnnualRentForm
 import uk.gov.hmrc.ngrraldfrontend.views.html.HowMuchIsTotalAnnualRentView
 
@@ -44,27 +43,16 @@ class HowMuchIsTotalAnnualRentViewSpec extends ViewBaseSpec {
     val saveAndContinue = "#continue"
   }
 
-  val content: NavigationBarContent = NavBarPageContents.CreateNavBar(
-    contents = NavBarContents(
-      homePage = Some(true),
-      messagesPage = Some(false),
-      profileAndSettingsPage = Some(false),
-      signOutPage = Some(true)
-    ),
-    currentPage = NavBarCurrentPage(homePage = true),
-    notifications = Some(1)
-  )
-
   val address = "5 Brixham Marina, Berry Head Road, Brixham, Devon, TQ5 9BW"
 
   val form = HowMuchIsTotalAnnualRentForm.form.fillAndValidate(HowMuchIsTotalAnnualRentForm(10000))
   
   "TellUsAboutYourNewAgreementView" must {
-    val howMuchIsTotalAnnualRentView = view(form, content, address)
+    val howMuchIsTotalAnnualRentView = view(form, address)
     lazy implicit val document: Document = Jsoup.parse(howMuchIsTotalAnnualRentView.body)
-    val htmlApply = view.apply(form, content, address).body
-    val htmlRender = view.render(form, content, address, request, messages, mockConfig).body
-    lazy val htmlF = view.f(form, content, address)
+    val htmlApply = view.apply(form, address).body
+    val htmlRender = view.render(form, address, request, messages, mockConfig).body
+    lazy val htmlF = view.f(form, address)
 
     "htmlF is not empty" in {
       htmlF.toString() must not be empty

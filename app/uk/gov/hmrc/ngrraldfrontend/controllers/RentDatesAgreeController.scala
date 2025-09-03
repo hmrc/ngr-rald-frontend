@@ -23,15 +23,11 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.dateinput.DateInput
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.RentAgreement
-import uk.gov.hmrc.ngrraldfrontend.models.RaldUserAnswers
-import uk.gov.hmrc.ngrraldfrontend.models.components.*
-import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentDatesAgreeForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentDatesAgreeForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
-import uk.gov.hmrc.ngrraldfrontend.views.html.{AgreedRentChangeView, RentDatesAgreeView, TellUsAboutYourAgreementView}
+import uk.gov.hmrc.ngrraldfrontend.views.html.RentDatesAgreeView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
@@ -67,7 +63,6 @@ class RentDatesAgreeController @Inject()(rentDatesAgreeView: RentDatesAgreeView,
       request.propertyLinking.map(property =>
         Future.successful(Ok(rentDatesAgreeView(
           form = form,
-          navigationBarContent = createDefaultNavBar,
           dateInput = dateInput(),
           propertyAddress = property.addressFull,
         )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
@@ -93,7 +88,6 @@ class RentDatesAgreeController @Inject()(rentDatesAgreeView: RentDatesAgreeView,
           request.propertyLinking.map(property =>
             Future.successful(BadRequest(rentDatesAgreeView(
               form = formWithCorrectedErrors,
-              navigationBarContent = createDefaultNavBar,
               dateInput = dateInput(),
               propertyAddress = property.addressFull
             )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
@@ -103,7 +97,7 @@ class RentDatesAgreeController @Inject()(rentDatesAgreeView: RentDatesAgreeView,
             credId = CredId(request.credId.getOrElse("")),
             rentDates = dateValue.dateInput.makeString
           )
-            Future.successful(Redirect(routes.WhatTypeOfLeaseRenewalController.show.url))
+          Future.successful(Redirect(routes.WhatTypeOfLeaseRenewalController.show.url))
       )
     }
 }

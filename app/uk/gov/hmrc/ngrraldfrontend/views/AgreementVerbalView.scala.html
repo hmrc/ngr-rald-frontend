@@ -16,9 +16,6 @@
 
 @import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.ngrraldfrontend.models.components.NavigationBarContent
 @import uk.gov.hmrc.ngrraldfrontend.viewmodels.govuk.all._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.ngrraldfrontend.views.html.components._
@@ -33,9 +30,9 @@
  saveAndContinueButton: saveAndContinueButton
 )
 
-@(navigationBarContent: NavigationBarContent, form: Form[AgreementVerbalForm], ngrRadio: Radios, selectedPropertyAddress: String)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+@(form: Form[AgreementVerbalForm], ngrRadio: Radios, selectedPropertyAddress: String)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
-@layout(pageTitle = Some(messages("agreementVerbal.title")), showBackLink = true, fullWidth = false, navigationBarContent = Some(navigationBarContent)) {
+@layout(pageTitle = Some(messages("agreementVerbal.title")), showBackLink = true, fullWidth = false) {
 
  @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.AgreementVerbalController.submit, Symbol("autoComplete") -> "off") {
     @if(form.errors.nonEmpty) {

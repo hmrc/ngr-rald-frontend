@@ -22,7 +22,7 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.Radios
 import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{buildRadios, noButton, yesButton}
-import uk.gov.hmrc.ngrraldfrontend.models.components.{NGRRadio, NGRRadioName, NavBarContents, NavBarCurrentPage, NavBarPageContents, NavigationBarContent}
+import uk.gov.hmrc.ngrraldfrontend.models.components.{NGRRadio, NGRRadioName}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.CheckRentFreePeriodForm
 import uk.gov.hmrc.ngrraldfrontend.views.html.CheckRentFreePeriodView
 
@@ -45,28 +45,17 @@ class CheckRentFreePeriodViewSpec extends ViewBaseSpec {
     val continue = "#continue"
   }
 
-  val content: NavigationBarContent = NavBarPageContents.CreateNavBar(
-    contents = NavBarContents(
-      homePage = Some(true),
-      messagesPage = Some(false),
-      profileAndSettingsPage = Some(false),
-      signOutPage = Some(true)
-    ),
-    currentPage = NavBarCurrentPage(homePage = true),
-    notifications = Some(1)
-  )
-
   val address = "5 Brixham Marina, Berry Head Road, Brixham, Devon, TQ5 9BW"
   private val ngrRadio: NGRRadio = NGRRadio(NGRRadioName(CheckRentFreePeriodForm.checkRentPeriodRadio), Seq(yesButton, noButton))
   val form = CheckRentFreePeriodForm.form.fillAndValidate(CheckRentFreePeriodForm("Yes"))
   val radio: Radios = buildRadios(form, ngrRadio)
 
   "TellUsAboutYourNewAgreementView" must {
-    val checkRentFreePeriodView = view(form, content, radio, address)
+    val checkRentFreePeriodView = view(form, radio, address)
     lazy implicit val document: Document = Jsoup.parse(checkRentFreePeriodView.body)
-    val htmlApply = view.apply(form, content, radio, address).body
-    val htmlRender = view.render(form, content, radio, address, request, messages, mockConfig).body
-    lazy val htmlF = view.f(form, content, radio, address)
+    val htmlApply = view.apply(form, radio, address).body
+    val htmlRender = view.render(form, radio, address, request, messages, mockConfig).body
+    lazy val htmlF = view.f(form, radio, address)
 
     "htmlF is not empty" in {
       htmlF.toString() must not be empty

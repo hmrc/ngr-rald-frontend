@@ -28,7 +28,6 @@ import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingActio
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
-import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreementVerbalForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreementVerbalForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
@@ -67,7 +66,7 @@ class AgreementVerbalController @Inject()(view: AgreementVerbalView,
   def show: Action[AnyContent] = {
     (authenticate andThen hasLinkedProperties).async { implicit request =>
       request.propertyLinking.map(property =>
-        Future.successful(Ok(view(createDefaultNavBar, form, buildRadios(form, ngrRadio(form)), property.addressFull)))
+        Future.successful(Ok(view(form, buildRadios(form, ngrRadio(form)), property.addressFull)))
       ).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
     }
   }
@@ -100,7 +99,7 @@ class AgreementVerbalController @Inject()(view: AgreementVerbalView,
             val formWithCorrectedErrors = formWithErrors.copy(errors = correctedFormErrors)
 
             request.propertyLinking.map(property =>
-                Future.successful(BadRequest(view(createDefaultNavBar, formWithCorrectedErrors,
+                Future.successful(BadRequest(view(formWithCorrectedErrors,
                   buildRadios(formWithErrors, ngrRadio(formWithCorrectedErrors)), property.addressFull))))
               .getOrElse(throw new NotFoundException("Couldn't find property in mongo")),
           agreementVerbalForm =>

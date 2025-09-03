@@ -15,8 +15,6 @@
  *@
 
 @import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-@import uk.gov.hmrc.ngrraldfrontend.views.html.FullWidthLayout
-@import uk.gov.hmrc.ngrraldfrontend.views.html.TwoThirdsLayout
 @import uk.gov.hmrc.hmrcfrontend.config.ContactFrontendConfig
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage._
@@ -26,6 +24,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage.HmrcStandardPageParams
 @import uk.gov.hmrc.ngrraldfrontend.models.components.NavigationBarContent
 @import uk.gov.hmrc.ngrraldfrontend.views.html.components.navigationBarComponent
+@import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
 
 @this(
   appConfig: AppConfig,
@@ -49,8 +48,12 @@ navigationBarContent: Option[NavigationBarContent] = None
 }
 
 @navbar = {
-    @navigationBarContent.map { content =>
-        @navigationBarComponent(content, showBackLink)
+    @if(navigationBarContent.isEmpty){
+        @navigationBarComponent(createDefaultNavBar, showBackLink)
+    }else{
+        @navigationBarContent.map { content =>
+            @navigationBarComponent(content, showBackLink)
+        }
     }
 }
 
