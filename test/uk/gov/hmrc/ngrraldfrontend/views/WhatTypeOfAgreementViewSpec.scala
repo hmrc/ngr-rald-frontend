@@ -44,17 +44,6 @@ class WhatTypeOfAgreementViewSpec extends ViewBaseSpec {
     val continue = "#continue"
   }
 
-  val content: NavigationBarContent = NavBarPageContents.CreateNavBar(
-    contents = NavBarContents(
-      homePage = Some(true),
-      messagesPage = Some(false),
-      profileAndSettingsPage = Some(false),
-      signOutPage = Some(true)
-    ),
-    currentPage = NavBarCurrentPage(homePage = true),
-    notifications = Some(1)
-  )
-
   val address = "5 Brixham Marina, Berry Head Road, Brixham, Devon, TQ5 9BW"
   private val leaseOrTenancyButton: NGRRadioButtons = NGRRadioButtons("Lease or tenancy agreement", LeaseOrTenancy)
   private val writtenAgreementButton: NGRRadioButtons = NGRRadioButtons("Licence or other type of written agreement", Written)
@@ -64,11 +53,11 @@ class WhatTypeOfAgreementViewSpec extends ViewBaseSpec {
   val radio: Radios = buildRadios(form, ngrRadio)
 
   "TellUsAboutYourNewAgreementView" must {
-    val whatTypeOfAgreementView = view(content, address, form, radio)
+    val whatTypeOfAgreementView = view(address, form, radio)
     lazy implicit val document: Document = Jsoup.parse(whatTypeOfAgreementView.body)
-    val htmlApply = view.apply(content, address, form, radio).body
-    val htmlRender = view.render(content, address, form, radio, request, messages, mockConfig).body
-    lazy val htmlF = view.f(content, address, form, radio)
+    val htmlApply = view.apply(address, form, radio).body
+    val htmlRender = view.render(address, form, radio, request, messages, mockConfig).body
+    lazy val htmlF = view.f(address, form, radio)
 
     "htmlF is not empty" in {
       htmlF.toString() must not be empty

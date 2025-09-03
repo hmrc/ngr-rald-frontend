@@ -27,7 +27,6 @@ import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingActio
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
-import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
 import uk.gov.hmrc.ngrraldfrontend.models.forms.ProvideDetailsOfFirstSecondRentPeriodForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.ProvideDetailsOfFirstSecondRentPeriodForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
@@ -48,7 +47,7 @@ class ProvideDetailsOfFirstSecondRentPeriodController @Inject()(view: ProvideDet
                                                                 mcc: MessagesControllerComponents
                                                                )(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
-  def firstDateStartInput()(implicit messages: Messages) : DateInput = DateInput(
+  def firstDateStartInput()(implicit messages: Messages): DateInput = DateInput(
     id = "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date",
     namePrefix = Some("provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date"),
     fieldset = Some(Fieldset(
@@ -145,7 +144,6 @@ class ProvideDetailsOfFirstSecondRentPeriodController @Inject()(view: ProvideDet
     (authenticate andThen hasLinkedProperties).async { implicit request =>
       request.propertyLinking.map(property =>
         Future.successful(Ok(view(
-          navigationBarContent = createDefaultNavBar,
           selectedPropertyAddress = property.addressFull,
           form,
           firstDateStartInput(),
@@ -175,7 +173,6 @@ class ProvideDetailsOfFirstSecondRentPeriodController @Inject()(view: ProvideDet
 
             request.propertyLinking.map(property =>
               Future.successful(BadRequest(view(
-                createDefaultNavBar,
                 selectedPropertyAddress = property.addressFull,
                 formWithCorrectedErrors,
                 firstDateStartInput(),

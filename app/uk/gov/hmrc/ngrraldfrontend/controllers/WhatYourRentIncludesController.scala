@@ -22,13 +22,11 @@ import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
-import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatYourRentIncludesForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatYourRentIncludesForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
-import uk.gov.hmrc.ngrraldfrontend.utils.Constants.{renewedAgreement, surrenderAndRenewal}
-import uk.gov.hmrc.ngrraldfrontend.views.html. WhatYourRentIncludesView
+import uk.gov.hmrc.ngrraldfrontend.views.html.WhatYourRentIncludesView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
@@ -41,13 +39,12 @@ class WhatYourRentIncludesController @Inject()(whatYourRentIncludesView: WhatYou
                                                raldRepo: RaldRepo,
                                                mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport {
-  
+
   def show: Action[AnyContent] = {
     (authenticate andThen hasLinkedProperties).async { implicit request =>
       request.propertyLinking.map(property =>
         Future.successful(Ok(whatYourRentIncludesView(
           form = form,
-          navigationBarContent = createDefaultNavBar,
           radios1 = buildRadios(form, WhatYourRentIncludesForm.ngrRadio1),
           radios2 = buildRadios(form, WhatYourRentIncludesForm.ngrRadio2),
           radios3 = buildRadios(form, WhatYourRentIncludesForm.ngrRadio3),
@@ -66,7 +63,6 @@ class WhatYourRentIncludesController @Inject()(whatYourRentIncludesView: WhatYou
           request.propertyLinking.map(property =>
             Future.successful(BadRequest(whatYourRentIncludesView(
               form = formWithErrors,
-              navigationBarContent = createDefaultNavBar,
               radios1 = buildRadios(formWithErrors, WhatYourRentIncludesForm.ngrRadio1),
               radios2 = buildRadios(formWithErrors, WhatYourRentIncludesForm.ngrRadio2),
               radios3 = buildRadios(formWithErrors, WhatYourRentIncludesForm.ngrRadio3),

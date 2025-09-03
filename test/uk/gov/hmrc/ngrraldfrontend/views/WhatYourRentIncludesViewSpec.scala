@@ -61,17 +61,6 @@ class WhatYourRentIncludesViewSpec  extends ViewBaseSpec {
     val continue = "#continue"
   }
 
-  val content: NavigationBarContent = NavBarPageContents.CreateNavBar(
-    contents = NavBarContents(
-      homePage = Some(true),
-      messagesPage = Some(false),
-      profileAndSettingsPage = Some(false),
-      signOutPage = Some(true)
-    ),
-    currentPage = NavBarCurrentPage(homePage = true),
-    notifications = Some(1)
-  )
-
   val address = "5 Brixham Marina, Berry Head Road, Brixham, Devon, TQ5 9BW"
   private val ngrRadio1: NGRRadio = NGRRadio(
     NGRRadioName("livingAccommodationRadio"),
@@ -133,11 +122,11 @@ class WhatYourRentIncludesViewSpec  extends ViewBaseSpec {
   val radio6: Radios = buildRadios(form, ngrRadio6)
 
   "WhatYourRentIncludesView" must {
-    val whatYourRentIncludesView = view(form, content, radio1, radio2, radio3, radio4, radio5, radio6, address)
+    val whatYourRentIncludesView = view(form, radio1, radio2, radio3, radio4, radio5, radio6, address)
     lazy implicit val document: Document = Jsoup.parse(whatYourRentIncludesView.body)
-    val htmlApply = view.apply(form, content, radio1, radio2, radio3, radio4, radio5, radio6, propertyAddress = "5 Brixham Marina, Berry Head Road, Brixham, Devon, TQ5 9BW").body
-    val htmlRender = view.render(form, content, radio1, radio2, radio3, radio4, radio5, radio6, address, request, messages, mockConfig).body
-    lazy val htmlF = view.f(form, content, radio1, radio2, radio3, radio4, radio5, radio6, address)
+    val htmlApply = view.apply(form, radio1, radio2, radio3, radio4, radio5, radio6, propertyAddress = "5 Brixham Marina, Berry Head Road, Brixham, Devon, TQ5 9BW").body
+    val htmlRender = view.render(form, radio1, radio2, radio3, radio4, radio5, radio6, address, request, messages, mockConfig).body
+    lazy val htmlF = view.f(form, radio1, radio2, radio3, radio4, radio5, radio6, address)
 
     "htmlF is not empty" in {
       htmlF.toString() must not be empty

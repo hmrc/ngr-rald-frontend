@@ -22,8 +22,7 @@ import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
-import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
-import uk.gov.hmrc.ngrraldfrontend.models.forms.{AgreedRentChangeForm, CheckRentFreePeriodForm}
+import uk.gov.hmrc.ngrraldfrontend.models.forms.CheckRentFreePeriodForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.CheckRentFreePeriodForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
@@ -35,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CheckRentFreePeriodController @Inject()(checkRentFreePeriodView: CheckRentFreePeriodView,
-                                              authenticate : AuthRetrievals,
+                                              authenticate: AuthRetrievals,
                                               hasLinkedProperties: PropertyLinkingAction,
                                               raldRepo: RaldRepo,
                                               mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
@@ -46,7 +45,6 @@ class CheckRentFreePeriodController @Inject()(checkRentFreePeriodView: CheckRent
       request.propertyLinking.map(property =>
         Future.successful(Ok(checkRentFreePeriodView(
           form = form,
-          navigationBarContent = createDefaultNavBar,
           radios = buildRadios(form, CheckRentFreePeriodForm.ngrRadio(form)),
           propertyAddress = property.addressFull,
         )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
@@ -60,7 +58,6 @@ class CheckRentFreePeriodController @Inject()(checkRentFreePeriodView: CheckRent
           request.propertyLinking.map(property =>
             Future.successful(BadRequest(checkRentFreePeriodView(
               form = formWithErrors,
-              navigationBarContent = createDefaultNavBar,
               radios = buildRadios(formWithErrors, CheckRentFreePeriodForm.ngrRadio(formWithErrors)),
               propertyAddress = property.addressFull
             )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
@@ -70,7 +67,9 @@ class CheckRentFreePeriodController @Inject()(checkRentFreePeriodView: CheckRent
             credId = CredId(request.credId.getOrElse("")),
             hasRentFreePeriod = radioValue.radioValue
           )
-          Future.successful(Redirect(routes.CheckRentFreePeriodController.show.url))
+          radioValue.radioValue match
+            case "No" => Future.successful(Redirect(routes.RentDatesAgreeStartController.show.url))
+            case _ => Future.successful(Redirect(routes.CheckRentFreePeriodController.show.url))
       )
     }
 

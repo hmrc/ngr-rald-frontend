@@ -59,7 +59,7 @@ class LayoutSpec extends ViewBaseSpec {
       }
 
       "should not display the language selector" in {
-        lazy val view = injectedView(pageTitle = Some("Title of page"))(Html("Test"))(request,messages,mockConfig)
+        lazy val view = injectedView(pageTitle = Some("Title of page"))(Html("Test"))(request, messages, mockConfig)
         lazy implicit val document: Document = Jsoup.parse(view.body)
 
         elementExtinct(Selectors.languageSelector)
@@ -67,7 +67,7 @@ class LayoutSpec extends ViewBaseSpec {
 
       "the language selector feature switch is turned on" in {
         mockConfig.features.welshLanguageSupportEnabled(true)
-        lazy val view = injectedView(pageTitle = Some("Title of page"))(Html("Test"))(request,messages,  mockConfig)
+        lazy val view = injectedView(pageTitle = Some("Title of page"))(Html("Test"))(request, messages,  mockConfig)
         lazy implicit val document: Document = Jsoup.parse(view.body)
 
         elementText(Selectors.languageSelector) mustBe "English"

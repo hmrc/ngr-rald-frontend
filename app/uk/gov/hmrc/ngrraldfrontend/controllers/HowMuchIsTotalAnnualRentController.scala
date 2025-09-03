@@ -21,7 +21,6 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
 import uk.gov.hmrc.ngrraldfrontend.models.forms.HowMuchIsTotalAnnualRentForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.HowMuchIsTotalAnnualRentForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
@@ -46,7 +45,6 @@ class HowMuchIsTotalAnnualRentController @Inject()(howMuchIsTotalAnnualRentView:
       request.propertyLinking.map(property =>
         Future.successful(Ok(howMuchIsTotalAnnualRentView(
           form = form,
-          navigationBarContent = createDefaultNavBar,
           propertyAddress = property.addressFull,
         )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
     }
@@ -59,7 +57,6 @@ class HowMuchIsTotalAnnualRentController @Inject()(howMuchIsTotalAnnualRentView:
           request.propertyLinking.map(property =>
             Future.successful(BadRequest(howMuchIsTotalAnnualRentView(
               form = formWithErrors,
-              navigationBarContent = createDefaultNavBar,
               propertyAddress = property.addressFull
             )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
         },

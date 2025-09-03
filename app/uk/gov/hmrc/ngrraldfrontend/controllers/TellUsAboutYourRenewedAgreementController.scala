@@ -23,7 +23,6 @@ import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingActio
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.RenewedAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.RaldUserAnswers
-import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
 import uk.gov.hmrc.ngrraldfrontend.views.html.TellUsAboutYourAgreementView
@@ -38,18 +37,18 @@ class TellUsAboutYourRenewedAgreementController @Inject()(view: TellUsAboutYourA
                                                           hasLinkedProperties: PropertyLinkingAction,
                                                           raldRepo: RaldRepo,
                                                           mcc: MessagesControllerComponents
-                                                     )(implicit appConfig: AppConfig, ec:ExecutionContext) extends FrontendController(mcc) with I18nSupport {
+                                                         )(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
   def show: Action[AnyContent] = {
     (authenticate andThen hasLinkedProperties).async { implicit request =>
       request.propertyLinking.map(property =>
-          Future.successful(Ok(view(navigationBarContent = createDefaultNavBar, selectedPropertyAddress = property.addressFull, agreement = RenewedAgreement))))
+          Future.successful(Ok(view(selectedPropertyAddress = property.addressFull, agreement = RenewedAgreement))))
         .getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
     }
   }
 
-    def submit: Action[AnyContent]   = {
-      (authenticate andThen hasLinkedProperties).async { implicit request =>
+  def submit: Action[AnyContent] = {
+    (authenticate andThen hasLinkedProperties).async { implicit request =>
       request.propertyLinking.map(property =>
         raldRepo.upsertRaldUserAnswers(
           raldUserAnswers = RaldUserAnswers(
@@ -60,7 +59,7 @@ class TellUsAboutYourRenewedAgreementController @Inject()(view: TellUsAboutYourA
           )
         )
       )
-        Future.successful(Redirect(routes.WhatTypeOfLeaseRenewalController.show.url))
-      }
+      Future.successful(Redirect(routes.WhatTypeOfLeaseRenewalController.show.url))
+    }
   }
 }                                                     

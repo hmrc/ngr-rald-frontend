@@ -23,7 +23,6 @@ import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingActio
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.RentAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.RaldUserAnswers
-import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
 import uk.gov.hmrc.ngrraldfrontend.views.html.TellUsAboutYourAgreementView
@@ -43,7 +42,7 @@ class TellUsAboutRentController @Inject()(view: TellUsAboutYourAgreementView,
   def show: Action[AnyContent] = {
     (authenticate andThen hasLinkedProperties).async { implicit request =>
       request.propertyLinking.map(property =>
-          Future.successful(Ok(view(navigationBarContent = createDefaultNavBar, selectedPropertyAddress = property.addressFull, agreement = RentAgreement))))
+          Future.successful(Ok(view(selectedPropertyAddress = property.addressFull, agreement = RentAgreement))))
         .getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
     }
   }

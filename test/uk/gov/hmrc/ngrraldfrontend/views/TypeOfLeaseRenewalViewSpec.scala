@@ -52,11 +52,11 @@ class TypeOfLeaseRenewalViewSpec extends ViewBaseSpec {
   }
 
   "TypeOfLeaseRenewalView" must {
-    val leaseRenewalView = view(form, content, radio, address)
+    val leaseRenewalView = view(form, radio, address)
     lazy implicit val document: Document = Jsoup.parse(leaseRenewalView.body)
-    val htmlApply = view.apply(form, content, radio, address).body
-    val htmlRender = view.render(form, content, radio, address, request, messages, mockConfig).body
-    lazy val htmlF = view.f(form, content, radio, address)
+    val htmlApply = view.apply(form, radio, address).body
+    val htmlRender = view.render(form, radio, address, request, messages, mockConfig).body
+    lazy val htmlF = view.f(form, radio, address)
 
     "htmlF is not empty" in {
       htmlF.toString() must not be empty

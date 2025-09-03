@@ -87,11 +87,11 @@ class LandlordViewSpec extends ViewBaseSpec {
     val radio: Radios = buildRadios(form, ngrRadio)
 
     "TellUsAboutYourNewAgreementView" must {
-      val landlordView = view(content, address, form, radio)
+      val landlordView = view(address, form, radio)
       lazy implicit val document: Document = Jsoup.parse(landlordView.body)
-      val htmlApply = view.apply(content, address, form, radio).body
-      val htmlRender = view.render(content, address, form, radio, request, messages, mockConfig).body
-      lazy val htmlF = view.f(content, address, form, radio)
+      val htmlApply = view.apply(address, form, radio).body
+      val htmlRender = view.render(address, form, radio, request, messages, mockConfig).body
+      lazy val htmlF = view.f(address, form, radio)
 
       "htmlF is not empty" in {
         htmlF.toString() must not be empty

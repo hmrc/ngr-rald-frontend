@@ -15,7 +15,6 @@
  *@
 
 @import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-@import uk.gov.hmrc.ngrraldfrontend.models.components.NavigationBarContent
 @import uk.gov.hmrc.ngrraldfrontend.viewmodels.govuk.all._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.ngrraldfrontend.views.html.components._
@@ -29,9 +28,9 @@
  formHelper: FormWithCSRF
 )
 
-@(navigationBarContent: NavigationBarContent, selectedPropertyAddress: String, form: Form[WhatTypeOfAgreementForm], ngrRadio: Radios)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+@(selectedPropertyAddress: String, form: Form[WhatTypeOfAgreementForm], ngrRadio: Radios)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
-@layout(pageTitle = Some(messages("tellUsAboutYourNewAgreement.title")), showBackLink = true, fullWidth = true, navigationBarContent = Some(navigationBarContent)) {
+@layout(pageTitle = Some(messages("tellUsAboutYourNewAgreement.title")), showBackLink = true, fullWidth = true) {
 
  @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatTypeOfAgreementController.submit, Symbol("autoComplete") -> "off") {
     @if(form.errors.nonEmpty) {

@@ -19,7 +19,6 @@
 @import uk.gov.hmrc.ngrraldfrontend.views.html.components._
 @import uk.gov.hmrc.ngrraldfrontend.viewmodels.govuk.all._
 @import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-@import uk.gov.hmrc.ngrraldfrontend.models.components.NavigationBarContent
 @import uk.gov.hmrc.ngrraldfrontend.models.forms.HowMuchIsTotalAnnualRentForm
 
 @this(
@@ -30,9 +29,9 @@ inputText: components.InputText,
 saveAndContinueButton: saveAndContinueButton
 )
 
-@(form:Form[HowMuchIsTotalAnnualRentForm], navigationBarContent: NavigationBarContent, propertyAddress: String)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+@(form:Form[HowMuchIsTotalAnnualRentForm], propertyAddress: String)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
-@layout(pageTitle = Some(messages("typeOfLeaseRenewal.title")), showBackLink = true, fullWidth = false, navigationBarContent = Some(navigationBarContent)) {
+@layout(pageTitle = Some(messages("typeOfLeaseRenewal.title")), showBackLink = true, fullWidth = false) {
 @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchIsTotalAnnualRentController.submit, Symbol("autoComplete") -> "off") {
 @if(form.errors.nonEmpty) {
 @govukErrorSummary(ErrorSummaryViewModel(form))

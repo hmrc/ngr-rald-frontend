@@ -7,6 +7,7 @@ service.continue = Continue
 service.saveAndContinue = Save and continue
 service.yes = Yes
 service.no = No
+date.is.before.1900.error = Date must be on or after 1 1 1900
 
 #NavigationBar
 nav.home=Account home
@@ -270,6 +271,29 @@ rentDatesAgree.date.month.year.required.error = Date you agreed your rent must i
 rentDatesAgree.date.day.required.error = Date you agreed your rent must include a day, month and year.
 rentDatesAgree.date.month.required.error = Date you agreed your rent must include a day, month and year.
 rentDatesAgree.date.year.required.error = Date you agreed your rent must include a day, month and year.
+
+#RentDatesAgreeStart
+rentDatesAgreeStart.title = Rent dates
+rentDatesAgreeStart.agreedDate.title = When did you agree your rent?
+rentDatesAgreeStart.agreedDate.hint = For example, 27 6 2026
+rentDatesAgreeStart.startPayingDate.title = When will you start paying rent?
+rentDatesAgreeStart.startPayingDate.hint = If you are already paying rent, tell us when you started paying it, for example, 27 6 2026
+rentDatesAgreeStart.agreedDate.required.error = Enter the date you agreed your rent
+rentDatesAgreeStart.agreedDate.day.required.error = Date you agreed your rent must include a day
+rentDatesAgreeStart.agreedDate.month.required.error = Date you agreed your rent must include a month
+rentDatesAgreeStart.agreedDate.year.required.error = Date you agreed your rent must include a year
+rentDatesAgreeStart.agreedDate.dayAndMonth.required.error = Date you agreed your rent must include a day and month
+rentDatesAgreeStart.agreedDate.dayAndYear.required.error = Date you agreed your rent must include a day and year
+rentDatesAgreeStart.agreedDate.monthAndYear.required.error = Date you agreed your rent must include a month and year
+rentDatesAgreeStart.agreedDate.invalid.error = Date you agreed your rent must be a real date
+rentDatesAgreeStart.startPayingDate.required.error = Enter the date you will start paying rent
+rentDatesAgreeStart.startPayingDate.day.required.error = Date you will start paying rent must include a day
+rentDatesAgreeStart.startPayingDate.month.required.error = Date you will start paying rent must include a month
+rentDatesAgreeStart.startPayingDate.year.required.error = Date you will start paying rent must include a year
+rentDatesAgreeStart.startPayingDate.dayAndMonth.required.error = Date you will start paying rent must include a day and month
+rentDatesAgreeStart.startPayingDate.dayAndYear.required.error = Date you will start paying rent must include a day and year
+rentDatesAgreeStart.startPayingDate.monthAndYear.required.error = Date you will start paying rent must include a month and year
+rentDatesAgreeStart.startPayingDate.invalid.error = Date you will start paying rent must be a real date
 
 #WhatYourRentIncludes
 whatYourRentIncludes.title = What your rent includes

@@ -27,7 +27,6 @@ import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingActio
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
-import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreementForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreementForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
@@ -49,7 +48,7 @@ class AgreementController @Inject()(view: AgreementView,
                                     mcc: MessagesControllerComponents
                                    )(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
-  def dateInput()(implicit messages: Messages) : DateInput = DateInput(
+  def dateInput()(implicit messages: Messages): DateInput = DateInput(
     id = "agreementStartDate",
     namePrefix = Some("agreementStartDate"),
     fieldset = Some(Fieldset(
@@ -111,7 +110,7 @@ class AgreementController @Inject()(view: AgreementView,
         ),
         hint = Some(
           Hint(
-            id =  Some("agreement-breakClause-hint"),
+            id = Some("agreement-breakClause-hint"),
             classes = "",
             attributes = Map.empty,
             content = Text(messages("agreement.radio.conditional.hint.2"))
@@ -129,7 +128,7 @@ class AgreementController @Inject()(view: AgreementView,
       NGRRadioName("agreement-breakClause-radio"),
       ngrTitle = Some(Legend(content = Text(messages("agreement.subheading.3")), classes = "govuk-fieldset__legend--m", isPageHeading = true)),
       hint = Some(messages("agreement.hint.3")),
-      NGRRadioButtons =  ngrRadioButtons
+      NGRRadioButtons = ngrRadioButtons
     )
   }
 
@@ -138,7 +137,6 @@ class AgreementController @Inject()(view: AgreementView,
     (authenticate andThen hasLinkedProperties).async { implicit request =>
       request.propertyLinking.map(property =>
         Future.successful(Ok(view(
-          navigationBarContent = createDefaultNavBar,
           selectedPropertyAddress = property.addressFull,
           form,
           dateInput(),
@@ -170,7 +168,6 @@ class AgreementController @Inject()(view: AgreementView,
 
             request.propertyLinking.map(property =>
               Future.successful(BadRequest(view(
-                createDefaultNavBar,
                 selectedPropertyAddress = property.addressFull,
                 formWithCorrectedErrors,
                 dateInput(),

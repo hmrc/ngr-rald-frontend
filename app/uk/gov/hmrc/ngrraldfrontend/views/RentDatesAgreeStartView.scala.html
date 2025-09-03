@@ -21,40 +21,41 @@
 @import uk.gov.hmrc.ngrraldfrontend.viewmodels.govuk.all._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.ngrraldfrontend.views.html.components._
-@import uk.gov.hmrc.ngrraldfrontend.models.forms.LandlordForm
+@import uk.gov.hmrc.ngrraldfrontend.models.forms.RentDatesAgreeStartForm
 
 @this(
  layout: Layout,
  formHelper: FormWithCSRF,
  govukErrorSummary: GovukErrorSummary,
- inputText: components.InputText,
  govukRadios : GovukRadios,
+ dateTextFields: components.DateTextFields,
  saveAndContinueButton: saveAndContinueButton
 )
 
-@(selectedPropertyAddress: String, form: Form[LandlordForm], ngrRadio: Radios)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+@(form: Form[RentDatesAgreeStartForm], selectedPropertyAddress: String)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
-@layout(pageTitle = Some(messages("landlord.title")), showBackLink = true, fullWidth = false) {
+@layout(pageTitle = Some(messages("rentDatesAgreeStart.title")), showBackLink = true, fullWidth = false) {
 
- @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.LandlordController.submit, Symbol("autoComplete") -> "off") {
-
+ @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeStartController.submit, Symbol("autoComplete") -> "off") {
     @if(form.errors.nonEmpty) {
       @govukErrorSummary(ErrorSummaryViewModel(form))
     }
-
     <span class="govuk-caption-m">@selectedPropertyAddress</span>
-    <h1 class="govuk-heading-l">@messages("landlord.title")</h1>
-    @inputText(
-        form  =   form,
-        id    =  "landlord-name-value",
-        name  =  "landlord-name-value",
-        label =   messages("landlord.p1"),
-        isPageHeading = true,
-        hint  =   None,
-        isVisible = true,
-        classes = None
+    <h1 class="govuk-heading-l">@messages("rentDatesAgreeStart.title")</h1>
+    @dateTextFields(
+        form,
+        DateInput(id = "agreedDate",
+            fieldset = Some(Fieldset(legend = Some(Legend(content = Text(messages("rentDatesAgreeStart.agreedDate.title")), classes = "govuk-fieldset__legend--m")))),
+            hint = Some(Hint(content = Text(messages("rentDatesAgreeStart.agreedDate.hint"))))
+        )
     )
-    @govukRadios(ngrRadio)
+    @dateTextFields(
+        form,
+        DateInput(id = "startPayingDate",
+            fieldset = Some(Fieldset(legend = Some(Legend(content = Text(messages("rentDatesAgreeStart.startPayingDate.title")), classes = "govuk-fieldset__legend--m")))),
+            hint = Some(Hint(content = Text(messages("rentDatesAgreeStart.startPayingDate.hint"))))
+        )
+    )
     @saveAndContinueButton(msg = messages("service.saveAndContinue"), isStartButton = false)
  }
 }

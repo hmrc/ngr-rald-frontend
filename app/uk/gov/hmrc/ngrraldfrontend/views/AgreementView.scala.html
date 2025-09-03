@@ -18,7 +18,6 @@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.ngrraldfrontend.models.components.NavigationBarContent
 @import uk.gov.hmrc.ngrraldfrontend.viewmodels.govuk.all._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.ngrraldfrontend.views.html.components._
@@ -33,9 +32,9 @@ govukRadios : GovukRadios,
 saveAndContinueButton: saveAndContinueButton
 )
 
-@(navigationBarContent: NavigationBarContent, selectedPropertyAddress: String, form: Form[AgreementForm], dateInput: DateInput, openEndedRadio: Radios, breakClauseRadio: Radios)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+@(selectedPropertyAddress: String, form: Form[AgreementForm], dateInput: DateInput, openEndedRadio: Radios, breakClauseRadio: Radios)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
-@layout(pageTitle = Some(messages("agreement.title")), showBackLink = true, fullWidth = false, navigationBarContent = Some(navigationBarContent)) {
+@layout(pageTitle = Some(messages("agreement.title")), showBackLink = true, fullWidth = false) {
 
     @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.AgreementController.submit, Symbol("autoComplete") -> "off") {
 

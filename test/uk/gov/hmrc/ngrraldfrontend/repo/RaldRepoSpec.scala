@@ -394,6 +394,15 @@ class RaldRepoSpec extends TestSupport with TestData
       actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, agreedRentDate = Some(rentDate)))
     }
 
+    "insert rent dates agree and start successfully" in {
+      await(
+        repository.insertRentAgreeStartDates(
+          credId, "2025-10-30", "2027-12-1")
+        )
+      val actual = await(repository.findByCredId(credId))
+      actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, rentDatesAgreeStart = Some(RentDatesAgreeStart("2025-10-30", "2027-12-1"))))
+    }
+
     "insert rent period successfully with yes" in {
       await(repository.insertRentPeriod(credId, "Yes"))
       val actual = await(repository.findByCredId(credId))

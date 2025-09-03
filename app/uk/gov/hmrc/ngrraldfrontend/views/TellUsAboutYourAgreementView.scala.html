@@ -15,7 +15,6 @@
  *@
 
 @import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-@import uk.gov.hmrc.ngrraldfrontend.models.components.NavigationBarContent
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.ngrraldfrontend.views.html.components._
 @import uk.gov.hmrc.ngrraldfrontend.models.*
@@ -27,7 +26,7 @@
  formHelper: FormWithCSRF
 )
 
-@(navigationBarContent: NavigationBarContent, selectedPropertyAddress: String, agreement:AgreementType)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+@(selectedPropertyAddress: String, agreement:AgreementType)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
 @heading = {
     @if(agreement == AgreementType.NewAgreement){
@@ -69,7 +68,7 @@
     }
 }
 
-@layout(pageTitle = Some(messages("tellUsAboutYourNewAgreement.title")), showBackLink = true, fullWidth = true, navigationBarContent = Some(navigationBarContent)) {
+@layout(pageTitle = Some(messages("tellUsAboutYourNewAgreement.title")), showBackLink = true, fullWidth = true) {
 
  @formHelper(action =
     if(agreement == AgreementType.NewAgreement){
