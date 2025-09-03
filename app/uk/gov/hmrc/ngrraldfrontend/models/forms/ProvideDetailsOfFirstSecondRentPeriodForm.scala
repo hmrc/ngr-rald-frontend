@@ -23,7 +23,6 @@ import play.api.data.{Form, FormError}
 import play.api.i18n.*
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.ngrraldfrontend.models.*
-import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreementVerbalForm.{isDateEmpty, isDateValid}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 
 import scala.util.Try
@@ -130,14 +129,16 @@ object ProvideDetailsOfFirstSecondRentPeriodForm extends CommonFormValidators wi
           .verifying(
             firstError(
               isDateEmpty(errorKeys("first.startDate")),
-              isDateValid("provideDetailsOfFirstSecondRentPeriod.startDate.format.error")
+              isDateValid("provideDetailsOfFirstSecondRentPeriod.startDate.format.error"),
+              isDateAfter1900("date.is.before.1900.error")
             )
           ),
         firstDateEndInput -> dateMapping
           .verifying(
             firstError(
               isDateEmpty(errorKeys("first.endDate")),
-              isDateValid("provideDetailsOfFirstSecondRentPeriod.endDate.format.error")
+              isDateValid("provideDetailsOfFirstSecondRentPeriod.endDate.format.error"),
+              isDateAfter1900("date.is.before.1900.error")
             )
           ),
         firstRentPeriodRadio -> text(radioFirstPeriodRequiredError),
