@@ -21,6 +21,7 @@ import org.jsoup.nodes.Document
 import play.api.libs.json.Json
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.Radios
 import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
+import uk.gov.hmrc.ngrraldfrontend.models.NormalMode
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{buildRadios, noButton, yesButton}
 import uk.gov.hmrc.ngrraldfrontend.models.components.{LeaseOrTenancy, NGRRadio, NGRRadioButtons, NGRRadioName, NavBarContents, NavBarCurrentPage, NavBarPageContents, NavigationBarContent, Verbal, Written, Yes}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.{AgreedRentChangeForm, WhatTypeOfAgreementForm}
@@ -62,11 +63,11 @@ class AgreedRentChangeViewSpec extends ViewBaseSpec {
   val radio: Radios = buildRadios(form, ngrRadio)
 
   "TellUsAboutYourNewAgreementView" must {
-    val agreedRentChangeView = view(form, content, radio, address)
+    val agreedRentChangeView = view(form, content, radio, address, NormalMode)
     lazy implicit val document: Document = Jsoup.parse(agreedRentChangeView.body)
-    val htmlApply = view.apply(form, content, radio, address).body
-    val htmlRender = view.render(form, content, radio, address, request, messages, mockConfig).body
-    lazy val htmlF = view.f(form, content, radio, address)
+    val htmlApply = view.apply(form, content, radio, address,NormalMode).body
+    val htmlRender = view.render(form, content, radio, address, NormalMode, request, messages, mockConfig).body
+    lazy val htmlF = view.f(form, content, radio, address, NormalMode)
 
     "htmlF is not empty" in {
       htmlF.toString() must not be empty

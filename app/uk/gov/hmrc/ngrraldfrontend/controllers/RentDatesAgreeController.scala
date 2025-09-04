@@ -42,8 +42,6 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class RentDatesAgreeController @Inject()(rentDatesAgreeView: RentDatesAgreeView,
                                          authenticate: AuthRetrievals,
-                                         hasLinkedProperties: PropertyLinkingAction,
-                                         raldRepo: RaldRepo,
                                          mcc: MessagesControllerComponents,
                                          getData: DataRetrievalAction,
                                          navigator: Navigator,

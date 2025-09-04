@@ -43,12 +43,10 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class RentPeriodsController @Inject()(view: RentPeriodView,
                                       authenticate: AuthRetrievals,
-                                      hasLinkedProperties: PropertyLinkingAction,
-                                      raldRepo: RaldRepo,
                                       getData: DataRetrievalAction,
-                                      mcc: MessagesControllerComponents,
                                       sessionRepository: SessionRepository,
-                                      navigator: Navigator
+                                      navigator: Navigator,
+                                      mcc: MessagesControllerComponents,
                                      )(implicit appConfig: AppConfig, ec:ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
 

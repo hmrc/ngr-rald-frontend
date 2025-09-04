@@ -40,8 +40,6 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class DidYouAgreeRentWithLandlordController @Inject()(didYouAgreeRentWithLandlordView: DidYouAgreeRentWithLandlordView,
                                                       authenticate: AuthRetrievals,
-                                                      hasLinkedProperties: PropertyLinkingAction,
-                                                      raldRepo: RaldRepo,
                                                       getData: DataRetrievalAction,
                                                       sessionRepository: SessionRepository,
                                                       navigator: Navigator,

@@ -21,12 +21,13 @@ import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
+import uk.gov.hmrc.ngrraldfrontend.models.NormalMode
 import uk.gov.hmrc.ngrraldfrontend.views.html.TellUsAboutYourAgreementView
 
 class TellUsAboutYourRentControllerSpec extends ControllerSpecSupport {
   val pageTitle = "Tell us about your rent review"
   val view: TellUsAboutYourAgreementView = inject[TellUsAboutYourAgreementView]
-  val controller: TellUsAboutRentController = new TellUsAboutRentController(view, mockAuthJourney, mockPropertyLinkingAction, mockRaldRepo, mcc)(mockConfig)
+  val controller: TellUsAboutRentController = new TellUsAboutRentController(view, mockAuthJourney, navigator, mcc, fakeData(None), mockSessionRepository)(mockConfig)
 
   "Tell us about your rent controller" must {
     "method show" must {
@@ -39,7 +40,7 @@ class TellUsAboutYourRentControllerSpec extends ControllerSpecSupport {
       "Return NotFoundException when property is not found in the mongo" in {
         mockRequestWithoutProperty()
         val exception = intercept[NotFoundException] {
-          await(controller.show(authenticatedFakeRequest()))
+          await(controller.show()(authenticatedFakeRequest()))
         }
         exception.getMessage contains "Couldn't find property in mongo" mustBe true
       }

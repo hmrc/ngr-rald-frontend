@@ -21,6 +21,7 @@ import org.jsoup.nodes.Document
 import play.api.data.Form
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.Radios
 import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
+import uk.gov.hmrc.ngrraldfrontend.models.NormalMode
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.components.{NGRRadio, NGRRadioButtons, NGRRadioName}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatTypeOfLeaseRenewalForm
@@ -52,11 +53,11 @@ class TypeOfLeaseRenewalViewSpec extends ViewBaseSpec {
   }
 
   "TypeOfLeaseRenewalView" must {
-    val leaseRenewalView = view(form, content, radio, address)
+    val leaseRenewalView = view(form, content, radio, address, NormalMode)
     lazy implicit val document: Document = Jsoup.parse(leaseRenewalView.body)
-    val htmlApply = view.apply(form, content, radio, address).body
-    val htmlRender = view.render(form, content, radio, address, request, messages, mockConfig).body
-    lazy val htmlF = view.f(form, content, radio, address)
+    val htmlApply = view.apply(form, content, radio, address, NormalMode).body
+    val htmlRender = view.render(form, content, radio, address, NormalMode, request, messages, mockConfig).body
+    lazy val htmlF = view.f(form, content, radio, address, NormalMode)
 
     "htmlF is not empty" in {
       htmlF.toString() must not be empty

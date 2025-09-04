@@ -37,8 +37,6 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class TellUsAboutRentController @Inject()(view: TellUsAboutYourAgreementView,
                                           authenticate: AuthRetrievals,
-                                          hasLinkedProperties: PropertyLinkingAction,
-                                          raldRepo: RaldRepo,
                                           navigator: Navigator,
                                           mcc: MessagesControllerComponents,
                                           getData: DataRetrievalAction,

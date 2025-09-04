@@ -43,8 +43,6 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class WhatIsYourRentBasedOnController @Inject()(view: WhatIsYourRentBasedOnView,
                                                 authenticate: AuthRetrievals,
-                                                hasLinkedProperties: PropertyLinkingAction,
-                                                raldRepo: RaldRepo,
                                                 ngrCharacterCountComponent: NGRCharacterCountComponent,
                                                 mcc: MessagesControllerComponents,
                                                 getData: DataRetrievalAction,

@@ -40,8 +40,6 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class WhatTypeOfAgreementController @Inject()(view: WhatTypeOfAgreementView,
                                               authenticate: AuthRetrievals,
-                                              hasLinkedProperties: PropertyLinkingAction,
-                                              raldRepo: RaldRepo,
                                               mcc: MessagesControllerComponents,
                                               getData: DataRetrievalAction,
                                               navigator: Navigator,
