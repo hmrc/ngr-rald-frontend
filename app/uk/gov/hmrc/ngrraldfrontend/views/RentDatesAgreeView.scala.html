@@ -40,8 +40,8 @@ saveAndContinueButton: saveAndContinueButton
       @govukErrorSummary(ErrorSummaryViewModel(form))
     }
     <span class="govuk-caption-m">@propertyAddress</span>
-    <h1 class="govuk-heading-l">@messages("agreedRentChange.title")</h1>
+    <h1 class="govuk-heading-l">@messages("rentDatesAgree.title")</h1>
     @dateInputField(form, dateInput)
-    @saveAndContinueButton(msg = messages("service.saveAndContinue"), isStartButton = false)
+    @saveAndContinueButton(msg = messages("service.continue"), isStartButton = false)
   }
 }
