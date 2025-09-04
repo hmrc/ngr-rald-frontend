@@ -49,7 +49,7 @@ object RentDatesAgreeStartForm extends CommonFormValidators with DateMappings wi
             firstError(
               isDateEmpty(errorKeys("agreedDate")),
               isDateValid("rentDatesAgreeStart.agreedDate.invalid.error"),
-              isDateAfter1900("date.is.before.1900.error")
+              isDateAfter1900("rentDatesAgreeStart.agreedDate.before.1900.error")
             )
           ),
         "startPayingDate" -> dateMapping
@@ -57,7 +57,7 @@ object RentDatesAgreeStartForm extends CommonFormValidators with DateMappings wi
             firstError(
               isDateEmpty(errorKeys("startPayingDate")),
               isDateValid("rentDatesAgreeStart.startPayingDate.invalid.error"),
-              isDateAfter1900("date.is.before.1900.error")
+              isDateAfter1900("rentDatesAgreeStart.startPayingDate.before.1900.error")
             )
           )
       )(RentDatesAgreeStartForm.apply)(RentDatesAgreeStartForm.unapply)

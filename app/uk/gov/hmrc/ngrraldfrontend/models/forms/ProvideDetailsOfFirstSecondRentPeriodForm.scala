@@ -130,7 +130,7 @@ object ProvideDetailsOfFirstSecondRentPeriodForm extends CommonFormValidators wi
             firstError(
               isDateEmpty(errorKeys("first.startDate")),
               isDateValid("provideDetailsOfFirstSecondRentPeriod.startDate.format.error"),
-              isDateAfter1900("date.is.before.1900.error")
+              isDateAfter1900("provideDetailsOfFirstSecondRentPeriod.first.startDate.before.1900.error")
             )
           ),
         firstDateEndInput -> dateMapping
@@ -138,7 +138,7 @@ object ProvideDetailsOfFirstSecondRentPeriodForm extends CommonFormValidators wi
             firstError(
               isDateEmpty(errorKeys("first.endDate")),
               isDateValid("provideDetailsOfFirstSecondRentPeriod.endDate.format.error"),
-              isDateAfter1900("date.is.before.1900.error")
+              isDateAfter1900("provideDetailsOfFirstSecondRentPeriod.first.endDate.before.1900.error")
             )
           ),
         firstRentPeriodRadio -> text(radioFirstPeriodRequiredError),
@@ -147,14 +147,16 @@ object ProvideDetailsOfFirstSecondRentPeriodForm extends CommonFormValidators wi
           .verifying(
             firstError(
               isDateEmpty(errorKeys("second.startDate")),
-              isDateValid("provideDetailsOfFirstSecondRentPeriod.startDate.format.error")
+              isDateValid("provideDetailsOfFirstSecondRentPeriod.startDate.format.error"),
+              isDateAfter1900("provideDetailsOfFirstSecondRentPeriod.second.startDate.before.1900.error")
             )
           ),
         secondDateEndInput -> dateMapping
           .verifying(
             firstError(
               isDateEmpty(errorKeys("second.endDate")),
-              isDateValid("provideDetailsOfFirstSecondRentPeriod.endDate.format.error")
+              isDateValid("provideDetailsOfFirstSecondRentPeriod.endDate.format.error"),
+              isDateAfter1900("provideDetailsOfFirstSecondRentPeriod.second.endDate.before.1900.error")
             )
           ),
         SecondRentPeriodAmount -> of(bigDecimalWithFormatError)

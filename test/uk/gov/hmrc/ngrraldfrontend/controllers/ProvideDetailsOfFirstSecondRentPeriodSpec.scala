@@ -86,11 +86,9 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
             "SecondRentPeriodAmount" -> "10000.00",
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
-        result.map(result => {
-          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/what-is-your-rent-based-on")
-        })
+
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.WhatIsYourRentBasedOnController.show.url)
+        redirectLocation(result) mustBe Some(routes.RentPeriodsController.show.url)
       }
       "Return OK and the correct view after submitting with first start date, first end date yes radio button selected for first rent period with first rent amount" +
         "and second rent date start, end and amount is added" in {
@@ -115,11 +113,9 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
             "SecondRentPeriodAmount" -> "10000.00",
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
-        result.map(result => {
-          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/what-is-your-rent-based-on")
-        })
+
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.WhatIsYourRentBasedOnController.show.url)
+        redirectLocation(result) mustBe Some(routes.RentPeriodsController.show.url)
       }
       "Return Form with Errors when no day is added to the first periods start date" in {
         mockRequest(hasCredId = true)

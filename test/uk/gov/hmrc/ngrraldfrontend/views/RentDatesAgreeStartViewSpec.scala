@@ -39,7 +39,7 @@ class RentDatesAgreeStartViewSpec extends ViewBaseSpec {
   val dayInputLabel = "Day"
   val monthInputLabel = "Month"
   val yearInputLabel = "Year"
-  val saveButton = "Save and continue"
+  val saveButton = "Continue"
 
   private val form: Form[RentDatesAgreeStartForm] = RentDatesAgreeStartForm.form.fillAndValidate(RentDatesAgreeStartForm(NGRDate("30", "4", "2025"), NGRDate("1", "6", "2025")))
 

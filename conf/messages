@@ -7,7 +7,6 @@ service.continue = Continue
 service.saveAndContinue = Save and continue
 service.yes = Yes
 service.no = No
-date.is.before.1900.error = Date must be after 1900
 
 #NavigationBar
 nav.home=Account home
@@ -102,9 +101,9 @@ howMuchIsTotalAnnualRent.tooLarge.error = New total annual rent must be £9,999,
 howMuchIsTotalAnnualRent.format.error = New total annual rent must be a number, like 30,000
 
 #AgreedRentChange
- agreedRentChange.title = Have you agreed in advance with the landlord when and by how much rent goes up?
- agreedRentChange.p1 = For example, the agreement says that the rent will increase from £5,000 to £7,000 a year after 12 months. This is often known as a stepped rent.
- agreedRentChange.empty.error = Select yes if you have agreed with your landlord in advance when and by how much rent goes up
+agreedRentChange.title = Have you agreed in advance with the landlord when and by how much rent goes up?
+agreedRentChange.p1 = For example, the agreement says that the rent will increase from £5,000 to £7,000 a year after 12 months. This is often known as a stepped rent.
+agreedRentChange.empty.error = Select yes if you have agreed with your landlord in advance when and by how much rent goes up
 
 #AgreementVerbal
 agreementVerbal.title = Agreement
@@ -208,6 +207,7 @@ provideDetailsOfFirstSecondRentPeriod.first.startDate.day.required.error = Date 
 provideDetailsOfFirstSecondRentPeriod.first.startDate.month.required.error = Date you will start paying rent must be a real date.
 provideDetailsOfFirstSecondRentPeriod.first.startDate.year.required.error = Date you will start paying rent must be a real date.
 provideDetailsOfFirstSecondRentPeriod.first.startDate.format.error = Date you will start paying rent must be a real date.
+provideDetailsOfFirstSecondRentPeriod.first.startDate.before.1900.error = Start date of the first rent period must be 1900 or after
 provideDetailsOfFirstSecondRentPeriod.first.endDate.required.error = Date you will start paying rent must be a real date.
 provideDetailsOfFirstSecondRentPeriod.first.endDate.day.month.required.error = Date you will start paying rent must be a real date.
 provideDetailsOfFirstSecondRentPeriod.first.endDate.day.year.required.error = Date you will start paying rent must be a real date.
@@ -216,6 +216,7 @@ provideDetailsOfFirstSecondRentPeriod.first.endDate.day.required.error = Date yo
 provideDetailsOfFirstSecondRentPeriod.first.endDate.month.required.error = Date you will start paying rent must be a real date.
 provideDetailsOfFirstSecondRentPeriod.first.endDate.year.required.error = Date you will start paying rent must be a real date.
 provideDetailsOfFirstSecondRentPeriod.first.endDate.format.error = Date you will start paying rent must be a real date.
+provideDetailsOfFirstSecondRentPeriod.first.endDate.before.1900.error = End date of the first rent period must be 1900 or after
 provideDetailsOfFirstSecondRentPeriod.second.startDate.required.error = Date you will start paying rent must be a real date.
 provideDetailsOfFirstSecondRentPeriod.second.startDate.day.required.error = Date you will start paying rent must be a real date.
 provideDetailsOfFirstSecondRentPeriod.second.startDate.day.month.required.error = Date you will start paying rent must be a real date.
@@ -225,6 +226,7 @@ provideDetailsOfFirstSecondRentPeriod.second.startDate.day.required.error = Date
 provideDetailsOfFirstSecondRentPeriod.second.startDate.month.required.error = Date you will start paying rent must be a real date.
 provideDetailsOfFirstSecondRentPeriod.second.startDate.year.required.error = Date you will start paying rent must be a real date.
 provideDetailsOfFirstSecondRentPeriod.second.startDate.format.error = Date you will start paying rent must be a real date.
+provideDetailsOfFirstSecondRentPeriod.second.startDate.before.1900.error = Start date of the second rent period must be 1900 or after
 provideDetailsOfFirstSecondRentPeriod.second.endDate.required.error = Date you will start paying rent must be a real date.
 provideDetailsOfFirstSecondRentPeriod.second.endDate.day.month.required.error = Date you will start paying rent must be a real date.
 provideDetailsOfFirstSecondRentPeriod.second.endDate.day.year.required.error = Date you will start paying rent must be a real date.
@@ -233,6 +235,7 @@ provideDetailsOfFirstSecondRentPeriod.second.endDate.day.required.error = Date y
 provideDetailsOfFirstSecondRentPeriod.second.endDate.month.required.error = Date you will start paying rent must be a real date.
 provideDetailsOfFirstSecondRentPeriod.second.endDate.year.required.error = Date you will start paying rent must be a real date.
 provideDetailsOfFirstSecondRentPeriod.second.endDate.format.error = Date you will start paying rent must be a real date.
+provideDetailsOfFirstSecondRentPeriod.second.endDate.before.1900.error = End date of the second rent period must be 1900 or after
 provideDetailsOfFirstSecondRentPeriod.firstPeriod.radio.error.required = Select yes if you pay rent in this period.
 provideDetailsOfFirstSecondRentPeriod.firstPeriod.amount.error.required = Enter the rent for the first rent period, in pounds.
 provideDetailsOfFirstSecondRentPeriod.secondPeriod.amount.error.required = Enter the rent for the second rent period, in pounds.
@@ -242,12 +245,12 @@ rentPeriods.title = Rent periods
 rentPeriods.first.subheading = First rent period
 rentPeriods.first.startDate = Start date
 rentPeriods.first.endDate = End date
-rentPeriods.first.rentValue = Rent for this period(excluding VAT)
+rentPeriods.first.rentValue = Rent for this period (excluding VAT)
 rentPeriods.first.doYouPay = Do you pay rent in this period?
 rentPeriods.second.subheading = Second rent period
 rentPeriods.second.startDate = Start date
 rentPeriods.second.endDate = End date
-rentPeriods.second.rentValue = Rent for this period(excluding VAT)
+rentPeriods.second.rentValue = Rent for this period (excluding VAT)
 rentPeriods.radio.heading = Do you need to add another rent period?
 rentPeriods.error.required = Select yes if you need to add another rent period.
 rentPeriods.yes = Yes
@@ -286,6 +289,7 @@ rentDatesAgreeStart.agreedDate.dayAndMonth.required.error = Date you agreed your
 rentDatesAgreeStart.agreedDate.dayAndYear.required.error = Date you agreed your rent must include a day and year
 rentDatesAgreeStart.agreedDate.monthAndYear.required.error = Date you agreed your rent must include a month and year
 rentDatesAgreeStart.agreedDate.invalid.error = Date you agreed your rent must be a real date
+rentDatesAgreeStart.agreedDate.before.1900.error = Date you agreed your rent must be 1900 or after
 rentDatesAgreeStart.startPayingDate.required.error = Enter the date you will start paying rent
 rentDatesAgreeStart.startPayingDate.day.required.error = Date you will start paying rent must include a day
 rentDatesAgreeStart.startPayingDate.month.required.error = Date you will start paying rent must include a month
@@ -294,6 +298,7 @@ rentDatesAgreeStart.startPayingDate.dayAndMonth.required.error = Date you will s
 rentDatesAgreeStart.startPayingDate.dayAndYear.required.error = Date you will start paying rent must include a day and year
 rentDatesAgreeStart.startPayingDate.monthAndYear.required.error = Date you will start paying rent must include a month and year
 rentDatesAgreeStart.startPayingDate.invalid.error = Date you will start paying rent must be a real date
+rentDatesAgreeStart.startPayingDate.before.1900.error = Date you will start paying rent must be 1900 or after
 
 #WhatYourRentIncludes
 whatYourRentIncludes.title = What your rent includes
