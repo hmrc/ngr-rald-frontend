@@ -20,6 +20,7 @@ import play.api.data.Form
 import play.api.data.Forms.mapping
 import play.api.i18n.Messages
 import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.govukfrontend.views.Aliases.{Legend, Text}
 import uk.gov.hmrc.ngrraldfrontend.models.components.{NGRRadio, NGRRadioName}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreedRentChangeForm.text
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
@@ -43,6 +44,6 @@ object RentInterimForm extends Mappings {
   }
 
   def ngrRadio(form: Form[RentInterimForm])(implicit messages: Messages): NGRRadio =
-    NGRRadio(NGRRadioName("rent-interim-radio"), NGRRadioButtons = Seq(NGRRadio.yesButton, NGRRadio.noButton))
+    NGRRadio(NGRRadioName("rent-interim-radio"), NGRRadioButtons = Seq(NGRRadio.yesButton, NGRRadio.noButton), Some(Legend(content = Text(messages("rentInterim.title")), classes = "govuk-fieldset__legend--l", isPageHeading = true)))
 
 }
