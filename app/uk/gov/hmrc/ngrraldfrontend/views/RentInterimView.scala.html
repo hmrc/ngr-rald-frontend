@@ -37,8 +37,7 @@
         @govukErrorSummary(ErrorSummaryViewModel(form))
         }
         <span class="govuk-caption-m">@propertyAddress</span>
-        <h1 class="govuk-heading-l">@messages("rentInterim.title")</h1>
         @govukRadios(radios)
-        @saveAndContinueButton(msg = messages("service.saveAndContinue"), isStartButton = false)
+        @saveAndContinueButton(msg = messages("service.continue"), isStartButton = false)
     }
 }
