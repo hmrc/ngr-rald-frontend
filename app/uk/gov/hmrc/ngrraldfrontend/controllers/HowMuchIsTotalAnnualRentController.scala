@@ -65,7 +65,7 @@ class HowMuchIsTotalAnnualRentController @Inject()(howMuchIsTotalAnnualRentView:
             credId = CredId(request.credId.getOrElse("")),
             rentAmount = rentAmount.annualRent
           )
-          Future.successful(Redirect(routes.WhatTypeOfLeaseRenewalController.show.url))
+          Future.successful(Redirect(routes.CheckRentFreePeriodController.show.url))
       )
     }
 }
