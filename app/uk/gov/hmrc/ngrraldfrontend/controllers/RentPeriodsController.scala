@@ -31,6 +31,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.forms.RentPeriodsForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{NGRDate, RaldUserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
+import uk.gov.hmrc.ngrraldfrontend.utils.CurrencyHelper
 import uk.gov.hmrc.ngrraldfrontend.views.html.RentPeriodView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -43,8 +44,8 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
                                       hasLinkedProperties: PropertyLinkingAction,
                                       raldRepo: RaldRepo,
                                       mcc: MessagesControllerComponents
-                                     )(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
-
+                                     )(implicit appConfig: AppConfig, ec: ExecutionContext)
+  extends FrontendController(mcc) with I18nSupport with CurrencyHelper {
 
   def firstTable(userAnswers: RaldUserAnswers)(implicit messages: Messages): Table =
     Table(
@@ -56,7 +57,10 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
           TableRow(
             content = Text(userAnswers.provideDetailsOfFirstSecondRentPeriod.map { dates =>
               NGRDate.formatDate(dates.firstDateStart)
-            }.getOrElse(""))
+            }.getOrElse("")),
+            attributes = Map(
+              "id" -> "first-period-start-date-id"
+            )
           )
         ),
         Seq(
@@ -66,7 +70,10 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
           TableRow(
             content = Text(userAnswers.provideDetailsOfFirstSecondRentPeriod.map { dates =>
               NGRDate.formatDate(dates.firstDateEnd)
-            }.getOrElse(""))
+            }.getOrElse("")),
+            attributes = Map(
+              "id" -> "first-period-end-date-id"
+            )
           )
         ),
         userAnswers.provideDetailsOfFirstSecondRentPeriod.map { userAnswers =>
@@ -76,7 +83,10 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
                 content = Text(messages("rentPeriods.first.rentValue"))
               ),
               TableRow(
-                content = Text(answer)
+                content = Text(formatRentValue(answer.toDouble)),
+                attributes = Map(
+                  "id" -> "first-period-rent-value-id"
+                )
               )
             )
             case None => Seq()
@@ -92,7 +102,10 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
               } else {
                 "No"
               }
-            }.getOrElse(""))
+            }.getOrElse("")),
+            attributes = Map(
+              "id" -> "first-period-has-pay-id"
+            )
           )
         )
       ),
@@ -111,7 +124,10 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
         TableRow(
           content = Text(userAnswers.provideDetailsOfFirstSecondRentPeriod.map { dates =>
             NGRDate.formatDate(dates.secondDateStart)
-          }.getOrElse(""))
+          }.getOrElse("")),
+          attributes = Map(
+            "id" -> "second-period-start-date-id"
+          )
         )
       ),
       Seq(
@@ -121,7 +137,10 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
         TableRow(
           content = Text(userAnswers.provideDetailsOfFirstSecondRentPeriod.map { dates =>
             NGRDate.formatDate(dates.secondDateEnd)
-          }.getOrElse(""))
+          }.getOrElse("")),
+          attributes = Map(
+            "id" -> "second-period-end-date-id"
+          )
         )
       ),
       Seq(
@@ -130,13 +149,16 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
         ),
         TableRow(
           content = Text(userAnswers.provideDetailsOfFirstSecondRentPeriod.map { dates =>
-            dates.secondHowMuchIsRent
-          }.getOrElse(""))
+            formatRentValue(dates.secondHowMuchIsRent.toDouble)
+          }.getOrElse("")),
+          attributes = Map(
+            "id" -> "second-period-rent-value-id"
+          )
         )
       )
     ),
     head = None,
-    caption = Some(Messages("rentPeriods.first.subheading")),
+    caption = Some(Messages("rentPeriods.second.subheading")),
     captionClasses = "govuk-table__caption--m",
     firstCellIsHeader = true
   )

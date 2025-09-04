@@ -71,7 +71,7 @@ class AgreedRentChangeController @Inject()(agreedRentChangeView: AgreedRentChang
           if (radioValue.radioValue == "Yes") {
             Future.successful(Redirect(routes.ProvideDetailsOfFirstSecondRentPeriodController.show.url))
           } else {
-            Future.successful(Redirect(routes.WhatTypeOfLeaseRenewalController.show.url))
+            Future.successful(Redirect(routes.HowMuchIsTotalAnnualRentController.show.url))
           }
       )
     }

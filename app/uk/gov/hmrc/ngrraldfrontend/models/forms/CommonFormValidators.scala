@@ -49,12 +49,6 @@ trait CommonFormValidators {
       dateValidation(date, errorKey)
     )
 
-  protected def isDateAfter1900[A](errorKey: String): Constraint[A] =
-    Constraint((input: A) =>
-      val date = input.asInstanceOf[NGRDate]
-      dateAfter1900Validation(date, errorKey)
-    )
-
   protected def dateEmptyValidation(date: NGRDate, errorKeys: Map[DateErrorKeys, String]): ValidationResult =
     (date.day.isEmpty, date.month.isEmpty, date.year.isEmpty) match
       case (true, true, true) => Invalid(errorKeys.get(Required).getOrElse(""))
@@ -67,13 +61,7 @@ trait CommonFormValidators {
       case (_, _, _) => Valid
       
   protected def dateValidation(date: NGRDate, errorKey: String) =
-    if (Try(date.ngrDate).isFailure)
-      Invalid(errorKey)
-    else
-      Valid
-
-  private def dateAfter1900Validation(date: NGRDate, errorKey: String) =
-    if (Try(date.ngrDate).isSuccess && date.year.toInt < 1900)
+    if (Try(date.ngrDate).isFailure || (Try(date.ngrDate).isSuccess && date.year.length > 4 || date.year.toInt < 1900))
       Invalid(errorKey)
     else
       Valid

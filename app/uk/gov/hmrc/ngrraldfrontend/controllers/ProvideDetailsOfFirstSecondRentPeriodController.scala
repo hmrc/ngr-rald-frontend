@@ -192,7 +192,7 @@ class ProvideDetailsOfFirstSecondRentPeriodController @Inject()(view: ProvideDet
               provideDetailsOfFirstSecondRentPeriodForm.secondDateEndInput.makeString,
               provideDetailsOfFirstSecondRentPeriodForm.secondHowMuchIsRent,
             )
-            Future.successful(Redirect(routes.WhatIsYourRentBasedOnController.show.url))
+            Future.successful(Redirect(routes.RentPeriodsController.show.url))
         )
     }
   }

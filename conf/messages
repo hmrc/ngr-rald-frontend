@@ -7,7 +7,6 @@ service.continue = Continue
 service.saveAndContinue = Save and continue
 service.yes = Yes
 service.no = No
-date.is.before.1900.error = Date must be after 1900
 
 #NavigationBar
 nav.home=Account home
@@ -102,9 +101,9 @@ howMuchIsTotalAnnualRent.tooLarge.error = New total annual rent must be £9,999,
 howMuchIsTotalAnnualRent.format.error = New total annual rent must be a number, like 30,000
 
 #AgreedRentChange
- agreedRentChange.title = Have you agreed in advance with the landlord when and by how much rent goes up?
- agreedRentChange.p1 = For example, the agreement says that the rent will increase from £5,000 to £7,000 a year after 12 months. This is often known as a stepped rent.
- agreedRentChange.empty.error = Select yes if you have agreed with your landlord in advance when and by how much rent goes up
+agreedRentChange.title = Have you agreed in advance with the landlord when and by how much rent goes up?
+agreedRentChange.p1 = For example, the agreement says that the rent will increase from £5,000 to £7,000 a year after 12 months. This is often known as a stepped rent.
+agreedRentChange.empty.error = Select yes if you have agreed with your landlord in advance when and by how much rent goes up
 
 #AgreementVerbal
 agreementVerbal.title = Agreement
@@ -242,12 +241,12 @@ rentPeriods.title = Rent periods
 rentPeriods.first.subheading = First rent period
 rentPeriods.first.startDate = Start date
 rentPeriods.first.endDate = End date
-rentPeriods.first.rentValue = Rent for this period(excluding VAT)
+rentPeriods.first.rentValue = Rent for this period (excluding VAT)
 rentPeriods.first.doYouPay = Do you pay rent in this period?
 rentPeriods.second.subheading = Second rent period
 rentPeriods.second.startDate = Start date
 rentPeriods.second.endDate = End date
-rentPeriods.second.rentValue = Rent for this period(excluding VAT)
+rentPeriods.second.rentValue = Rent for this period (excluding VAT)
 rentPeriods.radio.heading = Do you need to add another rent period?
 rentPeriods.error.required = Select yes if you need to add another rent period.
 rentPeriods.yes = Yes

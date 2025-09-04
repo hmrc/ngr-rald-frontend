@@ -129,16 +129,14 @@ object ProvideDetailsOfFirstSecondRentPeriodForm extends CommonFormValidators wi
           .verifying(
             firstError(
               isDateEmpty(errorKeys("first.startDate")),
-              isDateValid("provideDetailsOfFirstSecondRentPeriod.startDate.format.error"),
-              isDateAfter1900("date.is.before.1900.error")
+              isDateValid("provideDetailsOfFirstSecondRentPeriod.startDate.format.error")
             )
           ),
         firstDateEndInput -> dateMapping
           .verifying(
             firstError(
               isDateEmpty(errorKeys("first.endDate")),
-              isDateValid("provideDetailsOfFirstSecondRentPeriod.endDate.format.error"),
-              isDateAfter1900("date.is.before.1900.error")
+              isDateValid("provideDetailsOfFirstSecondRentPeriod.endDate.format.error")
             )
           ),
         firstRentPeriodRadio -> text(radioFirstPeriodRequiredError),
