@@ -49,8 +49,6 @@ import scala.math.BigDecimal.RoundingMode
 class ProvideDetailsOfFirstSecondRentPeriodController @Inject()(view: ProvideDetailsOfFirstSecondRentPeriodView,
                                                                 authenticate: AuthRetrievals,
                                                                 inputText: InputText,
-                                                                hasLinkedProperties: PropertyLinkingAction,
-                                                                raldRepo: RaldRepo,
                                                                 mcc: MessagesControllerComponents,
                                                                 getData: DataRetrievalAction,
                                                                 sessionRepository: SessionRepository,

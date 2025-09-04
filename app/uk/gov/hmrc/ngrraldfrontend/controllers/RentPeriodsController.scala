@@ -50,7 +50,8 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
                                       getData: DataRetrievalAction,
                                       mcc: MessagesControllerComponents,
                                       sessionRepository: SessionRepository,
-                                      navigator: Navigator
+                                      navigator: Navigator,
+                                      mcc: MessagesControllerComponents,
                                      )(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with CurrencyHelper {
 
@@ -213,4 +214,4 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
         )
     }
   }
-}
+}    

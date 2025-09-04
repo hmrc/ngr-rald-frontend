@@ -20,16 +20,21 @@ import org.mockito.Mockito.when
 import play.api.mvc.*
 import uk.gov.hmrc.auth.core.Nino
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction, FakeDataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.connectors.NGRConnector
 import uk.gov.hmrc.ngrraldfrontend.models.AuthenticatedUserRequest
-import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
+import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
+import uk.gov.hmrc.ngrraldfrontend.models.UserAnswers
+import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 
 import scala.concurrent.{ExecutionContext, Future}
 
 trait ControllerSpecSupport extends TestSupport {
   val mockPropertyLinkingAction: PropertyLinkingAction = mock[PropertyLinkingAction]
   val mockAuthJourney: AuthRetrievals = mock[AuthRetrievals]
+  val mockSessionRepository: SessionRepository = mock[SessionRepository]
+  def fakeData(answers: Option[UserAnswers]) = new FakeDataRetrievalAction(answers)
+  val navigator: Navigator = inject[Navigator]
   val mockInputText: InputText = inject[InputText]
   val mockNgrConnector: NGRConnector = mock[NGRConnector]
   implicit val headerCarrier: HeaderCarrier = HeaderCarrier()

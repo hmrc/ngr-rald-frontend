@@ -38,8 +38,6 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class AgreedRentChangeController @Inject()(agreedRentChangeView: AgreedRentChangeView,
                                            authenticate: AuthRetrievals,
-                                           hasLinkedProperties: PropertyLinkingAction,
-                                           raldRepo: RaldRepo,
                                            getData: DataRetrievalAction,
                                            sessionRepository: SessionRepository,
                                            navigator: Navigator,

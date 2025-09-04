@@ -37,8 +37,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class RentInterimController @Inject()(rentInterimView: RentInterimView,
                                        authenticate: AuthRetrievals,
-                                       hasLinkedProperties: PropertyLinkingAction,
-                                       raldRepo: RaldRepo,
                                       getData: DataRetrievalAction,
                                       navigator: Navigator,
                                       sessionRepository: SessionRepository,

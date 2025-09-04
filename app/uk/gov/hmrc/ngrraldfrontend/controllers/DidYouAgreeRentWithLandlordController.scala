@@ -28,7 +28,9 @@ import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDe
 import uk.gov.hmrc.ngrraldfrontend.models.forms.DidYouAgreeRentWithLandlordForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.DidYouAgreeRentWithLandlordForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
+import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
+import uk.gov.hmrc.ngrraldfrontend.pages.{DidYouAgreeRentWithLandlordPage, WhatTypeOfLeaseRenewalPage}
+import uk.gov.hmrc.ngrraldfrontend.repo.{RaldRepo, SessionRepository}
 import uk.gov.hmrc.ngrraldfrontend.views.html.DidYouAgreeRentWithLandlordView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -38,8 +40,9 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class DidYouAgreeRentWithLandlordController @Inject()(didYouAgreeRentWithLandlordView: DidYouAgreeRentWithLandlordView,
                                                       authenticate: AuthRetrievals,
-                                                      hasLinkedProperties: PropertyLinkingAction,
-                                                      raldRepo: RaldRepo,
+                                                      getData: DataRetrievalAction,
+                                                      sessionRepository: SessionRepository,
+                                                      navigator: Navigator,
                                                       mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport {
 

@@ -42,8 +42,6 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class LandlordController @Inject()(view: LandlordView,
                                    authenticate: AuthRetrievals,
-                                   hasLinkedProperties: PropertyLinkingAction,
-                                   raldRepo: RaldRepo,
                                    ngrCharacterCountComponent: NGRCharacterCountComponent,
                                    mcc: MessagesControllerComponents,
                                    getData : DataRetrievalAction,
