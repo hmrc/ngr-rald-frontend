@@ -44,8 +44,6 @@ object NGRDate {
     date.format(outputFormatter)
   }
 
-
-
   def fromString(dateString: String): NGRDate = {
     val parts = dateString.split("-").map(_.toInt)
     val year = parts(0).toString

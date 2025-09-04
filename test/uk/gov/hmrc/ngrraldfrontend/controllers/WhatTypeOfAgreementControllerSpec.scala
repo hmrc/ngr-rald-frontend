@@ -27,7 +27,7 @@ import uk.gov.hmrc.http.{HeaderNames, NotFoundException}
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, RaldUserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, NormalMode, RaldUserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.views.html.WhatTypeOfAgreementView
 
 import scala.concurrent.Future
@@ -35,13 +35,13 @@ import scala.concurrent.Future
 class WhatTypeOfAgreementControllerSpec extends ControllerSpecSupport {
   val pageTitle = "What type of agreement do you have?"
   val view: WhatTypeOfAgreementView = inject[WhatTypeOfAgreementView]
-  val controller: WhatTypeOfAgreementController = new WhatTypeOfAgreementController(view, mockAuthJourney, mockPropertyLinkingAction, mockRaldRepo, mcc)(mockConfig, ec)
+  val controller: WhatTypeOfAgreementController = new WhatTypeOfAgreementController(view, mockAuthJourney, mcc, fakeData(None), navigator, mockSessionRepository)(mockConfig, ec)
 
   "Tell us about your new agreement controller" must {
     "method show" must {
       "Return OK and the correct view" in {
         when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(Some(RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property))))
-        val result = controller.show()(authenticatedFakeRequest())
+        val result = controller.show(NormalMode)(authenticatedFakeRequest())
         status(result) mustBe OK
         val content = contentAsString(result)
         content must include(pageTitle)
@@ -49,7 +49,7 @@ class WhatTypeOfAgreementControllerSpec extends ControllerSpecSupport {
       "Return NotFoundException when property is not found in the mongo" in {
         mockRequestWithoutProperty()
         val exception = intercept[NotFoundException] {
-          await(controller.show(authenticatedFakeRequest()))
+          await(controller.show(NormalMode)(authenticatedFakeRequest()))
         }
         exception.getMessage contains "Couldn't find property in mongo" mustBe true
       }
@@ -59,30 +59,30 @@ class WhatTypeOfAgreementControllerSpec extends ControllerSpecSupport {
       "Return OK and the correct view after submitting with written radio button" in {
         when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(Some(RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property))))
         mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.WhatTypeOfAgreementController.submit)
+        val result = controller.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.WhatTypeOfAgreementController.submit(NormalMode))
           .withFormUrlEncodedBody(("what-type-of-agreement-radio", "Written"))
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
           result.header.headers.get("Location") shouldBe Some("/ngr-rald-frontend/what-type-of-agreement-do-you-have ")
         })
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.AgreementController.show.url)
+        redirectLocation(result) shouldBe Some(routes.AgreementController.show(NormalMode).url)
       }
       "Return OK and the correct view after submitting with verbal radio button" in {
         when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(Some(RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property))))
         mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.WhatTypeOfAgreementController.submit)
+        val result = controller.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.WhatTypeOfAgreementController.submit(NormalMode))
           .withFormUrlEncodedBody(("what-type-of-agreement-radio", "Verbal"))
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
           result.header.headers.get("Location") shouldBe Some("/ngr-rald-frontend/agreement-verbal")
         })
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.AgreementVerbalController.show.url)
+        redirectLocation(result) shouldBe Some(routes.AgreementVerbalController.show(NormalMode).url)
       }
       "Return Form with Errors when no radio button is selected" in {
         mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.WhatTypeOfAgreementController.submit)
+        val result = controller.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.WhatTypeOfAgreementController.submit(NormalMode))
           .withFormUrlEncodedBody(("what-type-of-agreement-radio", ""))
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -95,7 +95,7 @@ class WhatTypeOfAgreementControllerSpec extends ControllerSpecSupport {
       "Return Exception if no address is in the mongo" in {
         mockRequestWithoutProperty()
         val exception = intercept[NotFoundException] {
-          await(controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.WhatTypeOfAgreementController.submit)
+          await(controller.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.WhatTypeOfAgreementController.submit(NormalMode))
             .withFormUrlEncodedBody(("what-type-of-agreement-radio", ""))
             .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some("")))))
         }

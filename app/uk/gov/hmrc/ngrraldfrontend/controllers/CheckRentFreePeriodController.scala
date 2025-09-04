@@ -37,7 +37,6 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class CheckRentFreePeriodController @Inject()(checkRentFreePeriodView: CheckRentFreePeriodView,
                                               authenticate : AuthRetrievals,
-                                              hasLinkedProperties: PropertyLinkingAction,
                                               getData: DataRetrievalAction,
                                               navigator: Navigator,
                                               sessionRepository: SessionRepository,

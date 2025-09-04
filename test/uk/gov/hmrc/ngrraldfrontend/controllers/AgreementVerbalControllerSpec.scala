@@ -26,7 +26,7 @@ import uk.gov.hmrc.http.{HeaderNames, NotFoundException}
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, RaldUserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, NormalMode, RaldUserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.views.html.AgreementVerbalView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.DateTextFields
 
@@ -37,13 +37,13 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
   val pageTitle = "Agreement"
   val view: AgreementVerbalView = inject[AgreementVerbalView]
   val mockDateTextFields: DateTextFields = inject[DateTextFields]
-  val controller: AgreementVerbalController = new AgreementVerbalController(view, mockAuthJourney, mockPropertyLinkingAction, mockRaldRepo, mockDateTextFields, mcc)(mockConfig, ec)
+  val controller: AgreementVerbalController = new AgreementVerbalController(view, mockAuthJourney, mockDateTextFields, mcc, fakeData(None), mockSessionRepository, navigator)(mockConfig, ec)
 
   "Agreement Verbal controller" must {
     "method show" must {
       "Return OK and the correct view" in {
         when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(Some(RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property))))
-        val result = controller.show(authenticatedFakeRequest())
+        val result = controller.show(NormalMode)(authenticatedFakeRequest())
         status(result) mustBe OK
         val content = contentAsString(result)
         content must include(pageTitle)
@@ -51,7 +51,7 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
       "Return NotFoundException when property is not found in the mongo" in {
         mockRequestWithoutProperty()
         val exception = intercept[NotFoundException] {
-          await(controller.show(authenticatedFakeRequest()))
+          await(controller.show(NormalMode)(authenticatedFakeRequest()))
         }
         exception.getMessage contains "Couldn't find property in mongo" mustBe true
       }
@@ -60,7 +60,7 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
     "method submit" must {
       "Return SEE_OTHER and redirect HowMuchIsTotalAnnualRent view when radio button selected yes" in {
         when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(Some(RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property))))
-        val result = controller.submit(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit)
+        val result = controller.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "30",
             "agreementStartDate.month" -> "4",
@@ -70,11 +70,11 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         headers(result) mustBe TreeMap("Location" -> "/ngr-rald-frontend/how-much-is-total-annual-rent")
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.HowMuchIsTotalAnnualRentController.show.url)
+        redirectLocation(result) mustBe Some(routes.HowMuchIsTotalAnnualRentController.show(NormalMode).url)
       }
       "Return SEE_OTHER and redirect HowMuchIsTotalAnnualRent view when radio button selected no" in {
         when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(Some(RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property))))
-        val result = controller.submit(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit)
+        val result = controller.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "30",
             "agreementStartDate.month" -> "4",
@@ -87,11 +87,11 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         headers(result) mustBe TreeMap("Location" -> "/ngr-rald-frontend/how-much-is-total-annual-rent")
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.HowMuchIsTotalAnnualRentController.show.url)
+        redirectLocation(result) mustBe Some(routes.HowMuchIsTotalAnnualRentController.show(NormalMode).url)
       }
       "Return Form with Errors when no radio button is selected" in {
         mockRequest()
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit)
+        val result = controller.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "30",
             "agreementStartDate.month" -> "4",
@@ -106,7 +106,7 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
         content must include("<a href=\"#agreement-verbal-radio\">Select Yes if your agreement is open-ended</a>")
       }
       "Return Form with Errors when radio button No is selected but no end date is given" in {
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit)
+        val result = controller.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "30",
             "agreementStartDate.month" -> "4",
@@ -123,7 +123,7 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
         content must include("<a href=\"#agreementEndDate\">Select yes if your agreement is open-ended</a>")
       }
       "Return Form with Errors when radio button No is selected but end date is invalid" in {
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit)
+        val result = controller.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "30",
             "agreementStartDate.month" -> "4",
@@ -140,7 +140,7 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
         content must include("<a href=\"#agreementEndDate\">Date your agreement ends must be a real date</a>")
       }
       "Return Form with Errors when start date is missing day" in {
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit)
+        val result = controller.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "",
             "agreementStartDate.month" -> "4",
@@ -154,7 +154,7 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
         content must include("<a href=\"#agreementStartDate.day\">Date your agreement started must include a day</a>")
       }
       "Return Form with Errors when start date is missing month" in {
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit)
+        val result = controller.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "30",
             "agreementStartDate.month" -> "",
@@ -168,7 +168,7 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
         content must include("<a href=\"#agreementStartDate.month\">Date your agreement started must include a month</a>")
       }
       "Return Form with Errors when start date is missing year" in {
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit)
+        val result = controller.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "30",
             "agreementStartDate.month" -> "4",
@@ -182,7 +182,7 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
         content must include("<a href=\"#agreementStartDate.year\">Date your agreement started must include a year</a>")
       }
       "Return Form with Errors when end date is missing day" in {
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit)
+        val result = controller.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "30",
             "agreementStartDate.month" -> "4",
@@ -199,7 +199,7 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
         content must include("<a href=\"#agreementEndDate.day\">Date your agreement ends must include a day</a>")
       }
       "Return Form with Errors when end date is missing month" in {
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit)
+        val result = controller.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "30",
             "agreementStartDate.month" -> "4",
@@ -216,7 +216,7 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
         content must include("<a href=\"#agreementEndDate.month\">Date your agreement ends must include a month</a>")
       }
       "Return Form with Errors when end date is missing year" in {
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit)
+        val result = controller.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "30",
             "agreementStartDate.month" -> "4",
@@ -235,7 +235,7 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
       "Return Exception if no address is in the mongo" in {
         mockRequestWithoutProperty()
         val exception = intercept[NotFoundException] {
-          await(controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit)
+          await(controller.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit(NormalMode))
             .withFormUrlEncodedBody(
               "agreementStartDate.day" -> "30",
               "agreementStartDate.month" -> "4",

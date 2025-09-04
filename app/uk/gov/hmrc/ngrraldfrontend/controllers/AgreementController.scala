@@ -45,8 +45,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class AgreementController @Inject()(view: AgreementView,
                                     authenticate: AuthRetrievals,
                                     dateTextFields: DateTextFields,
-                                    hasLinkedProperties: PropertyLinkingAction,
-                                    raldRepo: RaldRepo,
                                     ngrCharacterCountComponent: NGRCharacterCountComponent,
                                     mcc: MessagesControllerComponents,
                                     getData: DataRetrievalAction,

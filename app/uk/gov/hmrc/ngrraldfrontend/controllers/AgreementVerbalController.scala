@@ -48,8 +48,6 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class AgreementVerbalController @Inject()(view: AgreementVerbalView,
                                           authenticate: AuthRetrievals,
-                                          hasLinkedProperties: PropertyLinkingAction,
-                                          raldRepo: RaldRepo,
                                           dateTextFields: DateTextFields,
                                           mcc: MessagesControllerComponents,
                                           getData: DataRetrievalAction,
