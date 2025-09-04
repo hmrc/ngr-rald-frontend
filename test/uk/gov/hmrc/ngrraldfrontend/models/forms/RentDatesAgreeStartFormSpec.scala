@@ -169,8 +169,8 @@ class RentDatesAgreeStartFormSpec extends AnyWordSpec with Matchers {
       val boundForm = RentDatesAgreeStartForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("agreedDate", List("date.is.before.1900.error")))
-      boundForm.errors should contain(FormError("startPayingDate", List("date.is.before.1900.error")))
+      boundForm.errors should contain(FormError("agreedDate", List("rentDatesAgreeStart.agreedDate.before.1900.error")))
+      boundForm.errors should contain(FormError("startPayingDate", List("rentDatesAgreeStart.startPayingDate.before.1900.error")))
     }
 
     "fail to bind when agreed and start paying dates are not a valid date" in {

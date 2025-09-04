@@ -17,7 +17,7 @@
 package uk.gov.hmrc.ngrraldfrontend.models.forms
 
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationResult}
-import uk.gov.hmrc.ngrraldfrontend.models.{DateErrorKeys, Day, DayAndMonth, DayAndYear, Month, MonthAndYear, NGRDate, Required, Year}
+import uk.gov.hmrc.ngrraldfrontend.models.*
 
 import scala.util.Try
 
@@ -41,12 +41,18 @@ trait CommonFormValidators {
   protected def isDateEmpty[A](errorKeys: Map[DateErrorKeys, String]): Constraint[A] =
     Constraint((input: A) =>
       dateEmptyValidation(input.asInstanceOf[NGRDate], errorKeys)
-  )
+    )
 
   protected def isDateValid[A](errorKey: String): Constraint[A] =
     Constraint((input: A) =>
       val date = input.asInstanceOf[NGRDate]
       dateValidation(date, errorKey)
+    )
+
+  protected def isDateAfter1900[A](errorKey: String): Constraint[A] =
+    Constraint((input: A) =>
+      val date = input.asInstanceOf[NGRDate]
+      dateAfter1900Validation(date, errorKey)
     )
 
   protected def dateEmptyValidation(date: NGRDate, errorKeys: Map[DateErrorKeys, String]): ValidationResult =
@@ -59,9 +65,15 @@ trait CommonFormValidators {
       case (false, true, false) => Invalid(errorKeys.get(Month).getOrElse(""))
       case (false, false, true) => Invalid(errorKeys.get(Year).getOrElse(""))
       case (_, _, _) => Valid
-      
+
   protected def dateValidation(date: NGRDate, errorKey: String) =
-    if (Try(date.ngrDate).isFailure || (Try(date.ngrDate).isSuccess && date.year.length > 4 || date.year.toInt < 1900))
+    if (Try(date.ngrDate).isFailure || (Try(date.ngrDate).isSuccess && date.year.length > 4))
+      Invalid(errorKey)
+    else
+      Valid
+      
+  private def dateAfter1900Validation(date: NGRDate, errorKey: String) =
+    if (Try(date.ngrDate).isSuccess && date.year.toInt < 1900)
       Invalid(errorKey)
     else
       Valid
