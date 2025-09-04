@@ -33,7 +33,7 @@ import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 import scala.concurrent.Future
 
 class RentDatesAgreeControllerSpec extends ControllerSpecSupport {
-  val pageTitle = "Have you agreed in advance with the landlord when and by how much rent goes up?"
+  val pageTitle = "Rent dates"
   val view: RentDatesAgreeView = inject[RentDatesAgreeView]
   val mockInputText: InputText = inject[InputText]
   val controller: RentDatesAgreeController = new RentDatesAgreeController(
