@@ -37,7 +37,6 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
         <span class="govuk-caption-m">@selectedPropertyAddress</span>
-        <h1 class="govuk-heading-l">@messages("didYouAgreeRentWithLandlord.title")</h1>
         @govukRadios(ngrRadio)
         @saveAndContinueButton(msg = messages("service.continue"), isStartButton = false)
     }

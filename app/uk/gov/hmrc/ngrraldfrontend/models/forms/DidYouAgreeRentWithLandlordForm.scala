@@ -20,6 +20,7 @@ import play.api.data.Form
 import play.api.data.Forms.mapping
 import play.api.i18n.Messages
 import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.govukfrontend.views.Aliases.{Legend, Text}
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 
@@ -45,6 +46,15 @@ object DidYouAgreeRentWithLandlordForm extends Mappings {
   private val no: NGRRadioButtons = NGRRadioButtons(radioContent  = "didYouAgreeRentWithLandlord.no", radioValue = NoACourtSet)
 
   def ngrRadio(form: Form[DidYouAgreeRentWithLandlordForm])(implicit messages: Messages): NGRRadio =
-    NGRRadio(NGRRadioName("did-you-agree-rent-with-landlord-radio"),NGRRadioButtons = Seq(yes,no))
+    NGRRadio(
+      NGRRadioName("did-you-agree-rent-with-landlord-radio"),
+      NGRRadioButtons = Seq(yes,no),
+      Some(
+        Legend(
+          content = Text(messages("didYouAgreeRentWithLandlord.title")),
+          classes = "govuk-fieldset__legend--l", isPageHeading = true
+        )
+      )
+    )
 }
 

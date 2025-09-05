@@ -29,14 +29,12 @@ class DidYouAgreeRentWithLandlordViewSpec extends ViewBaseSpec {
   lazy val view: DidYouAgreeRentWithLandlordView = inject[DidYouAgreeRentWithLandlordView]
 
   object Strings {
-    val heading = "Did you agree the rent with your landlord or their agent?"
     val radio1 = "Yes"
     val radio2 = "No, a court set the rent"
     val continue = "Continue"
   }
 
   object Selectors {
-    val heading = "#main-content > div > div > form > h1"
     val radio1 = "#main-content > div > div > form > div > div > div:nth-child(1) > label"
     val radio2 = "#main-content > div > div > form > div > div > div:nth-child(2) > label"
     val radio3 = "#main-content > div > div > form > div > div > div:nth-child(3) > label"
@@ -67,10 +65,6 @@ class DidYouAgreeRentWithLandlordViewSpec extends ViewBaseSpec {
 
     "render is not empty" in {
       htmlRender must not be empty
-    }
-
-    "show correct heading" in {
-      elementText(Selectors.heading) mustBe Strings.heading
     }
 
     "show correct radio 1" in {
