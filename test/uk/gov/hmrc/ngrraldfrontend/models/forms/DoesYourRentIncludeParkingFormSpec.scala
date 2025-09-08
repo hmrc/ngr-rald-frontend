@@ -58,7 +58,7 @@ class DoesYourRentIncludeParkingFormSpec extends AnyFlatSpec with Matchers {
     result shouldBe Some("Yes")
   }
 
-  "LandlordForm.format" should "serialize to JSON correctly" in {
+  "DoesYourRentIncludeParkingForm.format" should "serialize to JSON correctly" in {
     val form = DoesYourRentIncludeParkingForm("Yes")
     val json = Json.toJson(form)
 
