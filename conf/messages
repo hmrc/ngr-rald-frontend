@@ -303,9 +303,9 @@ rentDatesAgreeStart.startPayingDate.before.1900.error = Date you will start payi
 #WhatYourRentIncludes
 whatYourRentIncludes.title = What your rent includes
 whatYourRentIncludes.radio.1.title = Does your rent include any living accommodation?
-whatYourRentIncludes.radio.1.hint = For example, a flat over your shop or caretaker's accommodation
+whatYourRentIncludes.radio.1.hint = For example, a flat over your shop or caretaker''s accommodation
 whatYourRentIncludes.radio.2.title = Is the rent you pay only for part of this address?
-whatYourRentIncludes.radio.2.hint = For example, the address says 'units 1 and 2', and you pay rent for unit 1 only
+whatYourRentIncludes.radio.2.hint = For example, the address says ''units 1 and 2'', and you pay rent for unit 1 only
 whatYourRentIncludes.radio.3.title = Is your rent for an empty shell building?
 whatYourRentIncludes.radio.3.hint = For example, a building without internal walls, toilets, heating or lighting
 whatYourRentIncludes.radio.4.title = Does your rent include business rates?

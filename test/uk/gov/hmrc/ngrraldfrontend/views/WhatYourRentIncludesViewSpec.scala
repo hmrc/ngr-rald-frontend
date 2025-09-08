@@ -32,10 +32,10 @@ class WhatYourRentIncludesViewSpec  extends ViewBaseSpec {
   object Strings {
     val heading = "What your rent includes"
     val radio1Label = "Does your rent include any living accommodation?"
-    val radio1Hint = "For example, a flat over your shop or caretakers accommodation"
+    val radio1Hint = "For example, a flat over your shop or caretaker's accommodation"
     val radio2Label = "Is the rent you pay only for part of this address?"
     val radio2Indent = "5 Brixham Marina, Berry Head Road, Brixham, Devon, TQ5 9BW"
-    val radio2Hint = "For example, the address says units 1 and 2, and you pay rent for unit 1 only"
+    val radio2Hint = "For example, the address says 'units 1 and 2', and you pay rent for unit 1 only"
     val radio3Label = "Is your rent for an empty shell building?"
     val radio3Hint = "For example, a building without internal walls, toilets, heating or lighting"
     val radio4Label = "Does your rent include business rates?"
