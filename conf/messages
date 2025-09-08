@@ -319,3 +319,7 @@ whatYourRentIncludes.radio.3.required = Select yes if your rent is for an empty 
 whatYourRentIncludes.radio.4.required = Select yes if your rent includes business rates
 whatYourRentIncludes.radio.5.required = Select yes if your rent includes water charges
 whatYourRentIncludes.radio.6.required = Select yes if your rent includes service charges
+
+#DoesYourRentIncludeParking
+doesYourRentIncludeParking.title = Does your rent include parking spaces or garages?
+doesYourRentIncludeParking.empty.error = Select yes if your rent includes parking spaces or garages

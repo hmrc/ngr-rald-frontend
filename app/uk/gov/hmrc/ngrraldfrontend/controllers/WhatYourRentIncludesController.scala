@@ -82,7 +82,7 @@ class WhatYourRentIncludesController @Inject()(whatYourRentIncludesView: WhatYou
             radioValue.rentIncWaterChargesRadio,
             radioValue.rentIncServiceRadio
           )
-          Future.successful(Redirect(routes.LandlordController.show.url))
+          Future.successful(Redirect(routes.DoesYourRentIncludeParkingController.show.url))
       )
     }
 }
