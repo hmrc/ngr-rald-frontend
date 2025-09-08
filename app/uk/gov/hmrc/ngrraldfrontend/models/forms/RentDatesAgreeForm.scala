@@ -20,6 +20,7 @@ import play.api.data.Form
 import play.api.data.Forms.mapping
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.ngrraldfrontend.models.*
+import uk.gov.hmrc.ngrraldfrontend.models.forms.CommonFormValidators
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 
 case class RentDatesAgreeForm(dateInput: NGRDate)
@@ -48,7 +49,8 @@ object RentDatesAgreeForm extends CommonFormValidators with Mappings with DateMa
           .verifying(
             firstError(
               isDateEmpty(errorKeys("date")),
-              isDateValid("rentDatesAgree.date.invalid.error")
+              isDateValid("rentDatesAgree.date.invalid.error"),
+              isDateAfter1900("rentDatesAgree.date.before.1900.error")
             )
           ),
       )(RentDatesAgreeForm.apply)(RentDatesAgreeForm.unapply)
