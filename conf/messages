@@ -267,13 +267,14 @@ rentDatesAgree.title = Rent dates
 rentDatesAgree.subheading = When did you agree your rent?
 rentDatesAgree.hint = For example, 27 6 2026
 rentDatesAgree.date.required.error = Enter the date you agreed your rent.
-rentDatesAgree.date.day.month.required.error = Date you agreed your rent must include a day, month and year.
-rentDatesAgree.date.invalid.error = Date you agreed your rent must include a day, month and year.
-rentDatesAgree.date.day.year.required.error = Date you agreed your rent must include a day, month and year.
-rentDatesAgree.date.month.year.required.error = Date you agreed your rent must include a day, month and year.
-rentDatesAgree.date.day.required.error = Date you agreed your rent must include a day, month and year.
-rentDatesAgree.date.month.required.error = Date you agreed your rent must include a day, month and year.
-rentDatesAgree.date.year.required.error = Date you agreed your rent must include a day, month and year.
+rentDatesAgree.date.day.month.required.error = Date you agreed your rent must include a day and month.
+rentDatesAgree.date.invalid.error = Date you agreed your rent must be a real date.
+rentDatesAgree.date.day.year.required.error = Date you agreed your rent must include a day and year.
+rentDatesAgree.date.month.year.required.error = Date you agreed your rent must include a month and year.
+rentDatesAgree.date.day.required.error = Date you agreed your rent must include a day.
+rentDatesAgree.date.month.required.error = Date you agreed your rent must include a month.
+rentDatesAgree.date.year.required.error = Date you agreed your rent must include a year.
+rentDatesAgree.date.before.1900.error = Date you agreed your rent must be 1900 or after
 
 #RentDatesAgreeStart
 rentDatesAgreeStart.title = Rent dates
