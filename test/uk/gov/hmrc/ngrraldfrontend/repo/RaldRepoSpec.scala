@@ -474,6 +474,18 @@ class RaldRepoSpec extends TestSupport with TestData
       val actual = await(repository.findByCredId(credId2))
       actual mustBe None
     }
+
+    "insert has parking included in rent successfully with yes" in {
+      await(repository.insertDoesYourRentIncludeParking(credId, "Yes"))
+      val actual = await(repository.findByCredId(credId))
+      actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, doesYourRentIncludeParking = Some(true)))
+    }
+
+    "insert has parking included in rent successfully with no" in {
+      await(repository.insertDoesYourRentIncludeParking(credId, "No"))
+      val actual = await(repository.findByCredId(credId))
+      actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, doesYourRentIncludeParking = Some(false)))
+    }
   }
 }
 

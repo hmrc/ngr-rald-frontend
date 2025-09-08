@@ -63,9 +63,9 @@ class DoesYourRentIncludeParkingController  @Inject()(doesYourRentIncludeParking
             )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
         },
         radioValue =>
-          raldRepo.insertDidYouAgreeRentWithLandlord(
+          raldRepo.insertDoesYourRentIncludeParking(
             credId = CredId(request.credId.getOrElse("")),
-            radioValue = radioValue.toString
+            radioValue = radioValue.radio
           )
           if (radioValue.radio == "Yes") {
             Future.successful(Redirect(routes.CheckRentFreePeriodController.show.url))

@@ -38,7 +38,8 @@ final case class RaldUserAnswers(
                                   agreedRentDate: Option[String] = None,
                                   rentDatesAgreeStart: Option[RentDatesAgreeStart] = None,
                                   hasAnotherRentPeriod: Option[Boolean] = None,
-                                  whatYourRentIncludes: Option[WhatYourRentIncludes] = None
+                                  whatYourRentIncludes: Option[WhatYourRentIncludes] = None,
+                                  doesYourRentIncludeParking: Option[Boolean] = None,
                                 )
 
 
