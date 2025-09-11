@@ -25,10 +25,10 @@ import uk.gov.hmrc.ngrraldfrontend.models.NormalMode
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentInterimForm
 import uk.gov.hmrc.ngrraldfrontend.views.html.RentInterimView
 
-class RentInterimControllerSpec extends ControllerSpecSupport {
+class RentInterimControllerSpec extends ControllerSpecSupport { 
   val pageTitle = "Did the court also set an interim rent?"
   val view: RentInterimView = inject[RentInterimView]
-  val controller: RentInterimController = new RentInterimController(view, mockAuthJourney, mockPropertyLinkingAction, mockRaldRepo, mcc)(mockConfig)
+  val controller: RentInterimController = new RentInterimController(view, mockAuthJourney, navigator, fakeData(None), mockSessionRepository, mcc)(mockConfig)
 
   "RentInterimController" must {
     "method show" must {
@@ -54,7 +54,7 @@ class RentInterimControllerSpec extends ControllerSpecSupport {
 
         val result = controller.submit(NormalMode)(authenticatedFakeRequest(fakePostRequest))
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.InterimRentSetByTheCourtController.show(NormalMode).url)
+        redirectLocation(result) mustBe Some(routes.ProvideDetailsOfFirstSecondRentPeriodController.show(NormalMode).url)
       }
       "Return OK and the correct view when no is selected" in {
         val fakePostRequest = FakeRequest(routes.WhatTypeOfLeaseRenewalController.submit(NormalMode))

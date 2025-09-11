@@ -51,7 +51,7 @@ class NGRConnector @Inject()(http: HttpClientV2,
     getPropertyLinkingUserAnswers(credId)
       .map {
         case Some(propertyLinkingUserAnswers) => Some(propertyLinkingUserAnswers.vmvProperty)
-        case None => throw new NotFoundException("failed to find propertyLinkingUserAnswers from backend mongo")
+        case None => None
       }
   }
 }

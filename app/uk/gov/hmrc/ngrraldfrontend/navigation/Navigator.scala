@@ -76,7 +76,8 @@ class Navigator @Inject()() {
     }
     case DidYouAgreeRentWithLandlordPage => answers =>
       answers.get(DidYouAgreeRentWithLandlordPage) match {
-        case Some(value) => value match {
+        case Some(value)  => println(Console.MAGENTA + value + Console.RESET)
+          value match {
           case "YesTheLandlord" => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(NormalMode)
           case _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentInterimController.show(NormalMode)
         }
