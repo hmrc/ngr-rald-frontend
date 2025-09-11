@@ -16,64 +16,78 @@
 
 package uk.gov.hmrc.ngrraldfrontend.controllers
 
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import uk.gov.hmrc.http.{HeaderNames, NotFoundException}
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
-import uk.gov.hmrc.ngrraldfrontend.models.NormalMode
+import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.RenewedAgreement
+import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
+import uk.gov.hmrc.ngrraldfrontend.pages.TellUsAboutYourRenewedAgreementPage
 import uk.gov.hmrc.ngrraldfrontend.views.html.HowMuchIsTotalAnnualRentView
+
+import scala.concurrent.Future
+
 
 class HowMuchIsTotalAnnualRentControllerSpec extends ControllerSpecSupport {
   val pageTitle = "How much is your total annual rent?"
   val view: HowMuchIsTotalAnnualRentView = inject[HowMuchIsTotalAnnualRentView]
-  val controller: HowMuchIsTotalAnnualRentController = new HowMuchIsTotalAnnualRentController(view, mockAuthJourney, fakeData(None), mockSessionRepository, navigator, mcc)(mockConfig)
+  val controllerNoProperty: HowMuchIsTotalAnnualRentController = new HowMuchIsTotalAnnualRentController(view, fakeAuth, fakeData(None), mockSessionRepository, navigator, mcc)(mockConfig)
+  val controllerProperty: HowMuchIsTotalAnnualRentController = new HowMuchIsTotalAnnualRentController(view, fakeAuth, fakeDataProperty(Some(property),None), mockSessionRepository, navigator, mcc)(mockConfig)
+
+  lazy val userAnswersFilled: Option[UserAnswers] = UserAnswers("id").set(TellUsAboutYourRenewedAgreementPage, RenewedAgreement).toOption
 
   "TypeOfLeaseRenewalController" must {
     "method show" must {
       "Return OK and the correct view" in {
-        val result = controller.show(NormalMode)(authenticatedFakeRequest())
+        val result = controllerProperty.show(NormalMode)(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
         content must include(pageTitle)
       }
       "Return NotFoundException when property is not found in the mongo" in {
-        mockRequestWithoutProperty()
+        when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(None))
         val exception = intercept[NotFoundException] {
-          await(controller.show(NormalMode)(authenticatedFakeRequest()))
+          await(controllerNoProperty.show(NormalMode)(authenticatedFakeRequest))
         }
-        exception.getMessage contains "Couldn't find property in mongo" mustBe true
+        exception.getMessage contains "Could not find answers in backend mongo" mustBe true
       }
     }
 
     "method submit" must {
       "Return OK and the correct view" in {
+
+       lazy val filledController : HowMuchIsTotalAnnualRentController = HowMuchIsTotalAnnualRentController(
+         view, fakeAuth, fakeDataProperty(Some(property),userAnswersFilled), mockSessionRepository, navigator, mcc
+       )
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val fakePostRequest =  FakeRequest(routes.HowMuchIsTotalAnnualRentController.submit(NormalMode))
           .withFormUrlEncodedBody(("how–much–is–total–annual–rent-value", "10000"))
           .withHeaders(HeaderNames.authorisation -> "Bearer 1")
 
-        val result = controller.submit(NormalMode)(authenticatedFakeRequest(fakePostRequest))
+        val result = filledController.submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.CheckRentFreePeriodController.show(NormalMode).url)
       }
       "Return BAD_REQUEST for missing input and the correct view" in {
-        mockRequest()
-        val fakePostRequest = FakeRequest(routes.WhatTypeOfLeaseRenewalController.submit(NormalMode))
+        val fakePostRequest = FakeRequest(routes.HowMuchIsTotalAnnualRentController.submit(NormalMode))
           .withFormUrlEncodedBody(("how–much–is–total–annual–rent-value", ""))
           .withHeaders(HeaderNames.authorisation -> "Bearer 1")
 
-        val result = controller.submit()(authenticatedFakeRequest(fakePostRequest))
+        val result = controllerProperty.submit()(authenticatedFakePostRequest(fakePostRequest))
         status(result) mustBe BAD_REQUEST
       }
       "Return Exception if no address is in the mongo" in {
-        mockRequestWithoutProperty()
         val fakePostRequest = FakeRequest(routes.WhatTypeOfLeaseRenewalController.submit(NormalMode))
           .withFormUrlEncodedBody(("how–much–is–total–annual–rent-value", ""))
           .withHeaders(HeaderNames.authorisation -> "Bearer 1")
         val exception = intercept[NotFoundException] {
-          await(controller.submit(NormalMode)(authenticatedFakeRequest(fakePostRequest)))
+          await(controllerNoProperty.submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest)))
         }
-        exception.getMessage contains "Couldn't find property in mongo" mustBe true
+        exception.getMessage contains "Could not find answers in backend mongo" mustBe true
       }
     }
   }

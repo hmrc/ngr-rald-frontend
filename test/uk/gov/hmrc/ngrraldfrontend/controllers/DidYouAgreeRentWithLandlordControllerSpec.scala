@@ -35,31 +35,30 @@ import scala.concurrent.Future
 class DidYouAgreeRentWithLandlordControllerSpec  extends ControllerSpecSupport {
   val pageTitle = "Did you agree the rent with your landlord or their agent?"
   val view: DidYouAgreeRentWithLandlordView = inject[DidYouAgreeRentWithLandlordView]
-  val controller: DidYouAgreeRentWithLandlordController = new DidYouAgreeRentWithLandlordController(view, mockAuthJourney, fakeData(None), mockSessionRepository, navigator, mcc)(mockConfig, ec)
+  val controllerNoProperty: DidYouAgreeRentWithLandlordController = new DidYouAgreeRentWithLandlordController(view, fakeAuth, fakeData(None), mockSessionRepository, navigator, mcc)(mockConfig, ec)
+  val controllerProperty: DidYouAgreeRentWithLandlordController = new DidYouAgreeRentWithLandlordController(view, fakeAuth, fakeDataProperty(Some(property), None), mockSessionRepository, navigator, mcc)(mockConfig, ec)
 
   "Did you agree rent with landlord controller" must {
     "method show" must {
       "Return OK and the correct view" in {
-        when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(Some(RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property))))
-        val result = controller.show()(authenticatedFakeRequest())
+        val result = controllerProperty.show(NormalMode)(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
         content must include(pageTitle)
       }
       "Return NotFoundException when property is not found in the mongo" in {
-        mockRequestWithoutProperty()
+        when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(None))
         val exception = intercept[NotFoundException] {
-          await(controller.show(NormalMode)(authenticatedFakeRequest()))
+          await(controllerNoProperty.show(NormalMode)(authenticatedFakeRequest))
         }
-        exception.getMessage contains "Couldn't find property in mongo" mustBe true
+        exception.getMessage contains "Could not find answers in backend mongo" mustBe true
       }
     }
 
     "method submit" must {
-      "Return OK and the correct view after submitting with written radio button" in {
-        when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(Some(RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property))))
-        mockRequest(hasCredId = true)
-        val result = controller.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.DidYouAgreeRentWithLandlordController.submit(NormalMode))
+      "Return OK and the correct view after submitting with YesTheLandlord radio button" in {
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        val result = controllerProperty.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.DidYouAgreeRentWithLandlordController.submit(NormalMode))
           .withFormUrlEncodedBody(("did-you-agree-rent-with-landlord-radio", "YesTheLandlord"))
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -68,21 +67,19 @@ class DidYouAgreeRentWithLandlordControllerSpec  extends ControllerSpecSupport {
         status(result) mustBe SEE_OTHER
         redirectLocation(result) shouldBe Some(routes.CheckRentFreePeriodController.show(NormalMode).url)
       }
-      "Return OK and the correct view after submitting with verbal radio button" in {
-        when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(Some(RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property))))
-        mockRequest(hasCredId = true)
-        val result = controller.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.WhatTypeOfAgreementController.submit(NormalMode))
+      "Return OK and the correct view after submitting with NoACourtSet radio button" in {
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        val result = controllerProperty.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.DidYouAgreeRentWithLandlordController.submit(NormalMode))
           .withFormUrlEncodedBody(("did-you-agree-rent-with-landlord-radio", "NoACourtSet"))
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
-          result.header.headers.get("Location") shouldBe Some("/ngr-rald-frontend/do-you-have-a-rent-free-period")
+          result.header.headers.get("Location") shouldBe Some("/ngr-rald-frontend/did-the-court-set-an-interim-rent")
         })
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.CheckRentFreePeriodController.show(NormalMode).url)
+        redirectLocation(result) shouldBe Some(routes.RentInterimController.show(NormalMode).url)
       }
       "Return Form with Errors when no radio button is selected" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.WhatTypeOfAgreementController.submit(NormalMode))
+        val result = controllerProperty.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.DidYouAgreeRentWithLandlordController.submit(NormalMode))
           .withFormUrlEncodedBody(("did-you-agree-rent-with-landlord-radio", ""))
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -93,13 +90,13 @@ class DidYouAgreeRentWithLandlordControllerSpec  extends ControllerSpecSupport {
         content must include(pageTitle)
       }
       "Return Exception if no address is in the mongo" in {
-        mockRequestWithoutProperty()
+
         val exception = intercept[NotFoundException] {
-          await(controller.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.WhatTypeOfAgreementController.submit(NormalMode))
+          await(controllerNoProperty.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.DidYouAgreeRentWithLandlordController.submit(NormalMode))
             .withFormUrlEncodedBody(("did-you-agree-rent-with-landlord-radio", ""))
             .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some("")))))
         }
-        exception.getMessage contains "Couldn't find property in mongo" mustBe true
+        exception.getMessage contains "Could not find answers in backend mongo" mustBe true
       }
     }
   }

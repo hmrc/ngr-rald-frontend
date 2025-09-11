@@ -29,5 +29,6 @@ class MockAppConfig(val runModeConfiguration: Configuration) extends AppConfig {
   override def getString(key: String): String = ""
 
   override val timeToLive: String = "3"
+  override val cacheTtl: Long = 8
 }
 

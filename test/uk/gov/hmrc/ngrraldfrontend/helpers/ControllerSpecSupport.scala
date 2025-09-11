@@ -20,69 +20,72 @@ import org.mockito.Mockito.when
 import play.api.mvc.*
 import uk.gov.hmrc.auth.core.Nino
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction, FakeDataRetrievalAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction, FakeAuthenticatedRequest, FakeDataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.connectors.NGRConnector
 import uk.gov.hmrc.ngrraldfrontend.models.AuthenticatedUserRequest
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.models.UserAnswers
+import uk.gov.hmrc.ngrraldfrontend.models.requests.OptionalDataRequest
+import uk.gov.hmrc.ngrraldfrontend.models.vmvProperty.VMVProperty
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 
 import scala.concurrent.{ExecutionContext, Future}
 
 trait ControllerSpecSupport extends TestSupport {
-  val mockPropertyLinkingAction: PropertyLinkingAction = mock[PropertyLinkingAction]
+  val mockGetData: DataRetrievalAction = mock[DataRetrievalAction]
   val mockAuthJourney: AuthRetrievals = mock[AuthRetrievals]
   val mockSessionRepository: SessionRepository = mock[SessionRepository]
-  def fakeData(answers: Option[UserAnswers]) = new FakeDataRetrievalAction(answers)
+  def fakeData(answers: Option[UserAnswers]) = new FakeDataRetrievalAction(answers, None)
+  def fakeDataProperty(property: Option[VMVProperty], answers: Option[UserAnswers]) = new FakeDataRetrievalAction(answers, property)
   val navigator: Navigator = inject[Navigator]
   val mockInputText: InputText = inject[InputText]
   val mockNgrConnector: NGRConnector = mock[NGRConnector]
   implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
-  mockRequest()
+  val fakeAuth = new FakeAuthenticatedRequest(mcc.parsers.defaultBodyParser)
 
 
-  def mockRequest(hasCredId: Boolean = false, hasNino: Boolean = true): Unit =
-    when(mockAuthJourney andThen mockPropertyLinkingAction) thenReturn new ActionBuilder[AuthenticatedUserRequest, AnyContent] {
-      override def invokeBlock[A](request: Request[A], block: AuthenticatedUserRequest[A] => Future[Result]): Future[Result] = {
-        val authRequest = AuthenticatedUserRequest(
-          request,
-          None,
-          None,
-          Some("user@email.com"),
-          Some(property),
-          if (hasCredId) Some("1234") else None,
-          None,
-          None,
-          nino = if (hasNino) Nino(hasNino = true, Some("AA000003D")) else Nino(hasNino = false, None)
-        )
-        block(authRequest)
-      }
-
-      override def parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
-
-      override protected def executionContext: ExecutionContext = ec
-    }
-
-
-  def mockRequestWithoutProperty(hasCredId: Boolean = false, hasNino: Boolean = true): Unit =
-    when(mockAuthJourney andThen mockPropertyLinkingAction) thenReturn new ActionBuilder[AuthenticatedUserRequest, AnyContent] {
-      override def invokeBlock[A](request: Request[A], block: AuthenticatedUserRequest[A] => Future[Result]): Future[Result] = {
-        val authRequest = AuthenticatedUserRequest(
-          request,
-          None,
-          None,
-          Some("user@email.com"),
-          None,
-          if (hasCredId) Some("1234") else None,
-          None,
-          None,
-          nino = if (hasNino) Nino(hasNino = true, Some("AA000003D")) else Nino(hasNino = false, None)
-        )
-        block(authRequest)
-      }
-
-      override def parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
-
-      override protected def executionContext: ExecutionContext = ec
-    }
+  //  def mockRequest(hasCredId: Boolean = false, hasNino: Boolean = true): Unit =
+//    when(mockAuthJourney andThen mockGetData) thenReturn new ActionBuilder[AuthenticatedUserRequest, AnyContent] {
+//      override def invokeBlock[A](request: Request[A], block: AuthenticatedUserRequest[A] => Future[Result]): Future[Result] = {
+//        val authRequest = AuthenticatedUserRequest(
+//          request,
+//          None,
+//          None,
+//          Some("user@email.com"),
+//          Some(property),
+//          if (hasCredId) Some("1234") else None,
+//          None,
+//          None,
+//          nino = if (hasNino) Nino(hasNino = true, Some("AA000003D")) else Nino(hasNino = false, None)
+//        )
+//        block(authRequest)
+//      }
+//
+//      override def parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
+//
+//      override protected def executionContext: ExecutionContext = ec
+//    }
+//
+//
+//  def mockRequestWithoutProperty(hasCredId: Boolean = false, hasNino: Boolean = true): Unit =
+//    when(mockAuthJourney andThen mockGetData) thenReturn new ActionBuilder[AuthenticatedUserRequest, AnyContent] {
+//      override def invokeBlock[A](request: Request[A], block: AuthenticatedUserRequest[A] => Future[Result]): Future[Result] = {
+//        val authRequest = AuthenticatedUserRequest(
+//          request,
+//          None,
+//          None,
+//          Some("user@email.com"),
+//          None,
+//          if (hasCredId) Some("1234") else None,
+//          None,
+//          None,
+//          nino = if (hasNino) Nino(hasNino = true, Some("AA000003D")) else Nino(hasNino = false, None)
+//        )
+//        block(authRequest)
+//      }
+//
+//      override def parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
+//
+//      override protected def executionContext: ExecutionContext = ec
+//    }
 }

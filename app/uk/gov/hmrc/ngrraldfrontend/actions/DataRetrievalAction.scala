@@ -16,8 +16,10 @@
 
 package uk.gov.hmrc.ngrraldfrontend.actions
 
-import play.api.mvc.ActionTransformer
+import play.api.mvc.Results.Redirect
+import play.api.mvc.{ActionTransformer, Result}
 import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
+import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.connectors.NGRConnector
 import uk.gov.hmrc.ngrraldfrontend.models.AuthenticatedUserRequest
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
@@ -30,8 +32,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class DataRetrievalActionImpl @Inject()(
                                          val sessionRepository: SessionRepository,
-                                         ngrConnector: NGRConnector
-                                       )(implicit val executionContext: ExecutionContext) extends DataRetrievalAction {
+                                         ngrConnector: NGRConnector,
+                                         appConfig: AppConfig
+                                       )(implicit val executionContext: ExecutionContext) extends DataRetrievalAction  {
 
   override protected def transform[A](request: AuthenticatedUserRequest[A]): Future[OptionalDataRequest[A]] = {
 

@@ -16,21 +16,27 @@
 
 package uk.gov.hmrc.ngrraldfrontend.actions
 
-import models.UserAnswers
+import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.helpers.TestData
 import uk.gov.hmrc.ngrraldfrontend.models.AuthenticatedUserRequest
 import uk.gov.hmrc.ngrraldfrontend.models.requests.{IdentifierRequest, OptionalDataRequest}
+import uk.gov.hmrc.ngrraldfrontend.models.UserAnswers
+import uk.gov.hmrc.ngrraldfrontend.models.vmvProperty.VMVProperty
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class FakeDataRetrievalAction(answers: Option[UserAnswers]) extends DataRetrievalAction with TestData {
+class FakeDataRetrievalAction(answers: Option[UserAnswers], propertyOpt: Option[VMVProperty]) extends DataRetrievalAction with TestData {
 
   override protected def executionContext: ExecutionContext =
     scala.concurrent.ExecutionContext.Implicits.global
 
   override protected def transform[A](request: AuthenticatedUserRequest[A]): Future[OptionalDataRequest[A]] = {
-    Future.successful(
-      OptionalDataRequest(request.request, request.credId, answers, property)
-    )
+    propertyOpt match {
+      case Some(value) =>  Future.successful(
+        OptionalDataRequest(request.request, request.credId.getOrElse(""), answers, property)
+      )
+      case None => throw new NotFoundException("Could not find answers in backend mongo")
+    }
+     
   }
 }
