@@ -21,14 +21,16 @@ import play.api.data.Mapping
 import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import java.time.format.{DateTimeFormatter, TextStyle}
 import java.util.Locale
 
 final case class NGRDate(day: String, month: String, year: String) {
   lazy val ngrDate: LocalDate = LocalDate.of(year.toInt, month.toInt, day.toInt)
 
   def makeString: String = {
-    s"$year-$month-$day"
+    val monthStr = f"${month.toInt}%02d"
+    val dayStr = f"${day.toInt}%02d"
+    s"$year-$monthStr-$dayStr"
   }
 }
 
@@ -37,14 +39,8 @@ object NGRDate {
 
 
   def formatDate(dateString: String): String = {
-    val parts = dateString.split("-").map(_.toInt)
-    val year = parts(0)
-    val month = f"${parts(1)}%02d"
-    val day = f"${parts(2)}%02d"
-    val paddedDate = s"$year-$month-$day"
-    val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-    val outputFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)
-    val date = LocalDate.parse(paddedDate, inputFormatter)
+    val date = LocalDate.parse(dateString)
+    val outputFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.UK)
     date.format(outputFormatter)
   }
 
@@ -78,3 +74,13 @@ case object MonthAndYear extends DateErrorKeys
 case object DayAndYear extends DateErrorKeys
 
 case object Required extends DateErrorKeys
+
+def errorKeys(pageName: String, whichDate: String): Map[DateErrorKeys, String] = Map(
+  Required     -> s"$pageName.$whichDate.required.error",
+  DayAndMonth  -> s"$pageName.$whichDate.dayAndMonth.required.error",
+  DayAndYear   -> s"$pageName.$whichDate.dayAndYear.required.error",
+  MonthAndYear -> s"$pageName.$whichDate.monthAndYear.required.error",
+  Day          -> s"$pageName.$whichDate.day.required.error",
+  Month        -> s"$pageName.$whichDate.month.required.error",
+  Year         -> s"$pageName.$whichDate.year.required.error"
+)

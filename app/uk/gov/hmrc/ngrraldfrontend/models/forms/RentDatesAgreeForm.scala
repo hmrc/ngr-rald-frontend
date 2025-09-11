@@ -27,18 +27,8 @@ case class RentDatesAgreeForm(dateInput: NGRDate)
 
 object RentDatesAgreeForm extends CommonFormValidators with Mappings with DateMappings{
   implicit val format: OFormat[RentDatesAgreeForm] = Json.format[RentDatesAgreeForm]
-  
-  private def errorKeys(whichDate: String): Map[DateErrorKeys, String] = Map(
-    Required -> s"rentDatesAgree.$whichDate.required.error",
-    DayAndMonth -> s"rentDatesAgree.$whichDate.day.month.required.error",
-    DayAndYear -> s"rentDatesAgree.$whichDate.day.year.required.error",
-    MonthAndYear -> s"rentDatesAgree.$whichDate.month.year.required.error",
-    Day -> s"rentDatesAgree.$whichDate.day.required.error",
-    Month -> s"rentDatesAgree.$whichDate.month.required.error",
-    Year -> s"rentDatesAgree.$whichDate.year.required.error"
-  )
 
-  private lazy val dateInput = "rentDatesAgreeInput"
+  private lazy val dateInput = "date"
 
   def unapply(agreedRentChangeForm: RentDatesAgreeForm): Option[NGRDate] = Some(agreedRentChangeForm.dateInput)
 
@@ -48,7 +38,7 @@ object RentDatesAgreeForm extends CommonFormValidators with Mappings with DateMa
         dateInput -> dateMapping
           .verifying(
             firstError(
-              isDateEmpty(errorKeys("date")),
+              isDateEmpty(errorKeys("rentDatesAgree", "date")),
               isDateValid("rentDatesAgree.date.invalid.error"),
               isDateAfter1900("rentDatesAgree.date.before.1900.error")
             )

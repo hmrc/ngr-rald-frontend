@@ -69,9 +69,9 @@ class RentDatesAgreeControllerSpec extends ControllerSpecSupport {
         mockRequest(hasCredId = true)
         val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeController.submit)
           .withFormUrlEncodedBody(
-            "rentDatesAgreeInput.day" -> "12",
-            "rentDatesAgreeInput.month" -> "12",
-            "rentDatesAgreeInput.year" -> "2026",
+            "date.day" -> "12",
+            "date.month" -> "12",
+            "date.year" -> "2026",
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -84,9 +84,9 @@ class RentDatesAgreeControllerSpec extends ControllerSpecSupport {
         mockRequest(hasCredId = true)
         val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeController.submit)
           .withFormUrlEncodedBody(
-            "rentDatesAgreeInput.day" -> "",
-            "rentDatesAgreeInput.month" -> "12",
-            "rentDatesAgreeInput.year" -> "2026",
+            "date.day" -> "",
+            "date.month" -> "12",
+            "date.year" -> "2026",
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -95,14 +95,15 @@ class RentDatesAgreeControllerSpec extends ControllerSpecSupport {
         status(result) mustBe BAD_REQUEST
         val content = contentAsString(result)
         content must include(pageTitle)
+        content must include("<a href=\"#date.day\">Date you agreed your rent must include a day.</a>")
       }
       "Return Form with Errors when no month is added" in {
         mockRequest(hasCredId = true)
         val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeController.submit)
           .withFormUrlEncodedBody(
-            "rentDatesAgreeInput.day" -> "12",
-            "rentDatesAgreeInput.month" -> "",
-            "rentDatesAgreeInput.year" -> "2026",
+            "date.day" -> "12",
+            "date.month" -> "",
+            "date.year" -> "2026",
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -111,14 +112,15 @@ class RentDatesAgreeControllerSpec extends ControllerSpecSupport {
         status(result) mustBe BAD_REQUEST
         val content = contentAsString(result)
         content must include(pageTitle)
+        content must include("<a href=\"#date.month\">Date you agreed your rent must include a month.</a>")
       }
       "Return Form with Errors when no year is added" in {
         mockRequest(hasCredId = true)
         val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeController.submit)
           .withFormUrlEncodedBody(
-            "rentDatesAgreeInput.day" -> "12",
-            "rentDatesAgreeInput.month" -> "12",
-            "rentDatesAgreeInput.year" -> "",
+            "date.day" -> "12",
+            "date.month" -> "12",
+            "date.year" -> "",
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -127,6 +129,7 @@ class RentDatesAgreeControllerSpec extends ControllerSpecSupport {
         status(result) mustBe BAD_REQUEST
         val content = contentAsString(result)
         content must include(pageTitle)
+        content must include("<a href=\"#date.year\">Date you agreed your rent must include a year.</a>")
       }
       "Return Exception if no address is in the mongo" in {
         mockRequestWithoutProperty()

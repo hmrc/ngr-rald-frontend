@@ -27,6 +27,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.forms.RentDatesAgreeForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentDatesAgreeForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
+import uk.gov.hmrc.ngrraldfrontend.utils.DateKeyFinder
 import uk.gov.hmrc.ngrraldfrontend.views.html.RentDatesAgreeView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -40,10 +41,11 @@ class RentDatesAgreeController @Inject()(rentDatesAgreeView: RentDatesAgreeView,
                                          hasLinkedProperties: PropertyLinkingAction,
                                          raldRepo: RaldRepo,
                                          mcc: MessagesControllerComponents
-                                        )(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
+                                        )(implicit appConfig: AppConfig, ec: ExecutionContext)
+  extends FrontendController(mcc) with I18nSupport with DateKeyFinder {
 
   def dateInput()(implicit messages: Messages): DateInput = DateInput(
-    id = "rentDatesAgreeInput",
+    id = "date",
     namePrefix = Some("rentDatesAgreeInput"),
     fieldset = Some(Fieldset(
       legend = Some(Legend(
@@ -75,14 +77,10 @@ class RentDatesAgreeController @Inject()(rentDatesAgreeView: RentDatesAgreeView,
         formWithErrors => {
           val correctedFormErrors = formWithErrors.errors.map { formError =>
             (formError.key, formError.messages) match
-              case (key, messages) if messages.contains("rentDatesAgree.date.month.required.error") =>
-                formError.copy(key = "rentDatesAgreeInput.month")
-              case (key, messages) if messages.contains("rentDatesAgree.date.month.year.required.error") =>
-                formError.copy(key = "rentDatesAgreeInput.month")
-              case (key, messages) if messages.contains("rentDatesAgree.date.year.required.error") =>
-                formError.copy(key = "rentDatesAgreeInput.year")
+              case (key, messages) if messages.head.contains("rentDatesAgree.date") =>
+                setCorrectKey(formError, "rentDatesAgree", "date")
               case _ =>
-                formError.copy(key = "rentDatesAgreeInput.day")
+                formError
           }
           val formWithCorrectedErrors = formWithErrors.copy(errors = correctedFormErrors)
           request.propertyLinking.map(property =>

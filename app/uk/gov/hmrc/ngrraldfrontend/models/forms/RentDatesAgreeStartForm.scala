@@ -28,16 +28,6 @@ final case class RentDatesAgreeStartForm(agreedDate: NGRDate, startPayingDate: N
 object RentDatesAgreeStartForm extends CommonFormValidators with DateMappings with Mappings {
   implicit val format: OFormat[RentDatesAgreeStartForm] = Json.format[RentDatesAgreeStartForm]
 
-  private def errorKeys(whichDate: String): Map[DateErrorKeys, String] = Map(
-    Required     -> s"rentDatesAgreeStart.$whichDate.required.error",
-    DayAndMonth  -> s"rentDatesAgreeStart.$whichDate.dayAndMonth.required.error",
-    DayAndYear   -> s"rentDatesAgreeStart.$whichDate.dayAndYear.required.error",
-    MonthAndYear -> s"rentDatesAgreeStart.$whichDate.monthAndYear.required.error",
-    Day          -> s"rentDatesAgreeStart.$whichDate.day.required.error",
-    Month        -> s"rentDatesAgreeStart.$whichDate.month.required.error",
-    Year         -> s"rentDatesAgreeStart.$whichDate.year.required.error"
-  )
-
   def unapply(rentDatesAgreeStartForm: RentDatesAgreeStartForm): Option[(NGRDate, NGRDate)] =
     Some(rentDatesAgreeStartForm.agreedDate, rentDatesAgreeStartForm.startPayingDate)
 
@@ -47,7 +37,7 @@ object RentDatesAgreeStartForm extends CommonFormValidators with DateMappings wi
         "agreedDate" -> dateMapping
           .verifying(
             firstError(
-              isDateEmpty(errorKeys("agreedDate")),
+              isDateEmpty(errorKeys("rentDatesAgreeStart", "agreedDate")),
               isDateValid("rentDatesAgreeStart.agreedDate.invalid.error"),
               isDateAfter1900("rentDatesAgreeStart.agreedDate.before.1900.error")
             )
@@ -55,7 +45,7 @@ object RentDatesAgreeStartForm extends CommonFormValidators with DateMappings wi
         "startPayingDate" -> dateMapping
           .verifying(
             firstError(
-              isDateEmpty(errorKeys("startPayingDate")),
+              isDateEmpty(errorKeys("rentDatesAgreeStart", "startPayingDate")),
               isDateValid("rentDatesAgreeStart.startPayingDate.invalid.error"),
               isDateAfter1900("rentDatesAgreeStart.startPayingDate.before.1900.error")
             )

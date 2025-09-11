@@ -35,7 +35,7 @@
 
  @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeStartController.submit, Symbol("autoComplete") -> "off") {
     @if(form.errors.nonEmpty) {
-      @govukErrorSummary(ErrorSummaryViewModel(form))
+      @govukErrorSummary(ErrorSummaryViewModel(form, Some("rentDatesAgreeStart"), Some(Seq("agreedDate", "startPayingDate"))))
     }
     <span class="govuk-caption-m">@selectedPropertyAddress</span>
     <h1 class="govuk-heading-l">@messages("rentDatesAgreeStart.title")</h1>
