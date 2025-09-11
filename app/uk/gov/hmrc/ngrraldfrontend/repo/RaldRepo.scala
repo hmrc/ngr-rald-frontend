@@ -242,4 +242,11 @@ case class RaldRepo @Inject()(mongo: MongoComponent,
       equal("credId.value", credId.value)
     ).headOption()
   }
+
+  def insertDoesYourRentIncludeParking(credId: CredId, radioValue: String): Future[Option[RaldUserAnswers]] = {
+    radioValue match {
+      case "Yes" => findAndUpdateByCredId(credId, Updates.set("doesYourRentIncludeParking", true))
+      case _ => findAndUpdateByCredId(credId, Updates.set("doesYourRentIncludeParking", false))
+    }
+  }
 }

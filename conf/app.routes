@@ -40,3 +40,5 @@ GET        /rent-dates-agree-start                          uk.gov.hmrc.ngrraldf
 POST       /rent-dates-agree-start                          uk.gov.hmrc.ngrraldfrontend.controllers.RentDatesAgreeStartController.submit
 GET        /what-rent-includes                              uk.gov.hmrc.ngrraldfrontend.controllers.WhatYourRentIncludesController.show
 POST       /what-rent-includes                              uk.gov.hmrc.ngrraldfrontend.controllers.WhatYourRentIncludesController.submit
+GET        /does-rent-include-parking-spaces-or-garages     uk.gov.hmrc.ngrraldfrontend.controllers.DoesYourRentIncludeParkingController.show
+POST       /does-rent-include-parking-spaces-or-garages     uk.gov.hmrc.ngrraldfrontend.controllers.DoesYourRentIncludeParkingController.submit
