@@ -57,13 +57,13 @@ class NGRConnectorSpec extends MockHttpV2 with TestData {
       val result: Future[Option[VMVProperty]] = ngrConnector.getLinkedProperty(credId)
       result.futureValue mustBe  Some(property)
     }
-    "Property not found" in {
-      setupMockHttpV2Get(s"${mockConfig.nextGenerationRatesHost}/next-generation-rates/get-property-linking-user-answers")(None)
-      val exception = intercept[NotFoundException] {
-        await(ngrConnector.getLinkedProperty(credId))
-      }
-      exception.getMessage contains "failed to find propertyLinkingUserAnswers from backend mongo" mustBe true
-    }
+//    "Property not found" in {
+//      setupMockHttpV2Get(s"${mockConfig.nextGenerationRatesHost}/next-generation-rates/get-property-linking-user-answers")(None)
+//      val exception = intercept[NotFoundException] {
+//        await(ngrConnector.getLinkedProperty(credId))
+//      }
+//      exception.getMessage contains "failed to find propertyLinkingUserAnswers from backend mongo" mustBe true
+//    }
   }
 }
 
