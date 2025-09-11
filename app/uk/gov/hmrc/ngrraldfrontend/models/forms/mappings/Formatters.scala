@@ -19,6 +19,8 @@ package uk.gov.hmrc.ngrraldfrontend.models.forms.mappings
 import play.api.data.FormError
 import play.api.data.format.Formatter
 
+import scala.util.control.Exception.nonFatalCatch
+
 trait Formatters {
 
   private[mappings] def stringFormatter(errorKey: String, args: Seq[String] = Seq.empty): Formatter[String] = new Formatter[String] {
@@ -32,5 +34,35 @@ trait Formatters {
 
     override def unbind(key: String, value: String): Map[String, String] =
       Map(key -> value)
+  }
+  
+  private[mappings] def intFormatter(
+                                      isRequired: Boolean,
+                                      requiredKey: String,
+                                      wholeNumberKey: String,
+                                      nonNumericKey: String,
+                                      args: Seq[String] = Seq.empty
+                                    ): Formatter[Int] = new Formatter[Int] {
+    val decimalRegexp = """^-?(\d*\.\d*)$"""
+    override def bind(key: String, data: Map[String, String]) = {
+      val rawValue = data.get(key).map(_.trim).filter(_.nonEmpty)
+      rawValue match {
+        case None =>
+          if (isRequired) {
+            Left(Seq(FormError(key, requiredKey, args)))
+          } else {
+            Left(Seq.empty) // Or Right(defaultValue) if you want to provide a default
+          }
+
+        case Some(s) if s.matches(decimalRegexp) =>
+          Left(Seq(FormError(key, wholeNumberKey, args)))
+        case Some(s) =>
+          nonFatalCatch
+            .either(s.replace(",", "").toInt)
+            .left.map(_ => Seq(FormError(key, nonNumericKey, args)))
+      }
+    }
+    override def unbind(key: String, value: Int) =
+      Map(key -> value.toString)
   }
 }

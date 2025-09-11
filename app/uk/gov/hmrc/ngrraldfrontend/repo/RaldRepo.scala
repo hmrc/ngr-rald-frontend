@@ -237,6 +237,16 @@ case class RaldRepo @Inject()(mongo: MongoComponent,
     findAndUpdateByCredId(credId, updates: _*)
   }
 
+  def insertHowManyParkingSpacesOrGaragesIncludedInRent(credId: CredId, uncoveredSpaces: Int, coveredSpaces: Int, garages:Int): Future[Option[RaldUserAnswers]] = {
+    val updates = Seq(
+      Updates.set("howManyParkingSpacesOrGaragesIncludedInRent.uncoveredSpaces", uncoveredSpaces.toString()),
+      Updates.set("howManyParkingSpacesOrGaragesIncludedInRent.coveredSpaces", coveredSpaces.toString()),
+      Updates.set("howManyParkingSpacesOrGaragesIncludedInRent.garages", garages.toString())
+    )
+    findAndUpdateByCredId(credId, updates: _*)
+  }
+
+
   def findByCredId(credId: CredId): Future[Option[RaldUserAnswers]] = {
     collection.find(
       equal("credId.value", credId.value)

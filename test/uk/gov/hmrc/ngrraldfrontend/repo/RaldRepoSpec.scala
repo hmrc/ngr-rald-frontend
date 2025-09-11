@@ -470,6 +470,24 @@ class RaldRepoSpec extends TestSupport with TestData
       ))))
     }
 
+    "insert how many parking spaces or garages included in rent with 1 uncoveredSpaces" in {
+      await(repository.insertHowManyParkingSpacesOrGaragesIncludedInRent(credId, uncoveredSpaces =  1, coveredSpaces = 0, garages = 0))
+      val actual = await(repository.findByCredId(credId))
+      actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, howManyParkingSpacesOrGaragesIncludedInRent = Some(HowManyParkingSpacesOrGarages(uncoveredSpaces = "1", coveredSpaces = "0", garages = "0"))))
+    }
+
+    "insert how many parking spaces or garages included in rent with 1 coveredSpaces" in {
+      await(repository.insertHowManyParkingSpacesOrGaragesIncludedInRent(credId, uncoveredSpaces = 0, coveredSpaces = 1, garages = 0))
+      val actual = await(repository.findByCredId(credId))
+      actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, howManyParkingSpacesOrGaragesIncludedInRent = Some(HowManyParkingSpacesOrGarages(uncoveredSpaces = "0", coveredSpaces = "1", garages = "0"))))
+    }
+
+    "insert how many parking spaces or garages included in rent with 1 garage" in {
+      await(repository.insertHowManyParkingSpacesOrGaragesIncludedInRent(credId, uncoveredSpaces = 0, coveredSpaces = 0, garages = 1))
+      val actual = await(repository.findByCredId(credId))
+      actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, howManyParkingSpacesOrGaragesIncludedInRent = Some(HowManyParkingSpacesOrGarages(uncoveredSpaces = "0", coveredSpaces = "0", garages = "1"))))
+    }
+
     "credId doesn't exist in mongoDB" in {
       val actual = await(repository.findByCredId(credId2))
       actual mustBe None

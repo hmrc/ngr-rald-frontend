@@ -324,3 +324,18 @@ whatYourRentIncludes.radio.6.required = Select yes if your rent includes service
 #DoesYourRentIncludeParking
 doesYourRentIncludeParking.title = Does your rent include parking spaces or garages?
 doesYourRentIncludeParking.empty.error = Select yes if your rent includes parking spaces or garages
+
+#HowManyParkingSpacesOrGaragesIncludedInRent
+howManyParkingSpacesOrGaragesIncludedInRent.title = How many parking spaces or garages are included in your rent?
+howManyParkingSpacesOrGaragesIncludedInRent.hint = If spaces are in communal car park and you do not have a set number of spaces, provide an approximate number of spaces
+howManyParkingSpacesOrGaragesIncludedInRent.uncoveredSpaces.label = Uncovered spaces
+howManyParkingSpacesOrGaragesIncludedInRent.coveredSpaces.label = Covered spaces
+howManyParkingSpacesOrGaragesIncludedInRent.garages.label = Garages
+
+howManyParkingSpacesOrGaragesIncludedInRent.error.required = Total number of uncovered spaces, covered spaces and garages included in your rent must be more than 0
+howManyParkingSpacesOrGaragesIncludedInRent.uncoveredSpaces.wholeNum.error = Number of Uncovered parking spaces included in your rent must be a number, like 9
+howManyParkingSpacesOrGaragesIncludedInRent.coveredSpaces.wholeNum.error = Number of covered parking spaces included in your rent must be a number, like 9
+howManyParkingSpacesOrGaragesIncludedInRent.garages.wholeNum.error = Number of garages included in your rent must be a number, like 9
+howManyParkingSpacesOrGaragesIncludedInRent.uncoveredSpaces.tooHigh.error = Number of uncovered parking spaces included in your rent must be 9,999 or less
+howManyParkingSpacesOrGaragesIncludedInRent.coveredSpaces.tooHigh.error = Number of covered parking spaces included in your rent must be 9,999 or less
+howManyParkingSpacesOrGaragesIncludedInRent.garages.tooHigh.error = Number of  garages included in your rent must be 9,999 or less
