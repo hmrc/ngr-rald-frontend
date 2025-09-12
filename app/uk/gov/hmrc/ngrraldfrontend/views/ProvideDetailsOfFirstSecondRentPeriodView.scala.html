@@ -46,7 +46,8 @@ saveAndContinueButton: saveAndContinueButton
     @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfFirstSecondRentPeriodController.submit, Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form))
+            @govukErrorSummary(ErrorSummaryViewModel(form, Some("provideDetailsOfFirstSecondRentPeriod"),
+                Some(Seq("first.startDate", "first.endDate", "second.startDate", "second.endDate"))))
         }
 
         <span class="govuk-caption-m">@selectedPropertyAddress</span>

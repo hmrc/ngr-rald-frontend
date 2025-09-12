@@ -26,7 +26,7 @@ import scala.util.Try
 
 final case class HowMuchIsTotalAnnualRentForm(annualRent: BigDecimal)
 
-object HowMuchIsTotalAnnualRentForm {
+object HowMuchIsTotalAnnualRentForm extends CommonFormValidators {
   implicit val format: OFormat[HowMuchIsTotalAnnualRentForm] = Json.format[HowMuchIsTotalAnnualRentForm]
 
   private lazy val annualRent = "how–much–is–total–annual–rent-value"
@@ -36,29 +36,21 @@ object HowMuchIsTotalAnnualRentForm {
 
 
   def unapply(howMuchIsTotalAnnualRentForm: HowMuchIsTotalAnnualRentForm): Option[BigDecimal] = Some(howMuchIsTotalAnnualRentForm.annualRent)
-  
-  def bigDecimalWithFormatError: Formatter[BigDecimal] = new Formatter[BigDecimal] {
-    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], BigDecimal] = {
-      data.get(key).filter(_.nonEmpty) match {
-        case Some(value) =>
-          Try(BigDecimal(value)).toEither.left.map(_ =>
-            Seq(FormError(key, annualRentFormatError))
-          )
-        case None =>
-          Left(Seq(FormError(key, annualRentEmptyError)))
-      }
-    }
-    override def unbind(key: String, value: BigDecimal): Map[String, String] =
-      Map(key -> value.toString())
-  }
-
-  val annualRentFormMapping: (String, Mapping[BigDecimal]) =
-    annualRent -> of(bigDecimalWithFormatError)
-      .verifying(annualRentMaxError, _ <= BigDecimal("9999999.99"))
 
   val form: Form[HowMuchIsTotalAnnualRentForm] = Form(
     mapping(
-      annualRentFormMapping
+      annualRent -> text()
+        .transform[String](_.strip(), identity)
+        .verifying(
+          firstError(
+            isNotEmpty(annualRent, annualRentEmptyError),
+            regexp(amountRegex.pattern(), annualRentFormatError)
+          )
+        )
+        .transform[BigDecimal](BigDecimal(_), _.toString)
+        .verifying(
+          maximumValue[BigDecimal](BigDecimal("9999999.99"), annualRentMaxError)
+        )
     )(HowMuchIsTotalAnnualRentForm.apply)(HowMuchIsTotalAnnualRentForm.unapply)
   )
   

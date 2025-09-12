@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.ngrraldfrontend.models.forms
 
-import play.api.data.Forms.{mapping, of}
+import play.api.data.Forms.{bigDecimal, mapping, of, optional, text}
 import play.api.data.format.Formatter
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.data.{Form, FormError}
@@ -37,31 +37,21 @@ final case class ProvideDetailsOfFirstSecondRentPeriodForm(
                                 secondHowMuchIsRent: BigDecimal,
                               )
 
-object ProvideDetailsOfFirstSecondRentPeriodForm extends CommonFormValidators with Mappings with DateMappings{
+object ProvideDetailsOfFirstSecondRentPeriodForm extends CommonFormValidators with Mappings with DateMappings {
   implicit val format: OFormat[ProvideDetailsOfFirstSecondRentPeriodForm] = Json.format[ProvideDetailsOfFirstSecondRentPeriodForm]
 
-  private def errorKeys(whichDate: String): Map[DateErrorKeys, String] = Map(
-    Required -> s"provideDetailsOfFirstSecondRentPeriod.$whichDate.required.error",
-    DayAndMonth -> s"provideDetailsOfFirstSecondRentPeriod.$whichDate.day.month.required.error",
-    DayAndYear -> s"provideDetailsOfFirstSecondRentPeriod.$whichDate.day.year.required.error",
-    MonthAndYear -> s"provideDetailsOfFirstSecondRentPeriod.$whichDate.month.year.required.error",
-    Day -> s"provideDetailsOfFirstSecondRentPeriod.$whichDate.day.required.error",
-    Month -> s"provideDetailsOfFirstSecondRentPeriod.$whichDate.month.required.error",
-    Year -> s"provideDetailsOfFirstSecondRentPeriod.$whichDate.year.required.error"
-  )
-
   private lazy val radioFirstPeriodRequiredError = "provideDetailsOfFirstSecondRentPeriod.firstPeriod.radio.error.required"
-  private val firstDateStartInput = "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date"
-  private val firstDateEndInput = "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date"
+  private val firstDateStartInput = "first.startDate"
+  private val firstDateEndInput = "first.endDate"
   private val firstRentPeriodRadio = "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio"
   private val RentPeriodAmount = "RentPeriodAmount"
   private val SecondRentPeriodAmount = "SecondRentPeriodAmount"
-  private val secondDateStartInput = "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date"
-  private val secondDateEndInput = "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date"
-  private lazy val annualRentEmptyError = "provideDetailsOfFirstSecondRentPeriod.secondPeriod.amount.error.required"
-  private lazy val provideDetailsOfFirstSecondRentPeriodSecondPeriodAmountFormatError = "provideDetailsOfFirstSecondRentPeriod.firstPeriod.amount.error.required"
+  private val secondDateStartInput = "second.startDate"
+  private val secondDateEndInput = "second.endDate"
+  private lazy val annualRentEmptyError = "provideDetailsOfFirstSecondRentPeriod.secondPeriod.amount.required.error"
+  private lazy val provideDetailsOfFirstSecondRentPeriodSecondPeriodAmountFormatError = "provideDetailsOfFirstSecondRentPeriod.firstPeriod.amount.required.error"
 
-
+  private val maxAmount: BigDecimal = BigDecimal("9999999.99")
   val messagesApi: MessagesApi = new DefaultMessagesApi()
   val lang: Lang = Lang.defaultLang
   val messages: Messages = MessagesImpl(lang, messagesApi)
@@ -69,14 +59,13 @@ object ProvideDetailsOfFirstSecondRentPeriodForm extends CommonFormValidators wi
   def unapply(provideDetailsOfFirstSecondRentPeriodForm: ProvideDetailsOfFirstSecondRentPeriodForm): Option[(
     NGRDate, NGRDate, String, Option[BigDecimal], NGRDate, NGRDate, BigDecimal)] =
     Some(
-      (provideDetailsOfFirstSecondRentPeriodForm.firstDateStartInput,
-        provideDetailsOfFirstSecondRentPeriodForm.firstDateEndInput,
-        provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodRadio,
-        provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodAmount,
-        provideDetailsOfFirstSecondRentPeriodForm.secondDateStartInput,
-        provideDetailsOfFirstSecondRentPeriodForm.secondDateEndInput,
-        provideDetailsOfFirstSecondRentPeriodForm.secondHowMuchIsRent,
-      )
+      provideDetailsOfFirstSecondRentPeriodForm.firstDateStartInput,
+      provideDetailsOfFirstSecondRentPeriodForm.firstDateEndInput,
+      provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodRadio,
+      provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodAmount,
+      provideDetailsOfFirstSecondRentPeriodForm.secondDateStartInput,
+      provideDetailsOfFirstSecondRentPeriodForm.secondDateEndInput,
+      provideDetailsOfFirstSecondRentPeriodForm.secondHowMuchIsRent
     )
 
 
@@ -114,8 +103,10 @@ object ProvideDetailsOfFirstSecondRentPeriodForm extends CommonFormValidators wi
 
   private def isOptionalBigDecimalEmptyOrInvalid[A]: Constraint[A] =
     Constraint((input: A) =>
+      println(Console.GREEN + "*************** " + Console.RESET)
       val provideDetailsOfFirstSecondRentPeriodForm = input.asInstanceOf[ProvideDetailsOfFirstSecondRentPeriodForm]
-      if (provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodRadio.equals("yesPayedRent") && provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodAmount.getOrElse(None) == None)
+      println(Console.GREEN + "*************** " + provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodRadio + Console.RESET)
+      if (provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodRadio.equals("yesPayedRent"))// && provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodAmount.isEmpty)
         Invalid(provideDetailsOfFirstSecondRentPeriodSecondPeriodAmountFormatError)
       else
         Valid
@@ -128,34 +119,38 @@ object ProvideDetailsOfFirstSecondRentPeriodForm extends CommonFormValidators wi
         firstDateStartInput -> dateMapping
           .verifying(
             firstError(
-              isDateEmpty(errorKeys("first.startDate")),
-              isDateValid("provideDetailsOfFirstSecondRentPeriod.startDate.format.error"),
+              isDateEmpty(errorKeys("provideDetailsOfFirstSecondRentPeriod", "first.startDate")),
+              isDateValid("provideDetailsOfFirstSecondRentPeriod.startDate.invalid.error"),
               isDateAfter1900("provideDetailsOfFirstSecondRentPeriod.first.startDate.before.1900.error")
             )
           ),
         firstDateEndInput -> dateMapping
           .verifying(
             firstError(
-              isDateEmpty(errorKeys("first.endDate")),
-              isDateValid("provideDetailsOfFirstSecondRentPeriod.endDate.format.error"),
+              isDateEmpty(errorKeys("provideDetailsOfFirstSecondRentPeriod", "first.endDate")),
+              isDateValid("provideDetailsOfFirstSecondRentPeriod.first.endDate.invalid.error"),
               isDateAfter1900("provideDetailsOfFirstSecondRentPeriod.first.endDate.before.1900.error")
             )
           ),
         firstRentPeriodRadio -> text(radioFirstPeriodRequiredError),
-        RentPeriodAmount -> of(optionalBigDecimalWithFormatError),
+        RentPeriodAmount -> optional(
+          text()
+            .transform[BigDecimal](BigDecimal(_), _.toString)
+        ),
+//        RentPeriodAmount -> of(optionalBigDecimalWithFormatError),
         secondDateStartInput -> dateMapping
           .verifying(
             firstError(
-              isDateEmpty(errorKeys("second.startDate")),
-              isDateValid("provideDetailsOfFirstSecondRentPeriod.startDate.format.error"),
+              isDateEmpty(errorKeys("provideDetailsOfFirstSecondRentPeriod", "second.startDate")),
+              isDateValid("provideDetailsOfFirstSecondRentPeriod.startDate.invalid.error"),
               isDateAfter1900("provideDetailsOfFirstSecondRentPeriod.second.startDate.before.1900.error")
             )
           ),
         secondDateEndInput -> dateMapping
           .verifying(
             firstError(
-              isDateEmpty(errorKeys("second.endDate")),
-              isDateValid("provideDetailsOfFirstSecondRentPeriod.endDate.format.error"),
+              isDateEmpty(errorKeys("provideDetailsOfFirstSecondRentPeriod", "second.endDate")),
+              isDateValid("provideDetailsOfFirstSecondRentPeriod.second.endDate.invalid.error"),
               isDateAfter1900("provideDetailsOfFirstSecondRentPeriod.second.endDate.before.1900.error")
             )
           ),

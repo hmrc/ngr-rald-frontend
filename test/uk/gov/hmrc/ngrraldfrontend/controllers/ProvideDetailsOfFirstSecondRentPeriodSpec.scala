@@ -599,21 +599,21 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
         mockRequest(hasCredId = true)
         val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.ProvideDetailsOfFirstSecondRentPeriodController.submit)
           .withFormUrlEncodedBody(
-            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.day" -> "12",
-            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.month" -> "12",
-            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.year" -> "2026",
-            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.day" -> "12",
-            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.month" -> "12",
-            "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.year" -> "2026",
+            "first.startDate.day" -> "12",
+            "first.startDate.month" -> "12",
+            "first.startDate.year" -> "2026",
+            "first.endDate.day" -> "12",
+            "first.endDate.month" -> "12",
+            "first.endDate.year" -> "2026",
             "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "yesPayedRent",
-            "RentPeriodAmount" -> "20000.00",
-            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.day" -> "12",
-            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.month" -> "12",
-            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.year" -> "2026",
-            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.day" -> "12",
-            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.month" -> "12",
-            "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.year" -> "2026",
-            "SecondRentPeriodAmount" -> "hello",
+            "RentPeriodAmount" -> "",
+            "second.startDate.day" -> "12",
+            "second.startDate.month" -> "12",
+            "second.startDate.year" -> "2026",
+            "second.endDate.day" -> "12",
+            "second.endDate.month" -> "12",
+            "second.endDate.year" -> "2026",
+            "SecondRentPeriodAmount" -> "",
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
