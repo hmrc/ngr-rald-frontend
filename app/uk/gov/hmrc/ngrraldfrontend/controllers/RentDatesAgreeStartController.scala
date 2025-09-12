@@ -25,6 +25,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.forms.RentDatesAgreeStartForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentDatesAgreeStartForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
+import uk.gov.hmrc.ngrraldfrontend.utils.DateKeyFinder
 import uk.gov.hmrc.ngrraldfrontend.views.html.RentDatesAgreeStartView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -37,7 +38,8 @@ class RentDatesAgreeStartController @Inject()(view: RentDatesAgreeStartView,
                                               hasLinkedProperties: PropertyLinkingAction,
                                               raldRepo: RaldRepo,
                                               mcc: MessagesControllerComponents
-                                             )(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
+                                             )(implicit appConfig: AppConfig, ec: ExecutionContext)
+  extends FrontendController(mcc) with I18nSupport with DateKeyFinder {
 
   def show: Action[AnyContent] = {
     (authenticate andThen hasLinkedProperties).async { implicit request =>
@@ -55,18 +57,10 @@ class RentDatesAgreeStartController @Inject()(view: RentDatesAgreeStartView,
           formWithErrors =>
             val correctedFormErrors = formWithErrors.errors.map { formError =>
               (formError.key, formError.messages) match
-                case (key, messages) if messages.contains("rentDatesAgreeStart.agreedDate.day.required.error") =>
-                  formError.copy(key = "agreedDate.day")
-                case (key, messages) if messages.contains("rentDatesAgreeStart.agreedDate.month.required.error") =>
-                  formError.copy(key = "agreedDate.month")
-                case (key, messages) if messages.contains("rentDatesAgreeStart.agreedDate.year.required.error") =>
-                  formError.copy(key = "agreedDate.year")
-                case (key, messages) if messages.contains("rentDatesAgreeStart.startPayingDate.day.required.error") =>
-                  formError.copy(key = "startPayingDate.day")
-                case (key, messages) if messages.contains("rentDatesAgreeStart.startPayingDate.month.required.error") =>
-                  formError.copy(key = "startPayingDate.month")
-                case (key, messages) if messages.contains("rentDatesAgreeStart.startPayingDate.year.required.error") =>
-                  formError.copy(key = "startPayingDate.year")
+                case (key, messages) if messages.head.contains("rentDatesAgreeStart.agreedDate") =>
+                  setCorrectKey(formError, "rentDatesAgreeStart", "agreedDate")
+                case (key, messages) if messages.head.contains("rentDatesAgreeStart.startPayingDate") =>
+                  setCorrectKey(formError, "rentDatesAgreeStart", "startPayingDate")
                 case _ =>
                   formError
             }

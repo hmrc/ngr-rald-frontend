@@ -23,9 +23,9 @@ import uk.gov.hmrc.ngrraldfrontend.models.NGRDate
 
 class RentDatesAgreeFormSpec extends AnyWordSpec with Matchers {
 
-  val fieldDay = "rentDatesAgreeInput.day"
-  val fieldMonth = "rentDatesAgreeInput.month"
-  val fieldYear = "rentDatesAgreeInput.year"
+  val fieldDay = "date.day"
+  val fieldMonth = "date.month"
+  val fieldYear = "date.year"
   val requiredDayError = "rentDatesAgree.date.day.required.error"
   val requiredMonthError = "rentDatesAgree.date.month.required.error"
   val requiredYearError = "rentDatesAgree.date.year.required.error"
@@ -51,7 +51,7 @@ class RentDatesAgreeFormSpec extends AnyWordSpec with Matchers {
       val boundForm = RentDatesAgreeForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("rentDatesAgreeInput", requiredDayError))
+      boundForm.errors should contain(FormError("date", requiredDayError))
     }
     "return an error when month value is missing" in {
       val data = Map(
@@ -62,7 +62,7 @@ class RentDatesAgreeFormSpec extends AnyWordSpec with Matchers {
       val boundForm = RentDatesAgreeForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("rentDatesAgreeInput", requiredMonthError))
+      boundForm.errors should contain(FormError("date", requiredMonthError))
     }
     "return an error when year value is missing" in {
       val data = Map(
@@ -73,7 +73,7 @@ class RentDatesAgreeFormSpec extends AnyWordSpec with Matchers {
       val boundForm = RentDatesAgreeForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("rentDatesAgreeInput", requiredYearError))
+      boundForm.errors should contain(FormError("date", requiredYearError))
     }
 
 

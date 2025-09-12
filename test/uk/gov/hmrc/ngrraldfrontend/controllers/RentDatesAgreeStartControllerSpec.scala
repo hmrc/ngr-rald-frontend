@@ -90,8 +90,8 @@ class RentDatesAgreeStartControllerSpec extends ControllerSpecSupport {
         status(result) mustBe BAD_REQUEST
         val content = contentAsString(result)
         content must include(pageTitle)
-        content must include("<a href=\"#agreedDate\">Enter the date you agreed your rent</a>")
-        content must include("<a href=\"#startPayingDate\">Enter the date you will start paying rent</a>")
+        content must include("<a href=\"#agreedDate.day\">Enter the date you agreed your rent</a>")
+        content must include("<a href=\"#startPayingDate.day\">Enter the date you will start paying rent</a>")
       }
       "Return Form with Errors when agreed and start paying dates are missing day" in {
         val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeStartController.submit)
@@ -143,6 +143,57 @@ class RentDatesAgreeStartControllerSpec extends ControllerSpecSupport {
         content must include(pageTitle)
         content must include("<a href=\"#agreedDate.year\">Date you agreed your rent must include a year</a>")
         content must include("<a href=\"#startPayingDate.year\">Date you will start paying rent must include a year</a>")
+      }
+      "Return Form with Errors when agreed and start paying dates month is invalid" in {
+        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeStartController.submit)
+          .withFormUrlEncodedBody(
+            "agreedDate.day" -> "50",
+            "agreedDate.month" -> "AS",
+            "agreedDate.year" -> "2025",
+            "startPayingDate.day" -> "35",
+            "startPayingDate.month" -> "AS",
+            "startPayingDate.year" -> "2025"
+          )
+          .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
+        status(result) mustBe BAD_REQUEST
+        val content = contentAsString(result)
+        content must include(pageTitle)
+        content must include("<a href=\"#agreedDate.month\">Date you agreed your rent must be a real date</a>")
+        content must include("<a href=\"#startPayingDate.month\">Date you will start paying rent must be a real date</a>")
+      }
+      "Return Form with Errors when agreed and start paying dates day is invalid" in {
+        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeStartController.submit)
+          .withFormUrlEncodedBody(
+            "agreedDate.day" -> "30",
+            "agreedDate.month" -> "2",
+            "agreedDate.year" -> "2020",
+            "startPayingDate.day" -> "29",
+            "startPayingDate.month" -> "2",
+            "startPayingDate.year" -> "2025"
+          )
+          .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
+        status(result) mustBe BAD_REQUEST
+        val content = contentAsString(result)
+        content must include(pageTitle)
+        content must include("<a href=\"#agreedDate.day\">Date you agreed your rent must be a real date</a>")
+        content must include("<a href=\"#startPayingDate.day\">Date you will start paying rent must be a real date</a>")
+      }
+      "Return Form with Errors when agreed and start paying dates day is before 1900" in {
+        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeStartController.submit)
+          .withFormUrlEncodedBody(
+            "agreedDate.day" -> "30",
+            "agreedDate.month" -> "5",
+            "agreedDate.year" -> "1899",
+            "startPayingDate.day" -> "29",
+            "startPayingDate.month" -> "3",
+            "startPayingDate.year" -> "1800"
+          )
+          .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
+        status(result) mustBe BAD_REQUEST
+        val content = contentAsString(result)
+        content must include(pageTitle)
+        content must include("<a href=\"#agreedDate.year\">Date you agreed your rent must be 1900 or after</a>")
+        content must include("<a href=\"#startPayingDate.year\">Date you will start paying rent must be 1900 or after</a>")
       }
       "Return Exception if no address is in the mongo" in {
         mockRequestWithoutProperty()
