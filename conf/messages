@@ -333,6 +333,7 @@ howManyParkingSpacesOrGaragesIncludedInRent.coveredSpaces.label = Covered spaces
 howManyParkingSpacesOrGaragesIncludedInRent.garages.label = Garages
 
 howManyParkingSpacesOrGaragesIncludedInRent.error.required = Total number of uncovered spaces, covered spaces and garages included in your rent must be more than 0
+howManyParkingSpacesOrGaragesIncludedInRent.allFields.error.required = Enter how many parking spaces or garages are included in your rent
 howManyParkingSpacesOrGaragesIncludedInRent.uncoveredSpaces.wholeNum.error = Number of Uncovered parking spaces included in your rent must be a number, like 9
 howManyParkingSpacesOrGaragesIncludedInRent.coveredSpaces.wholeNum.error = Number of covered parking spaces included in your rent must be a number, like 9
 howManyParkingSpacesOrGaragesIncludedInRent.garages.wholeNum.error = Number of garages included in your rent must be a number, like 9

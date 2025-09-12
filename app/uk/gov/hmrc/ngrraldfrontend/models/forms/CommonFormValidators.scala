@@ -48,6 +48,14 @@ trait CommonFormValidators {
           Invalid(errorKey, maximum)
         }
     }
+    
+  protected def isNotEmpty(value: String, errorKey: String): Constraint[String] =
+    Constraint {
+      case str if str.trim.nonEmpty =>
+        Valid 
+      case _                        =>
+        Invalid(errorKey, value)
+    }
 
   protected def isDateEmpty[A](errorKeys: Map[DateErrorKeys, String]): Constraint[A] =
     Constraint((input: A) =>

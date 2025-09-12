@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.ngrraldfrontend.controllers
 
-import play.api.data.Form
+import play.api.data.{Form, FormError, Forms}
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.HtmlFormat
@@ -73,13 +73,24 @@ class HowManyParkingSpacesOrGaragesIncludedInRentController @Inject()(howManyPar
     (authenticate andThen hasLinkedProperties).async { implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
+
+          val uncoveredSpaces = FormError(key = "uncoveredSpaces", message = "howManyParkingSpacesOrGaragesIncludedInRent.error.required")
+          val coveredSpaces = FormError(key = "coveredSpaces", message = "howManyParkingSpacesOrGaragesIncludedInRent.error.required")
+          val garages = FormError(key = "garages", message = "howManyParkingSpacesOrGaragesIncludedInRent.error.required")
+
+          val validationCheck = formWithErrors.errors.head match {
+            case value if value.key.isEmpty && value.messages.contains("howManyParkingSpacesOrGaragesIncludedInRent.error.required") => formWithErrors.copy(errors = Seq(uncoveredSpaces, coveredSpaces, garages))
+            case _ => formWithErrors
+          }
+
+          val formWithCorrectedErrors = validationCheck
           request.propertyLinking.map(property =>
             Future.successful(BadRequest(howManyParkingSpacesOrGaragesIncludedInRentView(
-              form = formWithErrors,
+              form = formWithCorrectedErrors,
               propertyAddress = property.addressFull,
-              uncoveredSpaces = generateInputText(formWithErrors, "uncoveredSpaces"),
-              coveredSpaces = generateInputText(formWithErrors, "coveredSpaces"),
-              garages = generateInputText(formWithErrors, "garages")
+              uncoveredSpaces = generateInputText(formWithCorrectedErrors, "uncoveredSpaces"),
+              coveredSpaces = generateInputText(formWithCorrectedErrors, "coveredSpaces"),
+              garages = generateInputText(formWithCorrectedErrors, "garages")
             )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
         },
         rentAmount =>

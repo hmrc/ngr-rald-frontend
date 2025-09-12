@@ -66,11 +66,14 @@ class HowManyParkingSpacesOrGaragesIncludedInRentControllerSpec extends Controll
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.CheckRentFreePeriodController.show.url)
       }
-      "Return BAD_REQUEST for missing input and the correct view" in {
+      "Return BAD_REQUEST for inputting 0 in all fields and the correct view" in {
         mockRequest()
-        val fakePostRequest = FakeRequest(routes.HowManyParkingSpacesOrGaragesIncludedInRentController.submit)
-          .withFormUrlEncodedBody(("how–much–is–total–annual–rent-value", ""))
-          .withHeaders(HeaderNames.authorisation -> "Bearer 1")
+        val fakePostRequest =  FakeRequest(routes.HowManyParkingSpacesOrGaragesIncludedInRentController.submit)
+          .withFormUrlEncodedBody(
+            "uncoveredSpaces" -> "0",
+            "coveredSpaces" -> "0",
+            "garages" -> "0"
+          ).withHeaders(HeaderNames.authorisation -> "Bearer 1")
 
         val result = controller.submit()(authenticatedFakeRequest(fakePostRequest))
         status(result) mustBe BAD_REQUEST
@@ -78,8 +81,11 @@ class HowManyParkingSpacesOrGaragesIncludedInRentControllerSpec extends Controll
       "Return Exception if no address is in the mongo" in {
         mockRequestWithoutProperty()
         val fakePostRequest = FakeRequest(routes.HowManyParkingSpacesOrGaragesIncludedInRentController.submit)
-          .withFormUrlEncodedBody(("how–much–is–total–annual–rent-value", ""))
-          .withHeaders(HeaderNames.authorisation -> "Bearer 1")
+          .withFormUrlEncodedBody(
+            "uncoveredSpaces" -> "",
+            "coveredSpaces" -> "0",
+            "garages" -> "0"
+          ).withHeaders(HeaderNames.authorisation -> "Bearer 1")
         val exception = intercept[NotFoundException] {
           await(controller.submit()(authenticatedFakeRequest(fakePostRequest)))
         }
