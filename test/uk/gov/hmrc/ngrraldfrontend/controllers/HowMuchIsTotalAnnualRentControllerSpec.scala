@@ -23,10 +23,10 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import uk.gov.hmrc.http.{HeaderNames, NotFoundException}
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
-import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.RenewedAgreement
+import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.{NewAgreement, RenewedAgreement}
 import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.pages.TellUsAboutYourRenewedAgreementPage
+import uk.gov.hmrc.ngrraldfrontend.pages.{TellUsAboutYourNewAgreementPage, TellUsAboutYourRenewedAgreementPage}
 import uk.gov.hmrc.ngrraldfrontend.views.html.HowMuchIsTotalAnnualRentView
 
 import scala.concurrent.Future
@@ -37,8 +37,11 @@ class HowMuchIsTotalAnnualRentControllerSpec extends ControllerSpecSupport {
   val view: HowMuchIsTotalAnnualRentView = inject[HowMuchIsTotalAnnualRentView]
   val controllerNoProperty: HowMuchIsTotalAnnualRentController = new HowMuchIsTotalAnnualRentController(view, fakeAuth, fakeData(None), mockSessionRepository, navigator, mcc)(mockConfig)
   val controllerProperty: HowMuchIsTotalAnnualRentController = new HowMuchIsTotalAnnualRentController(view, fakeAuth, fakeDataProperty(Some(property),None), mockSessionRepository, navigator, mcc)(mockConfig)
-
-  lazy val userAnswersFilled: Option[UserAnswers] = UserAnswers("id").set(TellUsAboutYourRenewedAgreementPage, RenewedAgreement).toOption
+  lazy val renewedAgreementAnswers: Option[UserAnswers] = UserAnswers("id").set(TellUsAboutYourRenewedAgreementPage, RenewedAgreement).toOption
+  lazy val newAgreementAnswers: Option[UserAnswers] = UserAnswers("id").set(TellUsAboutYourNewAgreementPage, NewAgreement).toOption
+  lazy val filledController: Option[UserAnswers] => HowMuchIsTotalAnnualRentController = answers => HowMuchIsTotalAnnualRentController(
+    view, fakeAuth, fakeDataProperty(Some(property), answers), mockSessionRepository, navigator, mcc
+  )
 
   "TypeOfLeaseRenewalController" must {
     "method show" must {
@@ -58,17 +61,24 @@ class HowMuchIsTotalAnnualRentControllerSpec extends ControllerSpecSupport {
     }
 
     "method submit" must {
-      "Return OK and the correct view" in {
-
-       lazy val filledController : HowMuchIsTotalAnnualRentController = HowMuchIsTotalAnnualRentController(
-         view, fakeAuth, fakeDataProperty(Some(property),userAnswersFilled), mockSessionRepository, navigator, mcc
-       )
+      "Return OK and the correct view if its a renewedAgreement" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val fakePostRequest =  FakeRequest(routes.HowMuchIsTotalAnnualRentController.submit(NormalMode))
           .withFormUrlEncodedBody(("how–much–is–total–annual–rent-value", "10000"))
           .withHeaders(HeaderNames.authorisation -> "Bearer 1")
 
-        val result = filledController.submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
+        val result = filledController(renewedAgreementAnswers).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.DidYouAgreeRentWithLandlordController.show(NormalMode).url)
+      }
+      "Return OK and the correct view if its a newAgreement" in {
+
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        val fakePostRequest = FakeRequest(routes.HowMuchIsTotalAnnualRentController.submit(NormalMode))
+          .withFormUrlEncodedBody(("how–much–is–total–annual–rent-value", "10000"))
+          .withHeaders(HeaderNames.authorisation -> "Bearer 1")
+
+        val result = filledController(newAgreementAnswers).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.CheckRentFreePeriodController.show(NormalMode).url)
       }
