@@ -64,10 +64,10 @@ class DoesYourRentIncludeParkingControllerSpec extends ControllerSpecSupport {
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
-          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/do-you-have-a-rent-free-period")
+          result.header.headers.get("Location") mustBe Some("/how-many-parking-spaces-or-garages-included-in-rent")
         })
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.CheckRentFreePeriodController.show.url)
+        redirectLocation(result) mustBe Some(routes.HowManyParkingSpacesOrGaragesIncludedInRentController.show.url)
       }
       "Return OK and the correct view after submitting no" in {
         when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(Some(RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property))))

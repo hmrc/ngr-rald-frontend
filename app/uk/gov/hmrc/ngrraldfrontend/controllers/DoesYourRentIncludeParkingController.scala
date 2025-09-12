@@ -68,7 +68,7 @@ class DoesYourRentIncludeParkingController  @Inject()(doesYourRentIncludeParking
             radioValue = radioValue.radio
           )
           if (radioValue.radio == "Yes") {
-            Future.successful(Redirect(routes.CheckRentFreePeriodController.show.url))
+            Future.successful(Redirect(routes.HowManyParkingSpacesOrGaragesIncludedInRentController.show.url))
           } else {
             //TODO
             Future.successful(Redirect(routes.CheckRentFreePeriodController.show.url))
