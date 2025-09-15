@@ -19,15 +19,26 @@ package uk.gov.hmrc.ngrraldfrontend.models.forms
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationResult}
 import uk.gov.hmrc.ngrraldfrontend.models.*
 
+import java.util.regex.Pattern
 import scala.util.Try
 
 trait CommonFormValidators {
+  val amountRegex: Pattern = Pattern.compile("([0-9]+\\.[0-9]+|[0-9]+)")
+
   protected def firstError[A](constraints: Constraint[A]*): Constraint[A] =
     Constraint { input =>
       constraints
         .map(_.apply(input))
         .find(_ != Valid)
         .getOrElse(Valid)
+    }
+
+  protected def regexp(regex: String, errorKey: String): Constraint[String] =
+    Constraint {
+      case str if str.matches(regex) =>
+        Valid
+      case _ =>
+        Invalid(errorKey, regex)
     }
 
   protected def maxLength(maximum: Int, errorKey: String): Constraint[String] =
@@ -38,23 +49,23 @@ trait CommonFormValidators {
         Invalid(errorKey, maximum)
     }
 
-  protected def maximumValue[A](maximum: A, errorKey: String)(implicit ev: Ordering[A]): Constraint[A] =
-    Constraint {
-      input =>
-        import ev.*
-        if (input <= maximum) {
-          Valid
-        } else {
-          Invalid(errorKey, maximum)
-        }
-    }
-    
   protected def isNotEmpty(value: String, errorKey: String): Constraint[String] =
     Constraint {
       case str if str.trim.nonEmpty =>
-        Valid 
-      case _                        =>
+        Valid
+      case _ =>
         Invalid(errorKey, value)
+    }
+
+  protected def maximumValue[A](maximum: A, errorKey: String)(implicit ev: Ordering[A]): Constraint[A] =
+    Constraint { input =>
+      import ev._
+
+      if (input <= maximum) {
+        Valid
+      } else {
+        Invalid(errorKey, maximum)
+      }
     }
 
   protected def isDateEmpty[A](errorKeys: Map[DateErrorKeys, String]): Constraint[A] =

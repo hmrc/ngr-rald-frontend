@@ -21,7 +21,6 @@ import play.api.data.Forms.mapping
 import play.api.i18n.Messages
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.ngrraldfrontend.models.components.{NGRRadio, NGRRadioButtons, NGRRadioName}
-import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatTypeOfAgreementForm.text
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 
 case class AgreedRentChangeForm(radioValue: String)
@@ -37,7 +36,7 @@ object AgreedRentChangeForm extends Mappings {
   def form: Form[AgreedRentChangeForm] = {
     Form(
       mapping(
-        agreedRentChangeRadio -> text(radioUnselectedError)
+        agreedRentChangeRadio -> radioText(radioUnselectedError)
       )(AgreedRentChangeForm.apply)(AgreedRentChangeForm.unapply)
     )
   }

@@ -51,12 +51,17 @@ trait ErrorSummaryFluency {
       val messages = error.messages
       val key = error.key
       
-      if (pageNameOpt.isEmpty || fieldNameOpt.isEmpty)
+      if (pageNameOpt.isEmpty || fieldNameOpt.isEmpty) {
         Some(s"#${errorLinkOverrides.getOrElse(key, key)}")
-      else
-        fieldNameOpt.get.filter(messages.head.contains(_))
+      } else {
+        val matchedKeys: Seq[Option[String]] = fieldNameOpt.get.filter(messages.head.contains(_))
           .map(fieldName => matchingKey(form, key, messages, pageNameOpt.get, fieldName, errorLinkOverrides))
-          .head
+
+        if (matchedKeys.isEmpty)
+          Some(s"#${errorLinkOverrides.getOrElse(key, key)}")
+        else
+          matchedKeys.head
+      }
     }
 
     private def matchingKey(form: Form[_], key: String, messages: Seq[String], pageName: String, fieldName: String, errorLinkOverrides: Map[String, String]): Option[String] =

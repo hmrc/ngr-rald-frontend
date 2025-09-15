@@ -63,7 +63,7 @@ object WhatIsYourRentBasedOnForm extends CommonFormValidators with Mappings {
   def form: Form[WhatIsYourRentBasedOnForm] = {
     Form(
       mapping(
-        rentBasedOnRadio -> text(radioUnselectedError),
+        rentBasedOnRadio -> radioText(radioUnselectedError),
         rentBasedOnOther -> optional(
           play.api.data.Forms.text
             .transform[String](_.strip(), identity)

@@ -22,7 +22,6 @@ import play.api.i18n.Messages
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Legend, Text}
 import uk.gov.hmrc.ngrraldfrontend.models.components.{NGRRadio, NGRRadioName}
-import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreedRentChangeForm.text
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 
 case class RentInterimForm(radioValue: String)
@@ -38,7 +37,7 @@ object RentInterimForm extends Mappings {
   def form: Form[RentInterimForm] = {
     Form(
       mapping(
-        agreedRentChangeRadio -> text(radioUnselectedError)
+        agreedRentChangeRadio -> radioText(radioUnselectedError)
       )(RentInterimForm.apply)(RentInterimForm.unapply)
     )
   }

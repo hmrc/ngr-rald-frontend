@@ -20,7 +20,7 @@ import play.api.data.FieldMapping
 import play.api.data.Forms.of
 
 trait Mappings extends Formatters {
-  protected def text(errorKey: String = "error.required", args: Seq[String] = Seq.empty): FieldMapping[String] =
+  protected def radioText(errorKey: String = "error.required", args: Seq[String] = Seq.empty): FieldMapping[String] =
     of(stringFormatter(errorKey, args))
 
   protected def int(

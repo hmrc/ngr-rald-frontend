@@ -31,12 +31,14 @@ import uk.gov.hmrc.ngrraldfrontend.models.forms.ProvideDetailsOfFirstSecondRentP
 import uk.gov.hmrc.ngrraldfrontend.models.forms.ProvideDetailsOfFirstSecondRentPeriodForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
+import uk.gov.hmrc.ngrraldfrontend.utils.DateKeyFinder
 import uk.gov.hmrc.ngrraldfrontend.views.html.ProvideDetailsOfFirstSecondRentPeriodView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.math.BigDecimal.RoundingMode
 
 @Singleton
 class ProvideDetailsOfFirstSecondRentPeriodController @Inject()(view: ProvideDetailsOfFirstSecondRentPeriodView,
@@ -45,11 +47,12 @@ class ProvideDetailsOfFirstSecondRentPeriodController @Inject()(view: ProvideDet
                                                                 hasLinkedProperties: PropertyLinkingAction,
                                                                 raldRepo: RaldRepo,
                                                                 mcc: MessagesControllerComponents
-                                                               )(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
+                                                               )(implicit appConfig: AppConfig, ec: ExecutionContext)
+  extends FrontendController(mcc) with I18nSupport with DateKeyFinder {
 
   def firstDateStartInput()(implicit messages: Messages): DateInput = DateInput(
-    id = "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date",
-    namePrefix = Some("provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date"),
+    id = "first.startDate",
+    namePrefix = Some("first.startDate"),
     fieldset = Some(Fieldset(
       legend = Some(Legend(
         content = Text(messages("provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.label")),
@@ -64,8 +67,8 @@ class ProvideDetailsOfFirstSecondRentPeriodController @Inject()(view: ProvideDet
   )
 
   def firstDateEndInput()(implicit messages: Messages): DateInput = DateInput(
-    id = "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date",
-    namePrefix = Some("provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date"),
+    id = "first.endDate",
+    namePrefix = Some("first.endDate"),
     fieldset = Some(Fieldset(
       legend = Some(Legend(
         content = Text(messages("provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.label")),
@@ -109,8 +112,8 @@ class ProvideDetailsOfFirstSecondRentPeriodController @Inject()(view: ProvideDet
   }
 
   def secondDateStartInput()(implicit messages: Messages): DateInput = DateInput(
-    id = "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date",
-    namePrefix = Some("provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date"),
+    id = "second.startDate",
+    namePrefix = Some("second.startDate"),
     fieldset = Some(Fieldset(
       legend = Some(Legend(
         content = Text(messages("provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.label")),
@@ -125,8 +128,8 @@ class ProvideDetailsOfFirstSecondRentPeriodController @Inject()(view: ProvideDet
   )
 
   def secondDateEndInput()(implicit messages: Messages): DateInput = DateInput(
-    id = "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date",
-    namePrefix = Some("provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date"),
+    id = "second.endDate",
+    namePrefix = Some("second.endDate"),
     fieldset = Some(Fieldset(
       legend = Some(Legend(
         content = Text(messages("provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.label")),
@@ -164,6 +167,14 @@ class ProvideDetailsOfFirstSecondRentPeriodController @Inject()(view: ProvideDet
           formWithErrors =>
             val correctedFormErrors = formWithErrors.errors.map { formError =>
               (formError.key, formError.messages) match
+                case (key, messages) if messages.head.contains("provideDetailsOfFirstSecondRentPeriod.first.startDate") =>
+                  setCorrectKey(formError, "provideDetailsOfFirstSecondRentPeriod", "first.startDate")
+                case (key, messages) if messages.head.contains("provideDetailsOfFirstSecondRentPeriod.first.endDate") =>
+                  setCorrectKey(formError, "provideDetailsOfFirstSecondRentPeriod", "first.endDate")
+                case (key, messages) if messages.head.contains("provideDetailsOfFirstSecondRentPeriod.second.startDate") =>
+                  setCorrectKey(formError, "provideDetailsOfFirstSecondRentPeriod", "second.startDate")
+                case (key, messages) if messages.head.contains("provideDetailsOfFirstSecondRentPeriod.second.endDate") =>
+                  setCorrectKey(formError, "provideDetailsOfFirstSecondRentPeriod", "second.endDate")
                 case ("", messages) =>
                   formError.copy(key = "RentPeriodAmount")
                 case _ =>
@@ -187,7 +198,7 @@ class ProvideDetailsOfFirstSecondRentPeriodController @Inject()(view: ProvideDet
               provideDetailsOfFirstSecondRentPeriodForm.firstDateStartInput.makeString,
               provideDetailsOfFirstSecondRentPeriodForm.firstDateEndInput.makeString,
               provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodRadio,
-              provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodAmount,
+              provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodAmount.map(BigDecimal(_).setScale(2, RoundingMode.UP)).map(_.toString()),
               provideDetailsOfFirstSecondRentPeriodForm.secondDateStartInput.makeString,
               provideDetailsOfFirstSecondRentPeriodForm.secondDateEndInput.makeString,
               provideDetailsOfFirstSecondRentPeriodForm.secondHowMuchIsRent,

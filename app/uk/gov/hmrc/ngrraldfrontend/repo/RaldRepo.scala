@@ -129,7 +129,7 @@ case class RaldRepo @Inject()(mongo: MongoComponent,
                                firstDateStart: String,
                                firstDateEnd: String,
                                firstRentPeriodRadio: String,
-                               firstRentPeriodAmount: Option[BigDecimal],
+                               firstRentPeriodAmount: Option[String],
                                secondDateStart: String,
                                secondDateEnd: String,
                                secondHowMuchIsRent: BigDecimal
@@ -139,13 +139,14 @@ case class RaldRepo @Inject()(mongo: MongoComponent,
       Updates.set("provideDetailsOfFirstSecondRentPeriod.firstDateStart", firstDateStart),
       Updates.set("provideDetailsOfFirstSecondRentPeriod.firstDateEnd", firstDateEnd),
       Updates.set("provideDetailsOfFirstSecondRentPeriod.firstRentPeriodRadio", firstRentPeriodRadio match {
-        case answer if (answer == "yesPayedRent") => true
+        case "yesPayedRent" => true
         case _ => false
       }),
-      Updates.set("provideDetailsOfFirstSecondRentPeriod.firstRentPeriodAmount", firstRentPeriodAmount match {
-        case Some(value) => value.toString()
-        case _ => null
-      }),
+      firstRentPeriodRadio match
+        case "yesPayedRent" =>
+          Updates.set("provideDetailsOfFirstSecondRentPeriod.firstRentPeriodAmount", firstRentPeriodAmount.get)
+        case _ =>
+          Updates.unset("provideDetailsOfFirstSecondRentPeriod.firstRentPeriodAmount"),
       Updates.set("provideDetailsOfFirstSecondRentPeriod.secondDateStart", secondDateStart),
       Updates.set("provideDetailsOfFirstSecondRentPeriod.secondDateEnd", secondDateEnd),
       Updates.set("provideDetailsOfFirstSecondRentPeriod.secondHowMuchIsRent", secondHowMuchIsRent.toString)

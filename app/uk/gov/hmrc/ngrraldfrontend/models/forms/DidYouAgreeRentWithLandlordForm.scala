@@ -37,7 +37,7 @@ object DidYouAgreeRentWithLandlordForm extends Mappings {
   def form: Form[DidYouAgreeRentWithLandlordForm] = {
     Form(
       mapping(
-        didYouAgreeRentWithLandlordRadio -> text(radioUnselectedError)
+        didYouAgreeRentWithLandlordRadio -> radioText(radioUnselectedError)
       )(DidYouAgreeRentWithLandlordForm.apply)(DidYouAgreeRentWithLandlordForm.unapply)
     )
   }

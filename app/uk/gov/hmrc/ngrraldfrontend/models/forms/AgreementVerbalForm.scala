@@ -79,7 +79,7 @@ object AgreementVerbalForm extends CommonFormValidators with DateMappings with M
   def form: Form[AgreementVerbalForm] = {
     Form(
       mapping(
-        agreementVerbalRadio -> text(radioUnselectedError),
+        agreementVerbalRadio -> radioText(radioUnselectedError),
         "agreementStartDate" -> dateMapping
           .verifying(
             firstError(

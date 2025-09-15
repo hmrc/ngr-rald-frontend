@@ -286,7 +286,7 @@ class RaldRepoSpec extends TestSupport with TestData
         firstDateStart = "2025-01-01",
         firstDateEnd = "2025-01-31",
         firstRentPeriodRadio = "yesPayedRent",
-        firstRentPeriodAmount = Some(1000),
+        firstRentPeriodAmount = Some("1000"),
         secondDateStart = "2025-02-01",
         secondDateEnd = "2025-02-28",
         secondHowMuchIsRent = BigDecimal(1000)

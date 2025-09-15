@@ -17,7 +17,7 @@
 package uk.gov.hmrc.ngrraldfrontend.models.forms
 
 import play.api.data.Form
-import play.api.data.Forms.{mapping, optional}
+import play.api.data.Forms.{mapping, optional, text}
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.i18n.*
 import play.api.libs.json.{Json, OFormat}
@@ -69,11 +69,15 @@ object LandlordForm extends CommonFormValidators with Mappings{
   def form: Form[LandlordForm] = {
     Form(
       mapping(
-        landlord -> text(landlordNameEmptyError)
+        landlord -> text()
           .verifying(
-            maxLength(50, landlordNameTooLongError)
+            firstError(
+              isNotEmpty(landlord, landlordNameEmptyError),
+              maxLength(50, landlordNameTooLongError)
+            )
+            
           ),
-        landlordRadio -> text(radioUnselectedError),
+        landlordRadio -> radioText(radioUnselectedError),
         landlordOther -> optional(
           play.api.data.Forms.text
           .transform[String](_.strip(), identity)
