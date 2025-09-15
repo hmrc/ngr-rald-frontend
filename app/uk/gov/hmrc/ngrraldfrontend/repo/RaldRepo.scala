@@ -254,6 +254,13 @@ case class RaldRepo @Inject()(mongo: MongoComponent,
     findAndUpdateByCredId(credId, updates: _*)
   }
 
+  def insertInterimRentSetByTheCourt(credId: CredId, amount: BigDecimal, date: String) = {
+    val updates = Seq(
+      Updates.set("interimRentSetByTheCourt.amount", amount.toString()),
+      Updates.set("interimRentSetByTheCourt.date", date),
+    )
+    findAndUpdateByCredId(credId, updates: _*)
+  }
 
   def findByCredId(credId: CredId): Future[Option[RaldUserAnswers]] = {
     collection.find(

@@ -44,3 +44,5 @@ GET        /does-rent-include-parking-spaces-or-garages     uk.gov.hmrc.ngrraldf
 POST       /does-rent-include-parking-spaces-or-garages     uk.gov.hmrc.ngrraldfrontend.controllers.DoesYourRentIncludeParkingController.submit
 GET        /how-many-parking-spaces-or-garages-included-in-rent    uk.gov.hmrc.ngrraldfrontend.controllers.HowManyParkingSpacesOrGaragesIncludedInRentController.show
 POST       /how-many-parking-spaces-or-garages-included-in-rent    uk.gov.hmrc.ngrraldfrontend.controllers.HowManyParkingSpacesOrGaragesIncludedInRentController.submit
+GET        /interim-rent-set-by-court    uk.gov.hmrc.ngrraldfrontend.controllers.InterimRentSetByTheCourtController.show
+POST       /interim-rent-set-by-court    uk.gov.hmrc.ngrraldfrontend.controllers.InterimRentSetByTheCourtController.submit

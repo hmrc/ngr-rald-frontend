@@ -68,6 +68,17 @@ trait CommonFormValidators {
       }
     }
 
+  protected def isMonthYearEmpty[A](errorKeys: Map[DateErrorKeys, String]): Constraint[A] =
+    Constraint((input: A) =>
+      monthYearEmptyValidation(input.asInstanceOf[NGRMonthYear], errorKeys)
+    )
+
+  protected def isMonthYearValid[A](errorKey: String): Constraint[A] =
+    Constraint((input: A) =>
+      val date = input.asInstanceOf[NGRMonthYear]
+      monthYearValidation(date, errorKey)
+    )
+
   protected def isDateEmpty[A](errorKeys: Map[DateErrorKeys, String]): Constraint[A] =
     Constraint((input: A) =>
       dateEmptyValidation(input.asInstanceOf[NGRDate], errorKeys)
@@ -96,6 +107,13 @@ trait CommonFormValidators {
       case (false, false, true) => Invalid(errorKeys.get(Year).getOrElse(""))
       case (_, _, _) => Valid
 
+  protected def monthYearEmptyValidation(date: NGRMonthYear, errorKeys: Map[DateErrorKeys, String]): ValidationResult =
+    (date.month.isEmpty, date.year.isEmpty) match
+      case (true, true) => Invalid(errorKeys.get(Required).getOrElse(""))
+      case (true, false) => Invalid(errorKeys.get(Month).getOrElse(""))
+      case (false, true) => Invalid(errorKeys.get(Year).getOrElse(""))
+      case (false, false) => Valid
+
   protected def dateValidation(date: NGRDate, errorKey: String) =
     if (Try(date.ngrDate).isFailure || (Try(date.ngrDate).isSuccess && date.year.length > 4))
       Invalid(errorKey)
@@ -104,6 +122,12 @@ trait CommonFormValidators {
       
   private def dateAfter1900Validation(date: NGRDate, errorKey: String) =
     if (Try(date.ngrDate).isSuccess && date.year.toInt < 1900)
+      Invalid(errorKey)
+    else
+      Valid
+
+  protected def monthYearValidation(date: NGRMonthYear, errorKey: String) =
+    if (date.month.toInt > 11 || date.month.toInt + date.year.toInt)
       Invalid(errorKey)
     else
       Valid
