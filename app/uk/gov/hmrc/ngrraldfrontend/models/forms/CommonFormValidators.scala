@@ -68,25 +68,6 @@ trait CommonFormValidators {
       }
     }
 
-  protected def maximumValue[A](maximum: A, errorKey: String)(implicit ev: Ordering[A]): Constraint[A] =
-    Constraint {
-      input =>
-        import ev.*
-        if (input <= maximum) {
-          Valid
-        } else {
-          Invalid(errorKey, maximum)
-        }
-    }
-    
-  protected def isNotEmpty(value: String, errorKey: String): Constraint[String] =
-    Constraint {
-      case str if str.trim.nonEmpty =>
-        Valid 
-      case _                        =>
-        Invalid(errorKey, value)
-    }
-
   protected def isDateEmpty[A](errorKeys: Map[DateErrorKeys, String]): Constraint[A] =
     Constraint((input: A) =>
       dateEmptyValidation(input.asInstanceOf[NGRDate], errorKeys)
