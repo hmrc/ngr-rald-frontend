@@ -38,6 +38,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.math.BigDecimal.RoundingMode
 
 @Singleton
 class ProvideDetailsOfFirstSecondRentPeriodController @Inject()(view: ProvideDetailsOfFirstSecondRentPeriodView,
@@ -165,7 +166,6 @@ class ProvideDetailsOfFirstSecondRentPeriodController @Inject()(view: ProvideDet
         .fold(
           formWithErrors =>
             val correctedFormErrors = formWithErrors.errors.map { formError =>
-              println(Console.RED + "************** " + formWithErrors.errors + Console.RESET)
               (formError.key, formError.messages) match
                 case (key, messages) if messages.head.contains("provideDetailsOfFirstSecondRentPeriod.first.startDate") =>
                   setCorrectKey(formError, "provideDetailsOfFirstSecondRentPeriod", "first.startDate")
@@ -198,7 +198,7 @@ class ProvideDetailsOfFirstSecondRentPeriodController @Inject()(view: ProvideDet
               provideDetailsOfFirstSecondRentPeriodForm.firstDateStartInput.makeString,
               provideDetailsOfFirstSecondRentPeriodForm.firstDateEndInput.makeString,
               provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodRadio,
-              provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodAmount,
+              provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodAmount.map(BigDecimal(_).setScale(2, RoundingMode.UP)).map(_.toString()),
               provideDetailsOfFirstSecondRentPeriodForm.secondDateStartInput.makeString,
               provideDetailsOfFirstSecondRentPeriodForm.secondDateEndInput.makeString,
               provideDetailsOfFirstSecondRentPeriodForm.secondHowMuchIsRent,

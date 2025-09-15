@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.ngrraldfrontend.models.forms
 
-import play.api.data.Forms.{bigDecimal, mapping, of, optional, text}
+import play.api.data.Forms.{mapping, of, optional, text}
 import play.api.data.format.Formatter
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.data.{Form, FormError}
@@ -25,13 +25,15 @@ import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.ngrraldfrontend.models.*
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 
+import scala.math.BigDecimal.RoundingMode
+import scala.math.BigDecimal.RoundingMode.RoundingMode
 import scala.util.Try
 
 final case class ProvideDetailsOfFirstSecondRentPeriodForm(
                                 firstDateStartInput: NGRDate,
                                 firstDateEndInput: NGRDate,
                                 firstRentPeriodRadio: String,
-                                firstRentPeriodAmount: Option[BigDecimal],
+                                firstRentPeriodAmount: Option[String],
                                 secondDateStartInput: NGRDate,
                                 secondDateEndInput: NGRDate,
                                 secondHowMuchIsRent: BigDecimal,
@@ -49,7 +51,7 @@ object ProvideDetailsOfFirstSecondRentPeriodForm extends CommonFormValidators wi
   private val secondDateStartInput = "second.startDate"
   private val secondDateEndInput = "second.endDate"
   private lazy val annualRentEmptyError = "provideDetailsOfFirstSecondRentPeriod.secondPeriod.amount.required.error"
-  private lazy val provideDetailsOfFirstSecondRentPeriodSecondPeriodAmountFormatError = "provideDetailsOfFirstSecondRentPeriod.firstPeriod.amount.required.error"
+  private lazy val firstPeriodAmountEmptyError = "provideDetailsOfFirstSecondRentPeriod.firstPeriod.amount.required.error"
 
   private val maxAmount: BigDecimal = BigDecimal("9999999.99")
   val messagesApi: MessagesApi = new DefaultMessagesApi()
@@ -57,7 +59,7 @@ object ProvideDetailsOfFirstSecondRentPeriodForm extends CommonFormValidators wi
   val messages: Messages = MessagesImpl(lang, messagesApi)
 
   def unapply(provideDetailsOfFirstSecondRentPeriodForm: ProvideDetailsOfFirstSecondRentPeriodForm): Option[(
-    NGRDate, NGRDate, String, Option[BigDecimal], NGRDate, NGRDate, BigDecimal)] =
+    NGRDate, NGRDate, String, Option[String], NGRDate, NGRDate, BigDecimal)] =
     Some(
       provideDetailsOfFirstSecondRentPeriodForm.firstDateStartInput,
       provideDetailsOfFirstSecondRentPeriodForm.firstDateEndInput,
@@ -67,51 +69,24 @@ object ProvideDetailsOfFirstSecondRentPeriodForm extends CommonFormValidators wi
       provideDetailsOfFirstSecondRentPeriodForm.secondDateEndInput,
       provideDetailsOfFirstSecondRentPeriodForm.secondHowMuchIsRent
     )
-
-
-  def bigDecimalWithFormatError: Formatter[BigDecimal] = new Formatter[BigDecimal] {
-    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], BigDecimal] = {
-      data.get(key).filter(_.nonEmpty) match {
-        case Some(value) =>
-          Try(BigDecimal(value)).toEither.left.map(_ =>
-            Seq(FormError(key, annualRentEmptyError))
-          )
-        case None =>
-          Left(Seq(FormError(key, annualRentEmptyError)))
-      }
-    }
-    override def unbind(key: String, value: BigDecimal): Map[String, String] =
-      Map(key -> value.toString())
-  }
-
-  private def optionalBigDecimalWithFormatError: Formatter[Option[BigDecimal]] = new Formatter[Option[BigDecimal]] {
-    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[BigDecimal]] = {
-      data.get(key).map(_.trim).filter(_.nonEmpty) match {
-        case Some(value) =>
-          Try(BigDecimal(value)).toEither match {
-            case Right(parsed) => Right(Some(parsed))
-            case Left(_) => Left(Seq(FormError(key, "provideDetailsOfFirstSecondRentPeriod.firstPeriod.amount.error.required")))
-          }
-        case None => Right(None) // Field is optional and not provided
-      }
-    }
-
-    override def unbind(key: String, value: Option[BigDecimal]): Map[String, String] =
-      value.map(v => Map(key -> v.toString)).getOrElse(Map.empty)
-  }
-
-
-  private def isOptionalBigDecimalEmptyOrInvalid[A]: Constraint[A] =
+  
+  private def firstRentPeriodAmountValidation[A]: Constraint[A] =
     Constraint((input: A) =>
-      println(Console.GREEN + "*************** " + Console.RESET)
       val provideDetailsOfFirstSecondRentPeriodForm = input.asInstanceOf[ProvideDetailsOfFirstSecondRentPeriodForm]
-      println(Console.GREEN + "*************** " + provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodRadio + Console.RESET)
-      if (provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodRadio.equals("yesPayedRent"))// && provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodAmount.isEmpty)
-        Invalid(provideDetailsOfFirstSecondRentPeriodSecondPeriodAmountFormatError)
+      val rentAmount: Option[String] = provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodAmount
+      if (provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodRadio.equals("yesPayedRent")) {
+        if (rentAmount.isEmpty)
+          Invalid(firstPeriodAmountEmptyError)
+        else if (!rentAmount.get.matches(amountRegex.pattern()))
+          Invalid("provideDetailsOfFirstSecondRentPeriod.firstPeriod.amount.invalid.error")
+        else if (BigDecimal(rentAmount.get) > maxAmount)
+          Invalid("provideDetailsOfFirstSecondRentPeriod.firstPeriod.amount.max.error")
+        else
+          Valid
+      }
       else
         Valid
     )
-
 
   def form: Form[ProvideDetailsOfFirstSecondRentPeriodForm] = {
     Form(
@@ -132,12 +107,11 @@ object ProvideDetailsOfFirstSecondRentPeriodForm extends CommonFormValidators wi
               isDateAfter1900("provideDetailsOfFirstSecondRentPeriod.first.endDate.before.1900.error")
             )
           ),
-        firstRentPeriodRadio -> text(radioFirstPeriodRequiredError),
+        firstRentPeriodRadio -> radioText(radioFirstPeriodRequiredError),
         RentPeriodAmount -> optional(
-          text()
-            .transform[BigDecimal](BigDecimal(_), _.toString)
+          radioText()
+            .transform[String](_.strip(), identity)
         ),
-//        RentPeriodAmount -> of(optionalBigDecimalWithFormatError),
         secondDateStartInput -> dateMapping
           .verifying(
             firstError(
@@ -154,13 +128,20 @@ object ProvideDetailsOfFirstSecondRentPeriodForm extends CommonFormValidators wi
               isDateAfter1900("provideDetailsOfFirstSecondRentPeriod.second.endDate.before.1900.error")
             )
           ),
-        SecondRentPeriodAmount -> of(bigDecimalWithFormatError)
-      )(ProvideDetailsOfFirstSecondRentPeriodForm.apply)(ProvideDetailsOfFirstSecondRentPeriodForm.unapply)
-        .verifying(
-          firstError(
-            isOptionalBigDecimalEmptyOrInvalid
+        SecondRentPeriodAmount -> text()
+          .transform[String](_.strip(), identity)
+          .verifying(
+            firstError(
+              isNotEmpty(SecondRentPeriodAmount, annualRentEmptyError),
+              regexp(amountRegex.pattern(), "provideDetailsOfFirstSecondRentPeriod.secondPeriod.amount.invalid.error")
+            )
           )
-        )
+          .transform[BigDecimal](BigDecimal(_).setScale(2, RoundingMode.UP), _.toString)
+          .verifying(
+            maximumValue[BigDecimal](maxAmount, "provideDetailsOfFirstSecondRentPeriod.firstPeriod.amount.max.error")
+          )
+      )(ProvideDetailsOfFirstSecondRentPeriodForm.apply)(ProvideDetailsOfFirstSecondRentPeriodForm.unapply)
+        .verifying(firstRentPeriodAmountValidation)
     )
   }
 }

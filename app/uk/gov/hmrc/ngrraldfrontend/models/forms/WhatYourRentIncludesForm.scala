@@ -22,7 +22,6 @@ import play.api.i18n.Messages
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Legend, Text}
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
-import uk.gov.hmrc.ngrraldfrontend.models.forms.LandlordForm.text
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 
 final case class WhatYourRentIncludesForm(
@@ -127,12 +126,12 @@ object WhatYourRentIncludesForm extends CommonFormValidators with Mappings{
   def form: Form[WhatYourRentIncludesForm] = {
     Form(
       mapping(
-      livingAccommodationRadio -> text(livingAccommodationRadioError),
-      rentPartAddressRadio -> text(rentPartAddressRadioError),
-      rentEmptyShellRadio -> text(rentEmptyShellRadioError),
-      rentIncBusinessRatesRadio -> text(rentIncBusinessRatesRadioError),
-      rentIncWaterChargesRadio -> text(rentIncWaterChargesRadioError),
-      rentIncServiceRadio -> text(rentIncServiceRadioError)
+      livingAccommodationRadio -> radioText(livingAccommodationRadioError),
+      rentPartAddressRadio -> radioText(rentPartAddressRadioError),
+      rentEmptyShellRadio -> radioText(rentEmptyShellRadioError),
+      rentIncBusinessRatesRadio -> radioText(rentIncBusinessRatesRadioError),
+      rentIncWaterChargesRadio -> radioText(rentIncWaterChargesRadioError),
+      rentIncServiceRadio -> radioText(rentIncServiceRadioError)
       )(WhatYourRentIncludesForm.apply)(WhatYourRentIncludesForm.unapply)
     )
   }

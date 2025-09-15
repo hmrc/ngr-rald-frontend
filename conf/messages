@@ -231,8 +231,8 @@ provideDetailsOfFirstSecondRentPeriod.second.startDate.before.1900.error = Start
 
 provideDetailsOfFirstSecondRentPeriod.second.endDate.required.error = Enter the end date of the second rent period
 provideDetailsOfFirstSecondRentPeriod.second.endDate.day.required.error = End date of the second rent period must include a day
-provideDetailsOfFirstSecondRentPeriod.second.endDate.month.required.error = End date of the first rent period must include a month
-provideDetailsOfFirstSecondRentPeriod.second.endDate.year.required.error = End date of the first rent period must include a year
+provideDetailsOfFirstSecondRentPeriod.second.endDate.month.required.error = End date of the second rent period must include a month
+provideDetailsOfFirstSecondRentPeriod.second.endDate.year.required.error = End date of the second rent period must include a year
 provideDetailsOfFirstSecondRentPeriod.second.endDate.day.month.required.error = End date of the second rent period must include a day and month
 provideDetailsOfFirstSecondRentPeriod.second.endDate.day.year.required.error = End date of the second rent period must include a day and year
 provideDetailsOfFirstSecondRentPeriod.second.endDate.month.year.required.error = End date of the second rent period must include a month and year
@@ -244,8 +244,8 @@ provideDetailsOfFirstSecondRentPeriod.firstPeriod.amount.required.error = Enter 
 provideDetailsOfFirstSecondRentPeriod.firstPeriod.amount.invalid.error = Rent for the first rent period must be a number, like 30,000
 provideDetailsOfFirstSecondRentPeriod.firstPeriod.amount.max.error = Rent for the first rent period must be £9,999,999.99 or less
 provideDetailsOfFirstSecondRentPeriod.secondPeriod.amount.required.error = Enter the rent for the second rent period, in pounds.
-provideDetailsOfFirstSecondRentPeriod.secondPeriod.amount.invalid.error = Rent for the Second rent period must be a number, like 30,000
-provideDetailsOfFirstSecondRentPeriod.secondPeriod.amount.max.error = Rent for the Second rent period must be £9,999,999.99 or less
+provideDetailsOfFirstSecondRentPeriod.secondPeriod.amount.invalid.error = Rent for the second rent period must be a number, like 30,000
+provideDetailsOfFirstSecondRentPeriod.secondPeriod.amount.max.error = Rent for the second rent period must be £9,999,999.99 or less
 
 #RentPeriods
 rentPeriods.title = Rent periods

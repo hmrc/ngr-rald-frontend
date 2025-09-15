@@ -37,7 +37,7 @@ object CheckRentFreePeriodForm extends Mappings {
   def form: Form[CheckRentFreePeriodForm] = {
     Form(
       mapping(
-        checkRentPeriodRadio -> text(radioUnselectedError)
+        checkRentPeriodRadio -> radioText(radioUnselectedError)
       )(CheckRentFreePeriodForm.apply)(CheckRentFreePeriodForm.unapply)
     )
   }

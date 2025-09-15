@@ -23,6 +23,8 @@ import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.FormError
 import play.api.libs.json.Json
 
+import scala.collection.immutable.ArraySeq
+
 class HowMuchIsTotalAnnualRentFormSpec extends AnyWordSpec with Matchers {
 
   "AnnualRentForm" should {
@@ -36,18 +38,18 @@ class HowMuchIsTotalAnnualRentFormSpec extends AnyWordSpec with Matchers {
     }
 
     "fail to bind empty input" in {
-      val data = Map.empty[String, String]
+      val data = Map("how–much–is–total–annual–rent-value" -> "")
       val boundForm = HowMuchIsTotalAnnualRentForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("how–much–is–total–annual–rent-value", "howMuchIsTotalAnnualRent.empty.error"))
+      boundForm.errors should contain(FormError("how–much–is–total–annual–rent-value", List("howMuchIsTotalAnnualRent.empty.error"), ArraySeq("how–much–is–total–annual–rent-value")))
     }
 
     "fail to bind non-numeric input" in {
       val data = Map("how–much–is–total–annual–rent-value" -> "abc")
       val boundForm = HowMuchIsTotalAnnualRentForm.form.bind(data)
 
-      boundForm.errors should contain(FormError("how–much–is–total–annual–rent-value", "howMuchIsTotalAnnualRent.format.error"))
+      boundForm.errors should contain(FormError("how–much–is–total–annual–rent-value", List("howMuchIsTotalAnnualRent.format.error"), ArraySeq("([0-9]+\\.[0-9]+|[0-9]+)")))
     }
 
     "fail to bind input greater than 9999999.99" in {
@@ -55,7 +57,7 @@ class HowMuchIsTotalAnnualRentFormSpec extends AnyWordSpec with Matchers {
       val boundForm = HowMuchIsTotalAnnualRentForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("how–much–is–total–annual–rent-value", "howMuchIsTotalAnnualRent.tooLarge.error"))
+      boundForm.errors should contain(FormError("how–much–is–total–annual–rent-value", List("howMuchIsTotalAnnualRent.tooLarge.error"), ArraySeq(9999999.99)))
     }
 
     "bind edge case of exactly 9999999.99" in {

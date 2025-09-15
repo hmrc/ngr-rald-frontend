@@ -48,7 +48,7 @@ object DoesYourRentIncludeParkingForm extends CommonFormValidators with Mappings
   def form: Form[DoesYourRentIncludeParkingForm] = {
     Form(
       mapping(
-        radio -> text(radioUnselectedError),
+        radio -> radioText(radioUnselectedError),
       )(DoesYourRentIncludeParkingForm.apply)(DoesYourRentIncludeParkingForm.unapply)
     )
   }

@@ -23,8 +23,8 @@ import java.util.regex.Pattern
 import scala.util.Try
 
 trait CommonFormValidators {
-  val amountRegex: Pattern = Pattern.compile("[0-9]+\\.[0-9]+")
-  
+  val amountRegex: Pattern = Pattern.compile("([0-9]+\\.[0-9]+|[0-9]+)")
+
   protected def firstError[A](constraints: Constraint[A]*): Constraint[A] =
     Constraint { input =>
       constraints
@@ -39,7 +39,7 @@ trait CommonFormValidators {
         Valid
       case _ =>
         Invalid(errorKey, regex)
-    }  
+    }
 
   protected def maxLength(maximum: Int, errorKey: String): Constraint[String] =
     Constraint {
@@ -48,7 +48,7 @@ trait CommonFormValidators {
       case _ =>
         Invalid(errorKey, maximum)
     }
-  
+
   protected def isNotEmpty(value: String, errorKey: String): Constraint[String] =
     Constraint {
       case str if str.trim.nonEmpty =>

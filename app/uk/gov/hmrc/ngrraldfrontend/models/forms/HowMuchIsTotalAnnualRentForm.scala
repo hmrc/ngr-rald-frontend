@@ -21,6 +21,7 @@ import play.api.data.Forms.*
 import play.api.data.format.Formatter
 import play.api.libs.json.{Json, OFormat}
 
+import scala.math.BigDecimal.RoundingMode
 import scala.util.Try
 
 
@@ -47,7 +48,7 @@ object HowMuchIsTotalAnnualRentForm extends CommonFormValidators {
             regexp(amountRegex.pattern(), annualRentFormatError)
           )
         )
-        .transform[BigDecimal](BigDecimal(_), _.toString)
+        .transform[BigDecimal](BigDecimal(_).setScale(2, RoundingMode.UP), _.toString)
         .verifying(
           maximumValue[BigDecimal](BigDecimal("9999999.99"), annualRentMaxError)
         )

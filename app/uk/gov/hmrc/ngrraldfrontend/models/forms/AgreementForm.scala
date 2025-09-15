@@ -120,11 +120,11 @@ object AgreementForm extends CommonFormValidators with Mappings with DateMapping
               isDateValid("agreement.startDate.format.error")
             )
           ),
-        openEndedRadio -> text(radioOpenEndedUnselectedError),
+        openEndedRadio -> radioText(radioOpenEndedUnselectedError),
         endDate -> optional(
           dateMapping
         ),
-        breakClauseRadio -> text(radioBreakClauseUnselectedError),
+        breakClauseRadio -> radioText(radioBreakClauseUnselectedError),
         aboutBreakClause -> optional(
           play.api.data.Forms.text
             .transform[String](_.strip(), identity)

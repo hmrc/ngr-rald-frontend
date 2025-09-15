@@ -21,6 +21,8 @@ import org.scalatest.matchers.should.Matchers
 import play.api.data.FormError
 import play.api.libs.json.{JsNull, Json}
 
+import scala.collection.immutable.ArraySeq
+
 class LandlordFormSpec extends AnyFlatSpec with Matchers {
 
   val validData = Map(
@@ -37,10 +39,14 @@ class LandlordFormSpec extends AnyFlatSpec with Matchers {
   }
 
   it should "fail when landlord name is missing" in {
-    val data = validData - "landlord-name-value"
+    val data = Map(
+      "landlord-name-value" -> "",
+      "landlord-radio" -> "PrivateLandlord",
+      "landlord-radio-other" -> ""
+    )
     val boundForm = LandlordForm.form.bind(data)
 
-    boundForm.errors shouldBe List(FormError("landlord-name-value", List("landlord.name.empty.error"), List()))
+    boundForm.errors shouldBe List(FormError("landlord-name-value", List("landlord.name.empty.error"), ArraySeq("landlord-name-value")))
   }
 
   it should "fail when landlord type (radio) is missing" in {
@@ -83,10 +89,10 @@ class LandlordFormSpec extends AnyFlatSpec with Matchers {
   }
 
   it should "handle None for landlordOther correctly" in {
-    val form = LandlordForm("Jane Smith", "LandLordAndTennant", None)
+    val form = LandlordForm("Jane Smith", "LandLordAndTenant", None)
     val result = LandlordForm.unapply(form)
 
-    result shouldBe Some(("Jane Smith", "LandLordAndTennant", None))
+    result shouldBe Some(("Jane Smith", "LandLordAndTenant", None))
   }
 
   "LandlordForm.format" should "serialize to JSON correctly" in {
@@ -103,13 +109,13 @@ class LandlordFormSpec extends AnyFlatSpec with Matchers {
   it should "deserialize from JSON correctly" in {
     val json = Json.obj(
       "landlordName" -> "Jane Smith",
-      "landLordType" -> "LandLordAndTennant",
+      "landLordType" -> "LandLordAndTenant",
       "landlordOther" -> JsNull
     )
 
     val result = json.validate[LandlordForm]
     result.isSuccess shouldBe true
-    result.get shouldBe LandlordForm("Jane Smith", "LandLordAndTennant", None)
+    result.get shouldBe LandlordForm("Jane Smith", "LandLordAndTenant", None)
   }
 
   def validate(form: LandlordForm): Boolean = {
