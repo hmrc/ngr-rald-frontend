@@ -21,7 +21,7 @@ import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.data.{Form, Forms}
 import play.api.i18n.Messages
 import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.govukfrontend.views.Aliases.{Hint, Legend, PrefixOrSuffix, Text}
+import uk.gov.hmrc.govukfrontend.views.Aliases.{Legend, Text}
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
@@ -38,7 +38,7 @@ final case class WhatYourRentIncludesForm(
                                            bedroomNumbers: Option[String]
                                          ) extends RadioEntry
 
-object WhatYourRentIncludesForm extends CommonFormValidators with Mappings{
+object WhatYourRentIncludesForm extends CommonFormValidators with Mappings {
   implicit val format: OFormat[WhatYourRentIncludesForm] = Json.format[WhatYourRentIncludesForm]
 
   private lazy val livingAccommodationRadio = "livingAccommodationRadio"
@@ -142,7 +142,7 @@ object WhatYourRentIncludesForm extends CommonFormValidators with Mappings{
       whatYourRentIncludesForm.bedroomNumbers
     ))
 
-  private def isBedroomNumberValidation[A]: Constraint[A] =
+  private def isBedroomNumberValid[A]: Constraint[A] =
     Constraint((input: A) =>
       val whatYourRentIncludesForm = input.asInstanceOf[WhatYourRentIncludesForm]
       val bedroomNumber: Option[String] = whatYourRentIncludesForm.bedroomNumbers
@@ -165,15 +165,15 @@ object WhatYourRentIncludesForm extends CommonFormValidators with Mappings{
   def form: Form[WhatYourRentIncludesForm] = {
     Form(
       mapping(
-        livingAccommodationRadio  -> radioText(livingAccommodationRadioError),
-        rentPartAddressRadio      -> radioText(rentPartAddressRadioError),
-        rentEmptyShellRadio       -> radioText(rentEmptyShellRadioError),
+        livingAccommodationRadio -> radioText(livingAccommodationRadioError),
+        rentPartAddressRadio -> radioText(rentPartAddressRadioError),
+        rentEmptyShellRadio -> radioText(rentEmptyShellRadioError),
         rentIncBusinessRatesRadio -> radioText(rentIncBusinessRatesRadioError),
-        rentIncWaterChargesRadio  -> radioText(rentIncWaterChargesRadioError),
-        rentIncServiceRadio       -> radioText(rentIncServiceRadioError),
-        bedroomNumbers             -> optional(text().transform[String](_.strip(), identity))
+        rentIncWaterChargesRadio -> radioText(rentIncWaterChargesRadioError),
+        rentIncServiceRadio -> radioText(rentIncServiceRadioError),
+        bedroomNumbers -> optional(text().transform[String](_.strip(), identity))
       )(WhatYourRentIncludesForm.apply)(WhatYourRentIncludesForm.unapply)
-        .verifying(isBedroomNumberValidation)
+        .verifying(isBedroomNumberValid)
     )
   }
 }
