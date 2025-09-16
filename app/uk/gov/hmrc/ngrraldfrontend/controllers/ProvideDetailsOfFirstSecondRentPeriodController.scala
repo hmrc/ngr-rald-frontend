@@ -198,7 +198,7 @@ class ProvideDetailsOfFirstSecondRentPeriodController @Inject()(view: ProvideDet
               provideDetailsOfFirstSecondRentPeriodForm.firstDateStartInput.makeString,
               provideDetailsOfFirstSecondRentPeriodForm.firstDateEndInput.makeString,
               provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodRadio,
-              provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodAmount.map(BigDecimal(_).setScale(2, RoundingMode.UP)).map(_.toString()),
+              provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodAmount.map(BigDecimal(_).setScale(2, RoundingMode.HALF_UP)).map(_.toString()),
               provideDetailsOfFirstSecondRentPeriodForm.secondDateStartInput.makeString,
               provideDetailsOfFirstSecondRentPeriodForm.secondDateEndInput.makeString,
               provideDetailsOfFirstSecondRentPeriodForm.secondHowMuchIsRent,

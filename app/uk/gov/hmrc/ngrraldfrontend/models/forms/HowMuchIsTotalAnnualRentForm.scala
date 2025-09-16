@@ -48,7 +48,7 @@ object HowMuchIsTotalAnnualRentForm extends CommonFormValidators {
             regexp(amountRegex.pattern(), annualRentFormatError)
           )
         )
-        .transform[BigDecimal](BigDecimal(_).setScale(2, RoundingMode.UP), _.toString)
+        .transform[BigDecimal](BigDecimal(_).setScale(2, RoundingMode.HALF_UP), _.toString)
         .verifying(
           maximumValue[BigDecimal](BigDecimal("9999999.99"), annualRentMaxError)
         )
