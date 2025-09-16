@@ -23,13 +23,14 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.connectors.NGRConnector
 import uk.gov.hmrc.ngrraldfrontend.models.AuthenticatedUserRequest
+import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 
 import scala.concurrent.{ExecutionContext, Future}
 
 trait ControllerSpecSupport extends TestSupport {
   val mockPropertyLinkingAction: PropertyLinkingAction = mock[PropertyLinkingAction]
   val mockAuthJourney: AuthRetrievals = mock[AuthRetrievals]
-
+  val mockInputText: InputText = inject[InputText]
   val mockNgrConnector: NGRConnector = mock[NGRConnector]
   implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
   mockRequest()

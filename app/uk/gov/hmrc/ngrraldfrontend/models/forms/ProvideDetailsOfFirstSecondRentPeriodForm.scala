@@ -109,7 +109,7 @@ object ProvideDetailsOfFirstSecondRentPeriodForm extends CommonFormValidators wi
           ),
         firstRentPeriodRadio -> radioText(radioFirstPeriodRequiredError),
         RentPeriodAmount -> optional(
-          radioText()
+          text()
             .transform[String](_.strip(), identity)
         ),
         secondDateStartInput -> dateMapping

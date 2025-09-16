@@ -36,7 +36,6 @@ import scala.concurrent.Future
 class ProvideDetailsOfFirstSecondRentPeriodControllerSpec extends ControllerSpecSupport {
   val pageTitle = "Provide details of each rent period"
   val view: ProvideDetailsOfFirstSecondRentPeriodView = inject[ProvideDetailsOfFirstSecondRentPeriodView]
-  val mockInputText: InputText = inject[InputText]
   val controller: ProvideDetailsOfFirstSecondRentPeriodController = new ProvideDetailsOfFirstSecondRentPeriodController(
     view,
     mockAuthJourney,

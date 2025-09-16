@@ -27,6 +27,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatYourRentIncludesForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
 import uk.gov.hmrc.ngrraldfrontend.views.html.WhatYourRentIncludesView
+import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
@@ -35,6 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class WhatYourRentIncludesController @Inject()(whatYourRentIncludesView: WhatYourRentIncludesView,
                                                authenticate: AuthRetrievals,
+                                               inputText: InputText,
                                                hasLinkedProperties: PropertyLinkingAction,
                                                raldRepo: RaldRepo,
                                                mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
@@ -45,7 +47,7 @@ class WhatYourRentIncludesController @Inject()(whatYourRentIncludesView: WhatYou
       request.propertyLinking.map(property =>
         Future.successful(Ok(whatYourRentIncludesView(
           form = form,
-          radios1 = buildRadios(form, WhatYourRentIncludesForm.ngrRadio1),
+          radios1 = buildRadios(form, WhatYourRentIncludesForm.ngrRadio1(form, inputText)),
           radios2 = buildRadios(form, WhatYourRentIncludesForm.ngrRadio2),
           radios3 = buildRadios(form, WhatYourRentIncludesForm.ngrRadio3),
           radios4 = buildRadios(form, WhatYourRentIncludesForm.ngrRadio4),
@@ -60,10 +62,17 @@ class WhatYourRentIncludesController @Inject()(whatYourRentIncludesView: WhatYou
     (authenticate andThen hasLinkedProperties).async { implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
+          val correctedFormErrors = formWithErrors.errors.map { formError =>
+            (formError.key, formError.messages) match
+              case ("", messages) =>
+                formError.copy(key = "bedroomNumbers")
+              case _ => formError
+          }
+          val formWithCorrectedErrors = formWithErrors.copy(errors = correctedFormErrors)
           request.propertyLinking.map(property =>
             Future.successful(BadRequest(whatYourRentIncludesView(
-              form = formWithErrors,
-              radios1 = buildRadios(formWithErrors, WhatYourRentIncludesForm.ngrRadio1),
+              form = formWithCorrectedErrors,
+              radios1 = buildRadios(formWithErrors, WhatYourRentIncludesForm.ngrRadio1(formWithCorrectedErrors, inputText)),
               radios2 = buildRadios(formWithErrors, WhatYourRentIncludesForm.ngrRadio2),
               radios3 = buildRadios(formWithErrors, WhatYourRentIncludesForm.ngrRadio3),
               radios4 = buildRadios(formWithErrors, WhatYourRentIncludesForm.ngrRadio4),
@@ -72,15 +81,16 @@ class WhatYourRentIncludesController @Inject()(whatYourRentIncludesView: WhatYou
               propertyAddress = property.addressFull
             )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
         },
-        radioValue =>
+        whatYourRentIncludesForm =>
           raldRepo.insertWhatYourRentIncludes(
             credId = CredId(request.credId.getOrElse("")),
-            radioValue.livingAccommodationRadio,
-            radioValue.rentPartAddressRadio,
-            radioValue.rentEmptyShellRadio,
-            radioValue.rentIncBusinessRatesRadio,
-            radioValue.rentIncWaterChargesRadio,
-            radioValue.rentIncServiceRadio
+            whatYourRentIncludesForm.livingAccommodationRadio,
+            whatYourRentIncludesForm.rentPartAddressRadio,
+            whatYourRentIncludesForm.rentEmptyShellRadio,
+            whatYourRentIncludesForm.rentIncBusinessRatesRadio,
+            whatYourRentIncludesForm.rentIncWaterChargesRadio,
+            whatYourRentIncludesForm.rentIncServiceRadio,
+            whatYourRentIncludesForm.bedroomNumbers
           )
           Future.successful(Redirect(routes.DoesYourRentIncludeParkingController.show.url))
       )

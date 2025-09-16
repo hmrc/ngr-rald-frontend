@@ -312,6 +312,7 @@ rentDatesAgreeStart.startPayingDate.before.1900.error = Date you will start payi
 whatYourRentIncludes.title = What your rent includes
 whatYourRentIncludes.radio.1.title = Does your rent include any living accommodation?
 whatYourRentIncludes.radio.1.hint = For example, a flat over your shop or caretaker''s accommodation
+whatYourRentIncludes.radio.1.text.title = How many bedrooms does the living accommodation have?
 whatYourRentIncludes.radio.2.title = Is the rent you pay only for part of this address?
 whatYourRentIncludes.radio.2.hint = For example, the address says ''units 1 and 2'', and you pay rent for unit 1 only
 whatYourRentIncludes.radio.3.title = Is your rent for an empty shell building?
@@ -327,6 +328,10 @@ whatYourRentIncludes.radio.3.required = Select yes if your rent is for an empty 
 whatYourRentIncludes.radio.4.required = Select yes if your rent includes business rates
 whatYourRentIncludes.radio.5.required = Select yes if your rent includes water charges
 whatYourRentIncludes.radio.6.required = Select yes if your rent includes service charges
+whatYourRentIncludes.bedroom.number.required.error = Enter how many bedrooms the living accommodation has
+whatYourRentIncludes.bedroom.number.invalid.error = How many bedrooms must be a number, like 6
+whatYourRentIncludes.bedroom.number.maximum.error = How many bedrooms must be 99 or less
+whatYourRentIncludes.bedroom.number.minimum.error = How many bedrooms must be 1 or more
 
 #DoesYourRentIncludeParking
 doesYourRentIncludeParking.title = Does your rent include parking spaces or garages?

@@ -39,6 +39,7 @@ class WhatYourRentIncludesControllerSpec  extends ControllerSpecSupport {
   val controller:WhatYourRentIncludesController = new WhatYourRentIncludesController(
     view,
     mockAuthJourney,
+    mockInputText,
     mockPropertyLinkingAction,
     mockRaldRepo,
     mcc)(mockConfig, ec)
@@ -67,12 +68,13 @@ class WhatYourRentIncludesControllerSpec  extends ControllerSpecSupport {
         mockRequest(hasCredId = true)
         val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.WhatYourRentIncludesController.submit)
           .withFormUrlEncodedBody(
-            "livingAccommodationRadio" -> "Yes",
+            "livingAccommodationRadio" -> "livingAccommodationYes",
             "rentPartAddressRadio" -> "No",
             "rentEmptyShellRadio" -> "Yes",
             "rentIncBusinessRatesRadio" -> "No",
             "rentIncWaterChargesRadio" -> "No",
             "rentIncServiceRadio" -> "Yes",
+            "bedroomNumbers" -> "6"
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -99,6 +101,91 @@ class WhatYourRentIncludesControllerSpec  extends ControllerSpecSupport {
         status(result) mustBe BAD_REQUEST
         val content = contentAsString(result)
         content must include(pageTitle)
+        content must include("<a href=\"#livingAccommodationRadio\">Select yes if your rent includes any living accommodation</a>")
+      }
+      "Return Form with Errors when bedroom numbers is not provide" in {
+        mockRequest(hasCredId = true)
+        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.WhatYourRentIncludesController.submit)
+          .withFormUrlEncodedBody(
+            "livingAccommodationRadio" -> "livingAccommodationYes",
+            "rentPartAddressRadio" -> "No",
+            "rentEmptyShellRadio" -> "Yes",
+            "rentIncBusinessRatesRadio" -> "No",
+            "rentIncWaterChargesRadio" -> "No",
+            "rentIncServiceRadio" -> "Yes",
+            "bedroomNumbers" -> ""
+          )
+          .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
+        result.map(result => {
+          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/what-rent-includes")
+        })
+        status(result) mustBe BAD_REQUEST
+        val content = contentAsString(result)
+        content must include(pageTitle)
+        content must include("<a href=\"#bedroomNumbers\">Enter how many bedrooms the living accommodation has</a>")
+      }
+      "Return Form with Errors when bedroom numbers is not numeric" in {
+        mockRequest(hasCredId = true)
+        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.WhatYourRentIncludesController.submit)
+          .withFormUrlEncodedBody(
+            "livingAccommodationRadio" -> "livingAccommodationYes",
+            "rentPartAddressRadio" -> "No",
+            "rentEmptyShellRadio" -> "Yes",
+            "rentIncBusinessRatesRadio" -> "No",
+            "rentIncWaterChargesRadio" -> "No",
+            "rentIncServiceRadio" -> "Yes",
+            "bedroomNumbers" -> "AS&"
+          )
+          .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
+        result.map(result => {
+          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/what-rent-includes")
+        })
+        status(result) mustBe BAD_REQUEST
+        val content = contentAsString(result)
+        content must include(pageTitle)
+        content must include("<a href=\"#bedroomNumbers\">How many bedrooms must be a number, like 6</a>")
+      }
+      "Return Form with Errors when bedroom numbers is less than 1" in {
+        mockRequest(hasCredId = true)
+        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.WhatYourRentIncludesController.submit)
+          .withFormUrlEncodedBody(
+            "livingAccommodationRadio" -> "livingAccommodationYes",
+            "rentPartAddressRadio" -> "No",
+            "rentEmptyShellRadio" -> "Yes",
+            "rentIncBusinessRatesRadio" -> "No",
+            "rentIncWaterChargesRadio" -> "No",
+            "rentIncServiceRadio" -> "Yes",
+            "bedroomNumbers" -> "-1"
+          )
+          .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
+        result.map(result => {
+          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/what-rent-includes")
+        })
+        status(result) mustBe BAD_REQUEST
+        val content = contentAsString(result)
+        content must include(pageTitle)
+        content must include("<a href=\"#bedroomNumbers\">How many bedrooms must be 1 or more</a>")
+      }
+      "Return Form with Errors when bedroom numbers is greater than 99" in {
+        mockRequest(hasCredId = true)
+        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.WhatYourRentIncludesController.submit)
+          .withFormUrlEncodedBody(
+            "livingAccommodationRadio" -> "livingAccommodationYes",
+            "rentPartAddressRadio" -> "No",
+            "rentEmptyShellRadio" -> "Yes",
+            "rentIncBusinessRatesRadio" -> "No",
+            "rentIncWaterChargesRadio" -> "No",
+            "rentIncServiceRadio" -> "Yes",
+            "bedroomNumbers" -> "100"
+          )
+          .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
+        result.map(result => {
+          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/what-rent-includes")
+        })
+        status(result) mustBe BAD_REQUEST
+        val content = contentAsString(result)
+        content must include(pageTitle)
+        content must include("<a href=\"#bedroomNumbers\">How many bedrooms must be 99 or less</a>")
       }
       "Return Exception if no address is in the mongo" in {
         mockRequestWithoutProperty()
