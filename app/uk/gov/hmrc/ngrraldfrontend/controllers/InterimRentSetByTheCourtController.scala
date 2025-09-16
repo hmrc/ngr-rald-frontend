@@ -41,50 +41,18 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class InterimRentSetByTheCourtController @Inject()(interimRentSetByTheCourtView: InterimRentSetByTheCourtView,
                                                    authenticate: AuthRetrievals,
-                                                   inputText: InputText,
                                                    hasLinkedProperties: PropertyLinkingAction,
+                                                   inputText: InputText,
                                                    raldRepo: RaldRepo,
                                                    mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport {
-  
-  def generateDateInput(implicit messages: Messages): DateInput = DateInput(
-    id = "interimRentSetByTheCourt.date",
-    namePrefix = Some("interimRentSetByTheCourt.date"),
-    fieldset = Some(Fieldset(
-      legend = Some(Legend(
-        content = Text(messages("interimRentSetByTheCourt.label.2")),
-        classes = "govuk-fieldset__legend--m",
-        isPageHeading = true
-      ))
-    )),
-    items = Seq(
-      InputItem(
-        id = "interimRentSetByTheCourt.Month",
-        name = "interimRentSetByTheCourt.Month",
-        value = form("interimRentSetByTheCourt.month").value,
-        label = Some("interimRentSetByTheCourt.inputField.month"),
-        classes = s"govuk-input--width-2".trim
-      ),
-      InputItem(
-        id = "interimRentSetByTheCourt.Year",
-        name = "interimRentSetByTheCourt.Year",
-        label = Some("interimRentSetByTheCourt.inputField.year"),
-        value = form("interimRentSetByTheCourt.year").value,
-        classes = s"govuk-input--width-2".trim
-      )
-    ),
-    hint = Some(Hint(
-      id = Some("interimRentSetByTheCourt.hint.2"),
-      content = Text(messages("interimRentSetByTheCourt.hint.2"))
-    ))
-  )
 
   def generateInputText(form: Form[InterimRentSetByTheCourtForm], inputFieldName: String)(implicit messages: Messages): HtmlFormat.Appendable = {
     inputText(
       form = form,
       id = inputFieldName,
       name = inputFieldName,
-      label = messages(s"interimRentSetByTheCourt.$inputFieldName.label"),
+      label = messages(s"interimRentSetByTheCourt.label.1"),
       headingMessageArgs = Seq("govuk-fieldset__legend govuk-fieldset__legend--s"),
       isPageHeading = true,
       isVisible = true,
@@ -99,8 +67,7 @@ class InterimRentSetByTheCourtController @Inject()(interimRentSetByTheCourtView:
         Future.successful(Ok(interimRentSetByTheCourtView(
           form = form,
           propertyAddress = property.addressFull,
-          howMuch = generateInputText(form, "howMuch"),
-          dateInput = generateDateInput()
+          howMuch = generateInputText(form, "howMuch")
         )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
     }
   }
@@ -113,8 +80,7 @@ class InterimRentSetByTheCourtController @Inject()(interimRentSetByTheCourtView:
             Future.successful(BadRequest(interimRentSetByTheCourtView(
               form = formWithErrors,
               propertyAddress = property.addressFull,
-              howMuch = generateInputText(formWithErrors, "howMuch"),
-              dateInput = generateDateInput()
+              howMuch = generateInputText(formWithErrors, "howMuch")
             )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
         },
         interimRent =>

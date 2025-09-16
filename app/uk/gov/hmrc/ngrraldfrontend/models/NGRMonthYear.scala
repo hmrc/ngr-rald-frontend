@@ -26,7 +26,8 @@ import java.util.Locale
 
 final case class NGRMonthYear(month: String, year: String) {
   def makeString: String = {
-    val monthStr = f"${month.toInt}%02d"
+    println(Console.MAGENTA_B + month.toIntOption.getOrElse(0) + Console.RESET )
+    val monthStr = f"${month.toIntOption.getOrElse(0)}%02d"
     s"$year-$monthStr"
   }
 }
@@ -55,7 +56,5 @@ trait MonthYearMappings {
 }
 
 def monthYearErrorKeys(pageName: String, whichDate: String): Map[DateErrorKeys, String] = Map(
-  Required     -> s"$pageName.$whichDate.required.error",
-  Month        -> s"$pageName.$whichDate.month.required.error",
-  Year         -> s"$pageName.$whichDate.year.required.error"
+  Required     -> s"$pageName.$whichDate.required.error"
 )

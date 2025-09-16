@@ -357,5 +357,14 @@ interimRentSetByTheCourt.title = Interim rent set by the court
 interimRentSetByTheCourt.label.1 = How much was the interim rent?
 interimRentSetByTheCourt.label.2 = When did you start paying the interim rent?
 interimRentSetByTheCourt.hint.2 = For example, 6 2026
-interimRentSetByTheCourt.inputField.month = Month
-interimRentSetByTheCourt.inputField.year = Year
+date.month = Month
+date.year = Year
+
+interimRentSetByTheCourt.howMany.required.error = Enter how much the interim rent was, in pounds
+interimRentSetByTheCourt.howMany.tooLarge.error = Interim rent must be £9,999,999.99 or less
+interimRentSetByTheCourt.howMany.format.error = Interim rent must be a number, like 50,000
+interimRentSetByTheCourt.monthYear.format.error = Date your interim rent started must be a real date
+interimRentSetByTheCourt.required.error = Enter the date you started paying interim rent
+interimRentSetByTheCourt.month.required.error = Date you started paying the interim rent must include a month
+interimRentSetByTheCourt.year.required.error = Date you started paying the interim rent must include a year
+interimRentSetByTheCourt.startDate.before.1900.error = The date you started paying interim rent must be 1900 or after

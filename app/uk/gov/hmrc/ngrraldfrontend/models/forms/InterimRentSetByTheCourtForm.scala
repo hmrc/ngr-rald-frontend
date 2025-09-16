@@ -20,7 +20,8 @@ import play.api.data.*
 import play.api.data.Forms.*
 import play.api.data.format.Formatter
 import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.ngrraldfrontend.models.*
+import uk.gov.hmrc.ngrraldfrontend.models.forms.ProvideDetailsOfFirstSecondRentPeriodForm.isDateAfter1900
+import uk.gov.hmrc.ngrraldfrontend.models.{Month, *}
 
 import scala.util.Try
 
@@ -31,18 +32,17 @@ object InterimRentSetByTheCourtForm extends CommonFormValidators with MonthYearM
   implicit val format: OFormat[InterimRentSetByTheCourtForm] = Json.format[InterimRentSetByTheCourtForm]
 
   private lazy val howMuch = "howMuch"
-  private lazy val howMuchEmptyError  = "howMuch.empty.error"
-  private lazy val howMuchMaxError    = "howMuch.tooLarge.error"
-  private lazy val howMuchFormatError = "howMuch.format.error"
-  private val dateInput = "interimRentSetByTheCourt.date"
+  private lazy val howMuchEmptyError  = "interimRentSetByTheCourt.howMany.required.error"
+  private lazy val howMuchMaxError    = "interimRentSetByTheCourt.howMany.tooLarge.error"
+  private lazy val howMuchFormatError = "interimRentSetByTheCourt.howMany.format.error"
+  private val dateInput = "date"
 
   def unapply(interimRentSetByTheCourtForm: InterimRentSetByTheCourtForm): Option[(BigDecimal, NGRMonthYear)] = Some(interimRentSetByTheCourtForm.amount, interimRentSetByTheCourtForm.date)
 
   private def errorKeys(whichDate: String): Map[DateErrorKeys, String] = Map(
-    Required -> s"agreementVerbal.$whichDate.required.error",
-    MonthAndYear -> s"agreementVerbal.$whichDate.monthAndYear.required.error",
-    Month -> s"agreementVerbal.$whichDate.month.required.error",
-    Year -> s"agreementVerbal.$whichDate.year.required.error"
+    Required -> s"$whichDate.required.error",
+    Month -> s"$whichDate.month.required.error",
+    Year -> s"$whichDate.year.required.error"
   )
   
   def bigDecimalWithFormatError: Formatter[BigDecimal] = new Formatter[BigDecimal] {
@@ -67,11 +67,12 @@ object InterimRentSetByTheCourtForm extends CommonFormValidators with MonthYearM
   val form: Form[InterimRentSetByTheCourtForm] = Form(
     mapping(
       annualRentFormMapping,
-      dateInput -> monthYearMapping
+      "date" -> monthYearMapping
         .verifying(
           firstError(
-            isMonthYearEmpty(errorKeys("startDate")),
-            isMonthYearValid("agreement.startDate.format.error")
+            isMonthYearEmpty(errorKeys("interimRentSetByTheCourt")),
+            isMonthYearValid("interimRentSetByTheCourt.monthYear.format.error"),
+            isMonthYearAfter1900("interimRentSetByTheCourt.startDate.before.1900.error")
           )
         ),
     )(InterimRentSetByTheCourtForm.apply)(InterimRentSetByTheCourtForm.unapply)

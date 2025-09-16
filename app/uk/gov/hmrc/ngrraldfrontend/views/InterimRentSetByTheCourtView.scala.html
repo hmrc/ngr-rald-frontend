@@ -25,12 +25,13 @@
   layout: Layout,
   formHelper: FormWithCSRF,
   dateInputField: DateTextFields,
+  inputDateForMonthYear: components.InputDateForMonthYear,
   govukDateInput: GovukDateInput,
   govukErrorSummary: GovukErrorSummary,
   saveAndContinueButton: saveAndContinueButton
 )
 
-@(form:Form[InterimRentSetByTheCourtForm], propertyAddress: String, howMuch: Html, dateInput: DateInput)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+@(form:Form[InterimRentSetByTheCourtForm], propertyAddress: String, howMuch: Html)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
 @layout(pageTitle = Some(messages("interimRentSetByTheCourt.title")), showBackLink = true, fullWidth = false) {
   @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.InterimRentSetByTheCourtController.submit, Symbol("autoComplete") -> "off") {
@@ -40,37 +41,12 @@
     <span class="govuk-caption-m">@propertyAddress</span>
     <h1 class="govuk-heading-l">@messages("interimRentSetByTheCourt.title")</h1>
     @howMuch
-    @govukDateInput(DateInput(
-        id = "interimRentSetByTheCourt.date",
-        namePrefix = Some("interimRentSetByTheCourt.date"),
-        fieldset = Some(Fieldset(
-        legend = Some(Legend(
-        content = Text(messages("interimRentSetByTheCourt.label.2")),
-        classes = "govuk-fieldset__legend--m",
-        isPageHeading = true
-        ))
-        )),
-        items = Seq(
-        InputItem(
-        id = "interimRentSetByTheCourt.Month",
-        classes = s"govuk-input--width-2",
-        name = "interimRentSetByTheCourt.Month",
-        label = Some(messages("interimRentSetByTheCourt.inputField.month")),
-        value = form("interimRentSetByTheCourt.month").value
-        ),
-        InputItem(
-        id = "interimRentSetByTheCourt.Year",
-        name = "interimRentSetByTheCourt.Year",
-        label = Some("interimRentSetByTheCourt.inputField.year"),
-        value = form("interimRentSetByTheCourt.year").value
-        )
-        ),
-        hint = Some(Hint(
-        id = Some("interimRentSetByTheCourt.hint.2"),
-        content = Text(messages("interimRentSetByTheCourt.hint.2"))
-        ))
-    ))
-    @dateInputField(form, dateInput)
+    @inputDateForMonthYear(
+        form,
+        legendContent = messages("interimRentSetByTheCourt.label.2"),
+        legendAsPageHeading = false,
+        hintText = Some(messages("interimRentSetByTheCourt.hint.2"))
+    )
     @saveAndContinueButton(msg = messages("service.continue"), isStartButton = false)
   }
 }

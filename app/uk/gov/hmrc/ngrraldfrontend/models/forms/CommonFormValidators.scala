@@ -79,6 +79,12 @@ trait CommonFormValidators {
       monthYearValidation(date, errorKey)
     )
 
+  protected def isMonthYearAfter1900[A](errorKey: String): Constraint[A] =
+    Constraint((input: A) =>
+      val date = input.asInstanceOf[NGRMonthYear]
+      monthYearAfter1900Validation(date, errorKey)
+    )
+
   protected def isDateEmpty[A](errorKeys: Map[DateErrorKeys, String]): Constraint[A] =
     Constraint((input: A) =>
       dateEmptyValidation(input.asInstanceOf[NGRDate], errorKeys)
@@ -112,23 +118,40 @@ trait CommonFormValidators {
       case (true, true) => Invalid(errorKeys.get(Required).getOrElse(""))
       case (true, false) => Invalid(errorKeys.get(Month).getOrElse(""))
       case (false, true) => Invalid(errorKeys.get(Year).getOrElse(""))
-      case (false, false) => Valid
+      case (_, _) => Valid
 
   protected def dateValidation(date: NGRDate, errorKey: String) =
     if (Try(date.ngrDate).isFailure || (Try(date.ngrDate).isSuccess && date.year.length > 4))
       Invalid(errorKey)
     else
       Valid
-      
+
+
+  private def monthYearAfter1900Validation(date: NGRMonthYear, errorKey: String) =
+    val maybeYear = date.year.toIntOption
+    maybeYear match {
+      case Some(year) =>
+        if (date.year.toInt < 1900)
+          Invalid (errorKey)
+        else
+          Valid
+      case None => Invalid(errorKey)
+    }
+
   private def dateAfter1900Validation(date: NGRDate, errorKey: String) =
     if (Try(date.ngrDate).isSuccess && date.year.toInt < 1900)
       Invalid(errorKey)
     else
       Valid
 
-  protected def monthYearValidation(date: NGRMonthYear, errorKey: String) =
-    if (date.month.toInt > 11 || date.month.toInt + date.year.toInt)
-      Invalid(errorKey)
-    else
-      Valid
+  protected def monthYearValidation(date: NGRMonthYear, errorKey: String) = {
+    val maybeMonth = date.month.toIntOption
+    val maybeYear = date.year.toIntOption
+    (maybeMonth, maybeYear) match {
+      case (Some(month), Some(year)) if month >= 0 && month <= 12 && (month + year != 0) =>
+        Valid
+      case _ =>
+        Invalid(errorKey)
+    }
+  }
 }
