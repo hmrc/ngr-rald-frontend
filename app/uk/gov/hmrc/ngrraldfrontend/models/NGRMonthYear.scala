@@ -53,7 +53,3 @@ trait MonthYearMappings {
     )(NGRMonthYear.apply)(NGRMonthYear.unapply)
   }
 }
-
-def monthYearErrorKeys(pageName: String, whichDate: String): Map[DateErrorKeys, String] = Map(
-  Required     -> s"$pageName.$whichDate.required.error"
-)

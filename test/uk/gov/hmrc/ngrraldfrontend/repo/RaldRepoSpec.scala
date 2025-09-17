@@ -505,6 +505,12 @@ class RaldRepoSpec extends TestSupport with TestData
       actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, doesYourRentIncludeParking = Some(true)))
     }
 
+    "insert interim rent amount and start date" in {
+      await(repository.insertInterimRentSetByTheCourt(credId, 10000.00, "2020-1"))
+      val actual = await(repository.findByCredId(credId))
+      actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, interimRentSetByTheCourt = Some(InterimRentSetByTheCourt(amount =  "10000.0", date = "2020-1"))))
+    }
+
     "insert has parking included in rent successfully with no" in {
       await(repository.insertDoesYourRentIncludeParking(credId, "No"))
       val actual = await(repository.findByCredId(credId))
