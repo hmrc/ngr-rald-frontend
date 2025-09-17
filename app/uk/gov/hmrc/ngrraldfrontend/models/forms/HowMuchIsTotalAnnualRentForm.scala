@@ -41,7 +41,7 @@ object HowMuchIsTotalAnnualRentForm extends CommonFormValidators {
   val form: Form[HowMuchIsTotalAnnualRentForm] = Form(
     mapping(
       annualRent -> text()
-        .transform[String](_.strip(), identity)
+        .transform[String](_.strip().replaceAll("[£|,|\\s]", ""), identity)
         .verifying(
           firstError(
             isNotEmpty(annualRent, annualRentEmptyError),

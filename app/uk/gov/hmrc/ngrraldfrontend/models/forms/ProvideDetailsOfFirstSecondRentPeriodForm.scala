@@ -129,7 +129,7 @@ object ProvideDetailsOfFirstSecondRentPeriodForm extends CommonFormValidators wi
             )
           ),
         SecondRentPeriodAmount -> text()
-          .transform[String](_.strip(), identity)
+          .transform[String](_.strip().replaceAll("[£|,|\\s]", ""), identity)
           .verifying(
             firstError(
               isNotEmpty(SecondRentPeriodAmount, annualRentEmptyError),

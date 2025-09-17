@@ -46,7 +46,7 @@ object InterimRentSetByTheCourtForm extends CommonFormValidators with MonthYearM
   val form: Form[InterimRentSetByTheCourtForm] = Form(
     mapping(
       "interimAmount" -> text()
-        .transform[String](_.strip(), identity)
+        .transform[String](_.strip().replaceAll("[£|,|\\s]", ""), identity)
         .verifying(
           firstError(
             isNotEmpty("interimAmount", howMuchEmptyError),

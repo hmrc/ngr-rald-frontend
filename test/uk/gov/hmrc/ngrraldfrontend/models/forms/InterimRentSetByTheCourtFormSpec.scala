@@ -89,6 +89,21 @@ class InterimRentSetByTheCourtFormSpec extends AnyWordSpec with Matchers {
       ))
     }
 
+    "bind amount with commas" in {
+      val data = Map(
+        "interimAmount" -> "9,999,999.99",
+        "date.month" -> "1",
+        "date.year" -> "1990"
+      )
+      val boundForm = InterimRentSetByTheCourtForm.form.bind(data)
+
+      boundForm.hasErrors shouldBe false
+      boundForm.value shouldBe Some(InterimRentSetByTheCourtForm(
+        amount = BigDecimal("9999999.99"),
+        date = NGRMonthYear(month = "1", year = "1990")
+      ))
+    }
+
     "fail to bind incorrect month for month input field" in {
       val data = Map(
         "interimAmount" -> "123456.78",
