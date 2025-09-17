@@ -210,7 +210,8 @@ case class RaldRepo @Inject()(mongo: MongoComponent,
                                   rentEmptyShellRadio: String,
                                   rentIncBusinessRatesRadio: String,
                                   rentIncWaterChargesRadio: String,
-                                  rentIncServiceRadio:String
+                                  rentIncServiceRadio:String,
+                                  bedroomNumbers: Option[String]
                                 ): Future[Option[RaldUserAnswers]] = {
     
     def radioConvert(value: String): Boolean = {
@@ -220,13 +221,19 @@ case class RaldRepo @Inject()(mongo: MongoComponent,
       }
     }
 
+    val isIncludedLivingAccommodation: Boolean = radioConvert(livingAccommodationRadio)
     val updates = Seq(
-      Updates.set("whatYourRentIncludes.livingAccommodation", radioConvert(livingAccommodationRadio)),
+      Updates.set("whatYourRentIncludes.livingAccommodation", isIncludedLivingAccommodation),
       Updates.set("whatYourRentIncludes.rentPartAddress", radioConvert(rentPartAddressRadio)),
       Updates.set("whatYourRentIncludes.rentEmptyShell", radioConvert(rentEmptyShellRadio)),
       Updates.set("whatYourRentIncludes.rentIncBusinessRates", radioConvert(rentIncBusinessRatesRadio)),
       Updates.set("whatYourRentIncludes.rentIncWaterCharges", radioConvert(rentIncWaterChargesRadio)),
-      Updates.set("whatYourRentIncludes.rentIncService", radioConvert(rentIncServiceRadio))
+      Updates.set("whatYourRentIncludes.rentIncService", radioConvert(rentIncServiceRadio)),
+      isIncludedLivingAccommodation match
+        case true =>
+          Updates.set("whatYourRentIncludes.bedroomNumbers", bedroomNumbers.map(Integer.parseInt(_)).getOrElse(0))
+        case false =>
+          Updates.unset("whatYourRentIncludes.bedroomNumbers")
     )
 
     findAndUpdateByCredId(credId, updates: _*)

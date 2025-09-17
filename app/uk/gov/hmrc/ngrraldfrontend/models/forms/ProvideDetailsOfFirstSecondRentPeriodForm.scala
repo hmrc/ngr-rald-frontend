@@ -109,7 +109,7 @@ object ProvideDetailsOfFirstSecondRentPeriodForm extends CommonFormValidators wi
           ),
         firstRentPeriodRadio -> radioText(radioFirstPeriodRequiredError),
         RentPeriodAmount -> optional(
-          radioText()
+          text()
             .transform[String](_.strip(), identity)
         ),
         secondDateStartInput -> dateMapping
@@ -136,7 +136,7 @@ object ProvideDetailsOfFirstSecondRentPeriodForm extends CommonFormValidators wi
               regexp(amountRegex.pattern(), "provideDetailsOfFirstSecondRentPeriod.secondPeriod.amount.invalid.error")
             )
           )
-          .transform[BigDecimal](BigDecimal(_).setScale(2, RoundingMode.UP), _.toString)
+          .transform[BigDecimal](BigDecimal(_).setScale(2, RoundingMode.HALF_UP), _.toString)
           .verifying(
             maximumValue[BigDecimal](maxAmount, "provideDetailsOfFirstSecondRentPeriod.firstPeriod.amount.max.error")
           )

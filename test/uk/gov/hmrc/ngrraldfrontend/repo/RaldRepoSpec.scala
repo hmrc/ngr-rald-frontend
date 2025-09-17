@@ -421,6 +421,7 @@ class RaldRepoSpec extends TestSupport with TestData
       val radio4yes = rentIncBusinessRatesYes
       val radio5yes = rentIncWaterChargesYes
       val radio6yes = rentIncServiceYes
+      val bedroomNumbers = Some("6")
 
       await(repository.insertWhatYourRentIncludes(
         credId,
@@ -430,6 +431,7 @@ class RaldRepoSpec extends TestSupport with TestData
         radio4yes.toString,
         radio5yes.toString,
         radio6yes.toString,
+        bedroomNumbers
       ))
       val actual = await(repository.findByCredId(credId))
       actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, whatYourRentIncludes = Some(WhatYourRentIncludes(
@@ -438,7 +440,8 @@ class RaldRepoSpec extends TestSupport with TestData
         true,
         true,
         true,
-        true
+        true,
+        Some(6)
       ))))
     }
 
@@ -449,6 +452,7 @@ class RaldRepoSpec extends TestSupport with TestData
       val radio4yes = rentIncBusinessRatesNo
       val radio5yes = rentIncWaterChargesNo
       val radio6yes = rentIncServiceNo
+      val bedroomNumbers = Some("6")
 
       await(repository.insertWhatYourRentIncludes(
         credId,
@@ -458,6 +462,7 @@ class RaldRepoSpec extends TestSupport with TestData
         radio4yes.toString,
         radio5yes.toString,
         radio6yes.toString,
+        bedroomNumbers
       ))
       val actual = await(repository.findByCredId(credId))
       actual shouldBe Some(RaldUserAnswers(credId, NewAgreement, property, whatYourRentIncludes = Some(WhatYourRentIncludes(
@@ -466,7 +471,8 @@ class RaldRepoSpec extends TestSupport with TestData
         false,
         false,
         false,
-        false
+        false,
+        None
       ))))
     }
 

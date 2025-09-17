@@ -73,17 +73,15 @@ class HowManyParkingSpacesOrGaragesIncludedInRentController @Inject()(howManyPar
     (authenticate andThen hasLinkedProperties).async { implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
-
-          val uncoveredSpaces = FormError(key = "uncoveredSpaces", message = "howManyParkingSpacesOrGaragesIncludedInRent.error.required")
-          val coveredSpaces = FormError(key = "coveredSpaces", message = "howManyParkingSpacesOrGaragesIncludedInRent.error.required")
-          val garages = FormError(key = "garages", message = "howManyParkingSpacesOrGaragesIncludedInRent.error.required")
-
-          val validationCheck = formWithErrors.errors.head match {
-            case value if value.key.isEmpty && value.messages.contains("howManyParkingSpacesOrGaragesIncludedInRent.error.required") => formWithErrors.copy(errors = Seq(uncoveredSpaces, coveredSpaces, garages))
+          val formWithCorrectedErrors = formWithErrors.errors.head match {
+            case value if value.key.isEmpty && value.messages.contains("howManyParkingSpacesOrGaragesIncludedInRent.error.required") =>
+              val uncoveredSpaces = value.copy(key = "uncoveredSpaces")
+              val coveredSpaces = value.copy(key = "coveredSpaces")
+              val garages = value.copy(key = "garages")
+              formWithErrors.copy(errors = Seq(uncoveredSpaces, coveredSpaces, garages))
             case _ => formWithErrors
           }
-
-          val formWithCorrectedErrors = validationCheck
+          
           request.propertyLinking.map(property =>
             Future.successful(BadRequest(howManyParkingSpacesOrGaragesIncludedInRentView(
               form = formWithCorrectedErrors,

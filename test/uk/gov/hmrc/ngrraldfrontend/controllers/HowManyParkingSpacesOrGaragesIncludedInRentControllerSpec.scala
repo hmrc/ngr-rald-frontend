@@ -27,7 +27,6 @@ import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 class HowManyParkingSpacesOrGaragesIncludedInRentControllerSpec extends ControllerSpecSupport {
   val pageTitle = "How many parking spaces or garages are included in your rent?"
   val view: HowManyParkingSpacesOrGaragesIncludedInRentView = inject[HowManyParkingSpacesOrGaragesIncludedInRentView]
-  val mockInputText: InputText = inject[InputText]
   val controller: HowManyParkingSpacesOrGaragesIncludedInRentController = new HowManyParkingSpacesOrGaragesIncludedInRentController(
     howManyParkingSpacesOrGaragesIncludedInRentView = view,
     authenticate = mockAuthJourney,

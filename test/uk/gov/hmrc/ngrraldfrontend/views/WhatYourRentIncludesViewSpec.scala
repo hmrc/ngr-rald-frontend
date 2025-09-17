@@ -25,6 +25,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatYourRentIncludesForm
 import uk.gov.hmrc.ngrraldfrontend.views.html.WhatYourRentIncludesView
+import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 
 class WhatYourRentIncludesViewSpec  extends ViewBaseSpec {
   lazy val view: WhatYourRentIncludesView = inject[WhatYourRentIncludesView]
@@ -42,6 +43,7 @@ class WhatYourRentIncludesViewSpec  extends ViewBaseSpec {
     val radio5Label = "Does your rent include water charges?"
     val radio6Label = "Does your rent include service charges?"
     val radio6Hint = "For example, heating, lighting and maintenance of shared areas"
+    val bedroomNumbersLabel = "How many bedrooms does the living accommodation have?"
     val continue = "Continue"
   }
 
@@ -58,14 +60,28 @@ class WhatYourRentIncludesViewSpec  extends ViewBaseSpec {
     val radio5Label = "#main-content > div > div > form > div > div > div:nth-child(9) > fieldset > legend > h1"
     val radio6Label = "#main-content > div > div > form > div > div > div:nth-child(10) > fieldset > legend > h1"
     val radio6Hint = "#rentIncServiceRadio-hint"
+    val bedroomNumbersLabel = "#conditional-livingAccommodationRadio > div > label"
     val continue = "#continue"
   }
 
   val address = "5 Brixham Marina, Berry Head Road, Brixham, Devon, TQ5 9BW"
+  val mockInputText: InputText = inject[InputText]
+  val form = WhatYourRentIncludesForm.form.fillAndValidate(WhatYourRentIncludesForm("Yes", "Yes", "Yes", "Yes", "Yes", "Yes", Some("6")))
   private val ngrRadio1: NGRRadio = NGRRadio(
     NGRRadioName("livingAccommodationRadio"),
     Seq(
-      NGRRadioButtons(radioContent = "service.yes", radioValue = livingAccommodationYes),
+      NGRRadioButtons(radioContent = "service.yes",
+        radioValue = livingAccommodationYes,
+        conditionalHtml = Some(mockInputText(
+          form = form,
+          id = "bedroomNumbers",
+          name = "bedroomNumbers",
+          label = messages("whatYourRentIncludes.radio.1.text.title"),
+          isVisible = true,
+          classes = Some("govuk-input--width-4"),
+          labelClasses = Some("govuk-label--s")
+        ))
+      ),
       NGRRadioButtons(radioContent = "service.no", radioValue = livingAccommodationNo)
     ),
     Some(Legend(content = Text(messages("whatYourRentIncludes.radio.1.title")), classes = "govuk-fieldset__legend--m", isPageHeading = true)),
@@ -113,7 +129,7 @@ class WhatYourRentIncludesViewSpec  extends ViewBaseSpec {
     Some(Legend(content = Text(messages("whatYourRentIncludes.radio.6.title")), classes = "govuk-fieldset__legend--m", isPageHeading = true)),
     Some("whatYourRentIncludes.radio.6.hint")
   )
-  val form = WhatYourRentIncludesForm.form.fillAndValidate(WhatYourRentIncludesForm("Yes","Yes","Yes","Yes","Yes","Yes"))
+  
   val radio1: Radios = buildRadios(form, ngrRadio1)
   val radio2: Radios = buildRadios(form, ngrRadio2)
   val radio3: Radios = buildRadios(form, ngrRadio3)
@@ -186,6 +202,10 @@ class WhatYourRentIncludesViewSpec  extends ViewBaseSpec {
 
     "show correct radio 6 hint" in {
       elementText(Selectors.radio6Hint) mustBe Strings.radio6Hint
+    }
+    
+    "show correct bedroom number question" in {
+      elementText(Selectors.bedroomNumbersLabel) mustBe Strings.bedroomNumbersLabel
     }
 
     "show correct continue button" in {

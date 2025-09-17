@@ -31,6 +31,7 @@
  autoComplete: String = "",
  populateField: Boolean = true,
  prefix: Option[PrefixOrSuffix] = None,
+ labelClasses: Option[String] = None
 )(implicit messages: Messages)
 
 @govukInput(Input(
@@ -40,7 +41,11 @@
   label = Label(
    content = Text(messages(label, headingMessageArgs: _*)),
    isPageHeading = isPageHeading,
-   classes = if(isVisible && isPageHeading) "govuk-label--m " else if(isVisible) "govuk-label" else "govuk-visually-hidden"
+   classes = if(labelClasses.isDefined) {
+                labelClasses.get
+             } else {
+                if(isVisible && isPageHeading) "govuk-label--m " else if(isVisible) "govuk-label" else "govuk-visually-hidden"
+             }
   ),
   hint = hint,
   prefix = prefix,

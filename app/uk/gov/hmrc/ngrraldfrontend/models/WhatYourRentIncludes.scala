@@ -24,7 +24,8 @@ case class WhatYourRentIncludes(
                                  rentEmptyShell: Boolean,
                                  rentIncBusinessRates: Boolean,
                                  rentIncWaterCharges: Boolean,
-                                 rentIncService: Boolean
+                                 rentIncService: Boolean,
+                                 bedroomNumbers: Option[Int]
                                )
 
 object WhatYourRentIncludes {

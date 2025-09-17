@@ -30,7 +30,8 @@ class WhatYourRentIncludesSpec extends PlaySpec {
         rentEmptyShell = true,
         rentIncBusinessRates = false,
         rentIncWaterCharges = true,
-        rentIncService = false
+        rentIncService = false,
+        bedroomNumbers = Some(6)
       )
 
       val expectedJson = Json.parse(
@@ -41,7 +42,8 @@ class WhatYourRentIncludesSpec extends PlaySpec {
             "rentEmptyShell": true,
             "rentIncBusinessRates": false,
             "rentIncWaterCharges": true,
-            "rentIncService": false
+            "rentIncService": false,
+            "bedroomNumbers": 6
           }
         """
       )
@@ -69,7 +71,8 @@ class WhatYourRentIncludesSpec extends PlaySpec {
         rentEmptyShell = false,
         rentIncBusinessRates = true,
         rentIncWaterCharges = false,
-        rentIncService = true
+        rentIncService = true,
+        bedroomNumbers = None
       )
 
       json.as[WhatYourRentIncludes] mustBe expected

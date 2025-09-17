@@ -35,7 +35,6 @@ import scala.concurrent.Future
 class RentDatesAgreeControllerSpec extends ControllerSpecSupport {
   val pageTitle = "Rent dates"
   val view: RentDatesAgreeView = inject[RentDatesAgreeView]
-  val mockInputText: InputText = inject[InputText]
   val controller: RentDatesAgreeController = new RentDatesAgreeController(
     view,
     mockAuthJourney,
