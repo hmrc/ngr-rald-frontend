@@ -20,8 +20,7 @@ import play.api.data.*
 import play.api.data.Forms.*
 import play.api.data.format.Formatter
 import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.ngrraldfrontend.models.forms.ProvideDetailsOfFirstSecondRentPeriodForm.isDateAfter1900
-import uk.gov.hmrc.ngrraldfrontend.models.{Month, *}
+import uk.gov.hmrc.ngrraldfrontend.models.*
 
 import scala.util.Try
 

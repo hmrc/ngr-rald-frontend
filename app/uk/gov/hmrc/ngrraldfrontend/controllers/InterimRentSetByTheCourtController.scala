@@ -16,24 +16,20 @@
 
 package uk.gov.hmrc.ngrraldfrontend.controllers
 
-import play.api.data.{Form, FormError}
-import play.api.i18n.I18nSupport
+import play.api.data.Form
+import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.Aliases.{Hint, PrefixOrSuffix, Text}
+import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
-import play.twirl.api.HtmlFormat
-import play.api.i18n.{I18nSupport, Messages}
-import uk.gov.hmrc.govukfrontend.views.Aliases.{Fieldset, Hint, PrefixOrSuffix, Text}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.dateinput.{DateInput, InputItem}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.{Fieldset, Legend}
-import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.ngrraldfrontend.views.html.InterimRentSetByTheCourtView
 import uk.gov.hmrc.ngrraldfrontend.models.forms.InterimRentSetByTheCourtForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.InterimRentSetByTheCourtForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-
-import uk.gov.hmrc.ngrraldfrontend.views.html.components.{DateTextFields, InputText}
+import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
+import uk.gov.hmrc.ngrraldfrontend.views.html.InterimRentSetByTheCourtView
+import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject
@@ -76,11 +72,24 @@ class InterimRentSetByTheCourtController @Inject()(interimRentSetByTheCourtView:
     (authenticate andThen hasLinkedProperties).async { implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
+          val correctedFormErrors = formWithErrors.errors.map { formError =>
+            (formError.key, formError.messages) match
+              case (key, messages) if messages.contains("interimRentSetByTheCourt.startDate.before.1900.error") ||
+                messages.contains("interimRentSetByTheCourt.year.required.error") =>
+                formError.copy(key = "date.year")
+              case ("date.month", messages) =>
+                formError.copy(key = "date.month")
+              case ("date", messages) =>
+                formError.copy(key = "date.month")
+              case _ =>
+                formError
+          }
+          val formWithCorrectedErrors = formWithErrors.copy(errors = correctedFormErrors)
           request.propertyLinking.map(property =>
             Future.successful(BadRequest(interimRentSetByTheCourtView(
-              form = formWithErrors,
+              form = formWithCorrectedErrors,
               propertyAddress = property.addressFull,
-              howMuch = generateInputText(formWithErrors, "howMuch")
+              howMuch = generateInputText(formWithCorrectedErrors, "howMuch")
             )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
         },
         interimRent =>
