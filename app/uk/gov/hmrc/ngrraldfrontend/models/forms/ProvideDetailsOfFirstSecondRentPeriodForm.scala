@@ -95,7 +95,7 @@ object ProvideDetailsOfFirstSecondRentPeriodForm extends CommonFormValidators wi
           .verifying(
             firstError(
               isDateEmpty(errorKeys("provideDetailsOfFirstSecondRentPeriod", "first.startDate")),
-              isDateValid("provideDetailsOfFirstSecondRentPeriod.startDate.invalid.error"),
+              isDateValid("provideDetailsOfFirstSecondRentPeriod.first.startDate.invalid.error"),
               isDateAfter1900("provideDetailsOfFirstSecondRentPeriod.first.startDate.before.1900.error")
             )
           ),
@@ -116,7 +116,7 @@ object ProvideDetailsOfFirstSecondRentPeriodForm extends CommonFormValidators wi
           .verifying(
             firstError(
               isDateEmpty(errorKeys("provideDetailsOfFirstSecondRentPeriod", "second.startDate")),
-              isDateValid("provideDetailsOfFirstSecondRentPeriod.startDate.invalid.error"),
+              isDateValid("provideDetailsOfFirstSecondRentPeriod.second.startDate.invalid.error"),
               isDateAfter1900("provideDetailsOfFirstSecondRentPeriod.second.startDate.before.1900.error")
             )
           ),
