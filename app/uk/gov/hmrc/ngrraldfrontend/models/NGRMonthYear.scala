@@ -26,7 +26,6 @@ import java.util.Locale
 
 final case class NGRMonthYear(month: String, year: String) {
   def makeString: String = {
-    println(Console.MAGENTA_B + month.toIntOption.getOrElse(0) + Console.RESET )
     val monthStr = f"${month.toIntOption.getOrElse(0)}%02d"
     s"$year-$monthStr"
   }
