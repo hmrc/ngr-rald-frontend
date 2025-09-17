@@ -233,9 +233,9 @@ provideDetailsOfFirstSecondRentPeriod.second.endDate.required.error = Enter the 
 provideDetailsOfFirstSecondRentPeriod.second.endDate.day.required.error = End date of the second rent period must include a day
 provideDetailsOfFirstSecondRentPeriod.second.endDate.month.required.error = End date of the second rent period must include a month
 provideDetailsOfFirstSecondRentPeriod.second.endDate.year.required.error = End date of the second rent period must include a year
-provideDetailsOfFirstSecondRentPeriod.second.endDate.day.month.required.error = End date of the second rent period must include a day and month
-provideDetailsOfFirstSecondRentPeriod.second.endDate.day.year.required.error = End date of the second rent period must include a day and year
-provideDetailsOfFirstSecondRentPeriod.second.endDate.month.year.required.error = End date of the second rent period must include a month and year
+provideDetailsOfFirstSecondRentPeriod.second.endDate.dayAndMonth.required.error = End date of the second rent period must include a day and month
+provideDetailsOfFirstSecondRentPeriod.second.endDate.dayAndYear.required.error = End date of the second rent period must include a day and year
+provideDetailsOfFirstSecondRentPeriod.second.endDate.monthAndYear.required.error = End date of the second rent period must include a month and year
 provideDetailsOfFirstSecondRentPeriod.second.endDate.invalid.error = End date of the second rent period must be a real date
 provideDetailsOfFirstSecondRentPeriod.second.endDate.before.1900.error = End date of the second rent period must be 1900 or after
 
