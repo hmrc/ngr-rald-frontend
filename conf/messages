@@ -360,9 +360,9 @@ interimRentSetByTheCourt.hint.2 = For example, 6 2026
 date.month = Month
 date.year = Year
 
-interimRentSetByTheCourt.howMany.required.error = Enter how much the interim rent was, in pounds
-interimRentSetByTheCourt.howMany.tooLarge.error = Interim rent must be £9,999,999.99 or less
-interimRentSetByTheCourt.howMany.format.error = Interim rent must be a number, like 50,000
+interimRentSetByTheCourt.interimAmount.required.error = Enter how much the interim rent was, in pounds
+interimRentSetByTheCourt.interimAmount.tooLarge.error = Interim rent must be £9,999,999.99 or less
+interimRentSetByTheCourt.interimAmount.format.error = Interim rent must be a number, like 50,000
 interimRentSetByTheCourt.monthYear.format.error = Date your interim rent started must be a real date
 interimRentSetByTheCourt.required.error = Enter the date you started paying interim rent
 interimRentSetByTheCourt.month.required.error = Date you started paying the interim rent must include a month

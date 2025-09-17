@@ -76,7 +76,7 @@ class InterimRentSetByTheCourtControllerSpec extends ControllerSpecSupport {
       "Return OK and the correct view" in {
         val fakePostRequest =  FakeRequest(routes.InterimRentSetByTheCourtController.submit)
           .withFormUrlEncodedBody(
-            "howMuch" -> "10000",
+            "interimAmount" -> "10000",
             "date.month" -> "1",
             "date.year" -> "1990"
           )
@@ -98,6 +98,8 @@ class InterimRentSetByTheCourtControllerSpec extends ControllerSpecSupport {
 
         val result = controller.submit()(authenticatedFakeRequest(fakePostRequest))
         status(result) mustBe BAD_REQUEST
+        val content = contentAsString(result)
+        content must include("Enter how much the interim rent was, in pounds")
       }
       "Return BAD_REQUEST for missing month input and the correct view" in {
         mockRequest()
@@ -111,6 +113,8 @@ class InterimRentSetByTheCourtControllerSpec extends ControllerSpecSupport {
 
         val result = controller.submit()(authenticatedFakeRequest(fakePostRequest))
         status(result) mustBe BAD_REQUEST
+        val content = contentAsString(result)
+        content must include("Date you started paying the interim rent must include a month")
       }
       "Return BAD_REQUEST for missing year input and the correct view" in {
         mockRequest()
@@ -124,6 +128,8 @@ class InterimRentSetByTheCourtControllerSpec extends ControllerSpecSupport {
 
         val result = controller.submit()(authenticatedFakeRequest(fakePostRequest))
         status(result) mustBe BAD_REQUEST
+        val content = contentAsString(result)
+        content must include("Date you started paying the interim rent must include a year")
       }
       "Return Exception if no address is in the mongo" in {
         mockRequestWithoutProperty()

@@ -22,6 +22,7 @@ import play.api.data.format.Formatter
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.ngrraldfrontend.models.*
 
+import scala.math.BigDecimal.RoundingMode
 import scala.util.Try
 
 
@@ -30,11 +31,9 @@ final case class InterimRentSetByTheCourtForm(amount: BigDecimal, date: NGRMonth
 object InterimRentSetByTheCourtForm extends CommonFormValidators with MonthYearMappings {
   implicit val format: OFormat[InterimRentSetByTheCourtForm] = Json.format[InterimRentSetByTheCourtForm]
 
-  private lazy val howMuch = "howMuch"
-  private lazy val howMuchEmptyError  = "interimRentSetByTheCourt.howMany.required.error"
-  private lazy val howMuchMaxError    = "interimRentSetByTheCourt.howMany.tooLarge.error"
-  private lazy val howMuchFormatError = "interimRentSetByTheCourt.howMany.format.error"
-  private val dateInput = "date"
+  private lazy val howMuchEmptyError  = "interimRentSetByTheCourt.interimAmount.required.error"
+  private lazy val howMuchMaxError    = "interimRentSetByTheCourt.interimAmount.tooLarge.error"
+  private lazy val howMuchFormatError = "interimRentSetByTheCourt.interimAmount.format.error"
 
   def unapply(interimRentSetByTheCourtForm: InterimRentSetByTheCourtForm): Option[(BigDecimal, NGRMonthYear)] = Some(interimRentSetByTheCourtForm.amount, interimRentSetByTheCourtForm.date)
 
@@ -44,28 +43,20 @@ object InterimRentSetByTheCourtForm extends CommonFormValidators with MonthYearM
     Year -> s"$whichDate.year.required.error"
   )
   
-  def bigDecimalWithFormatError: Formatter[BigDecimal] = new Formatter[BigDecimal] {
-    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], BigDecimal] = {
-      data.get(key).filter(_.nonEmpty) match {
-        case Some(value) =>
-          Try(BigDecimal(value)).toEither.left.map(_ =>
-            Seq(FormError(key, howMuchFormatError))
-          )
-        case None =>
-          Left(Seq(FormError(key, howMuchEmptyError)))
-      }
-    }
-    override def unbind(key: String, value: BigDecimal): Map[String, String] =
-      Map(key -> value.toString())
-  }
-
-  val annualRentFormMapping: (String, Mapping[BigDecimal]) =
-    howMuch -> of(bigDecimalWithFormatError)
-      .verifying(howMuchMaxError, _ <= BigDecimal("9999999.99"))
-
   val form: Form[InterimRentSetByTheCourtForm] = Form(
     mapping(
-      annualRentFormMapping,
+      "interimAmount" -> text()
+        .transform[String](_.strip(), identity)
+        .verifying(
+          firstError(
+            isNotEmpty("interimAmount", howMuchEmptyError),
+            regexp(amountRegex.pattern(), howMuchFormatError)
+          )
+        )
+        .transform[BigDecimal](BigDecimal(_).setScale(2, RoundingMode.UP), _.toString)
+        .verifying(
+          maximumValue[BigDecimal](BigDecimal("9999999.99"), howMuchMaxError)
+        ),
       "date" -> monthYearMapping
         .verifying(
           firstError(

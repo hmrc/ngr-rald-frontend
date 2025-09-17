@@ -131,7 +131,7 @@ trait CommonFormValidators {
     val maybeYear = date.year.toIntOption
     maybeYear match {
       case Some(year) =>
-        if (date.year.toInt < 1900)
+        if (year < 1900)
           Invalid (errorKey)
         else
           Valid
@@ -148,7 +148,7 @@ trait CommonFormValidators {
     val maybeMonth = date.month.toIntOption
     val maybeYear = date.year.toIntOption
     (maybeMonth, maybeYear) match {
-      case (Some(month), Some(year)) if month >= 0 && month <= 12 && (month + year != 0) =>
+      case (Some(month), Some(year)) if month > 0 && month <= 12 && (month + year != 0) =>
         Valid
       case _ =>
         Invalid(errorKey)

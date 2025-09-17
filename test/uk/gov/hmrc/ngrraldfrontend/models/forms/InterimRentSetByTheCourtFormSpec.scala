@@ -23,13 +23,15 @@ import play.api.data.FormError
 import play.api.libs.json.Json
 import uk.gov.hmrc.ngrraldfrontend.models.NGRMonthYear
 
+import scala.collection.immutable.ArraySeq
+
 class InterimRentSetByTheCourtFormSpec extends AnyWordSpec with Matchers {
 
   "InterimRentSetByTheCourtForm" should {
 
     "bind valid input" in {
       val data = Map(
-        "howMuch" -> "123456.78",
+        "interimAmount" -> "123456.78",
         "date.month" -> "1",
         "date.year" -> "1990"
       )
@@ -37,7 +39,7 @@ class InterimRentSetByTheCourtFormSpec extends AnyWordSpec with Matchers {
 
       boundForm.hasErrors shouldBe false
       boundForm.value shouldBe Some(InterimRentSetByTheCourtForm(
-        amount = BigDecimal("123456.78"),
+        amount = BigDecimal(123456.78),
         date = NGRMonthYear(month = "1", year = "1990")
       ))
     }
@@ -47,34 +49,34 @@ class InterimRentSetByTheCourtFormSpec extends AnyWordSpec with Matchers {
       val boundForm = InterimRentSetByTheCourtForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("howMuch", "interimRentSetByTheCourt.howMany.required.error"))
+      boundForm.errors should contain(FormError("interimAmount", "error.required"))
     }
 
     "fail to bind non-numeric input for how much input field" in {
       val data = Map(
-        "howMuch" -> "hello",
+        "interimAmount" -> "hello",
         "date.month" -> "1",
         "date.year" -> "1990"
       )
       val boundForm = InterimRentSetByTheCourtForm.form.bind(data)
-
-      boundForm.errors should contain(FormError("howMuch", "interimRentSetByTheCourt.howMany.format.error"))
+      boundForm.hasErrors shouldBe true
+      boundForm.errors shouldBe List(FormError("interimAmount", List("interimRentSetByTheCourt.interimAmount.format.error"), ArraySeq("""([0-9]+\.[0-9]+|[0-9]+)""")))
     }
 
     "fail to bind input greater than 9999999.99 for how much input field" in {
       val data = Map(
-        "howMuch" -> "123456789.78",
+        "interimAmount" -> "123456789.78",
         "date.month" -> "1",
         "date.year" -> "1990"
       )
       val boundForm = InterimRentSetByTheCourtForm.form.bind(data)
 
-      boundForm.errors should contain(FormError("howMuch", "interimRentSetByTheCourt.howMany.tooLarge.error"))
+      boundForm.errors shouldBe List(FormError("interimAmount", List("interimRentSetByTheCourt.interimAmount.tooLarge.error"), ArraySeq(9999999.99)))
     }
 
     "bind edge case of exactly 9999999.99" in {
       val data = Map(
-        "howMuch" -> "9999999.99",
+        "interimAmount" -> "9999999.99",
         "date.month" -> "1",
         "date.year" -> "1990"
       )
@@ -89,7 +91,7 @@ class InterimRentSetByTheCourtFormSpec extends AnyWordSpec with Matchers {
 
     "fail to bind incorrect month for month input field" in {
       val data = Map(
-        "howMuch" -> "123456.78",
+        "interimAmount" -> "123456.78",
         "date.month" -> "13",
         "date.year" -> "1990"
       )
@@ -99,7 +101,7 @@ class InterimRentSetByTheCourtFormSpec extends AnyWordSpec with Matchers {
     }
     "fail to bind year before 1900 for year input field" in {
       val data = Map(
-        "howMuch" -> "123456.78",
+        "interimAmount" -> "123456.78",
         "date.month" -> "10",
         "date.year" -> "1899"
       )
@@ -110,7 +112,7 @@ class InterimRentSetByTheCourtFormSpec extends AnyWordSpec with Matchers {
 
     "fail to bind missing month input" in {
       val data = Map(
-        "howMuch" -> "123456.78",
+        "interimAmount" -> "123456.78",
         "date.month" -> "",
         "date.year" -> "1899"
       )
@@ -121,7 +123,7 @@ class InterimRentSetByTheCourtFormSpec extends AnyWordSpec with Matchers {
 
     "fail to bind missing year input" in {
       val data = Map(
-        "howMuch" -> "123456.78",
+        "interimAmount" -> "123456.78",
         "date.month" -> "1",
         "date.year" -> ""
       )
@@ -132,7 +134,7 @@ class InterimRentSetByTheCourtFormSpec extends AnyWordSpec with Matchers {
 
     "fail to bind non numeric format for month input" in {
       val data = Map(
-        "howMuch" -> "123456.78",
+        "interimAmount" -> "123456.78",
         "date.month" -> "hello",
         "date.year" -> "1999"
       )
@@ -143,7 +145,7 @@ class InterimRentSetByTheCourtFormSpec extends AnyWordSpec with Matchers {
 
     "fail to bind non numeric format for year input" in {
       val data = Map(
-        "howMuch" -> "123456.78",
+        "interimAmount" -> "123456.78",
         "date.month" -> "1",
         "date.year" -> "hello"
       )

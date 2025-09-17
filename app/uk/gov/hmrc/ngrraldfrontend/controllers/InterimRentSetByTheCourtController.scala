@@ -63,7 +63,7 @@ class InterimRentSetByTheCourtController @Inject()(interimRentSetByTheCourtView:
         Future.successful(Ok(interimRentSetByTheCourtView(
           form = form,
           propertyAddress = property.addressFull,
-          howMuch = generateInputText(form, "howMuch")
+          interimAmount = generateInputText(form, "interimAmount")
         )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
     }
   }
@@ -77,8 +77,6 @@ class InterimRentSetByTheCourtController @Inject()(interimRentSetByTheCourtView:
               case (key, messages) if messages.contains("interimRentSetByTheCourt.startDate.before.1900.error") ||
                 messages.contains("interimRentSetByTheCourt.year.required.error") =>
                 formError.copy(key = "date.year")
-              case ("date.month", messages) =>
-                formError.copy(key = "date.month")
               case ("date", messages) =>
                 formError.copy(key = "date.month")
               case _ =>
@@ -89,7 +87,7 @@ class InterimRentSetByTheCourtController @Inject()(interimRentSetByTheCourtView:
             Future.successful(BadRequest(interimRentSetByTheCourtView(
               form = formWithCorrectedErrors,
               propertyAddress = property.addressFull,
-              howMuch = generateInputText(formWithCorrectedErrors, "howMuch")
+              interimAmount = generateInputText(formWithCorrectedErrors, "interimAmount")
             )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
         },
         interimRent =>
