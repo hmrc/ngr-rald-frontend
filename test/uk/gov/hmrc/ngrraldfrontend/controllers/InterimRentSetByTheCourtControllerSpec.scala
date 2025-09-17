@@ -90,7 +90,7 @@ class InterimRentSetByTheCourtControllerSpec extends ControllerSpecSupport {
         mockRequest()
         val fakePostRequest = FakeRequest(routes.InterimRentSetByTheCourtController.submit)
           .withFormUrlEncodedBody(
-            "howMuch" -> "",
+            "interimAmount" -> "",
             "date.month" -> "1",
             "date.year" -> "1990"
           )
@@ -105,7 +105,7 @@ class InterimRentSetByTheCourtControllerSpec extends ControllerSpecSupport {
         mockRequest()
         val fakePostRequest = FakeRequest(routes.InterimRentSetByTheCourtController.submit)
           .withFormUrlEncodedBody(
-            "howMuch" -> "1000",
+            "interimAmount" -> "1000",
             "date.month" -> "",
             "date.year" -> "1990"
           )
@@ -120,7 +120,7 @@ class InterimRentSetByTheCourtControllerSpec extends ControllerSpecSupport {
         mockRequest()
         val fakePostRequest = FakeRequest(routes.InterimRentSetByTheCourtController.submit)
           .withFormUrlEncodedBody(
-            "howMuch" -> "1000",
+            "interimAmount" -> "1000",
             "date.month" -> "1",
             "date.year" -> ""
           )
