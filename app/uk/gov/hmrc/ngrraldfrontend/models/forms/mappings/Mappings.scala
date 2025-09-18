@@ -22,12 +22,4 @@ import play.api.data.Forms.of
 trait Mappings extends Formatters {
   protected def radioText(errorKey: String = "error.required", args: Seq[String] = Seq.empty): FieldMapping[String] =
     of(stringFormatter(errorKey, args))
-
-  protected def int(
-                    isRequired: Boolean = true,
-                    requiredKey: String = "error.required",
-                    wholeNumberKey: String = "error.wholeNumber",
-                    nonNumericKey: String = "error.nonNumeric",
-                    args: Seq[String] = Seq.empty): FieldMapping[Int] =
-    of(intFormatter(isRequired, requiredKey, wholeNumberKey, nonNumericKey, args))
 }

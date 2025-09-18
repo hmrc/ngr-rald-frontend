@@ -17,7 +17,7 @@
 package uk.gov.hmrc.ngrraldfrontend.models.forms
 
 import play.api.data.Form
-import play.api.data.Forms.{mapping, optional}
+import play.api.data.Forms.{mapping, optional, text}
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreementVerbalForm.firstError
@@ -35,7 +35,7 @@ object HowManyParkingSpacesOrGaragesIncludedInRentForm extends CommonFormValidat
   private lazy val fieldRequired = "howManyParkingSpacesOrGaragesIncludedInRent.error.required"
   private lazy val uncoveredSpacesWholeNumError  = "howManyParkingSpacesOrGaragesIncludedInRent.uncoveredSpaces.wholeNum.error"
   private lazy val coveredSpacesWholeNumError  = "howManyParkingSpacesOrGaragesIncludedInRent.coveredSpaces.wholeNum.error"
-  private lazy val garagesSpacesWholeNumError  = "howManyParkingSpacesOrGaragesIncludedInRent.garages.wholeNum.error"
+  private lazy val garagesWholeNumError  = "howManyParkingSpacesOrGaragesIncludedInRent.garages.wholeNum.error"
   private lazy val uncoveredSpacesTooHighError  = "howManyParkingSpacesOrGaragesIncludedInRent.uncoveredSpaces.tooHigh.error"
   private lazy val coveredSpacesTooHighError  = "howManyParkingSpacesOrGaragesIncludedInRent.coveredSpaces.tooHigh.error"
   private lazy val garagesTooHighError  = "howManyParkingSpacesOrGaragesIncludedInRent.garages.tooHigh.error"
@@ -63,29 +63,25 @@ object HowManyParkingSpacesOrGaragesIncludedInRentForm extends CommonFormValidat
   val form: Form[HowManyParkingSpacesOrGaragesIncludedInRentForm] = {
     Form(
       mapping(
-        "uncoveredSpaces" -> int(
-          requiredKey = allFieldsRequiredError,
-          wholeNumberKey = uncoveredSpacesWholeNumError,
-          nonNumericKey = uncoveredSpacesWholeNumError,
-        ).verifying(
-          maximumValue(9999, uncoveredSpacesTooHighError)),
-        "coveredSpaces" ->
-          int(
-            requiredKey = allFieldsRequiredError,
-            wholeNumberKey = coveredSpacesWholeNumError,
-            nonNumericKey = coveredSpacesWholeNumError,
-          ).verifying(
-            maximumValue(9999, coveredSpacesTooHighError)
-          ),
-        "garages" ->
-          int(
-            requiredKey = allFieldsRequiredError,
-            wholeNumberKey = garagesSpacesWholeNumError,
-            nonNumericKey = garagesSpacesWholeNumError,
-          ).verifying(
-            maximumValue(9999, garagesTooHighError)
-          )
-       )
+        "uncoveredSpaces" -> optional(
+          text()
+            .transform[String](_.strip().replaceAll(",", ""), identity)
+            .verifying(regexp(wholePositiveNumberRegexp.pattern(), uncoveredSpacesWholeNumError))
+        ).transform[Int](_.map(_.toInt).getOrElse(0), value => Some(value.toString))
+          .verifying(maximumValue[Int](maxValue, uncoveredSpacesTooHighError)),
+        "coveredSpaces" -> optional(
+          text()
+            .transform[String](_.strip().replaceAll(",", ""), identity)
+            .verifying(regexp(wholePositiveNumberRegexp.pattern(), coveredSpacesWholeNumError))
+        ).transform[Int](_.map(_.toInt).getOrElse(0), value => Some(value.toString))
+          .verifying(maximumValue[Int](maxValue, coveredSpacesTooHighError)),
+        "garages" -> optional(
+          text()
+            .transform[String](_.strip().replaceAll(",", ""), identity)
+            .verifying(regexp(wholePositiveNumberRegexp.pattern(), garagesWholeNumError))
+        ).transform[Int](_.map(_.toInt).getOrElse(0), value => Some(value.toString))
+          .verifying(maximumValue[Int](maxValue, garagesTooHighError)),
+      )
       (HowManyParkingSpacesOrGaragesIncludedInRentForm.apply)(HowManyParkingSpacesOrGaragesIncludedInRentForm.unapply)
         .verifying(
           firstError(
