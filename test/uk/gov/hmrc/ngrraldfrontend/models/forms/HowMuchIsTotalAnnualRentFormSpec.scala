@@ -37,6 +37,16 @@ class HowMuchIsTotalAnnualRentFormSpec extends AnyWordSpec with Matchers {
       boundForm.value shouldBe Some(HowMuchIsTotalAnnualRentForm(BigDecimal("123456.78")))
     }
 
+    "bind amount with commas" in {
+      val data = Map(
+        "how–much–is–total–annual–rent-value" -> "9,999,999.99",
+      )
+      val boundForm = HowMuchIsTotalAnnualRentForm.form.bind(data)
+
+      boundForm.hasErrors shouldBe false
+      boundForm.value shouldBe Some(HowMuchIsTotalAnnualRentForm(BigDecimal("9999999.99")))
+    }
+
     "fail to bind empty input" in {
       val data = Map("how–much–is–total–annual–rent-value" -> "")
       val boundForm = HowMuchIsTotalAnnualRentForm.form.bind(data)

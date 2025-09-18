@@ -68,7 +68,7 @@ class RentInterimController @Inject()(rentInterimView: RentInterimView,
             agreedRentChange = radioValue.radioValue
           )
           if (radioValue.radioValue == "Yes") {
-            Future.successful(Redirect(routes.ProvideDetailsOfFirstSecondRentPeriodController.show.url))
+            Future.successful(Redirect(routes.InterimRentSetByTheCourtController.show.url))
           } else {
             Future.successful(Redirect(routes.CheckRentFreePeriodController.show.url))
           }
