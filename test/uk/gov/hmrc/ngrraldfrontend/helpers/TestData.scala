@@ -57,6 +57,16 @@ trait TestData {
   )
  )
  
+ val firstSecondRentPeriod: ProvideDetailsOfFirstSecondRentPeriod = ProvideDetailsOfFirstSecondRentPeriod(
+ firstDateStart = "2025-01-01",
+ firstDateEnd = "2025-01-31",
+ firstRentPeriodRadio = true,
+ firstRentPeriodAmount = Some("1000"),
+ secondDateStart = "2025-02-01",
+ secondDateEnd = "2025-02-28",
+ secondHowMuchIsRent = "1000"
+ )
+ 
  val testRegistrationModel: RatepayerRegistration = RatepayerRegistration(
   userType = Some(Individual),
   agentStatus = Some(AgentStatus.Agent),
@@ -105,4 +115,16 @@ trait TestData {
     |{"credId":{"value":"1234"}}
     |""".stripMargin
  )
+ 
+ val agreementModel: Agreement = Agreement(
+  agreementStart = "2025-01-01", isOpenEnded = true, openEndedDate = Some("2025-02-02"), haveBreakClause = true, breakClauseInfo = Some("he has a break clause")
+ )
+
+ val agreementModelMin: Agreement = Agreement(
+  agreementStart = "2025-01-01", isOpenEnded = false, openEndedDate = None, haveBreakClause = false, breakClauseInfo = None
+ )
+ 
+ val agreementVerbalModelMin: AgreementVerbal = AgreementVerbal(startDate = "2025-01-01", openEnded = true, endDate = None)
+ val agreementVerbalModel: AgreementVerbal = AgreementVerbal(startDate = "2025-01-01", openEnded = false, endDate =  Some("2025-02-02"))
+ 
 }

@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.ngrraldfrontend.controllers
 
+import org.mockito.Mockito.when
+import org.mockito.ArgumentMatchers.any
 import play.api.test.FakeRequest
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redirectLocation, status}
@@ -23,66 +25,69 @@ import uk.gov.hmrc.http.{HeaderNames, NotFoundException}
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
 import uk.gov.hmrc.ngrraldfrontend.models.NormalMode
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentInterimForm
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.views.html.RentInterimView
 
-class RentInterimControllerSpec extends ControllerSpecSupport { 
+import scala.concurrent.Future
+class RentInterimControllerSpec extends ControllerSpecSupport {
   val pageTitle = "Did the court also set an interim rent?"
   val view: RentInterimView = inject[RentInterimView]
-  val controller: RentInterimController = new RentInterimController(view, mockAuthJourney, navigator, fakeData(None), mockSessionRepository, mcc)(mockConfig)
+  val controllerNoProperty: RentInterimController = new RentInterimController(view, fakeAuth, fakeData(None), navigator, mockSessionRepository, mcc)(mockConfig)
+  val controllerProperty: RentInterimController = new RentInterimController(view, fakeAuth, fakeDataProperty(Some(property), None), navigator, mockSessionRepository, mcc)(mockConfig)
 
   "RentInterimController" must {
     "method show" must {
       "Return OK and the correct view" in {
-        val result = controller.show(NormalMode)(authenticatedFakeRequest())
+        val result = controllerProperty.show(NormalMode)(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
         content must include(pageTitle)
       }
       "Return NotFoundException when property is not found in the mongo" in {
-        mockRequestWithoutProperty()
+        when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(None))
         val exception = intercept[NotFoundException] {
-          await(controller.show(NormalMode)(authenticatedFakeRequest()))
+          await(controllerNoProperty.show(NormalMode)(authenticatedFakeRequest))
         }
-        exception.getMessage contains "Couldn't find property in mongo" mustBe true
+        exception.getMessage contains "Could not find answers in backend mongo" mustBe true
       }
     }
     "method submit" must {
       "Return OK and the correct view" in {
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val fakePostRequest =  FakeRequest(routes.WhatTypeOfLeaseRenewalController.submit(NormalMode))
           .withFormUrlEncodedBody((RentInterimForm.agreedRentChangeRadio, "Yes"))
           .withHeaders(HeaderNames.authorisation -> "Bearer 1")
 
-        val result = controller.submit(NormalMode)(authenticatedFakeRequest(fakePostRequest))
+        val result = controllerProperty.submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.ProvideDetailsOfFirstSecondRentPeriodController.show(NormalMode).url)
       }
       "Return OK and the correct view when no is selected" in {
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val fakePostRequest = FakeRequest(routes.WhatTypeOfLeaseRenewalController.submit(NormalMode))
           .withFormUrlEncodedBody((RentInterimForm.agreedRentChangeRadio, "No"))
           .withHeaders(HeaderNames.authorisation -> "Bearer 1")
 
-        val result = controller.submit(NormalMode)(authenticatedFakeRequest(fakePostRequest))
+        val result = controllerProperty.submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.CheckRentFreePeriodController.show(NormalMode).url)
       }
       "Return BAD_REQUEST for missing input and the correct view" in {
-        mockRequest()
         val fakePostRequest = FakeRequest(routes.WhatTypeOfLeaseRenewalController.submit(NormalMode))
           .withFormUrlEncodedBody((RentInterimForm.agreedRentChangeRadio, ""))
           .withHeaders(HeaderNames.authorisation -> "Bearer 1")
 
-        val result = controller.submit(NormalMode)(authenticatedFakeRequest(fakePostRequest))
+        val result = controllerProperty.submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
         status(result) mustBe BAD_REQUEST
       }
       "Return Exception if no address is in the mongo" in {
-        mockRequestWithoutProperty()
         val fakePostRequest = FakeRequest(routes.WhatTypeOfLeaseRenewalController.submit(NormalMode))
           .withFormUrlEncodedBody((RentInterimForm.agreedRentChangeRadio, ""))
           .withHeaders(HeaderNames.authorisation -> "Bearer 1")
         val exception = intercept[NotFoundException] {
-          await(controller.submit(NormalMode)(authenticatedFakeRequest(fakePostRequest)))
+          await(controllerNoProperty.submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest)))
         }
-        exception.getMessage contains "Couldn't find property in mongo" mustBe true
+        exception.getMessage contains "Could not find answers in backend mongo" mustBe true
       }
     }
   }

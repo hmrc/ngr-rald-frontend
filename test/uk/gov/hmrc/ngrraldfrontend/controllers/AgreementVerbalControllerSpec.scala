@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.ngrraldfrontend.controllers
 
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -26,7 +27,8 @@ import uk.gov.hmrc.http.{HeaderNames, NotFoundException}
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, NormalMode, RaldUserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, NormalMode, RaldUserAnswers, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.pages.AgreementVerbalPage
 import uk.gov.hmrc.ngrraldfrontend.views.html.AgreementVerbalView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.DateTextFields
 
@@ -38,15 +40,40 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
   val view: AgreementVerbalView = inject[AgreementVerbalView]
   val mockDateTextFields: DateTextFields = inject[DateTextFields]
   val controllerNoProperty: AgreementVerbalController = new AgreementVerbalController(view, fakeAuth, mockDateTextFields, mcc, fakeData(None), mockSessionRepository, navigator)(mockConfig, ec)
-  val controllerProperty: AgreementVerbalController = new AgreementVerbalController(view, fakeAuth, mockDateTextFields, mcc, fakeDataProperty(Some(property),None), mockSessionRepository, navigator)(mockConfig, ec)
+  val controllerProperty: Option[UserAnswers] => AgreementVerbalController = answers => new AgreementVerbalController(view, fakeAuth, mockDateTextFields, mcc, fakeDataProperty(Some(property), answers), mockSessionRepository, navigator)(mockConfig, ec)
+  val agreementVerbalMinAnswers: Option[UserAnswers] = UserAnswers("id").set(AgreementVerbalPage, agreementVerbalModelMin).toOption
+  val agreementVerbalAnswers: Option[UserAnswers] = UserAnswers("id").set(AgreementVerbalPage, agreementVerbalModel).toOption
 
   "Agreement Verbal controller" must {
     "method show" must {
       "Return OK and the correct view" in {
-        val result = controllerProperty.show(NormalMode)(authenticatedFakeRequest)
+        val result = controllerProperty(None).show(NormalMode)(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
         content must include(pageTitle)
+      }
+      "return OK and the correct view with prepopulated answers but no end date" in {
+        val result = controllerProperty(agreementVerbalMinAnswers).show(NormalMode)(authenticatedFakeRequest)
+        status(result) mustBe OK
+        val content = contentAsString(result)
+        val document = Jsoup.parse(content)
+        document.select("input[name=agreementStartDate.day]").attr("value") mustBe "01"
+        document.select("input[name=agreementStartDate.month]").attr("value") mustBe "01"
+        document.select("input[name=agreementStartDate.year]").attr("value") mustBe "2025"
+        document.select("input[type=radio][name=agreement-verbal-radio][value=Yes]").hasAttr("checked") mustBe true
+      }
+      "return OK and the correct view with prepopulated answers with an end date" in {
+        val result = controllerProperty(agreementVerbalAnswers).show(NormalMode)(authenticatedFakeRequest)
+        status(result) mustBe OK
+        val content = contentAsString(result)
+        val document = Jsoup.parse(content)
+        document.select("input[name=agreementStartDate.day]").attr("value") mustBe "01"
+        document.select("input[name=agreementStartDate.month]").attr("value") mustBe "01"
+        document.select("input[name=agreementStartDate.year]").attr("value") mustBe "2025"
+        document.select("input[type=radio][name=agreement-verbal-radio][value=No]").hasAttr("checked") mustBe true
+        document.select("input[name=agreementEndDate.day]").attr("value") mustBe "02"
+        document.select("input[name=agreementEndDate.month]").attr("value") mustBe "02"
+        document.select("input[name=agreementEndDate.year]").attr("value") mustBe "2025"
       }
       "Return NotFoundException when property is not found in the mongo" in {
         when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(None))
@@ -60,7 +87,7 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
     "method submit" must {
       "Return SEE_OTHER and redirect HowMuchIsTotalAnnualRent view when radio button selected yes" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        val result = controllerProperty.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit(NormalMode))
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "30",
             "agreementStartDate.month" -> "4",
@@ -74,7 +101,7 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
       }
       "Return SEE_OTHER and redirect HowMuchIsTotalAnnualRent view when radio button selected no" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        val result = controllerProperty.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit(NormalMode))
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "30",
             "agreementStartDate.month" -> "4",
@@ -90,7 +117,7 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
         redirectLocation(result) mustBe Some(routes.HowMuchIsTotalAnnualRentController.show(NormalMode).url)
       }
       "Return Form with Errors when no radio button is selected" in {
-        val result = controllerProperty.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit(NormalMode))
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "30",
             "agreementStartDate.month" -> "4",
@@ -105,7 +132,7 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
         content must include("<a href=\"#agreement-verbal-radio\">Select Yes if your agreement is open-ended</a>")
       }
       "Return Form with Errors when radio button No is selected but no end date is given" in {
-        val result = controllerProperty.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit(NormalMode))
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "30",
             "agreementStartDate.month" -> "4",
@@ -122,7 +149,7 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
         content must include("<a href=\"#agreementEndDate\">Select yes if your agreement is open-ended</a>")
       }
       "Return Form with Errors when radio button No is selected but end date is invalid" in {
-        val result = controllerProperty.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit(NormalMode))
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "30",
             "agreementStartDate.month" -> "4",
@@ -139,7 +166,7 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
         content must include("<a href=\"#agreementEndDate\">Date your agreement ends must be a real date</a>")
       }
       "Return Form with Errors when start date is missing day" in {
-        val result = controllerProperty.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit(NormalMode))
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "",
             "agreementStartDate.month" -> "4",
@@ -153,7 +180,7 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
         content must include("<a href=\"#agreementStartDate.day\">Date your agreement started must include a day</a>")
       }
       "Return Form with Errors when start date is missing month" in {
-        val result = controllerProperty.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit(NormalMode))
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "30",
             "agreementStartDate.month" -> "",
@@ -167,7 +194,7 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
         content must include("<a href=\"#agreementStartDate.month\">Date your agreement started must include a month</a>")
       }
       "Return Form with Errors when start date is missing year" in {
-        val result = controllerProperty.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit(NormalMode))
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "30",
             "agreementStartDate.month" -> "4",
@@ -181,7 +208,7 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
         content must include("<a href=\"#agreementStartDate.year\">Date your agreement started must include a year</a>")
       }
       "Return Form with Errors when end date is missing day" in {
-        val result = controllerProperty.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit(NormalMode))
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "30",
             "agreementStartDate.month" -> "4",
@@ -198,7 +225,7 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
         content must include("<a href=\"#agreementEndDate.day\">Date your agreement ends must include a day</a>")
       }
       "Return Form with Errors when end date is missing month" in {
-        val result = controllerProperty.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit(NormalMode))
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "30",
             "agreementStartDate.month" -> "4",
@@ -215,7 +242,7 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
         content must include("<a href=\"#agreementEndDate.month\">Date your agreement ends must include a month</a>")
       }
       "Return Form with Errors when end date is missing year" in {
-        val result = controllerProperty.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit(NormalMode))
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "30",
             "agreementStartDate.month" -> "4",
