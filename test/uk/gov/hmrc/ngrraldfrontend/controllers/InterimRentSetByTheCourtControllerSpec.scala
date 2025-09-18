@@ -46,7 +46,6 @@ import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 class InterimRentSetByTheCourtControllerSpec extends ControllerSpecSupport {
   val pageTitle = "Interim rent set by the court"
   val view: InterimRentSetByTheCourtView = inject[InterimRentSetByTheCourtView]
-  val mockInputText: InputText = inject[InputText]
   val controller: InterimRentSetByTheCourtController = new InterimRentSetByTheCourtController(
     interimRentSetByTheCourtView = view,
     authenticate = mockAuthJourney,
