@@ -24,6 +24,8 @@ import scala.util.Try
 
 trait CommonFormValidators {
   val amountRegex: Pattern = Pattern.compile("([0-9]+\\.[0-9]+|[0-9]+)")
+  val wholePositiveNumberRegexp: Pattern = Pattern.compile("^\\d+$")
+  
 
   protected def firstError[A](constraints: Constraint[A]*): Constraint[A] =
     Constraint { input =>

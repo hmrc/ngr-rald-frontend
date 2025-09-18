@@ -39,7 +39,7 @@ class HowManyParkingSpacesOrGaragesIncludedInRentFormSpec extends AnyWordSpec wi
       boundForm.value shouldBe Some(HowManyParkingSpacesOrGaragesIncludedInRentForm(uncoveredSpaces = 100, coveredSpaces = 100, garages = 100))
     }
 
-    "fail to bind empty input" in {
+    "bind empty input" in {
       val data = Map(
         "uncoveredSpaces" -> "",
         "coveredSpaces" -> "100",
@@ -47,8 +47,31 @@ class HowManyParkingSpacesOrGaragesIncludedInRentFormSpec extends AnyWordSpec wi
       )
       val boundForm = HowManyParkingSpacesOrGaragesIncludedInRentForm.form.bind(data)
 
+      boundForm.hasErrors shouldBe false
+    }
+
+    "bind field with commas input" in {
+      val data = Map(
+        "uncoveredSpaces" -> "1,000",
+        "coveredSpaces" -> "100",
+        "garages" -> "100"
+      )
+      val boundForm = HowManyParkingSpacesOrGaragesIncludedInRentForm.form.bind(data)
+
+      boundForm.hasErrors shouldBe false
+    }
+
+    "fail to bind field with decimal place" in {
+      val data = Map(
+        "uncoveredSpaces" -> "10.5",
+        "coveredSpaces" -> "100",
+        "garages" -> "100"
+      )
+
+
+      val boundForm = HowManyParkingSpacesOrGaragesIncludedInRentForm.form.bind(data)
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("uncoveredSpaces", "howManyParkingSpacesOrGaragesIncludedInRent.allFields.error.required"))
+      boundForm.errors shouldBe List(FormError("uncoveredSpaces", List("howManyParkingSpacesOrGaragesIncludedInRent.uncoveredSpaces.wholeNum.error"), ArraySeq("""^\d+$""")))
     }
 
     "fail to bind non-numeric input" in {
@@ -59,7 +82,7 @@ class HowManyParkingSpacesOrGaragesIncludedInRentFormSpec extends AnyWordSpec wi
       )
       val boundForm = HowManyParkingSpacesOrGaragesIncludedInRentForm.form.bind(data)
 
-      boundForm.errors shouldBe List(FormError("uncoveredSpaces", List("howManyParkingSpacesOrGaragesIncludedInRent.uncoveredSpaces.wholeNum.error"), List()))
+      boundForm.errors shouldBe List(FormError("uncoveredSpaces", List("howManyParkingSpacesOrGaragesIncludedInRent.uncoveredSpaces.wholeNum.error"), ArraySeq("""^\d+$""")))
     }
 
     "fail to bind input greater than 9,999" in {
@@ -72,6 +95,18 @@ class HowManyParkingSpacesOrGaragesIncludedInRentFormSpec extends AnyWordSpec wi
 
       boundForm.hasErrors shouldBe true
       boundForm.errors shouldBe List(FormError("uncoveredSpaces", List("howManyParkingSpacesOrGaragesIncludedInRent.uncoveredSpaces.tooHigh.error"), ArraySeq(9999)))
+    }
+
+    "fail to bind when no input fields are entered" in {
+      val data = Map(
+        "uncoveredSpaces" -> "",
+        "coveredSpaces" -> "",
+        "garages" -> ""
+      )
+      val boundForm = HowManyParkingSpacesOrGaragesIncludedInRentForm.form.bind(data)
+
+      boundForm.hasErrors shouldBe true
+      boundForm.errors shouldBe List(FormError("", "howManyParkingSpacesOrGaragesIncludedInRent.error.required"))
     }
 
     "fail to bind when input fields are all 0" in {
