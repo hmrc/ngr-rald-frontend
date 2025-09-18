@@ -42,7 +42,7 @@ object InterimRentSetByTheCourtForm extends CommonFormValidators with MonthYearM
     Month -> s"$whichDate.month.required.error",
     Year -> s"$whichDate.year.required.error"
   )
-  
+
   val form: Form[InterimRentSetByTheCourtForm] = Form(
     mapping(
       "interimAmount" -> text()
@@ -53,7 +53,7 @@ object InterimRentSetByTheCourtForm extends CommonFormValidators with MonthYearM
             regexp(amountRegex.pattern(), howMuchFormatError)
           )
         )
-        .transform[BigDecimal](BigDecimal(_).setScale(2, RoundingMode.UP), _.toString)
+        .transform[BigDecimal](BigDecimal(_).setScale(2, RoundingMode.HALF_UP), _.toString)
         .verifying(
           maximumValue[BigDecimal](BigDecimal("9999999.99"), howMuchMaxError)
         ),

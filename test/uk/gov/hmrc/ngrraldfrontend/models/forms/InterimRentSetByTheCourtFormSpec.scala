@@ -89,6 +89,51 @@ class InterimRentSetByTheCourtFormSpec extends AnyWordSpec with Matchers {
       ))
     }
 
+    "bind and drop decimal places to make 2" in {
+      val data = Map(
+        "interimAmount" -> "11.123",
+        "date.month" -> "1",
+        "date.year" -> "1990"
+      )
+      val boundForm = InterimRentSetByTheCourtForm.form.bind(data)
+
+      boundForm.hasErrors shouldBe false
+      boundForm.value shouldBe Some(InterimRentSetByTheCourtForm(
+        amount = BigDecimal("11.12"),
+        date = NGRMonthYear(month = "1", year = "1990")
+      ))
+    }
+
+    "bind and round the decimal places up" in {
+      val data = Map(
+        "interimAmount" -> "11.125",
+        "date.month" -> "1",
+        "date.year" -> "1990"
+      )
+      val boundForm = InterimRentSetByTheCourtForm.form.bind(data)
+
+      boundForm.hasErrors shouldBe false
+      boundForm.value shouldBe Some(InterimRentSetByTheCourtForm(
+        amount = BigDecimal("11.13"),
+        date = NGRMonthYear(month = "1", year = "1990")
+      ))
+    }
+
+    "bind decimal with two .00" in {
+      val data = Map(
+        "interimAmount" -> "11.00",
+        "date.month" -> "1",
+        "date.year" -> "1990"
+      )
+      val boundForm = InterimRentSetByTheCourtForm.form.bind(data)
+
+      boundForm.hasErrors shouldBe false
+      boundForm.value shouldBe Some(InterimRentSetByTheCourtForm(
+        amount = BigDecimal("11.00"),
+        date = NGRMonthYear(month = "1", year = "1990")
+      ))
+    }
+
     "bind amount with commas" in {
       val data = Map(
         "interimAmount" -> "9,999,999.99",
