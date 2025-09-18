@@ -20,7 +20,7 @@ import play.api.mvc.Call
 import controllers.routes
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.models.{CheckMode, Mode, NormalMode, ProvideDetailsOfFirstSecondRentPeriod, UserAnswers}
-import uk.gov.hmrc.ngrraldfrontend.pages.{AgreedRentChangePage, AgreementPage, AgreementVerbalPage, CheckRentFreePeriodPage, DidYouAgreeRentWithLandlordPage, HowMuchIsTotalAnnualRentPage, LandlordPage, Page, ProvideDetailsOfFirstSecondRentPeriodPage, RentInterimPage, RentPeriodsPage, TellUsAboutRentPage, TellUsAboutYourNewAgreementPage, TellUsAboutYourRenewedAgreementPage, WhatIsYourRentBasedOnPage, WhatTypeOfAgreementPage, WhatTypeOfLeaseRenewalPage}
+import uk.gov.hmrc.ngrraldfrontend.pages.{AgreedRentChangePage, AgreementPage, AgreementVerbalPage, CheckRentFreePeriodPage, DidYouAgreeRentWithLandlordPage, HowMuchIsTotalAnnualRentPage, LandlordPage, Page, ProvideDetailsOfFirstSecondRentPeriodPage, RentDatesAgreePage, RentInterimPage, RentPeriodsPage, TellUsAboutRentPage, TellUsAboutYourNewAgreementPage, TellUsAboutYourRenewedAgreementPage, WhatIsYourRentBasedOnPage, WhatTypeOfAgreementPage, WhatTypeOfLeaseRenewalPage}
 
 import javax.inject.{Inject, Singleton}
 
@@ -104,6 +104,8 @@ class Navigator @Inject()() {
         //TODO ADD A TECHNICAL DIFFICULTIES PAGE
         case None => ???
       }
+      //TODO Fix this route once the rebase is done
+    case RentDatesAgreePage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeController.show(NormalMode)
   }
 
   //TODO change to check your answers page

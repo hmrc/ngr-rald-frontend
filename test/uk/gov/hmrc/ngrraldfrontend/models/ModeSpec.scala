@@ -16,26 +16,18 @@
 
 package uk.gov.hmrc.ngrraldfrontend.models
 
-import play.api.libs.json.{JsString, Writes}
-import play.api.mvc.JavascriptLiteral
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
-sealed trait Mode
+class ModeSpec extends AnyWordSpec with Matchers {
 
-case object CheckMode extends Mode
-
-case object NormalMode extends Mode
-
-object Mode {
-
-  implicit val jsLiteral: JavascriptLiteral[Mode] = new JavascriptLiteral[Mode] {
-    override def to(value: Mode): String = value match {
-      case NormalMode => "NormalMode"
-      case CheckMode => "CheckMode"
+  "Mode" must {
+    "return a normal type" in {
+      Mode.jsLiteral.to(NormalMode) mustBe "NormalMode"
+    }
+    "return a check mode type" in {
+      Mode.jsLiteral.to(CheckMode) mustBe "CheckMode"
     }
   }
 
-  implicit val writes: Writes[Mode] = Writes {
-    case NormalMode => JsString("NormalMode")
-    case CheckMode => JsString("CheckMode")
-  }
 }

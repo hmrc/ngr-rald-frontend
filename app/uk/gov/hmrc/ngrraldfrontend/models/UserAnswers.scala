@@ -47,22 +47,6 @@ final case class UserAnswers(
         page.cleanup(Some(value), updatedAnswers)
     }
   }
-
-  def remove[A](page: Settable[A]): Try[UserAnswers] = {
-
-    val updatedData = data.removeObject(page.path) match {
-      case JsSuccess(jsValue, _) =>
-        Success(jsValue)
-      case JsError(_) =>
-        Success(data)
-    }
-
-    updatedData.flatMap {
-      d =>
-        val updatedAnswers = copy (data = d)
-        page.cleanup(None, updatedAnswers)
-    }
-  }
 }
 
 object UserAnswers {
