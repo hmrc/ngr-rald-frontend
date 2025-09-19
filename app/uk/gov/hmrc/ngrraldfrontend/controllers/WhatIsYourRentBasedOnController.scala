@@ -79,7 +79,7 @@ class WhatIsYourRentBasedOnController @Inject()(view: WhatIsYourRentBasedOnView,
       NGRRadioButtons = ngrRadioButtons :+ otherRadioButton(form)
     )
 
-  def show: Action[AnyContent] = {
+  def show(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(WhatIsYourRentBasedOnPage) match {
         case None => form
@@ -105,7 +105,7 @@ class WhatIsYourRentBasedOnController @Inject()(view: WhatIsYourRentBasedOnView,
                   formError
             }
             val formWithCorrectedErrors = formWithErrors.copy(errors = correctedFormErrors)
-                Future.successful(BadRequest(view(createDefaultNavBar, formWithCorrectedErrors,
+                Future.successful(BadRequest(view(formWithCorrectedErrors,
                   buildRadios(formWithErrors, ngrRadio(formWithCorrectedErrors)), request.property.addressFull, mode))),
           rentBasedOnForm =>
             for {

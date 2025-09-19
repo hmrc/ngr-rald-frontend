@@ -25,7 +25,7 @@ import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, RaldUserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, RaldUserAnswers, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.views.html.TellUsAboutYourAgreementView
 
 import scala.concurrent.Future
@@ -33,13 +33,13 @@ import scala.concurrent.Future
 class TellUsAboutYourNewAgreementControllerSpec extends ControllerSpecSupport {
   val pageTitle = "Tell us about your new agreement"
   val view: TellUsAboutYourAgreementView = inject[TellUsAboutYourAgreementView]
-  val controllerNoProperty: TellUsAboutYourNewAgreementController = new TellUsAboutYourNewAgreementController(view, fakeAuth, mcc, fakeData(None), mockSessionRepository, navigator)(mockConfig)
-  val controllerProperty: TellUsAboutYourNewAgreementController = new TellUsAboutYourNewAgreementController(view, fakeAuth, mcc, fakeDataProperty(Some(property),None), mockSessionRepository, navigator)(mockConfig)
+  val controllerNoProperty: TellUsAboutYourNewAgreementController = new TellUsAboutYourNewAgreementController(view, fakeAuth, mcc, fakeData(None), mockSessionRepository, mockNavigator)(mockConfig)
+  val controllerProperty: Option[UserAnswers] => TellUsAboutYourNewAgreementController = answers => new TellUsAboutYourNewAgreementController(view, fakeAuth, mcc, fakeDataProperty(Some(property),answers), mockSessionRepository, mockNavigator)(mockConfig)
 
   "Tell us about your new agreement controller" must {
     "method show" must {
       "Return OK and the correct view" in {
-        val result = controllerProperty.show()(authenticatedFakeRequest)
+        val result = controllerProperty(None).show()(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
         content must include(pageTitle)
@@ -55,7 +55,7 @@ class TellUsAboutYourNewAgreementControllerSpec extends ControllerSpecSupport {
     "method submit" must {
       "Return OK and the correct view" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        val result = controllerProperty.submit()(authenticatedFakeRequest)
+        val result = controllerProperty(None).submit(authenticatedFakeRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) shouldBe Some(routes.LandlordController.show(NormalMode).url)
       }

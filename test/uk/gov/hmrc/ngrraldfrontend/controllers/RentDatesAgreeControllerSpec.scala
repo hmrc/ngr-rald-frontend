@@ -33,15 +33,14 @@ import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 import scala.concurrent.Future
 
 class RentDatesAgreeControllerSpec extends ControllerSpecSupport {
-  val pageTitle = "Have you agreed in advance with the landlord when and by how much rent goes up?"
+  val pageTitle = "Rent dates"
   val view: RentDatesAgreeView = inject[RentDatesAgreeView]
-  val mockInputText: InputText = inject[InputText]
   val controllerNoProperty: RentDatesAgreeController = new RentDatesAgreeController(
     view,
     fakeAuth,
     mcc,
     fakeData(None),
-    navigator,
+    mockNavigator,
     mockSessionRepository
   )(mockConfig, ec)
 
@@ -50,13 +49,13 @@ class RentDatesAgreeControllerSpec extends ControllerSpecSupport {
     fakeAuth,
     mcc,
     fakeDataProperty(Some(property), None),
-    navigator,
+    mockNavigator,
     mockSessionRepository
   )(mockConfig, ec)
 
 
 
-  "Agreement controller" must {
+  "Rent Date Agree controller" must {
     "method show" must {
       "Return OK and the correct view" in {
         val result = controllerProperty.show(NormalMode)(authenticatedFakeRequest)
@@ -79,13 +78,13 @@ class RentDatesAgreeControllerSpec extends ControllerSpecSupport {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val result = controllerProperty.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeController.submit(NormalMode))
           .withFormUrlEncodedBody(
-            "rentDatesAgreeInput.day" -> "12",
-            "rentDatesAgreeInput.month" -> "12",
-            "rentDatesAgreeInput.year" -> "2026",
+            "date.day" -> "12",
+            "date.month" -> "12",
+            "date.year" -> "2026",
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
-          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/what-type-of-lease-renewal-is-it")
+          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/rent-dates-agree")
         })
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.RentDatesAgreeController.show(NormalMode).url)

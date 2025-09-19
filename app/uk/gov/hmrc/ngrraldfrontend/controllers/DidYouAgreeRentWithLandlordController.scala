@@ -55,7 +55,6 @@ class DidYouAgreeRentWithLandlordController @Inject()(didYouAgreeRentWithLandlor
       }
         Future.successful(Ok(didYouAgreeRentWithLandlordView(
           selectedPropertyAddress = request.property.addressFull,
-          navigationBarContent = createDefaultNavBar,
           form = preparedForm,
           ngrRadio = buildRadios(preparedForm, DidYouAgreeRentWithLandlordForm.ngrRadio(preparedForm)),
           mode = mode

@@ -67,7 +67,6 @@ class WhatTypeOfLeaseRenewalController @Inject()(whatTypeOfLeaseRenewalView: Wha
     }
       Future.successful(Ok(whatTypeOfLeaseRenewalView(
         form = preparedForm,
-        navigationBarContent = createDefaultNavBar,
         radios = buildRadios(preparedForm, WhatTypeOfLeaseRenewalForm.ngrRadio),
         propertyAddress = request.property.addressFull,
         mode = mode

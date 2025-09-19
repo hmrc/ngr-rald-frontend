@@ -35,8 +35,8 @@ import scala.concurrent.Future
 class WhatTypeOfAgreementControllerSpec extends ControllerSpecSupport {
   val pageTitle = "What type of agreement do you have?"
   val view: WhatTypeOfAgreementView = inject[WhatTypeOfAgreementView]
-  val controllerProperty: WhatTypeOfAgreementController = new WhatTypeOfAgreementController(view, fakeAuth, mcc, fakeDataProperty(Some(property),None), navigator, mockSessionRepository)(mockConfig, ec)
-  val controllerNoProperty: WhatTypeOfAgreementController = new WhatTypeOfAgreementController(view, fakeAuth, mcc, fakeData(None), navigator, mockSessionRepository)(mockConfig, ec)
+  val controllerProperty: WhatTypeOfAgreementController = new WhatTypeOfAgreementController(view, fakeAuth, mcc, fakeDataProperty(Some(property),None), mockNavigator, mockSessionRepository)(mockConfig, ec)
+  val controllerNoProperty: WhatTypeOfAgreementController = new WhatTypeOfAgreementController(view, fakeAuth, mcc, fakeData(None), mockNavigator, mockSessionRepository)(mockConfig, ec)
 
   "Tell us about your new agreement controller" must {
     "method show" must {

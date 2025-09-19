@@ -21,12 +21,15 @@ import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
+import uk.gov.hmrc.ngrraldfrontend.models.{HowManyParkingSpacesOrGarages, Mode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.HowManyParkingSpacesOrGaragesIncludedInRentForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.HowManyParkingSpacesOrGaragesIncludedInRentForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
+import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
+import uk.gov.hmrc.ngrraldfrontend.pages.{AgreedRentChangePage, HowManyParkingSpacesOrGaragesIncludedInRentPage}
+import uk.gov.hmrc.ngrraldfrontend.repo.{RaldRepo, SessionRepository}
 import uk.gov.hmrc.ngrraldfrontend.views.html.HowManyParkingSpacesOrGaragesIncludedInRentView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -37,8 +40,9 @@ import scala.concurrent.{ExecutionContext, Future}
 class HowManyParkingSpacesOrGaragesIncludedInRentController @Inject()(howManyParkingSpacesOrGaragesIncludedInRentView: HowManyParkingSpacesOrGaragesIncludedInRentView,
                                                                       authenticate: AuthRetrievals,
                                                                       inputText: InputText,
-                                                                      hasLinkedProperties: PropertyLinkingAction,
-                                                                      raldRepo: RaldRepo,
+                                                                      getData: DataRetrievalAction,
+                                                                      sessionRepository: SessionRepository,
+                                                                      navigator: Navigator,
                                                                       mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport {
 
@@ -56,21 +60,25 @@ class HowManyParkingSpacesOrGaragesIncludedInRentController @Inject()(howManyPar
   }
   
   
-  def show: Action[AnyContent] = {
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
-      request.propertyLinking.map(property =>
+  def show(mode: Mode): Action[AnyContent] = {
+    (authenticate andThen getData).async { implicit request =>
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(HowManyParkingSpacesOrGaragesIncludedInRentPage) match {
+        case None => form
+        case Some(value) => form.fill(HowManyParkingSpacesOrGaragesIncludedInRentForm(value.uncoveredSpaces.toInt, value.coveredSpaces.toInt, value.garages.toInt))
+      }
         Future.successful(Ok(howManyParkingSpacesOrGaragesIncludedInRentView(
-          form = form,
-          propertyAddress = property.addressFull,
-          uncoveredSpaces = generateInputText(form, "uncoveredSpaces"),
-          coveredSpaces = generateInputText(form, "coveredSpaces"),
-          garages = generateInputText(form, "garages"),
-        )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
+          form = preparedForm,
+          propertyAddress = request.property.addressFull,
+          uncoveredSpaces = generateInputText(preparedForm, "uncoveredSpaces"),
+          coveredSpaces = generateInputText(preparedForm, "coveredSpaces"),
+          garages = generateInputText(preparedForm, "garages"),
+          mode = mode
+        )))
     }
   }
 
-  def submit: Action[AnyContent] =
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
+  def submit(mode: Mode): Action[AnyContent] =
+    (authenticate andThen getData).async { implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
           val formWithCorrectedErrors = formWithErrors.errors.head match {
@@ -83,24 +91,21 @@ class HowManyParkingSpacesOrGaragesIncludedInRentController @Inject()(howManyPar
               formWithErrors.copy(errors = Seq(uncoveredSpaces, coveredSpaces, garages))
             case _ => formWithErrors
           }
-          
-          request.propertyLinking.map(property =>
             Future.successful(BadRequest(howManyParkingSpacesOrGaragesIncludedInRentView(
               form = formWithCorrectedErrors,
-              propertyAddress = property.addressFull,
+              propertyAddress = request.property.addressFull,
               uncoveredSpaces = generateInputText(formWithCorrectedErrors, "uncoveredSpaces"),
               coveredSpaces = generateInputText(formWithCorrectedErrors, "coveredSpaces"),
-              garages = generateInputText(formWithCorrectedErrors, "garages")
-            )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
+              garages = generateInputText(formWithCorrectedErrors, "garages"),
+              mode = mode
+            )))
         },
         rentAmount =>
-          raldRepo.insertHowManyParkingSpacesOrGaragesIncludedInRent(
-            credId = CredId(request.credId.getOrElse("")),
-            uncoveredSpaces = if(rentAmount.uncoveredSpaces == -1) 0 else rentAmount.uncoveredSpaces,
-            coveredSpaces =  if(rentAmount.coveredSpaces == -1) 0 else rentAmount.coveredSpaces,
-            garages = if(rentAmount.garages == -1) 0 else rentAmount.garages
-          )
-          Future.successful(Redirect(routes.CheckRentFreePeriodController.show.url))
+          val answers = HowManyParkingSpacesOrGarages(rentAmount.uncoveredSpaces.toString, rentAmount.coveredSpaces.toString, rentAmount.garages.toString)
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(HowManyParkingSpacesOrGaragesIncludedInRentPage, answers))
+            _ <- sessionRepository.set(updatedAnswers)
+          } yield Redirect(navigator.nextPage(HowManyParkingSpacesOrGaragesIncludedInRentPage, mode, updatedAnswers))
       )
     }
 }

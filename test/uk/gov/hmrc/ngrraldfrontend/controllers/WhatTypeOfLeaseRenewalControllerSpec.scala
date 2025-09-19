@@ -33,8 +33,8 @@ import scala.concurrent.Future
 class WhatTypeOfLeaseRenewalControllerSpec extends ControllerSpecSupport {
   val pageTitle = "What type of lease renewal is it?"
   val view: WhatTypeOfLeaseRenewalView = inject[WhatTypeOfLeaseRenewalView]
-  val controllerNoProperty: WhatTypeOfLeaseRenewalController = new WhatTypeOfLeaseRenewalController(view, fakeAuth, fakeData(None),mockSessionRepository,navigator, mcc)(mockConfig)
-  val controllerProperty: WhatTypeOfLeaseRenewalController = new WhatTypeOfLeaseRenewalController(view, fakeAuth, fakeDataProperty(Some(property),None),mockSessionRepository,navigator, mcc)(mockConfig)
+  val controllerNoProperty: WhatTypeOfLeaseRenewalController = new WhatTypeOfLeaseRenewalController(view, fakeAuth, fakeData(None),mockSessionRepository,mockNavigator, mcc)(mockConfig)
+  val controllerProperty: WhatTypeOfLeaseRenewalController = new WhatTypeOfLeaseRenewalController(view, fakeAuth, fakeDataProperty(Some(property),None),mockSessionRepository,mockNavigator, mcc)(mockConfig)
 
   "TypeOfLeaseRenewalController" must {
     "method show" must {

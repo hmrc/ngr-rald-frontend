@@ -19,8 +19,9 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
+import uk.gov.hmrc.ngrraldfrontend.models.{Mode, UserAnswers, WhatYourRentIncludes}
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatYourRentIncludesForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatYourRentIncludesForm.form
@@ -29,6 +30,9 @@ import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
 import uk.gov.hmrc.ngrraldfrontend.views.html.WhatYourRentIncludesView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
+import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
+import uk.gov.hmrc.ngrraldfrontend.pages.{AgreedRentChangePage, AgreementPage, WhatYourRentIncludesPage}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,30 +40,67 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class WhatYourRentIncludesController @Inject()(whatYourRentIncludesView: WhatYourRentIncludesView,
                                                authenticate: AuthRetrievals,
-                                               inputText: InputText,
-                                               hasLinkedProperties: PropertyLinkingAction,
-                                               raldRepo: RaldRepo,
+                                               inputText: InputText, 
+                                               getData: DataRetrievalAction,
+                                               sessionRepository: SessionRepository,
+                                               navigator: Navigator, 
                                                mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport {
 
-  def show: Action[AnyContent] = {
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
-      request.propertyLinking.map(property =>
+  def show(mode: Mode): Action[AnyContent] = {
+    (authenticate andThen getData).async { implicit request =>
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(WhatYourRentIncludesPage) match {
+      case Some(value) => form.fill(WhatYourRentIncludesForm(
+        livingAccommodationRadio = if (value.livingAccommodation) {
+          "Yes"
+        } else {
+          "No"
+        }, 
+        rentPartAddressRadio = if (value.rentPartAddress) {
+          "Yes"
+        } else {
+          "No"
+        }, 
+        rentEmptyShellRadio = if (value.rentEmptyShell) {
+          "Yes"
+        } else {
+          "No"
+        }, 
+        rentIncBusinessRatesRadio = if (value.rentIncBusinessRates) {
+          "Yes"
+        } else {
+          "No"
+        }, 
+        rentIncWaterChargesRadio = if (value.rentIncWaterCharges) {
+          "Yes"
+        } else {
+          "No"
+        }, 
+        rentIncServiceRadio = if (value.rentIncService) {
+          "Yes"
+        } else {
+          "No"
+        }, 
+        bedroomNumbers = Some(value.bedroomNumbers.toString)
+      ))
+      case None => form
+    }
         Future.successful(Ok(whatYourRentIncludesView(
-          form = form,
-          radios1 = buildRadios(form, WhatYourRentIncludesForm.ngrRadio1(form, inputText)),
+          form = preparedForm,
+          radios1 = buildRadios(form, WhatYourRentIncludesForm.ngrRadio1(preparedForm, inputText)),
           radios2 = buildRadios(form, WhatYourRentIncludesForm.ngrRadio2),
           radios3 = buildRadios(form, WhatYourRentIncludesForm.ngrRadio3),
           radios4 = buildRadios(form, WhatYourRentIncludesForm.ngrRadio4),
           radios5 = buildRadios(form, WhatYourRentIncludesForm.ngrRadio5),
           radios6 = buildRadios(form, WhatYourRentIncludesForm.ngrRadio6),
-          propertyAddress = property.addressFull,
-        )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
+          propertyAddress = request.property.addressFull,
+          mode = mode
+        )))
     }
   }
 
-  def submit: Action[AnyContent] =
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
+  def submit(mode: Mode): Action[AnyContent] =
+    (authenticate andThen getData).async { implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
           val correctedFormErrors = formWithErrors.errors.map { formError =>
@@ -69,7 +110,6 @@ class WhatYourRentIncludesController @Inject()(whatYourRentIncludesView: WhatYou
               case _ => formError
           }
           val formWithCorrectedErrors = formWithErrors.copy(errors = correctedFormErrors)
-          request.propertyLinking.map(property =>
             Future.successful(BadRequest(whatYourRentIncludesView(
               form = formWithCorrectedErrors,
               radios1 = buildRadios(formWithErrors, WhatYourRentIncludesForm.ngrRadio1(formWithCorrectedErrors, inputText)),
@@ -78,21 +118,41 @@ class WhatYourRentIncludesController @Inject()(whatYourRentIncludesView: WhatYou
               radios4 = buildRadios(formWithErrors, WhatYourRentIncludesForm.ngrRadio4),
               radios5 = buildRadios(formWithErrors, WhatYourRentIncludesForm.ngrRadio5),
               radios6 = buildRadios(formWithErrors, WhatYourRentIncludesForm.ngrRadio6),
-              propertyAddress = property.addressFull
-            )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
+              propertyAddress = request.property.addressFull,
+              mode = mode
+            )))
         },
         whatYourRentIncludesForm =>
-          raldRepo.insertWhatYourRentIncludes(
-            credId = CredId(request.credId.getOrElse("")),
-            whatYourRentIncludesForm.livingAccommodationRadio,
-            whatYourRentIncludesForm.rentPartAddressRadio,
-            whatYourRentIncludesForm.rentEmptyShellRadio,
-            whatYourRentIncludesForm.rentIncBusinessRatesRadio,
-            whatYourRentIncludesForm.rentIncWaterChargesRadio,
-            whatYourRentIncludesForm.rentIncServiceRadio,
-            whatYourRentIncludesForm.bedroomNumbers
-          )
-          Future.successful(Redirect(routes.DoesYourRentIncludeParkingController.show.url))
+          val answers: WhatYourRentIncludes = WhatYourRentIncludes(
+            livingAccommodation = whatYourRentIncludesForm.livingAccommodationRadio match {
+              case "Yes" => true
+              case _ => false
+            }, 
+            rentPartAddress = whatYourRentIncludesForm.rentPartAddressRadio match {
+              case "Yes" => true
+              case _ => false
+            }, 
+            rentEmptyShell = whatYourRentIncludesForm.rentEmptyShellRadio match {
+              case "Yes" => true
+              case _ => false
+            }, 
+            rentIncBusinessRates = whatYourRentIncludesForm.rentIncBusinessRatesRadio match {
+              case "Yes" => true
+              case _ => false
+            }, 
+            rentIncWaterCharges = whatYourRentIncludesForm.rentIncWaterChargesRadio match {
+              case "Yes" => true
+              case _ => false
+            }, 
+            rentIncService = whatYourRentIncludesForm.rentIncServiceRadio match {
+              case "Yes" => true
+              case _ => false
+            }, 
+            bedroomNumbers = whatYourRentIncludesForm.bedroomNumbers.map(_.toInt))
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(WhatYourRentIncludesPage, answers))
+            _ <- sessionRepository.set(updatedAnswers)
+          } yield Redirect(navigator.nextPage(WhatYourRentIncludesPage, mode, updatedAnswers))
       )
     }
 }

@@ -39,8 +39,8 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
   val pageTitle = "Agreement"
   val view: AgreementVerbalView = inject[AgreementVerbalView]
   val mockDateTextFields: DateTextFields = inject[DateTextFields]
-  val controllerNoProperty: AgreementVerbalController = new AgreementVerbalController(view, fakeAuth, mockDateTextFields, mcc, fakeData(None), mockSessionRepository, navigator)(mockConfig, ec)
-  val controllerProperty: Option[UserAnswers] => AgreementVerbalController = answers => new AgreementVerbalController(view, fakeAuth, mockDateTextFields, mcc, fakeDataProperty(Some(property), answers), mockSessionRepository, navigator)(mockConfig, ec)
+  val controllerNoProperty: AgreementVerbalController = new AgreementVerbalController(view, fakeAuth, mockDateTextFields, mcc, fakeData(None), mockSessionRepository, mockNavigator)(mockConfig, ec)
+  val controllerProperty: Option[UserAnswers] => AgreementVerbalController = answers => new AgreementVerbalController(view, fakeAuth, mockDateTextFields, mcc, fakeDataProperty(Some(property), answers), mockSessionRepository, mockNavigator)(mockConfig, ec)
   val agreementVerbalMinAnswers: Option[UserAnswers] = UserAnswers("id").set(AgreementVerbalPage, agreementVerbalModelMin).toOption
   val agreementVerbalAnswers: Option[UserAnswers] = UserAnswers("id").set(AgreementVerbalPage, agreementVerbalModel).toOption
 

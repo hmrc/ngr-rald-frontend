@@ -28,6 +28,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.UserAnswers
 import uk.gov.hmrc.ngrraldfrontend.models.requests.OptionalDataRequest
 import uk.gov.hmrc.ngrraldfrontend.models.vmvProperty.VMVProperty
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
+import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -37,7 +38,7 @@ trait ControllerSpecSupport extends TestSupport {
   val mockSessionRepository: SessionRepository = mock[SessionRepository]
   def fakeData(answers: Option[UserAnswers]) = new FakeDataRetrievalAction(answers, None)
   def fakeDataProperty(property: Option[VMVProperty], answers: Option[UserAnswers]) = new FakeDataRetrievalAction(answers, property)
-  val navigator: Navigator = inject[Navigator]
+  val mockNavigator: Navigator = inject[Navigator]
   val mockInputText: InputText = inject[InputText]
   val mockNgrConnector: NGRConnector = mock[NGRConnector]
   implicit val headerCarrier: HeaderCarrier = HeaderCarrier()

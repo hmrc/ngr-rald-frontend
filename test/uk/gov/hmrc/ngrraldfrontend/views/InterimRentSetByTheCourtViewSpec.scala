@@ -23,7 +23,7 @@ import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.{PrefixOrSuffix, Text}
 import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
-import uk.gov.hmrc.ngrraldfrontend.models.NGRMonthYear
+import uk.gov.hmrc.ngrraldfrontend.models.{NGRMonthYear, NormalMode}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.InterimRentSetByTheCourtForm
 import uk.gov.hmrc.ngrraldfrontend.views.html.InterimRentSetByTheCourtView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
@@ -68,11 +68,11 @@ class InterimRentSetByTheCourtViewSpec extends ViewBaseSpec {
   val howMuch: HtmlFormat.Appendable = generateInputText(form, "howMuch")
 
   "InterimRentSetByTheCourtView" must {
-    val interimRentSetByTheCourtView = view(form, address, howMuch)
+    val interimRentSetByTheCourtView = view(form, address, howMuch, NormalMode)
     lazy implicit val document: Document = Jsoup.parse(interimRentSetByTheCourtView.body)
-    val htmlApply = view.apply(form, address, howMuch).body
-    val htmlRender = view.render(form, address, howMuch, request, messages, mockConfig).body
-    lazy val htmlF = view.f(form, address, howMuch)
+    val htmlApply = view.apply(form, address, howMuch, NormalMode).body
+    val htmlRender = view.render(form, address, howMuch, NormalMode, request, messages, mockConfig).body
+    lazy val htmlF = view.f(form, address, howMuch, NormalMode)
 
     "htmlF is not empty" in {
       htmlF.toString() must not be empty

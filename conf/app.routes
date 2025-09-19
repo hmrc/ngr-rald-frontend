@@ -94,13 +94,36 @@ POST       /rent-dates-agree                            uk.gov.hmrc.ngrraldfront
 GET        /rent-dates-agree/change                     uk.gov.hmrc.ngrraldfrontend.controllers.RentDatesAgreeController.show(mode: Mode = CheckMode)
 POST       /rent-dates-agree/change                     uk.gov.hmrc.ngrraldfrontend.controllers.RentDatesAgreeController.submit(mode: Mode = CheckMode)
 
-GET        /what-rent-includes                                     uk.gov.hmrc.ngrraldfrontend.controllers.WhatYourRentIncludesController.show
-POST       /what-rent-includes                                     uk.gov.hmrc.ngrraldfrontend.controllers.WhatYourRentIncludesController.submit
-GET        /does-rent-include-parking-spaces-or-garages            uk.gov.hmrc.ngrraldfrontend.controllers.DoesYourRentIncludeParkingController.show
-POST       /does-rent-include-parking-spaces-or-garages            uk.gov.hmrc.ngrraldfrontend.controllers.DoesYourRentIncludeParkingController.submit
-GET        /how-many-parking-spaces-or-garages-included-in-rent    uk.gov.hmrc.ngrraldfrontend.controllers.HowManyParkingSpacesOrGaragesIncludedInRentController.show
-POST       /how-many-parking-spaces-or-garages-included-in-rent    uk.gov.hmrc.ngrraldfrontend.controllers.HowManyParkingSpacesOrGaragesIncludedInRentController.submit
-GET        /interim-rent-set-by-court                              uk.gov.hmrc.ngrraldfrontend.controllers.InterimRentSetByTheCourtController.show
-POST       /interim-rent-set-by-court                              uk.gov.hmrc.ngrraldfrontend.controllers.InterimRentSetByTheCourtController.submit
+#Rent dates agree start
+GET        /rent-dates-agree-start                       uk.gov.hmrc.ngrraldfrontend.controllers.RentDatesAgreeStartController.show(mode: Mode = NormalMode)
+POST       /rent-dates-agree-start                       uk.gov.hmrc.ngrraldfrontend.controllers.RentDatesAgreeStartController.submit(mode: Mode = NormalMode)
+GET        /rent-dates-agree-start/change                uk.gov.hmrc.ngrraldfrontend.controllers.RentDatesAgreeStartController.show(mode: Mode = CheckMode)
+POST       /rent-dates-agree-start/change                uk.gov.hmrc.ngrraldfrontend.controllers.RentDatesAgreeStartController.submit(mode: Mode = CheckMode)
+
+#What your rent includes
+GET        /what-rent-includes                                     uk.gov.hmrc.ngrraldfrontend.controllers.WhatYourRentIncludesController.show(mode: Mode = NormalMode)
+POST       /what-rent-includes                                     uk.gov.hmrc.ngrraldfrontend.controllers.WhatYourRentIncludesController.submit(mode: Mode = NormalMode)
+GET        /what-rent-includes/change                              uk.gov.hmrc.ngrraldfrontend.controllers.WhatYourRentIncludesController.show(mode: Mode = CheckMode)
+POST       /what-rent-includes/change                              uk.gov.hmrc.ngrraldfrontend.controllers.WhatYourRentIncludesController.submit(mode: Mode = CheckMode)
+
+#Does your rent include parking spaces or garages
+GET        /does-rent-include-parking-spaces-or-garages            uk.gov.hmrc.ngrraldfrontend.controllers.DoesYourRentIncludeParkingController.show(mode: Mode = NormalMode)
+POST       /does-rent-include-parking-spaces-or-garages            uk.gov.hmrc.ngrraldfrontend.controllers.DoesYourRentIncludeParkingController.submit(mode: Mode = NormalMode)
+GET        /does-rent-include-parking-spaces-or-garages/change     uk.gov.hmrc.ngrraldfrontend.controllers.DoesYourRentIncludeParkingController.show(mode: Mode = CheckMode)
+POST       /does-rent-include-parking-spaces-or-garages/change     uk.gov.hmrc.ngrraldfrontend.controllers.DoesYourRentIncludeParkingController.submit(mode: Mode = CheckMode)
+
+
+#How many parking spaces or garages included in rent
+GET        /how-many-parking-spaces-or-garages-included-in-rent           uk.gov.hmrc.ngrraldfrontend.controllers.HowManyParkingSpacesOrGaragesIncludedInRentController.show(mode: Mode = NormalMode)
+POST       /how-many-parking-spaces-or-garages-included-in-rent           uk.gov.hmrc.ngrraldfrontend.controllers.HowManyParkingSpacesOrGaragesIncludedInRentController.submit(mode: Mode = NormalMode)
+GET        /how-many-parking-spaces-or-garages-included-in-rent/change    uk.gov.hmrc.ngrraldfrontend.controllers.HowManyParkingSpacesOrGaragesIncludedInRentController.show(mode: Mode = CheckMode)
+POST       /how-many-parking-spaces-or-garages-included-in-rent/change    uk.gov.hmrc.ngrraldfrontend.controllers.HowManyParkingSpacesOrGaragesIncludedInRentController.submit(mode: Mode = CheckMode)
+
+#Interim rent set by the court
+GET        /interim-rent-set-by-court                              uk.gov.hmrc.ngrraldfrontend.controllers.InterimRentSetByTheCourtController.show(mode: Mode = NormalMode)
+POST       /interim-rent-set-by-court                              uk.gov.hmrc.ngrraldfrontend.controllers.InterimRentSetByTheCourtController.submit(mode: Mode = NormalMode)
+GET        /interim-rent-set-by-court/change                       uk.gov.hmrc.ngrraldfrontend.controllers.InterimRentSetByTheCourtController.show(mode: Mode = CheckMode)
+POST       /interim-rent-set-by-court/change                       uk.gov.hmrc.ngrraldfrontend.controllers.InterimRentSetByTheCourtController.submit(mode: Mode = CheckMode)
+
 GET        /rent-free-period                                       uk.gov.hmrc.ngrraldfrontend.controllers.RentFreePeriodController.show
 POST       /rent-free-period                                       uk.gov.hmrc.ngrraldfrontend.controllers.RentFreePeriodController.submit

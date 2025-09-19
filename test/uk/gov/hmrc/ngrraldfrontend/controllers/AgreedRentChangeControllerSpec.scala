@@ -41,8 +41,8 @@ import scala.concurrent.Future
 class AgreedRentChangeControllerSpec extends ControllerSpecSupport {
   val pageTitle = "Have you agreed in advance with the landlord when and by how much rent goes up?"
   val view: AgreedRentChangeView = inject[AgreedRentChangeView]
-  val controllerNoProperty = new AgreedRentChangeController(view, fakeAuth, fakeData(None), mockSessionRepository, navigator, mcc)(mockConfig)
-  val controllerProperty: Option[UserAnswers] => AgreedRentChangeController = answers => new AgreedRentChangeController(view, fakeAuth, fakeDataProperty(Some(property), answers), mockSessionRepository, navigator, mcc)(mockConfig)
+  val controllerNoProperty = new AgreedRentChangeController(view, fakeAuth, fakeData(None), mockSessionRepository, mockNavigator, mcc)(mockConfig)
+  val controllerProperty: Option[UserAnswers] => AgreedRentChangeController = answers => new AgreedRentChangeController(view, fakeAuth, fakeDataProperty(Some(property), answers), mockSessionRepository, mockNavigator, mcc)(mockConfig)
   val agreedRentChangeAnswers: Option[UserAnswers] = UserAnswers("id").set(AgreedRentChangePage, "Yes").toOption
 
   "AgreedRentChangeController" must {
