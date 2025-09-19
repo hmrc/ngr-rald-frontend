@@ -1,4 +1,7 @@
+import play.sbt.routes.RoutesKeys
 import uk.gov.hmrc.DefaultBuildSettings
+
+import scala.collection.immutable.Seq
 
 ThisBuild / majorVersion := 0
 ThisBuild / scalaVersion := "3.3.5"
@@ -14,6 +17,15 @@ lazy val microservice = Project("ngr-rald-frontend", file("."))
     pipelineStages := Seq(gzip),
     Compile / scalacOptions -= "utf8",
     PlayKeys.playDefaultPort := 1505,
+  )
+  .settings(
+      RoutesKeys.routesImport ++= Seq(
+          "uk.gov.hmrc.ngrraldfrontend.models._",
+          "uk.gov.hmrc.play.bootstrap.binders.RedirectUrl"
+      ),
+      TwirlKeys.templateImports ++= Seq(
+          "uk.gov.hmrc.ngrraldfrontend.models.Mode"
+      ),
   )
   .settings(CodeCoverageSettings.settings: _*)
   .disablePlugins(JUnitXmlReportPlugin)

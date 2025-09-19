@@ -21,6 +21,7 @@ import org.jsoup.nodes.Document
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Legend, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.Radios
 import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
+import uk.gov.hmrc.ngrraldfrontend.models.NormalMode
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatYourRentIncludesForm
@@ -138,11 +139,11 @@ class WhatYourRentIncludesViewSpec  extends ViewBaseSpec {
   val radio6: Radios = buildRadios(form, ngrRadio6)
 
   "WhatYourRentIncludesView" must {
-    val whatYourRentIncludesView = view(form, radio1, radio2, radio3, radio4, radio5, radio6, address)
+    val whatYourRentIncludesView = view(form, radio1, radio2, radio3, radio4, radio5, radio6, address, NormalMode)
     lazy implicit val document: Document = Jsoup.parse(whatYourRentIncludesView.body)
-    val htmlApply = view.apply(form, radio1, radio2, radio3, radio4, radio5, radio6, propertyAddress = "5 Brixham Marina, Berry Head Road, Brixham, Devon, TQ5 9BW").body
-    val htmlRender = view.render(form, radio1, radio2, radio3, radio4, radio5, radio6, address, request, messages, mockConfig).body
-    lazy val htmlF = view.f(form, radio1, radio2, radio3, radio4, radio5, radio6, address)
+    val htmlApply = view.apply(form, radio1, radio2, radio3, radio4, radio5, radio6, propertyAddress = "5 Brixham Marina, Berry Head Road, Brixham, Devon, TQ5 9BW", NormalMode).body
+    val htmlRender = view.render(form, radio1, radio2, radio3, radio4, radio5, radio6, address, NormalMode, request, messages, mockConfig).body
+    lazy val htmlF = view.f(form, radio1, radio2, radio3, radio4, radio5, radio6, address, NormalMode)
 
     "htmlF is not empty" in {
       htmlF.toString() must not be empty

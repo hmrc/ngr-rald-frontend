@@ -19,6 +19,8 @@ package uk.gov.hmrc.ngrraldfrontend.views
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
+import uk.gov.hmrc.ngrraldfrontend.models.NormalMode
+import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.forms.HowMuchIsTotalAnnualRentForm
 import uk.gov.hmrc.ngrraldfrontend.views.html.HowMuchIsTotalAnnualRentView
 
@@ -48,11 +50,11 @@ class HowMuchIsTotalAnnualRentViewSpec extends ViewBaseSpec {
   val form = HowMuchIsTotalAnnualRentForm.form.fillAndValidate(HowMuchIsTotalAnnualRentForm(10000))
   
   "TellUsAboutYourNewAgreementView" must {
-    val howMuchIsTotalAnnualRentView = view(form, address)
+    val howMuchIsTotalAnnualRentView = view(form, address, NormalMode)
     lazy implicit val document: Document = Jsoup.parse(howMuchIsTotalAnnualRentView.body)
-    val htmlApply = view.apply(form, address).body
-    val htmlRender = view.render(form, address, request, messages, mockConfig).body
-    lazy val htmlF = view.f(form, address)
+    val htmlApply = view.apply(form, address, NormalMode).body
+    val htmlRender = view.render(form, address, NormalMode, request, messages, mockConfig).body
+    lazy val htmlF = view.f(form, address, NormalMode)
 
     "htmlF is not empty" in {
       htmlF.toString() must not be empty

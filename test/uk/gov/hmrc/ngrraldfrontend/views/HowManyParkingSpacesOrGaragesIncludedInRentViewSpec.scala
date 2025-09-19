@@ -22,6 +22,7 @@ import play.api.data.Form
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
+import uk.gov.hmrc.ngrraldfrontend.models.NormalMode
 import uk.gov.hmrc.ngrraldfrontend.models.forms.HowManyParkingSpacesOrGaragesIncludedInRentForm
 import uk.gov.hmrc.ngrraldfrontend.views.html.HowManyParkingSpacesOrGaragesIncludedInRentView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
@@ -74,12 +75,13 @@ class HowManyParkingSpacesOrGaragesIncludedInRentViewSpec extends ViewBaseSpec {
       propertyAddress =  address,
       uncoveredSpaces = uncoveredSpaces,
       coveredSpaces = coveredSpaces,
-      garages = garages
+      garages = garages,
+      mode = NormalMode
     )
     lazy implicit val document: Document = Jsoup.parse(HowManyParkingSpacesOrGaragesIncludedInRentView.body)
-    val htmlApply = view.apply(form, address, uncoveredSpaces, coveredSpaces, garages).body
-    val htmlRender = view.render(form, address, uncoveredSpaces, coveredSpaces, garages, request, messages, mockConfig).body
-    lazy val htmlF = view.f(form, address, uncoveredSpaces, coveredSpaces, garages)
+    val htmlApply = view.apply(form, address, uncoveredSpaces, coveredSpaces, garages, NormalMode).body
+    val htmlRender = view.render(form, address, uncoveredSpaces, coveredSpaces, garages, NormalMode, request, messages, mockConfig).body
+    lazy val htmlF = view.f(form, address, uncoveredSpaces, coveredSpaces, garages, NormalMode)
 
     "htmlF is not empty" in {
       htmlF.toString() must not be empty

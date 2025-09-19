@@ -44,6 +44,15 @@ object NGRDate {
     date.format(outputFormatter)
   }
 
+  def fromString(dateString: String): NGRDate = {
+    val parts = dateString.split("-").map(_.toInt)
+    val year = parts(0).toString
+    val month = f"${parts(1)}%02d"
+    val day = f"${parts(2)}%02d"
+    NGRDate(day, month, year)
+  }
+
+
 
   def unapply(ngrDate: NGRDate): Option[(String, String, String)] =
     Some(ngrDate.day, ngrDate.month, ngrDate.year)

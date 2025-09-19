@@ -30,10 +30,10 @@
     saveAndContinueButton: saveAndContinueButton
 )
 
-@(form:Form[WhatYourRentIncludesForm], radios1: Radios, radios2: Radios, radios3: Radios, radios4: Radios, radios5: Radios, radios6: Radios, propertyAddress: String)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+@(form:Form[WhatYourRentIncludesForm], radios1: Radios, radios2: Radios, radios3: Radios, radios4: Radios, radios5: Radios, radios6: Radios, propertyAddress: String, mode: Mode)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
 @layout(pageTitle = Some(messages("whatYourRentIncludes.title")), showBackLink = true, fullWidth = true) {
-    @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatYourRentIncludesController.submit, Symbol("autoComplete") -> "off") {
+    @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatYourRentIncludesController.submit(mode), Symbol("autoComplete") -> "off") {
     @if(form.errors.nonEmpty) {
         @govukErrorSummary(ErrorSummaryViewModel(form))
     }
