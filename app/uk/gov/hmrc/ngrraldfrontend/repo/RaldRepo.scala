@@ -261,6 +261,12 @@ case class RaldRepo @Inject()(mongo: MongoComponent,
     )
     findAndUpdateByCredId(credId, updates: _*)
   }
+  def insertRentFreePeriod(credId: CredId, rentFreePeriodMonths: Int, reasons: String): Future[Option[RaldUserAnswers]] = {
+    val updates: Seq[Bson] = Seq(Updates.set("rentFreePeriod.months", rentFreePeriodMonths),
+      Updates.set("rentFreePeriod.reasons", reasons))
+    findAndUpdateByCredId(credId, updates: _*)
+  }
+
 
   def findByCredId(credId: CredId): Future[Option[RaldUserAnswers]] = {
     collection.find(
