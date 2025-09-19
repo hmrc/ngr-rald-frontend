@@ -46,14 +46,23 @@ class CheckRentFreePeriodControllerSpec extends ControllerSpecSupport{
       }
     }
     "method submit" must {
-      "Return OK and the correct view" in {
+      "Return OK and redirect to RentFreePeriod view when user selects yes" in {
         val fakePostRequest = FakeRequest(routes.CheckRentFreePeriodController.submit)
           .withFormUrlEncodedBody((CheckRentFreePeriodForm.checkRentPeriodRadio, "Yes"))
           .withHeaders(HeaderNames.authorisation -> "Bearer 1")
 
         val result = controller.submit()(authenticatedFakeRequest(fakePostRequest))
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.CheckRentFreePeriodController.show.url)
+        redirectLocation(result) mustBe Some(routes.RentFreePeriodController.show.url)
+      }
+      "Return OK and redirect to RentDatesAgreeStart view when user selects no" in {
+        val fakePostRequest = FakeRequest(routes.CheckRentFreePeriodController.submit)
+          .withFormUrlEncodedBody((CheckRentFreePeriodForm.checkRentPeriodRadio, "No"))
+          .withHeaders(HeaderNames.authorisation -> "Bearer 1")
+
+        val result = controller.submit()(authenticatedFakeRequest(fakePostRequest))
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.RentDatesAgreeStartController.show.url)
       }
       "Return BAD_REQUEST for missing input and the correct view" in {
         mockRequest()

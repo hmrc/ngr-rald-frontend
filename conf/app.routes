@@ -46,3 +46,5 @@ GET        /how-many-parking-spaces-or-garages-included-in-rent    uk.gov.hmrc.n
 POST       /how-many-parking-spaces-or-garages-included-in-rent    uk.gov.hmrc.ngrraldfrontend.controllers.HowManyParkingSpacesOrGaragesIncludedInRentController.submit
 GET        /interim-rent-set-by-court                              uk.gov.hmrc.ngrraldfrontend.controllers.InterimRentSetByTheCourtController.show
 POST       /interim-rent-set-by-court                              uk.gov.hmrc.ngrraldfrontend.controllers.InterimRentSetByTheCourtController.submit
+GET        /rent-free-period                                       uk.gov.hmrc.ngrraldfrontend.controllers.RentFreePeriodController.show
+POST       /rent-free-period                                       uk.gov.hmrc.ngrraldfrontend.controllers.RentFreePeriodController.submit
