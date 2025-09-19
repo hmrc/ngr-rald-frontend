@@ -157,7 +157,7 @@ class ProvideDetailsOfFirstSecondRentPeriodController @Inject()(view: ProvideDet
           case true => "yesPayedRent"
           case false => "noRentPayed"
         }, value.firstRentPeriodAmount match {
-          case Some(value) => Some(BigDecimal(value))
+          case Some(value) => Some(value)
           case None => None
         },
           NGRDate.fromString(value.secondDateStart),NGRDate.fromString(value.secondDateEnd),BigDecimal(value.secondHowMuchIsRent)))
@@ -199,7 +199,6 @@ class ProvideDetailsOfFirstSecondRentPeriodController @Inject()(view: ProvideDet
             }
             val formWithCorrectedErrors = formWithErrors.copy(errors = correctedFormErrors)
               Future.successful(BadRequest(view(
-                createDefaultNavBar,
                 selectedPropertyAddress = request.property.addressFull,
                 formWithCorrectedErrors,
                 firstDateStartInput(),
@@ -218,7 +217,7 @@ class ProvideDetailsOfFirstSecondRentPeriodController @Inject()(view: ProvideDet
                 case _ => false
               },
               provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodAmount match {
-                case Some(value) => Some(value.toString())
+                case Some(value) => Some(value)
                 case None => None
               },
               provideDetailsOfFirstSecondRentPeriodForm.secondDateStartInput.makeString,

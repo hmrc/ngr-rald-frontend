@@ -32,8 +32,8 @@ import scala.concurrent.Future
 class TellUsAboutYourRentControllerSpec extends ControllerSpecSupport {
   val pageTitle = "Tell us about your rent review"
   val view: TellUsAboutYourAgreementView = inject[TellUsAboutYourAgreementView]
-  val controllerProperty: TellUsAboutRentController = new TellUsAboutRentController(view, fakeAuth, navigator, mcc, fakeDataProperty(Some(property),None), mockSessionRepository)(mockConfig)
-  val controllerNoProperty: TellUsAboutRentController = new TellUsAboutRentController(view, fakeAuth, navigator, mcc, fakeData(None), mockSessionRepository)(mockConfig)
+  val controllerProperty: TellUsAboutRentController = new TellUsAboutRentController(view, fakeAuth, mockNavigator, mcc, fakeDataProperty(Some(property),None), mockSessionRepository)(mockConfig)
+  val controllerNoProperty: TellUsAboutRentController = new TellUsAboutRentController(view, fakeAuth, mockNavigator, mcc, fakeData(None), mockSessionRepository)(mockConfig)
 
   "Tell us about your rent controller" must {
     "method show" must {

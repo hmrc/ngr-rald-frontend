@@ -52,7 +52,6 @@ class RentInterimController @Inject()(rentInterimView: RentInterimView,
       }
         Future.successful(Ok(rentInterimView(
           form = preparedForm,
-          navigationBarContent = createDefaultNavBar,
           radios = buildRadios(preparedForm, RentInterimForm.ngrRadio(preparedForm)),
           propertyAddress = request.property.addressFull,
           mode = mode

@@ -59,7 +59,7 @@ class WhatTypeOfAgreementController @Inject()(view: WhatTypeOfAgreementView,
             ngrRadio = buildRadios(preparedForm, WhatTypeOfAgreementForm.ngrRadio(preparedForm)),
             mode
           )
-        ))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
+        ))
     }
   }
 

@@ -33,7 +33,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.forms.RentPeriodsForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{NGRDate, NormalMode, RaldUserAnswers, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
-import uk.gov.hmrc.ngrraldfrontend.pages.ProvideDetailsOfFirstSecondRentPeriodPage
+import uk.gov.hmrc.ngrraldfrontend.pages.{ProvideDetailsOfFirstSecondRentPeriodPage, RentPeriodsPage}
 import uk.gov.hmrc.ngrraldfrontend.repo.{RaldRepo, SessionRepository}
 import uk.gov.hmrc.ngrraldfrontend.utils.CurrencyHelper
 import uk.gov.hmrc.ngrraldfrontend.views.html.RentPeriodView
@@ -45,17 +45,14 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class RentPeriodsController @Inject()(view: RentPeriodView,
                                       authenticate: AuthRetrievals,
-                                      hasLinkedProperties: PropertyLinkingAction,
-                                      raldRepo: RaldRepo,
                                       getData: DataRetrievalAction,
                                       mcc: MessagesControllerComponents,
                                       sessionRepository: SessionRepository,
                                       navigator: Navigator,
-                                      mcc: MessagesControllerComponents,
                                      )(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with CurrencyHelper {
 
-  def firstTable(userAnswers: RaldUserAnswers)(implicit messages: Messages): Table =
+  def firstTable(userAnswers: ProvideDetailsOfFirstSecondRentPeriod)(implicit messages: Messages): Table =
     Table(
       rows = Seq(
         Seq(
@@ -63,9 +60,7 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
             content = Text(messages("rentPeriods.first.startDate"))
           ),
           TableRow(
-            content = Text(userAnswers.provideDetailsOfFirstSecondRentPeriod.map { dates =>
-              NGRDate.formatDate(dates.firstDateStart)
-            }.getOrElse("")),
+            content = Text(userAnswers.firstDateStart),
             attributes = Map(
               "id" -> "first-period-start-date-id"
             )
@@ -76,16 +71,13 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
             content = Text(messages("rentPeriods.first.endDate"))
           ),
           TableRow(
-            content = Text(userAnswers.provideDetailsOfFirstSecondRentPeriod.map { dates =>
-              NGRDate.formatDate(dates.firstDateEnd)
-            }.getOrElse("")),
+            content = Text(userAnswers.firstDateEnd),
             attributes = Map(
               "id" -> "first-period-end-date-id"
             )
           )
         ),
-        userAnswers.provideDetailsOfFirstSecondRentPeriod.map { userAnswers =>
-          userAnswers.firstRentPeriodAmount match
+        userAnswers.firstRentPeriodAmount match
             case Some(answer) => Seq(
               TableRow(
                 content = Text(messages("rentPeriods.first.rentValue"))
@@ -97,20 +89,19 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
                 )
               )
             )
-            case None => Seq()
-        }.getOrElse(Seq()),
+            case None => Seq(),
         Seq(
           TableRow(
             content = Text(messages("rentPeriods.first.doYouPay"))
           ),
           TableRow(
-            content = Text(userAnswers.provideDetailsOfFirstSecondRentPeriod.map { dates =>
-              if (dates.firstRentPeriodRadio == true) {
+            content = Text(
+              if (userAnswers.firstRentPeriodRadio) {
                 "Yes"
               } else {
                 "No"
               }
-            }.getOrElse("")),
+            ),
             attributes = Map(
               "id" -> "first-period-has-pay-id"
             )
@@ -123,16 +114,14 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
       firstCellIsHeader = true
     )
 
-  def secondTable(userAnswers: RaldUserAnswers)(implicit messages: Messages): Table = Table(
+  def secondTable(userAnswers: ProvideDetailsOfFirstSecondRentPeriod)(implicit messages: Messages): Table = Table(
     rows = Seq(
       Seq(
         TableRow(
           content = Text(messages("rentPeriods.second.startDate"))
         ),
         TableRow(
-          content = Text(userAnswers.provideDetailsOfFirstSecondRentPeriod.map { dates =>
-            NGRDate.formatDate(dates.secondDateStart)
-          }.getOrElse("")),
+          content = Text(userAnswers.secondDateStart),
           attributes = Map(
             "id" -> "second-period-start-date-id"
           )
@@ -143,9 +132,7 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
           content = Text(messages("rentPeriods.second.endDate"))
         ),
         TableRow(
-          content = Text(userAnswers.provideDetailsOfFirstSecondRentPeriod.map { dates =>
-            NGRDate.formatDate(dates.secondDateEnd)
-          }.getOrElse("")),
+          content = Text(userAnswers.secondDateEnd),
           attributes = Map(
             "id" -> "second-period-end-date-id"
           )
@@ -156,9 +143,7 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
           content = Text(messages("rentPeriods.second.rentValue"))
         ),
         TableRow(
-          content = Text(userAnswers.provideDetailsOfFirstSecondRentPeriod.map { dates =>
-            formatRentValue(dates.secondHowMuchIsRent.toDouble)
-          }.getOrElse("")),
+          content = Text(userAnswers.secondHowMuchIsRent),
           attributes = Map(
             "id" -> "second-period-rent-value-id"
           )

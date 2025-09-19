@@ -19,8 +19,8 @@ package uk.gov.hmrc.ngrraldfrontend.navigation
 import play.api.mvc.Call
 import controllers.routes
 import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.ngrraldfrontend.models.{CheckMode, Mode, NormalMode, ProvideDetailsOfFirstSecondRentPeriod, UserAnswers}
-import uk.gov.hmrc.ngrraldfrontend.pages.{AgreedRentChangePage, AgreementPage, AgreementVerbalPage, CheckRentFreePeriodPage, DidYouAgreeRentWithLandlordPage, HowMuchIsTotalAnnualRentPage, LandlordPage, Page, ProvideDetailsOfFirstSecondRentPeriodPage, RentDatesAgreePage, RentInterimPage, RentPeriodsPage, TellUsAboutRentPage, TellUsAboutYourNewAgreementPage, TellUsAboutYourRenewedAgreementPage, WhatIsYourRentBasedOnPage, WhatTypeOfAgreementPage, WhatTypeOfLeaseRenewalPage}
+import uk.gov.hmrc.ngrraldfrontend.models.{CheckMode, Mode, NormalMode, ProvideDetailsOfFirstSecondRentPeriod, UserAnswers, WhatYourRentIncludes}
+import uk.gov.hmrc.ngrraldfrontend.pages._
 
 import javax.inject.{Inject, Singleton}
 
@@ -106,6 +106,18 @@ class Navigator @Inject()() {
       }
       //TODO Fix this route once the rebase is done
     case RentDatesAgreePage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeController.show(NormalMode)
+    case WhatYourRentIncludesPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DoesYourRentIncludeParkingController.show(NormalMode)
+    case RentDatesAgreeStartPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeStartController.show(NormalMode)
+    case DoesYourRentIncludeParkingPage => answers =>
+      answers.get(DoesYourRentIncludeParkingPage) match {
+        case Some(value) => value match {
+          case "Yes" => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowManyParkingSpacesOrGaragesIncludedInRentController.show(NormalMode)
+          case _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(NormalMode)
+        }
+        case None => throw new NotFoundException("Failed to find answers")
+      }
+    case HowManyParkingSpacesOrGaragesIncludedInRentPage => _ =>  uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(NormalMode)
+    case InterimSetByTheCourtPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(NormalMode)
   }
 
   //TODO change to check your answers page

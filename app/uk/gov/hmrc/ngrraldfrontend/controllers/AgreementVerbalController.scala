@@ -70,7 +70,7 @@ class AgreementVerbalController @Inject()(view: AgreementVerbalView,
       Some(Legend(content = Text(messages("agreementVerbal.radio.title")), classes = "govuk-fieldset__legend--m", isPageHeading = true)),
       Some("agreementVerbal.radio.hint"))
 
-  def show: Action[AnyContent] = {
+  def show(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(AgreementVerbalPage) match {
         case None => form

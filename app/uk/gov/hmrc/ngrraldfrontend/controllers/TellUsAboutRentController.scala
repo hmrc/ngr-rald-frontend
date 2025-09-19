@@ -46,7 +46,7 @@ class TellUsAboutRentController @Inject()(view: TellUsAboutYourAgreementView,
 
   def show: Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
-      Future.successful(Ok(view(navigationBarContent = createDefaultNavBar, selectedPropertyAddress = request.property.addressFull, agreement = RentAgreement)))
+      Future.successful(Ok(view(selectedPropertyAddress = request.property.addressFull, agreement = RentAgreement)))
     }
   }
 

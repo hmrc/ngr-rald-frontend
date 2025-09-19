@@ -45,7 +45,7 @@ class TellUsAboutYourRenewedAgreementController @Inject()(view: TellUsAboutYourA
 
   def show: Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
-          Future.successful(Ok(view(navigationBarContent = createDefaultNavBar, selectedPropertyAddress = request.property.addressFull, agreement = RenewedAgreement)))
+          Future.successful(Ok(view(selectedPropertyAddress = request.property.addressFull, agreement = RenewedAgreement)))
     }
   }
 

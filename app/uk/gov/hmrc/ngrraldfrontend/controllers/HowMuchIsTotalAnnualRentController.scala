@@ -59,7 +59,7 @@ class HowMuchIsTotalAnnualRentController @Inject()(howMuchIsTotalAnnualRentView:
     }
   }
 
-  def submit: Action[AnyContent] =
+  def submit(mode: Mode): Action[AnyContent] =
     (authenticate andThen getData).async { implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {

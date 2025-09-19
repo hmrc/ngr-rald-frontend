@@ -35,12 +35,12 @@ import scala.concurrent.Future
 class HowMuchIsTotalAnnualRentControllerSpec extends ControllerSpecSupport {
   val pageTitle = "How much is your total annual rent?"
   val view: HowMuchIsTotalAnnualRentView = inject[HowMuchIsTotalAnnualRentView]
-  val controllerNoProperty: HowMuchIsTotalAnnualRentController = new HowMuchIsTotalAnnualRentController(view, fakeAuth, fakeData(None), mockSessionRepository, navigator, mcc)(mockConfig)
-  val controllerProperty: HowMuchIsTotalAnnualRentController = new HowMuchIsTotalAnnualRentController(view, fakeAuth, fakeDataProperty(Some(property),None), mockSessionRepository, navigator, mcc)(mockConfig)
+  val controllerNoProperty: HowMuchIsTotalAnnualRentController = new HowMuchIsTotalAnnualRentController(view, fakeAuth, fakeData(None), mockSessionRepository, mockNavigator, mcc)(mockConfig)
+  val controllerProperty: HowMuchIsTotalAnnualRentController = new HowMuchIsTotalAnnualRentController(view, fakeAuth, fakeDataProperty(Some(property),None), mockSessionRepository, mockNavigator, mcc)(mockConfig)
   lazy val renewedAgreementAnswers: Option[UserAnswers] = UserAnswers("id").set(TellUsAboutYourRenewedAgreementPage, RenewedAgreement).toOption
   lazy val newAgreementAnswers: Option[UserAnswers] = UserAnswers("id").set(TellUsAboutYourNewAgreementPage, NewAgreement).toOption
   lazy val filledController: Option[UserAnswers] => HowMuchIsTotalAnnualRentController = answers => HowMuchIsTotalAnnualRentController(
-    view, fakeAuth, fakeDataProperty(Some(property), answers), mockSessionRepository, navigator, mcc
+    view, fakeAuth, fakeDataProperty(Some(property), answers), mockSessionRepository, mockNavigator, mcc
   )
 
   "TypeOfLeaseRenewalController" must {
@@ -87,7 +87,7 @@ class HowMuchIsTotalAnnualRentControllerSpec extends ControllerSpecSupport {
           .withFormUrlEncodedBody(("how–much–is–total–annual–rent-value", ""))
           .withHeaders(HeaderNames.authorisation -> "Bearer 1")
 
-        val result = controllerProperty.submit()(authenticatedFakePostRequest(fakePostRequest))
+        val result = controllerProperty.submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
         status(result) mustBe BAD_REQUEST
       }
       "Return Exception if no address is in the mongo" in {
