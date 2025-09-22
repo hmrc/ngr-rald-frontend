@@ -69,7 +69,7 @@ class CheckRentFreePeriodController @Inject()(checkRentFreePeriodView: CheckRent
           )
           radioValue.radioValue match
             case "No" => Future.successful(Redirect(routes.RentDatesAgreeStartController.show.url))
-            case _ => Future.successful(Redirect(routes.CheckRentFreePeriodController.show.url))
+            case _ => Future.successful(Redirect(routes.RentFreePeriodController.show.url))
       )
     }
 
