@@ -106,7 +106,7 @@ class HowManyParkingSpacesOrGaragesIncludedInRentFormSpec extends AnyWordSpec wi
       val boundForm = HowManyParkingSpacesOrGaragesIncludedInRentForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors shouldBe List(FormError("", "howManyParkingSpacesOrGaragesIncludedInRent.error.required"))
+      boundForm.errors shouldBe List(FormError("", "howManyParkingSpacesOrGaragesIncludedInRent.allFields.error.required"))
     }
 
     "fail to bind when input fields are all 0" in {

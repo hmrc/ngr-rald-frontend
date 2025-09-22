@@ -74,7 +74,9 @@ class HowManyParkingSpacesOrGaragesIncludedInRentController @Inject()(howManyPar
       form.bindFromRequest().fold(
         formWithErrors => {
           val formWithCorrectedErrors = formWithErrors.errors.head match {
-            case value if value.key.isEmpty && value.messages.contains("howManyParkingSpacesOrGaragesIncludedInRent.error.required") =>
+            case value if value.key.isEmpty &&
+              value.messages.contains("howManyParkingSpacesOrGaragesIncludedInRent.allFields.error.required") ||
+              value.messages.contains("howManyParkingSpacesOrGaragesIncludedInRent.error.required") =>
               val uncoveredSpaces = value.copy(key = "uncoveredSpaces")
               val coveredSpaces = value.copy(key = "coveredSpaces")
               val garages = value.copy(key = "garages")
@@ -94,9 +96,9 @@ class HowManyParkingSpacesOrGaragesIncludedInRentController @Inject()(howManyPar
         rentAmount =>
           raldRepo.insertHowManyParkingSpacesOrGaragesIncludedInRent(
             credId = CredId(request.credId.getOrElse("")),
-            uncoveredSpaces = rentAmount.uncoveredSpaces,
-            coveredSpaces = rentAmount.coveredSpaces,
-            garages = rentAmount.garages
+            uncoveredSpaces = if(rentAmount.uncoveredSpaces == -1) 0 else rentAmount.uncoveredSpaces,
+            coveredSpaces =  if(rentAmount.coveredSpaces == -1) 0 else rentAmount.coveredSpaces,
+            garages = if(rentAmount.garages == -1) 0 else rentAmount.garages
           )
           Future.successful(Redirect(routes.CheckRentFreePeriodController.show.url))
       )
