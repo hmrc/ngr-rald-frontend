@@ -58,7 +58,7 @@ class RentFreePeriodControllerSpec extends ControllerSpecSupport {
     "method submit" must {
       "Return SEE_OTHER and redirect RentDatesAgreeStart view when everything is provided" in {
         when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(Some(RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property))))
-        val result = controller.submit(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeStartController.submit)
+        val result = controller.submit(AuthenticatedUserRequest(FakeRequest(routes.RentFreePeriodController.submit)
           .withFormUrlEncodedBody(
             "rentFreePeriodMonths" -> "5",
             "reasons" -> "Any reasons"
@@ -70,7 +70,7 @@ class RentFreePeriodControllerSpec extends ControllerSpecSupport {
       }
       "Return Form with Errors when rentFreePeriodMonths is missing" in {
         mockRequest()
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeStartController.submit)
+        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.RentFreePeriodController.submit)
           .withFormUrlEncodedBody(
             "rentFreePeriodMonths" -> "",
             "reasons" -> "Any reasons"
@@ -83,7 +83,7 @@ class RentFreePeriodControllerSpec extends ControllerSpecSupport {
         content must include("<a href=\"#rentFreePeriodMonths\">Enter how many months the rent-free period is</a>")
       }
       "Return Form with Errors when rentFreePeriodMonths isn't numeric" in {
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeStartController.submit)
+        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.RentFreePeriodController.submit)
           .withFormUrlEncodedBody(
             "rentFreePeriodMonths" -> "$A,",
             "reasons" -> "Any reasons"
@@ -95,7 +95,7 @@ class RentFreePeriodControllerSpec extends ControllerSpecSupport {
         content must include("<a href=\"#rentFreePeriodMonths\">Rent-free period must be a number, like 6</a>")
       }
       "Return Form with Errors when rentFreePeriodMonths is over 999" in {
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeStartController.submit)
+        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.RentFreePeriodController.submit)
           .withFormUrlEncodedBody(
             "rentFreePeriodMonths" -> "1000",
             "reasons" -> "Any reasons"
@@ -107,7 +107,7 @@ class RentFreePeriodControllerSpec extends ControllerSpecSupport {
         content must include("<a href=\"#rentFreePeriodMonths\">Rent-free period must be 99 months or less</a>")
       }
       "Return Form with Errors when rentFreePeriodMonths is less than 1" in {
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeStartController.submit)
+        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.RentFreePeriodController.submit)
           .withFormUrlEncodedBody(
             "rentFreePeriodMonths" -> "0",
             "reasons" -> "Any reasons"
@@ -119,7 +119,7 @@ class RentFreePeriodControllerSpec extends ControllerSpecSupport {
         content must include("<a href=\"#rentFreePeriodMonths\">Rent-free period must be more more than 0</a>")
       }
       "Return Form with Errors when reasons is missing" in {
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeStartController.submit)
+        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.RentFreePeriodController.submit)
           .withFormUrlEncodedBody(
             "rentFreePeriodMonths" -> "5",
             "reasons" -> ""
@@ -133,7 +133,7 @@ class RentFreePeriodControllerSpec extends ControllerSpecSupport {
       "Return Exception if no address is in the mongo" in {
         mockRequestWithoutProperty()
         val exception = intercept[NotFoundException] {
-          await(controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeStartController.submit)
+          await(controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.RentFreePeriodController.submit)
             .withFormUrlEncodedBody(
               "rentFreePeriodMonths" -> "5",
               "reasons" -> ""
