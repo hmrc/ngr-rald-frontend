@@ -53,11 +53,11 @@ object HowManyParkingSpacesOrGaragesIncludedInRentForm extends CommonFormValidat
   Constraint[A] =
     Constraint((input: A) => {
       val formData = input.asInstanceOf[HowManyParkingSpacesOrGaragesIncludedInRentForm]
-      val totalSpaces = Seq(formData.uncoveredSpaces, formData.coveredSpaces, formData.garages).sum
-      if (totalSpaces > 0)
-        Valid
-      else
-        Invalid(fieldRequired)
+      (formData.uncoveredSpaces, formData.coveredSpaces, formData.garages) match {
+        case (-1,-1,-1) => Invalid(allFieldsRequiredError)
+        case (0, 0, 0) =>  Invalid(fieldRequired)
+        case (_,_,_)=> Valid
+      }
     })
 
   val form: Form[HowManyParkingSpacesOrGaragesIncludedInRentForm] = {
@@ -67,19 +67,19 @@ object HowManyParkingSpacesOrGaragesIncludedInRentForm extends CommonFormValidat
           text()
             .transform[String](_.strip().replaceAll(",", ""), identity)
             .verifying(regexp(wholePositiveNumberRegexp.pattern(), uncoveredSpacesWholeNumError))
-        ).transform[Int](_.map(_.toInt).getOrElse(0), value => Some(value.toString))
+        ).transform[Int](_.map(_.toInt).getOrElse(-1), value => Some(value.toString))
           .verifying(maximumValue[Int](maxValue, uncoveredSpacesTooHighError)),
         "coveredSpaces" -> optional(
           text()
             .transform[String](_.strip().replaceAll(",", ""), identity)
             .verifying(regexp(wholePositiveNumberRegexp.pattern(), coveredSpacesWholeNumError))
-        ).transform[Int](_.map(_.toInt).getOrElse(0), value => Some(value.toString))
+        ).transform[Int](_.map(_.toInt).getOrElse(-1), value => Some(value.toString))
           .verifying(maximumValue[Int](maxValue, coveredSpacesTooHighError)),
         "garages" -> optional(
           text()
             .transform[String](_.strip().replaceAll(",", ""), identity)
             .verifying(regexp(wholePositiveNumberRegexp.pattern(), garagesWholeNumError))
-        ).transform[Int](_.map(_.toInt).getOrElse(0), value => Some(value.toString))
+        ).transform[Int](_.map(_.toInt).getOrElse(-1), value => Some(value.toString))
           .verifying(maximumValue[Int](maxValue, garagesTooHighError)),
       )
       (HowManyParkingSpacesOrGaragesIncludedInRentForm.apply)(HowManyParkingSpacesOrGaragesIncludedInRentForm.unapply)

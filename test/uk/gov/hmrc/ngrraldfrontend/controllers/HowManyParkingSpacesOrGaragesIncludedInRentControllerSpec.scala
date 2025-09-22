@@ -81,7 +81,7 @@ class HowManyParkingSpacesOrGaragesIncludedInRentControllerSpec extends Controll
         mockRequestWithoutProperty()
         val fakePostRequest = FakeRequest(routes.HowManyParkingSpacesOrGaragesIncludedInRentController.submit)
           .withFormUrlEncodedBody(
-            "uncoveredSpaces" -> "",
+            "uncoveredSpaces" -> "0",
             "coveredSpaces" -> "0",
             "garages" -> "0"
           ).withHeaders(HeaderNames.authorisation -> "Bearer 1")
