@@ -75,10 +75,10 @@ trait CommonFormValidators {
       monthYearEmptyValidation(input.asInstanceOf[NGRMonthYear], errorKeys)
     )
 
-  protected def isMonthYearValid[A](errorKey: String): Constraint[A] =
+  protected def isMonthYearValid[A]: Constraint[A] =
     Constraint((input: A) =>
       val date = input.asInstanceOf[NGRMonthYear]
-      monthYearValidation(date, errorKey)
+      monthYearValidation(date)
     )
 
   protected def isMonthYearAfter1900[A](errorKey: String): Constraint[A] =
@@ -146,14 +146,16 @@ trait CommonFormValidators {
     else
       Valid
 
-  protected def monthYearValidation(date: NGRMonthYear, errorKey: String) = {
+  protected def monthYearValidation(date: NGRMonthYear) = {
     val maybeMonth = date.month.toIntOption
     val maybeYear = date.year.toIntOption
     (maybeMonth, maybeYear) match {
       case (Some(month), Some(year)) if month > 0 && month <= 12 && (month + year != 0) =>
         Valid
-      case _ =>
-        Invalid(errorKey)
+      case (_, None) =>  
+        Invalid("interimRentSetByTheCourt.year.format.error")
+      case (_, _) => 
+        Invalid("interimRentSetByTheCourt.month.format.error")
     }
   }
 }
