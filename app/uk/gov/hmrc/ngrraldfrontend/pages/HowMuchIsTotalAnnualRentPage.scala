@@ -18,10 +18,10 @@ package uk.gov.hmrc.ngrraldfrontend.pages
 
 import play.api.libs.json.JsPath
 
-case object HowMuchIsTotalAnnualRentPage extends QuestionPage [BigDecimal]{
-
+case object HowMuchIsTotalAnnualRentPage extends QuestionPage[BigDecimal]{
 
   override def toString: String = "howMuchIsTotalAnnualRentPage"
 
   override def path: JsPath = JsPath \ toString
+
 }

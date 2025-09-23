@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.ngrraldfrontend.controllers
 
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.shouldBe
@@ -27,7 +28,8 @@ import uk.gov.hmrc.http.{HeaderNames, NotFoundException}
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, NormalMode, RaldUserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, NormalMode, RaldUserAnswers, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.pages.WhatTypeOfAgreementPage
 import uk.gov.hmrc.ngrraldfrontend.views.html.WhatTypeOfAgreementView
 
 import scala.concurrent.Future
@@ -35,17 +37,28 @@ import scala.concurrent.Future
 class WhatTypeOfAgreementControllerSpec extends ControllerSpecSupport {
   val pageTitle = "What type of agreement do you have?"
   val view: WhatTypeOfAgreementView = inject[WhatTypeOfAgreementView]
-  val controllerProperty: WhatTypeOfAgreementController = new WhatTypeOfAgreementController(view, fakeAuth, mcc, fakeDataProperty(Some(property),None), mockNavigator, mockSessionRepository)(mockConfig, ec)
+  val controllerProperty: Option[UserAnswers] => WhatTypeOfAgreementController = answers => new WhatTypeOfAgreementController(view, fakeAuth, mcc, fakeDataProperty(Some(property),answers), mockNavigator, mockSessionRepository)(mockConfig, ec)
   val controllerNoProperty: WhatTypeOfAgreementController = new WhatTypeOfAgreementController(view, fakeAuth, mcc, fakeData(None), mockNavigator, mockSessionRepository)(mockConfig, ec)
+  val whatTypeOfAgreementAnswers: Option[UserAnswers] = UserAnswers("id").set(WhatTypeOfAgreementPage, "Verbal").toOption
+
+
 
   "Tell us about your new agreement controller" must {
     "method show" must {
       "Return OK and the correct view" in {
-        when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(Some(RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property))))
-        val result = controllerProperty.show(NormalMode)(authenticatedFakeRequest)
+        val result = controllerProperty(None).show(NormalMode)(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
         content must include(pageTitle)
+      }
+      "Return OK and the correct view with prepopulated answers for Verbal" in {
+        val result = controllerProperty(whatTypeOfAgreementAnswers).show(NormalMode)(authenticatedFakeRequest)
+        status(result)
+        val content = contentAsString(result)
+        val document = Jsoup.parse(content)
+        document.select("input[type=radio][name=what-type-of-agreement-radio][value=Verbal]").hasAttr("checked") mustBe true
+        document.select("input[type=radio][name=what-type-of-agreement-radio][value=Written]").hasAttr("checked") mustBe false
+        document.select("input[type=radio][name=what-type-of-agreement-radio][value=LeaseOrTenancy]").hasAttr("checked") mustBe false
       }
       "Return NotFoundException when property is not found in the mongo" in {
         val exception = intercept[NotFoundException] {
@@ -58,7 +71,7 @@ class WhatTypeOfAgreementControllerSpec extends ControllerSpecSupport {
     "method submit" must {
       "Return OK and the correct view after submitting with written radio button" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        val result = controllerProperty.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.WhatTypeOfAgreementController.submit(NormalMode))
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.WhatTypeOfAgreementController.submit(NormalMode))
           .withFormUrlEncodedBody(("what-type-of-agreement-radio", "Written"))
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -69,7 +82,7 @@ class WhatTypeOfAgreementControllerSpec extends ControllerSpecSupport {
       }
       "Return OK and the correct view after submitting with verbal radio button" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        val result = controllerProperty.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.WhatTypeOfAgreementController.submit(NormalMode))
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.WhatTypeOfAgreementController.submit(NormalMode))
           .withFormUrlEncodedBody(("what-type-of-agreement-radio", "Verbal"))
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -79,7 +92,7 @@ class WhatTypeOfAgreementControllerSpec extends ControllerSpecSupport {
         redirectLocation(result) shouldBe Some(routes.AgreementVerbalController.show(NormalMode).url)
       }
       "Return Form with Errors when no radio button is selected" in {
-        val result = controllerProperty.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.WhatTypeOfAgreementController.submit(NormalMode))
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.WhatTypeOfAgreementController.submit(NormalMode))
           .withFormUrlEncodedBody(("what-type-of-agreement-radio", ""))
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {

@@ -16,24 +16,21 @@
 
 package uk.gov.hmrc.ngrraldfrontend.controllers
 
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.govukfrontend.views.Aliases.*
 import uk.gov.hmrc.govukfrontend.views.viewmodels.dateinput.DateInput
-import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.RentAgreement
-import uk.gov.hmrc.ngrraldfrontend.models.{Mode, NormalMode, RaldUserAnswers, UserAnswers}
-import uk.gov.hmrc.ngrraldfrontend.models.components.*
-import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
+import uk.gov.hmrc.ngrraldfrontend.models.forms.RentDatesAgreeForm
+import uk.gov.hmrc.ngrraldfrontend.models.{Mode, NGRDate, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentDatesAgreeForm.form
-import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
-import uk.gov.hmrc.ngrraldfrontend.pages.{RentDatesAgreePage, TellUsAboutRentPage}
-import uk.gov.hmrc.ngrraldfrontend.repo.{RaldRepo, SessionRepository}
+import uk.gov.hmrc.ngrraldfrontend.pages.{AgreedRentChangePage, RentDatesAgreePage}
+import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.utils.DateKeyFinder
-import uk.gov.hmrc.ngrraldfrontend.views.html.{AgreedRentChangeView, RentDatesAgreeView, TellUsAboutYourAgreementView}
+import uk.gov.hmrc.ngrraldfrontend.views.html.RentDatesAgreeView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
@@ -67,8 +64,12 @@ class RentDatesAgreeController @Inject()(rentDatesAgreeView: RentDatesAgreeView,
   //TODO Add in preparedForm
   def show(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(RentDatesAgreePage) match {
+      case None => form
+      case Some(value) => form.fill(RentDatesAgreeForm(NGRDate.fromString(value)))
+    }
         Future.successful(Ok(rentDatesAgreeView(
-          form = form,
+          form = preparedForm,
           dateInput = dateInput(),
           propertyAddress = request.property.addressFull,
           mode = mode

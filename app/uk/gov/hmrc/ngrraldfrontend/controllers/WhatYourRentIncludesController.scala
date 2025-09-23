@@ -18,21 +18,18 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.{Mode, UserAnswers, WhatYourRentIncludes}
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatYourRentIncludesForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatYourRentIncludesForm.form
-import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
 import uk.gov.hmrc.ngrraldfrontend.views.html.WhatYourRentIncludesView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
-import uk.gov.hmrc.ngrraldfrontend.pages.{AgreedRentChangePage, AgreementPage, WhatYourRentIncludesPage}
+import uk.gov.hmrc.ngrraldfrontend.pages.WhatYourRentIncludesPage
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -52,47 +49,47 @@ class WhatYourRentIncludesController @Inject()(whatYourRentIncludesView: WhatYou
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(WhatYourRentIncludesPage) match {
       case Some(value) => form.fill(WhatYourRentIncludesForm(
         livingAccommodationRadio = if (value.livingAccommodation) {
-          "Yes"
+          "livingAccommodationYes"
         } else {
-          "No"
-        }, 
+          "livingAccommodationNo"
+        },
         rentPartAddressRadio = if (value.rentPartAddress) {
-          "Yes"
+          "rentPartAddressYes"
         } else {
-          "No"
-        }, 
+          "rentPartAddressNo"
+        },
         rentEmptyShellRadio = if (value.rentEmptyShell) {
-          "Yes"
+          "rentEmptyShellYes"
         } else {
-          "No"
+          "rentEmptyShellNo"
         }, 
         rentIncBusinessRatesRadio = if (value.rentIncBusinessRates) {
-          "Yes"
+          "rentIncBusinessRatesYes"
         } else {
-          "No"
+          "rentIncBusinessRatesNo"
         }, 
         rentIncWaterChargesRadio = if (value.rentIncWaterCharges) {
-          "Yes"
+          "rentIncWaterChargesYes"
         } else {
-          "No"
+          "rentIncWaterChargesNo"
         }, 
         rentIncServiceRadio = if (value.rentIncService) {
-          "Yes"
+          "rentIncServiceYes"
         } else {
-          "No"
+          "rentIncServiceNo"
         }, 
-        bedroomNumbers = Some(value.bedroomNumbers.toString)
+        bedroomNumbers = value.bedroomNumbers.map(_.toString)
       ))
       case None => form
     }
         Future.successful(Ok(whatYourRentIncludesView(
           form = preparedForm,
-          radios1 = buildRadios(form, WhatYourRentIncludesForm.ngrRadio1(preparedForm, inputText)),
-          radios2 = buildRadios(form, WhatYourRentIncludesForm.ngrRadio2),
-          radios3 = buildRadios(form, WhatYourRentIncludesForm.ngrRadio3),
-          radios4 = buildRadios(form, WhatYourRentIncludesForm.ngrRadio4),
-          radios5 = buildRadios(form, WhatYourRentIncludesForm.ngrRadio5),
-          radios6 = buildRadios(form, WhatYourRentIncludesForm.ngrRadio6),
+          radios1 = buildRadios(preparedForm, WhatYourRentIncludesForm.ngrRadio1(preparedForm, inputText)),
+          radios2 = buildRadios(preparedForm, WhatYourRentIncludesForm.ngrRadio2),
+          radios3 = buildRadios(preparedForm, WhatYourRentIncludesForm.ngrRadio3),
+          radios4 = buildRadios(preparedForm, WhatYourRentIncludesForm.ngrRadio4),
+          radios5 = buildRadios(preparedForm, WhatYourRentIncludesForm.ngrRadio5),
+          radios6 = buildRadios(preparedForm, WhatYourRentIncludesForm.ngrRadio6),
           propertyAddress = request.property.addressFull,
           mode = mode
         )))
@@ -125,7 +122,7 @@ class WhatYourRentIncludesController @Inject()(whatYourRentIncludesView: WhatYou
         whatYourRentIncludesForm =>
           val answers: WhatYourRentIncludes = WhatYourRentIncludes(
             livingAccommodation = whatYourRentIncludesForm.livingAccommodationRadio match {
-              case "Yes" => true
+              case "livingAccommodationYes" => true
               case _ => false
             }, 
             rentPartAddress = whatYourRentIncludesForm.rentPartAddressRadio match {
@@ -148,8 +145,12 @@ class WhatYourRentIncludesController @Inject()(whatYourRentIncludesView: WhatYou
               case "Yes" => true
               case _ => false
             }, 
-            bedroomNumbers = whatYourRentIncludesForm.bedroomNumbers.map(_.toInt))
-          for {
+            bedroomNumbers = whatYourRentIncludesForm.bedroomNumbers match {
+              case Some(value) if(whatYourRentIncludesForm.livingAccommodationRadio == "livingAccommodationYes") => Some(value.toInt)
+              case _ => None
+            }
+          )
+            for {
             updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(WhatYourRentIncludesPage, answers))
             _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(WhatYourRentIncludesPage, mode, updatedAnswers))

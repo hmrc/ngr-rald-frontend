@@ -34,7 +34,6 @@ import uk.gov.hmrc.ngrraldfrontend.connectors.NGRConnector
 import uk.gov.hmrc.ngrraldfrontend.mocks.MockAppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.requests.{IdentifierRequest, OptionalDataRequest}
 import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, Postcode}
-import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
 
 import scala.concurrent.ExecutionContext
 
@@ -73,7 +72,6 @@ trait TestSupport extends PlaySpec
   lazy val testName: Name = Name(name = Some("testUser"), lastName = Some("testUserLastName"))
   lazy val testNoResultsFoundPostCode: Postcode = Postcode("LS1 6RE")
   lazy implicit val mockConfig: MockAppConfig = new MockAppConfig(app.configuration)
-  lazy implicit val mockRaldRepo: RaldRepo = mock[RaldRepo]
   lazy implicit val mockNGRConnector: NGRConnector = mock[NGRConnector]
   lazy val messagesApi: MessagesApi = inject[MessagesApi]
   implicit lazy val messages: Messages = MessagesImpl(Lang("en"), messagesApi)

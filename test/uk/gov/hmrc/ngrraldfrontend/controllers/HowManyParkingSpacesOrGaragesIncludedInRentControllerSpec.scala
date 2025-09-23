@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.ngrraldfrontend.controllers
 
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -24,7 +25,8 @@ import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redir
 import uk.gov.hmrc.http.{HeaderNames, NotFoundException}
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{HowManyParkingSpacesOrGarages, NormalMode, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.pages.HowManyParkingSpacesOrGaragesIncludedInRentPage
 import uk.gov.hmrc.ngrraldfrontend.views.html.HowManyParkingSpacesOrGaragesIncludedInRentView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 
@@ -51,6 +53,8 @@ class HowManyParkingSpacesOrGaragesIncludedInRentControllerSpec extends Controll
     navigator = mockNavigator,
     mcc = mcc)(mockConfig)
 
+  val howManyParkingGaragesAnswers: Option[UserAnswers] = UserAnswers("id").set(HowManyParkingSpacesOrGaragesIncludedInRentPage, HowManyParkingSpacesOrGarages("1","2","3")).toOption
+
   "HowManyParkingSpacesOrGaragesIncludedInRentController" must {
     "method show" must {
       "Return OK and the correct view" in {
@@ -58,6 +62,15 @@ class HowManyParkingSpacesOrGaragesIncludedInRentControllerSpec extends Controll
         status(result) mustBe OK
         val content = contentAsString(result)
         content must include(pageTitle)
+      }
+      "return OK and the correct view with prepopulated answers" in {
+        val result = controllerProperty(howManyParkingGaragesAnswers).show(NormalMode)(authenticatedFakeRequest)
+        status(result) mustBe OK
+        val content = contentAsString(result)
+        val document = Jsoup.parse(content)
+        document.select("input[name=uncoveredSpaces]").attr("value") mustBe "1"
+        document.select("input[name=coveredSpaces]").attr("value") mustBe "2"
+        document.select("input[name=garages]").attr("value") mustBe "3"
       }
       "Return NotFoundException when property is not found in the mongo" in {
         when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(None))

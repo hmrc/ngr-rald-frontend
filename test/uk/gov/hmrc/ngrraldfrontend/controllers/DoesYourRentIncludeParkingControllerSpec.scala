@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.ngrraldfrontend.controllers
 
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -27,6 +28,7 @@ import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, NormalMode, RaldUserAnswers, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.pages.DoesYourRentIncludeParkingPage
 import uk.gov.hmrc.ngrraldfrontend.views.html.DoesYourRentIncludeParkingView
 
 import scala.concurrent.Future
@@ -36,14 +38,24 @@ class DoesYourRentIncludeParkingControllerSpec extends ControllerSpecSupport {
   val view: DoesYourRentIncludeParkingView = inject[DoesYourRentIncludeParkingView]
   val controllerNoProperty: DoesYourRentIncludeParkingController = new DoesYourRentIncludeParkingController(view, fakeAuth, fakeData(None), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
   val controllerProperty: Option[UserAnswers] => DoesYourRentIncludeParkingController = answers => new DoesYourRentIncludeParkingController(view, fakeAuth, fakeDataProperty(Some(property),answers), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
+  val doesYourRentIncludeParkingAnswers: Option[UserAnswers] =  UserAnswers("id").set(DoesYourRentIncludeParkingPage, "Yes").toOption
 
-  " Does Your Rent IncludeParking Controller" must {
+
+  "Does Your Rent IncludeParking Controller" must {
     "method show" must {
       "Return OK and the correct view" in {
         val result = controllerProperty(None).show(NormalMode)(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
         content must include(pageTitle)
+      }
+      "Return OK and the correct view with prepopulated answers" in {
+        val result = controllerProperty(doesYourRentIncludeParkingAnswers).show(NormalMode)(authenticatedFakeRequest)
+        status(result) mustBe OK
+        val content = contentAsString(result)
+        val document = Jsoup.parse(content)
+        println(document)
+        document.select("input[type=radio][name=doesYourRentIncludeParking-radio-value][value=Yes]").hasAttr("checked") mustBe true
       }
       "Return NotFoundException when property is not found in the mongo" in {
         when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(None))

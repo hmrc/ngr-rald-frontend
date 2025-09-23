@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.ngrraldfrontend.controllers
 
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -26,7 +27,8 @@ import uk.gov.hmrc.http.{HeaderNames, NotFoundException}
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, NormalMode, RaldUserAnswers, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, NormalMode, RaldUserAnswers, RentDatesAgreeStart, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.pages.RentDatesAgreeStartPage
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.DateTextFields
 import uk.gov.hmrc.ngrraldfrontend.views.html.RentDatesAgreeStartView
 
@@ -38,7 +40,8 @@ class RentDatesAgreeStartControllerSpec extends ControllerSpecSupport {
   val view: RentDatesAgreeStartView = inject[RentDatesAgreeStartView]
   val mockDateTextFields: DateTextFields = inject[DateTextFields]
   val controllerNoProperty: RentDatesAgreeStartController = new RentDatesAgreeStartController(view, fakeAuth, fakeData(None), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
-  val controllerProperty: Option[UserAnswers] => RentDatesAgreeStartController = answers => new RentDatesAgreeStartController(view, fakeAuth, fakeDataProperty(Some(property), None), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
+  val controllerProperty: Option[UserAnswers] => RentDatesAgreeStartController = answers => new RentDatesAgreeStartController(view, fakeAuth, fakeDataProperty(Some(property), answers), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
+  val rentDatesAgreeStartAnswers: Option[UserAnswers] = UserAnswers("id").set(RentDatesAgreeStartPage, rentDatesAgreeStartModel).toOption
 
   "Rent Dates Agree Start controller" must {
     "method show" must {
@@ -47,6 +50,18 @@ class RentDatesAgreeStartControllerSpec extends ControllerSpecSupport {
         status(result) mustBe OK
         val content = contentAsString(result)
         content must include(pageTitle)
+      }
+      "Return OK and the correct view with prepopulated data" in {
+        val result = controllerProperty(rentDatesAgreeStartAnswers).show(NormalMode)(authenticatedFakeRequest)
+        status(result) mustBe OK
+        val content = contentAsString(result)
+        val document = Jsoup.parse(content)
+        document.select("input[name=agreedDate.day]").attr("value") mustBe "01"
+        document.select("input[name=agreedDate.month]").attr("value") mustBe "01"
+        document.select("input[name=agreedDate.year]").attr("value") mustBe "2025"
+        document.select("input[name=startPayingDate.day]").attr("value") mustBe "02"
+        document.select("input[name=startPayingDate.month]").attr("value") mustBe "02"
+        document.select("input[name=startPayingDate.year]").attr("value") mustBe "2025"
       }
       "Return NotFoundException when property is not found in the mongo" in {
         val exception = intercept[NotFoundException] {

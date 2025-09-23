@@ -53,7 +53,6 @@ class NGRConnectorSpec extends MockHttpV2 with TestData {
     "Successfully return a Property" in {
       val propertyLinkingUserAnswers = PropertyLinkingUserAnswers(CredId("1234"), property)
       setupMockHttpV2Get(s"${mockConfig.nextGenerationRatesHost}/next-generation-rates/get-property-linking-user-answers")(Some(propertyLinkingUserAnswers))
-      when(mockRaldRepo.upsertRaldUserAnswers(any())).thenReturn(Future.successful(true))
       val result: Future[Option[VMVProperty]] = ngrConnector.getLinkedProperty(credId)
       result.futureValue mustBe  Some(property)
     }

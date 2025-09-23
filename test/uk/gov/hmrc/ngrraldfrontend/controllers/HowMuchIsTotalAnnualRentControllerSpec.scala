@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.ngrraldfrontend.controllers
 
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -26,7 +27,7 @@ import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.{NewAgreement, RenewedAgreement}
 import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.pages.{TellUsAboutYourNewAgreementPage, TellUsAboutYourRenewedAgreementPage}
+import uk.gov.hmrc.ngrraldfrontend.pages.{HowMuchIsTotalAnnualRentPage, TellUsAboutYourNewAgreementPage, TellUsAboutYourRenewedAgreementPage}
 import uk.gov.hmrc.ngrraldfrontend.views.html.HowMuchIsTotalAnnualRentView
 
 import scala.concurrent.Future
@@ -39,6 +40,7 @@ class HowMuchIsTotalAnnualRentControllerSpec extends ControllerSpecSupport {
   val controllerProperty: HowMuchIsTotalAnnualRentController = new HowMuchIsTotalAnnualRentController(view, fakeAuth, fakeDataProperty(Some(property),None), mockSessionRepository, mockNavigator, mcc)(mockConfig)
   lazy val renewedAgreementAnswers: Option[UserAnswers] = UserAnswers("id").set(TellUsAboutYourRenewedAgreementPage, RenewedAgreement).toOption
   lazy val newAgreementAnswers: Option[UserAnswers] = UserAnswers("id").set(TellUsAboutYourNewAgreementPage, NewAgreement).toOption
+  lazy val howMuchIsTotalAnnualRentAnswers: Option[UserAnswers] = UserAnswers("id").set(HowMuchIsTotalAnnualRentPage, BigDecimal(1234.67)).toOption
   lazy val filledController: Option[UserAnswers] => HowMuchIsTotalAnnualRentController = answers => HowMuchIsTotalAnnualRentController(
     view, fakeAuth, fakeDataProperty(Some(property), answers), mockSessionRepository, mockNavigator, mcc
   )
@@ -50,6 +52,13 @@ class HowMuchIsTotalAnnualRentControllerSpec extends ControllerSpecSupport {
         status(result) mustBe OK
         val content = contentAsString(result)
         content must include(pageTitle)
+      }
+      "Return OK and the correct with prepopulated answers" in {
+        val result = filledController(howMuchIsTotalAnnualRentAnswers).show(NormalMode)(authenticatedFakeRequest)
+        status(result) mustBe OK
+        val content = contentAsString(result)
+        val document = Jsoup.parse(content)
+        document.select("input[name=how–much–is–total–annual–rent-value]").attr("value") mustBe "1234.67"
       }
       "Return NotFoundException when property is not found in the mongo" in {
         when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(None))

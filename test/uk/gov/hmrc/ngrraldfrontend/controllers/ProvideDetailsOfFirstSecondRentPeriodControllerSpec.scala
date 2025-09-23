@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.ngrraldfrontend.controllers
 
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -28,6 +29,7 @@ import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, NormalMode, RaldUserAnswers, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
+import uk.gov.hmrc.ngrraldfrontend.pages.ProvideDetailsOfFirstSecondRentPeriodPage
 import uk.gov.hmrc.ngrraldfrontend.views.html.ProvideDetailsOfFirstSecondRentPeriodView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.{DateTextFields, InputText}
 
@@ -56,6 +58,10 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
     mockNavigator
   )(mockConfig, ec)
 
+  val firstSecondRentPeriodAnswers: Option[UserAnswers] = UserAnswers("id").set(ProvideDetailsOfFirstSecondRentPeriodPage, firstSecondRentPeriod).toOption
+  val firstSecondRentPeriodAnswersMin: Option[UserAnswers] = UserAnswers("id").set(ProvideDetailsOfFirstSecondRentPeriodPage, firstSecondRentPeriodNoRentPayed).toOption
+
+
   "Agreement controller" must {
     "method show" must {
       "Return OK and the correct view" in {
@@ -63,6 +69,46 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
         status(result) mustBe OK
         val content = contentAsString(result)
         content must include(pageTitle)
+      }
+      "Return OK and the correct view with prepopulated data and YesPayedRent" in {
+        val result = controllerProperty(firstSecondRentPeriodAnswers).show(NormalMode)(authenticatedFakeRequest)
+        status(result) mustBe OK
+        val content = contentAsString(result)
+        val document = Jsoup.parse(content)
+        document.select("input[name=first.startDate.day]").attr("value") mustBe "01"
+        document.select("input[name=first.startDate.month]").attr("value") mustBe "01"
+        document.select("input[name=first.startDate.year]").attr("value") mustBe "2025"
+        document.select("input[name=first.endDate.day]").attr("value") mustBe "31"
+        document.select("input[name=first.endDate.month]").attr("value") mustBe "01"
+        document.select("input[name=first.endDate.year]").attr("value") mustBe "2025"
+        document.select("input[type=radio][name=provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio][value=yesPayedRent]").hasAttr("checked") mustBe true
+        document.select("input[name=second.startDate.day]").attr("value") mustBe "01"
+        document.select("input[name=second.startDate.month]").attr("value") mustBe "02"
+        document.select("input[name=second.startDate.year]").attr("value") mustBe "2025"
+        document.select("input[name=second.endDate.day]").attr("value") mustBe "28"
+        document.select("input[name=second.endDate.month]").attr("value") mustBe "02"
+        document.select("input[name=second.endDate.year]").attr("value") mustBe "2025"
+        document.select("input[name=SecondRentPeriodAmount]").attr("value") mustBe "1000"
+      }
+      "Return OK and the correct view with prepopulated data and noRentPayed" in {
+        val result = controllerProperty(firstSecondRentPeriodAnswersMin).show(NormalMode)(authenticatedFakeRequest)
+        status(result) mustBe OK
+        val content = contentAsString(result)
+        val document = Jsoup.parse(content)
+        document.select("input[name=first.startDate.day]").attr("value") mustBe "01"
+        document.select("input[name=first.startDate.month]").attr("value") mustBe "01"
+        document.select("input[name=first.startDate.year]").attr("value") mustBe "2025"
+        document.select("input[name=first.endDate.day]").attr("value") mustBe "31"
+        document.select("input[name=first.endDate.month]").attr("value") mustBe "01"
+        document.select("input[name=first.endDate.year]").attr("value") mustBe "2025"
+        document.select("input[type=radio][name=provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio][value=noRentPayed]").hasAttr("checked") mustBe true
+        document.select("input[name=second.startDate.day]").attr("value") mustBe "01"
+        document.select("input[name=second.startDate.month]").attr("value") mustBe "02"
+        document.select("input[name=second.startDate.year]").attr("value") mustBe "2025"
+        document.select("input[name=second.endDate.day]").attr("value") mustBe "28"
+        document.select("input[name=second.endDate.month]").attr("value") mustBe "02"
+        document.select("input[name=second.endDate.year]").attr("value") mustBe "2025"
+        document.select("input[name=SecondRentPeriodAmount]").attr("value") mustBe "1000"
       }
       "Return NotFoundException when property is not found in the mongo" in {
         when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(None))
@@ -112,7 +158,8 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
             "first.endDate.day" -> "12",
             "first.endDate.month" -> "12",
             "first.endDate.year" -> "2026",
-            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "noRentPayed",
+            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "yesPayedRent",
+            "RentPeriodAmount" -> "20000.00",
             "second.startDate.day" -> "12",
             "second.startDate.month" -> "12",
             "second.startDate.year" -> "2026",

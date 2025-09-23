@@ -18,16 +18,14 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.{Mode, NGRDate, RentDatesAgreeStart, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentDatesAgreeStartForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentDatesAgreeStartForm.form
-import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
-import uk.gov.hmrc.ngrraldfrontend.pages.{AgreedRentChangePage, RentDatesAgreeStartPage}
-import uk.gov.hmrc.ngrraldfrontend.repo.{RaldRepo, SessionRepository}
+import uk.gov.hmrc.ngrraldfrontend.pages.RentDatesAgreeStartPage
+import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.utils.DateKeyFinder
 import uk.gov.hmrc.ngrraldfrontend.views.html.RentDatesAgreeStartView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController

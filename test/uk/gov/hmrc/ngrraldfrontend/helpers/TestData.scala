@@ -56,17 +56,27 @@ trait TestData {
    )
   )
  )
- 
+
  val firstSecondRentPeriod: ProvideDetailsOfFirstSecondRentPeriod = ProvideDetailsOfFirstSecondRentPeriod(
- firstDateStart = "2025-01-01",
- firstDateEnd = "2025-01-31",
- firstRentPeriodRadio = true,
- firstRentPeriodAmount = Some("1000"),
- secondDateStart = "2025-02-01",
- secondDateEnd = "2025-02-28",
- secondHowMuchIsRent = "1000"
+  firstDateStart = "2025-01-01",
+  firstDateEnd = "2025-01-31",
+  firstRentPeriodRadio = true,
+  firstRentPeriodAmount = Some("1000"),
+  secondDateStart = "2025-02-01",
+  secondDateEnd = "2025-02-28",
+  secondHowMuchIsRent = "1000"
  )
- 
+
+ val firstSecondRentPeriodNoRentPayed: ProvideDetailsOfFirstSecondRentPeriod = ProvideDetailsOfFirstSecondRentPeriod(
+  firstDateStart = "2025-01-01",
+  firstDateEnd = "2025-01-31",
+  firstRentPeriodRadio = false,
+  firstRentPeriodAmount = None,
+  secondDateStart = "2025-02-01",
+  secondDateEnd = "2025-02-28",
+  secondHowMuchIsRent = "1000"
+ )
+
  val testRegistrationModel: RatepayerRegistration = RatepayerRegistration(
   userType = Some(Individual),
   agentStatus = Some(AgentStatus.Agent),
@@ -95,8 +105,8 @@ trait TestData {
    postcode = Postcode("BN110AA")
   )
  val regResponseJson: JsValue = Json.parse(
-   """{"userType":"Individual","agentStatus":"Agent","name":{"value":"John Doe"},"tradingName":{"value":"CompanyLTD"},"email":{"value":"JohnDoe@digital.hmrc.gov.uk"},"contactNumber":{"value":"07123456789"},"secondaryNumber":{"value":"07123456789"},"address":{"line1":"99","line2":"Wibble Rd","town":"Worthing","county":"West Sussex","postcode":{"value":"BN110AA"}},"trnReferenceNumber":{"referenceType":"TRN","value":"12345"},"isRegistered":false}
-   |""".stripMargin
+  """{"userType":"Individual","agentStatus":"Agent","name":{"value":"John Doe"},"tradingName":{"value":"CompanyLTD"},"email":{"value":"JohnDoe@digital.hmrc.gov.uk"},"contactNumber":{"value":"07123456789"},"secondaryNumber":{"value":"07123456789"},"address":{"line1":"99","line2":"Wibble Rd","town":"Worthing","county":"West Sussex","postcode":{"value":"BN110AA"}},"trnReferenceNumber":{"referenceType":"TRN","value":"12345"},"isRegistered":false}
+    |""".stripMargin
  )
  val minRegResponseModel: RatepayerRegistration = testRegistrationModel.copy(tradingName = None, secondaryNumber = None)
  val minRegResponseJson: JsValue = Json.parse(
@@ -115,7 +125,7 @@ trait TestData {
     |{"credId":{"value":"1234"}}
     |""".stripMargin
  )
- 
+
  val agreementModel: Agreement = Agreement(
   agreementStart = "2025-01-01", isOpenEnded = true, openEndedDate = Some("2025-02-02"), haveBreakClause = true, breakClauseInfo = Some("he has a break clause")
  )
@@ -123,8 +133,20 @@ trait TestData {
  val agreementModelMin: Agreement = Agreement(
   agreementStart = "2025-01-01", isOpenEnded = false, openEndedDate = None, haveBreakClause = false, breakClauseInfo = None
  )
- 
+
  val agreementVerbalModelMin: AgreementVerbal = AgreementVerbal(startDate = "2025-01-01", openEnded = true, endDate = None)
- val agreementVerbalModel: AgreementVerbal = AgreementVerbal(startDate = "2025-01-01", openEnded = false, endDate =  Some("2025-02-02"))
  
+ val agreementVerbalModel: AgreementVerbal = AgreementVerbal(startDate = "2025-01-01", openEnded = false, endDate = Some("2025-02-02"))
+
+ val interimRentSetByTheCourtModel: InterimRentSetByTheCourt = InterimRentSetByTheCourt("10000", "1990-01")
+
+ val landlordModel: Landlord = Landlord("Joe Bloggs", "LandLordAndTenant", None)
+
+ val rentDatesAgreeStartModel: RentDatesAgreeStart = RentDatesAgreeStart("2025-01-01", "2025-02-02")
+
+ val whatYourRentIncludesModelAllYes: WhatYourRentIncludes = WhatYourRentIncludes(true,true,true,true,true,true,Some(5))
+
+ val whatYourRentIncludesModelAllNo: WhatYourRentIncludes = WhatYourRentIncludes(false,false,false,false,false,false,None)
+ 
+ val rentBasedOnModel: RentBasedOn = RentBasedOn("Other",Some("The rent was agreed"))
 }

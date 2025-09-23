@@ -23,13 +23,11 @@ import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.{Landlord, Mode, NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
-import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
-import uk.gov.hmrc.ngrraldfrontend.models.forms.{AgreedRentChangeForm, CheckRentFreePeriodForm}
+import uk.gov.hmrc.ngrraldfrontend.models.forms.CheckRentFreePeriodForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.CheckRentFreePeriodForm.form
-import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.CheckRentFreePeriodPage
-import uk.gov.hmrc.ngrraldfrontend.repo.{RaldRepo, SessionRepository}
+import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.views.html.CheckRentFreePeriodView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -76,7 +74,7 @@ class CheckRentFreePeriodController @Inject()(checkRentFreePeriodView: CheckRent
             updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
               .set(CheckRentFreePeriodPage, radioValue.radioValue))
             _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(CheckRentFreePeriodPage, NormalMode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(CheckRentFreePeriodPage, mode, updatedAnswers))
       )
     }
 

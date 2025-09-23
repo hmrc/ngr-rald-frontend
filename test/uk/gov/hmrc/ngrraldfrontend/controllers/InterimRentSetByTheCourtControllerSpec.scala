@@ -35,17 +35,19 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
  */
 
 
+import org.jsoup.Jsoup
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import uk.gov.hmrc.http.{HeaderNames, NotFoundException}
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
-import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{InterimRentSetByTheCourt, NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.views.html.InterimRentSetByTheCourtView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
+import uk.gov.hmrc.ngrraldfrontend.pages.{AgreedRentChangePage, InterimSetByTheCourtPage}
 
 import scala.concurrent.Future
 
@@ -65,10 +67,12 @@ class InterimRentSetByTheCourtControllerSpec extends ControllerSpecSupport {
     interimRentSetByTheCourtView = view,
     authenticate = fakeAuth,
     inputText = mockInputText,
-    getData = fakeDataProperty(Some(property),None),
+    getData = fakeDataProperty(Some(property),answers),
     sessionRepository = mockSessionRepository,
     navigator = mockNavigator,
     mcc = mcc)(mockConfig)
+
+  val interimSetByTheCourtAnswers: Option[UserAnswers] = UserAnswers("id").set(InterimSetByTheCourtPage, interimRentSetByTheCourtModel).toOption
 
   "InterimRentSetByTheCourtController" must {
     "method show" must {
@@ -77,6 +81,16 @@ class InterimRentSetByTheCourtControllerSpec extends ControllerSpecSupport {
         status(result) mustBe OK
         val content = contentAsString(result)
         content must include(pageTitle)
+      }
+      "Return OK and the correct view with prepopulated answers" in {
+        val result = controllerProperty(interimSetByTheCourtAnswers).show(NormalMode)(authenticatedFakeRequest)
+        status(result) mustBe OK
+        val content = contentAsString(result)
+        val document = Jsoup.parse(content)
+        document.select("input[name=interimAmount]").attr("value") mustBe "10000.0"
+        document.select("input[name=date.month]").attr("value") mustBe "01"
+        document.select("input[name=date.year]").attr("value") mustBe "1990"
+
       }
       "Return NotFoundException when property is not found in the mongo" in {
         when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(None))

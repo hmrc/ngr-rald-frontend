@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.ngrraldfrontend.controllers
 
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -26,7 +27,8 @@ import uk.gov.hmrc.http.{HeaderNames, NotFoundException}
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, NormalMode, RaldUserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, NormalMode, RaldUserAnswers, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.pages.WhatIsYourRentBasedOnPage
 import uk.gov.hmrc.ngrraldfrontend.views.html.WhatIsYourRentBasedOnView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.NGRCharacterCountComponent
 
@@ -37,16 +39,26 @@ class WhatIsYourRentBasedOnControllerSpec extends ControllerSpecSupport {
   val pageTitle = "What is your rent based on?"
   val view: WhatIsYourRentBasedOnView = inject[WhatIsYourRentBasedOnView]
   val mockNGRCharacterCountComponent: NGRCharacterCountComponent = inject[NGRCharacterCountComponent]
-  val controllerProperty: WhatIsYourRentBasedOnController = new WhatIsYourRentBasedOnController(view, fakeAuth, mockNGRCharacterCountComponent, mcc, fakeDataProperty(Some(property),None), mockNavigator, mockSessionRepository)(mockConfig, ec)
+  val controllerProperty: Option[UserAnswers] => WhatIsYourRentBasedOnController = answers => new WhatIsYourRentBasedOnController(view, fakeAuth, mockNGRCharacterCountComponent, mcc, fakeDataProperty(Some(property),answers), mockNavigator, mockSessionRepository)(mockConfig, ec)
   val controllerNoProperty: WhatIsYourRentBasedOnController = new WhatIsYourRentBasedOnController(view, fakeAuth, mockNGRCharacterCountComponent, mcc, fakeData(None), mockNavigator, mockSessionRepository)(mockConfig, ec)
+  val whatIsYourRentBasedOnAnswers: Option[UserAnswers] = UserAnswers("id").set(WhatIsYourRentBasedOnPage, rentBasedOnModel).toOption
 
   "What is your rent based on controller" must {
     "method show" must {
       "Return OK and the correct view" in {
-        val result = controllerProperty.show(NormalMode)(authenticatedFakeRequest)
+        val result = controllerProperty(None).show(NormalMode)(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
         content must include(pageTitle)
+      }
+      "Return OK and the correct view with prepopulated data" in {
+        val result = controllerProperty(whatIsYourRentBasedOnAnswers).show(NormalMode)(authenticatedFakeRequest)
+        status(result) mustBe OK
+        val content = contentAsString(result)
+        val document = Jsoup.parse(content)
+        document.select("input[type=radio][name=rent-based-on-radio][value=Other]").hasAttr("checked") mustBe true
+        document.select("textarea[name=rent-based-on-other-desc]").text() mustBe "The rent was agreed"
+
       }
       "Return NotFoundException when property is not found in the mongo" in {
         val exception = intercept[NotFoundException] {
@@ -59,7 +71,7 @@ class WhatIsYourRentBasedOnControllerSpec extends ControllerSpecSupport {
     "method submit" must {
       "Return SEE_OTHER and redirect HowMuchIsTotalAnnualRent view when radio button selected PercentageTurnover" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        val result = controllerProperty.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.WhatIsYourRentBasedOnController.submit(NormalMode))
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.WhatIsYourRentBasedOnController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "rent-based-on-radio" -> "PercentageTurnover"
           )
@@ -70,8 +82,7 @@ class WhatIsYourRentBasedOnControllerSpec extends ControllerSpecSupport {
       }
       "Return SEE_OTHER and the correct view  when radio button selected Other and description has been entered" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(Some(RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property))))
-        val result = controllerProperty.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.WhatIsYourRentBasedOnController.submit(NormalMode))
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.WhatIsYourRentBasedOnController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "rent-based-on-radio" -> "Other",
             "rent-based-on-other-desc" -> "The rent was agreed"
@@ -82,7 +93,7 @@ class WhatIsYourRentBasedOnControllerSpec extends ControllerSpecSupport {
         redirectLocation(result) mustBe Some(routes.AgreedRentChangeController.show(NormalMode).url)
       }
       "Return Form with Errors when no radio button is selected" in {
-        val result = controllerProperty.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.WhatIsYourRentBasedOnController.submit(NormalMode))
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.WhatIsYourRentBasedOnController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "rent-based-on-radio" -> ""
           )
@@ -94,7 +105,7 @@ class WhatIsYourRentBasedOnControllerSpec extends ControllerSpecSupport {
         content must include("Select what your rent is based on")
       }
       "Return Form with Errors when radio button Other is selected but no other description is given" in {
-        val result = controllerProperty.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.WhatIsYourRentBasedOnController.submit(NormalMode))
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.WhatIsYourRentBasedOnController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "rent-based-on-radio" -> "Other",
             "rent-based-on-other-desc" -> ""
@@ -107,7 +118,7 @@ class WhatIsYourRentBasedOnControllerSpec extends ControllerSpecSupport {
       }
       "Return Form with Errors when radio button Other is selected but other description is over 250 characters" in {
         val over250Characters = "Bug Me Not PVT LTD, RODLEY LANE, RODLEY, LEEDS, BH1 1HU What is your rent based on?Open market value This is the rent a landlord could rent the property for if, it was available to anyoneA percentage of open market value This is a percentage of the rent a landlord could rent the property for if, it was available to anyoneTurnover top-up The rent is a fixed base rent with an additional payment based on a percentage of your turnoverA percentage of expected turnover The rent paid is based on a percentage of turnoverTotal Occupancy Cost leases (TOCs)The rent is the total cost of leasing the property. It includes base rent, business rates, insurance and utilities. It also includes common area maintenance and tenant improvements Indexation The rent is reviewed according to an index (such as Retail Price Index)Other The rent was agreed another way Can you tell us how your rent was agreed?"
-        val result = controllerProperty.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.WhatIsYourRentBasedOnController.submit(NormalMode))
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.WhatIsYourRentBasedOnController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "rent-based-on-radio" -> "Other",
             "rent-based-on-other-desc" -> over250Characters

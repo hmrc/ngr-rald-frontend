@@ -18,17 +18,15 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-import uk.gov.hmrc.ngrraldfrontend.models.{Mode, NormalMode, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{Mode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreedRentChangeForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreedRentChangeForm.form
-import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.AgreedRentChangePage
-import uk.gov.hmrc.ngrraldfrontend.repo.{RaldRepo, SessionRepository}
+import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.views.html.AgreedRentChangeView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -53,7 +51,7 @@ class AgreedRentChangeController @Inject()(agreedRentChangeView: AgreedRentChang
       }
         Future.successful(Ok(agreedRentChangeView(
           form = preparedForm,
-          radios = buildRadios(preparedForm, AgreedRentChangeForm.ngrRadio(form)),
+          radios = buildRadios(preparedForm, AgreedRentChangeForm.ngrRadio(preparedForm)),
           propertyAddress = request.property.addressFull,
           mode = mode
         )))

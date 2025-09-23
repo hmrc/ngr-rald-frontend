@@ -18,17 +18,15 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.{Mode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.DoesYourRentIncludeParkingForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.DoesYourRentIncludeParkingForm.form
-import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.DoesYourRentIncludeParkingPage
-import uk.gov.hmrc.ngrraldfrontend.repo.{RaldRepo, SessionRepository}
+import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.views.html.DoesYourRentIncludeParkingView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -49,11 +47,12 @@ class DoesYourRentIncludeParkingController  @Inject()(doesYourRentIncludeParking
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(DoesYourRentIncludeParkingPage) match {
         case None => form
         case Some(value) => form.fill(DoesYourRentIncludeParkingForm(value))
+
       }
         Future.successful(Ok(doesYourRentIncludeParkingView(
           selectedPropertyAddress = request.property.addressFull,
           form = preparedForm,
-          ngrRadio = buildRadios(form, DoesYourRentIncludeParkingForm.ngrRadio(preparedForm)),
+          ngrRadio = buildRadios(preparedForm, DoesYourRentIncludeParkingForm.ngrRadio(preparedForm)),
           mode = mode
         )))
     }
