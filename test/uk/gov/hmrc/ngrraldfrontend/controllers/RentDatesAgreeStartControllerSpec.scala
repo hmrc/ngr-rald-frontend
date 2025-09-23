@@ -84,9 +84,9 @@ class RentDatesAgreeStartControllerSpec extends ControllerSpecSupport {
             "startPayingDate.year" -> "2025"
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
-        headers(result) mustBe TreeMap("Location" -> "/ngr-rald-frontend/rent-dates-agree-start")
+        headers(result) mustBe TreeMap("Location" -> "/ngr-rald-frontend/what-rent-includes")
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.RentDatesAgreeStartController.show(NormalMode).url)
+        redirectLocation(result) mustBe Some(routes.WhatYourRentIncludesController.show(NormalMode).url)
       }
       "Return Form with Errors when dates are missing" in {
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeStartController.submit(NormalMode))

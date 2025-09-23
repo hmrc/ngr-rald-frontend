@@ -72,7 +72,7 @@ class CheckRentFreePeriodControllerSpec extends ControllerSpecSupport{
 
         val result = controllerProperty(None).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.CheckRentFreePeriodController.show(NormalMode).url)
+        redirectLocation(result) mustBe Some(routes.RentFreePeriodController.show(NormalMode).url)
       }
       "Return OK and the correct view and the answer is No" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
@@ -81,15 +81,6 @@ class CheckRentFreePeriodControllerSpec extends ControllerSpecSupport{
           .withHeaders(HeaderNames.authorisation -> "Bearer 1")
 
         val result = controllerProperty(None).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.RentFreePeriodController.show.url)
-      }
-      "Return OK and redirect to RentDatesAgreeStart view when user selects no" in {
-        val fakePostRequest = FakeRequest(routes.CheckRentFreePeriodController.submit)
-          .withFormUrlEncodedBody((CheckRentFreePeriodForm.checkRentPeriodRadio, "No"))
-          .withHeaders(HeaderNames.authorisation -> "Bearer 1")
-
-        val result = controller.submit()(authenticatedFakeRequest(fakePostRequest))
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.RentDatesAgreeStartController.show(NormalMode).url)
       }

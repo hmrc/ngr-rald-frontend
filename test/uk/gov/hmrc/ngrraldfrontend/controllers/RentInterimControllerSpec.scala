@@ -71,7 +71,7 @@ class RentInterimControllerSpec extends ControllerSpecSupport {
 
         val result = controllerProperty(None).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.ProvideDetailsOfFirstSecondRentPeriodController.show(NormalMode).url)
+        redirectLocation(result) mustBe Some(routes.InterimRentSetByTheCourtController.show(NormalMode).url)
       }
       "Return OK and the correct view when no is selected" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))

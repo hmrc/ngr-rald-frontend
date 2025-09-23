@@ -60,7 +60,7 @@ class RentPeriodsControllerSpec extends ControllerSpecSupport {
           result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/landlord")
         })
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.DidYouAgreeRentWithLandlordController.show(NormalMode).url)
+        redirectLocation(result) mustBe Some(routes.ProvideDetailsOfFirstSecondRentPeriodController.show(NormalMode).url)
       }
       "Return OK and the correct view after submitting no" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
@@ -73,7 +73,7 @@ class RentPeriodsControllerSpec extends ControllerSpecSupport {
           result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/landlord")
         })
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.ProvideDetailsOfFirstSecondRentPeriodController.show(NormalMode).url)
+        redirectLocation(result) mustBe Some(routes.DidYouAgreeRentWithLandlordController.show(NormalMode).url)
       }
       "Return Form with Errors when no name is input" in {
         val result = controllerProperty(firstSecondRentPeriodAnswers).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentPeriodsController.submit(NormalMode))

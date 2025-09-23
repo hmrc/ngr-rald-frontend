@@ -56,8 +56,14 @@ class Navigator @Inject()() {
     case WhatIsYourRentBasedOnPage => answers =>
       answers.get(WhatIsYourRentBasedOnPage) match {
         case Some(value) => value.rentBased match {
-          case "PercentageTurnover" => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchIsTotalAnnualRentController.show(NormalMode)
-          case _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.AgreedRentChangeController.show(NormalMode)
+          case "PercentageTurnover" => answers.get(TellUsAboutRentPage) match {
+            case Some(_) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatYourRentIncludesController.show(NormalMode)
+            case None => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchIsTotalAnnualRentController.show(NormalMode)
+          }
+          case _ => answers.get(TellUsAboutRentPage) match {
+            case Some(value) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatYourRentIncludesController.show(NormalMode)
+            case None => uk.gov.hmrc.ngrraldfrontend.controllers.routes.AgreedRentChangeController.show(NormalMode)
+          }
         }
         case None => throw new NotFoundException("Not found answers")
       }
@@ -76,9 +82,15 @@ class Navigator @Inject()() {
     }
     case DidYouAgreeRentWithLandlordPage => answers =>
       answers.get(DidYouAgreeRentWithLandlordPage) match {
-        case Some(value)  => println(Console.MAGENTA + value + Console.RESET)
+        case Some(value)  =>
           value match {
-          case "YesTheLandlord" => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(NormalMode)
+          case "YesTheLandlord" => answers.get(AgreedRentChangePage) match {
+            case Some(value) => value match {
+              case "Yes" => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(NormalMode)
+              case _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeController.show(NormalMode)
+            }
+            case None => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(NormalMode)
+          }
           case _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentInterimController.show(NormalMode)
         }
         case None => throw new NotFoundException("Failed to find answers")
@@ -87,27 +99,34 @@ class Navigator @Inject()() {
     case RentPeriodsPage => answers =>
       answers.get(RentPeriodsPage) match {
         case Some(value) => value match {
-          case "Yes" => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouAgreeRentWithLandlordController.show(NormalMode)
-          case _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfFirstSecondRentPeriodController.show(NormalMode)
+          case "Yes" => uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfFirstSecondRentPeriodController.show(NormalMode)
+          case _ => answers.get(TellUsAboutYourNewAgreementPage) match {
+            case Some(_) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeController.show(NormalMode)
+            case None => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouAgreeRentWithLandlordController.show(NormalMode)
+          }
         }
         case None => throw new NotFoundException("Failed to find answers")
       }
-      //TODO CHANGE ROUTE TO CORRECT PAGE
-    case CheckRentFreePeriodPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(NormalMode)
-    //TODO CHECK THIS ROUTE
+    case CheckRentFreePeriodPage => answers =>
+      answers.get(CheckRentFreePeriodPage) match {
+        case Some(value) => value match {
+          case "Yes" => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentFreePeriodController.show(NormalMode)
+          case _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeStartController.show(NormalMode)
+        }
+        case None => ???
+      }
     case RentInterimPage => answers =>
       answers.get(RentInterimPage) match {
         case Some(value) => value match {
-          case "Yes" => uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfFirstSecondRentPeriodController.show(NormalMode)
+          case "Yes" => uk.gov.hmrc.ngrraldfrontend.controllers.routes.InterimRentSetByTheCourtController.show(NormalMode)
           case _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(NormalMode)
         }
         //TODO ADD A TECHNICAL DIFFICULTIES PAGE
         case None => ???
       }
-      //TODO Fix this route once the rebase is done
-    case RentDatesAgreePage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeController.show(NormalMode)
+    case RentDatesAgreePage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatYourRentIncludesController.show(NormalMode)
     case WhatYourRentIncludesPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DoesYourRentIncludeParkingController.show(NormalMode)
-    case RentDatesAgreeStartPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeStartController.show(NormalMode)
+    case RentDatesAgreeStartPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatYourRentIncludesController.show(NormalMode)
     case DoesYourRentIncludeParkingPage => answers =>
       answers.get(DoesYourRentIncludeParkingPage) match {
         case Some(value) => value match {
@@ -117,7 +136,12 @@ class Navigator @Inject()() {
         case None => throw new NotFoundException("Failed to find answers")
       }
     case HowManyParkingSpacesOrGaragesIncludedInRentPage => _ =>  uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(NormalMode)
-    case InterimSetByTheCourtPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(NormalMode)
+    case InterimSetByTheCourtPage => answers =>
+      answers.get(ProvideDetailsOfFirstSecondRentPeriodPage) match {
+        case Some(_) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeController.show(NormalMode)
+        case None => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(NormalMode)
+      }
+    case RentFreePeriodPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeStartController.show(NormalMode)
   }
 
   //TODO change to check your answers page

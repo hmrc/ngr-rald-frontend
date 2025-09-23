@@ -100,7 +100,7 @@ class RentDatesAgreeControllerSpec extends ControllerSpecSupport {
           result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/rent-dates-agree")
         })
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.RentDatesAgreeController.show(NormalMode).url)
+        redirectLocation(result) mustBe Some(routes.WhatYourRentIncludesController.show(NormalMode).url)
       }
       "Return Form with Errors when no day is added" in {
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeController.submit(NormalMode))

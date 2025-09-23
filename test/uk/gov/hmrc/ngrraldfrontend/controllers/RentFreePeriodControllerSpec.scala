@@ -26,7 +26,7 @@ import uk.gov.hmrc.http.{HeaderNames, NotFoundException}
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, RaldUserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.views.html.RentFreePeriodView
 
 import scala.collection.immutable.TreeMap
@@ -35,30 +35,30 @@ import scala.concurrent.Future
 class RentFreePeriodControllerSpec extends ControllerSpecSupport {
   val pageTitle = "Rent-free period"
   val view: RentFreePeriodView = inject[RentFreePeriodView]
-  val controller: RentFreePeriodController = new RentFreePeriodController(view, mockAuthJourney, mockPropertyLinkingAction, mockRaldRepo, mcc)(mockConfig, ec)
+  val controllerNoProperty: RentFreePeriodController = new RentFreePeriodController(view, fakeAuth, fakeData(None), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
+  val controllerProperty: Option[UserAnswers] => RentFreePeriodController = answers => new RentFreePeriodController(view, fakeAuth, fakeDataProperty(Some(property), answers), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
 
   "Rent free period controller" must {
     "method show" must {
       "Return OK and the correct view" in {
-        when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(Some(RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property))))
-        val result = controller.show(authenticatedFakeRequest())
+        val result = controllerProperty(None).show(NormalMode)(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
         content must include(pageTitle)
       }
       "Return NotFoundException when property is not found in the mongo" in {
-        mockRequestWithoutProperty()
+        when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(None))
         val exception = intercept[NotFoundException] {
-          await(controller.show(authenticatedFakeRequest()))
+          await(controllerNoProperty.show(NormalMode)(authenticatedFakeRequest))
         }
-        exception.getMessage contains "Couldn't find property in mongo" mustBe true
+        exception.getMessage contains "Could not find answers in backend mongo" mustBe true
       }
     }
 
     "method submit" must {
       "Return SEE_OTHER and redirect RentDatesAgreeStart view when everything is provided" in {
-        when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(Some(RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property))))
-        val result = controller.submit(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeStartController.submit)
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeStartController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "rentFreePeriodMonths" -> "5",
             "reasons" -> "Any reasons"
@@ -66,11 +66,10 @@ class RentFreePeriodControllerSpec extends ControllerSpecSupport {
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         headers(result) mustBe TreeMap("Location" -> "/ngr-rald-frontend/rent-dates-agree-start")
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.RentDatesAgreeStartController.show.url)
+        redirectLocation(result) mustBe Some(routes.RentDatesAgreeStartController.show(NormalMode).url)
       }
       "Return Form with Errors when rentFreePeriodMonths is missing" in {
-        mockRequest()
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeStartController.submit)
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeStartController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "rentFreePeriodMonths" -> "",
             "reasons" -> "Any reasons"
@@ -83,7 +82,7 @@ class RentFreePeriodControllerSpec extends ControllerSpecSupport {
         content must include("<a href=\"#rentFreePeriodMonths\">Enter how many months the rent-free period is</a>")
       }
       "Return Form with Errors when rentFreePeriodMonths isn't numeric" in {
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeStartController.submit)
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeStartController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "rentFreePeriodMonths" -> "$A,",
             "reasons" -> "Any reasons"
@@ -95,7 +94,7 @@ class RentFreePeriodControllerSpec extends ControllerSpecSupport {
         content must include("<a href=\"#rentFreePeriodMonths\">Rent-free period must be a number, like 6</a>")
       }
       "Return Form with Errors when rentFreePeriodMonths is over 999" in {
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeStartController.submit)
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeStartController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "rentFreePeriodMonths" -> "1000",
             "reasons" -> "Any reasons"
@@ -107,7 +106,7 @@ class RentFreePeriodControllerSpec extends ControllerSpecSupport {
         content must include("<a href=\"#rentFreePeriodMonths\">Rent-free period must be 99 months or less</a>")
       }
       "Return Form with Errors when rentFreePeriodMonths is less than 1" in {
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeStartController.submit)
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeStartController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "rentFreePeriodMonths" -> "0",
             "reasons" -> "Any reasons"
@@ -119,7 +118,7 @@ class RentFreePeriodControllerSpec extends ControllerSpecSupport {
         content must include("<a href=\"#rentFreePeriodMonths\">Rent-free period must be more more than 0</a>")
       }
       "Return Form with Errors when reasons is missing" in {
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeStartController.submit)
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeStartController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "rentFreePeriodMonths" -> "5",
             "reasons" -> ""
@@ -131,16 +130,16 @@ class RentFreePeriodControllerSpec extends ControllerSpecSupport {
         content must include("<a href=\"#reasons\">Tell us why you have a rent-free period</a>")
       }
       "Return Exception if no address is in the mongo" in {
-        mockRequestWithoutProperty()
+        when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(None))
         val exception = intercept[NotFoundException] {
-          await(controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeStartController.submit)
+          await(controllerNoProperty.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeStartController.submit(NormalMode))
             .withFormUrlEncodedBody(
               "rentFreePeriodMonths" -> "5",
               "reasons" -> ""
             )
             .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some("")))))
         }
-        exception.getMessage contains "Couldn't find property in mongo" mustBe true
+        exception.getMessage contains "Could not find answers in backend mongo" mustBe true
       }
     }
   }

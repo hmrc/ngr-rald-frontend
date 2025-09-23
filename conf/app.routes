@@ -125,5 +125,8 @@ POST       /interim-rent-set-by-court                              uk.gov.hmrc.n
 GET        /interim-rent-set-by-court/change                       uk.gov.hmrc.ngrraldfrontend.controllers.InterimRentSetByTheCourtController.show(mode: Mode = CheckMode)
 POST       /interim-rent-set-by-court/change                       uk.gov.hmrc.ngrraldfrontend.controllers.InterimRentSetByTheCourtController.submit(mode: Mode = CheckMode)
 
-GET        /rent-free-period                                       uk.gov.hmrc.ngrraldfrontend.controllers.RentFreePeriodController.show
-POST       /rent-free-period                                       uk.gov.hmrc.ngrraldfrontend.controllers.RentFreePeriodController.submit
+#Rent Free Period
+GET        /rent-free-period                                       uk.gov.hmrc.ngrraldfrontend.controllers.RentFreePeriodController.show(mode: Mode = NormalMode)
+POST       /rent-free-period                                       uk.gov.hmrc.ngrraldfrontend.controllers.RentFreePeriodController.submit(mode: Mode = NormalMode)
+GET        /rent-free-period/change                                uk.gov.hmrc.ngrraldfrontend.controllers.RentFreePeriodController.show(mode: Mode = CheckMode)
+POST       /rent-free-period/change                                uk.gov.hmrc.ngrraldfrontend.controllers.RentFreePeriodController.submit(mode: Mode = CheckMode)
