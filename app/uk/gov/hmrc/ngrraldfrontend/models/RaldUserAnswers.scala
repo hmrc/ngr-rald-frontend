@@ -42,7 +42,8 @@ final case class RaldUserAnswers(
                                   doesYourRentIncludeParking: Option[Boolean] = None,
                                   howManyParkingSpacesOrGaragesIncludedInRent: Option[HowManyParkingSpacesOrGarages] = None,
                                   interimRentSetByTheCourt: Option[InterimRentSetByTheCourt] = None,
-                                  rentFreePeriod: Option[RentFreePeriod] =  None
+                                  rentFreePeriod: Option[RentFreePeriod] =  None,
+                                  repairsAndInsurance: Option[RepairsAndInsurance] = None
                                 )
 
 

@@ -28,7 +28,6 @@ import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{HowManyParkingSpacesOrGarages, NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.pages.HowManyParkingSpacesOrGaragesIncludedInRentPage
 import uk.gov.hmrc.ngrraldfrontend.views.html.HowManyParkingSpacesOrGaragesIncludedInRentView
-import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 
 import scala.concurrent.Future
 
@@ -109,7 +108,7 @@ class HowManyParkingSpacesOrGaragesIncludedInRentControllerSpec extends Controll
       "Return Exception if no address is in the mongo" in {
         val fakePostRequest = FakeRequest(routes.HowManyParkingSpacesOrGaragesIncludedInRentController.submit(NormalMode))
           .withFormUrlEncodedBody(
-            "uncoveredSpaces" -> "0",
+            "uncoveredSpaces" -> "",
             "coveredSpaces" -> "0",
             "garages" -> "0"
           ).withHeaders(HeaderNames.authorisation -> "Bearer 1")
