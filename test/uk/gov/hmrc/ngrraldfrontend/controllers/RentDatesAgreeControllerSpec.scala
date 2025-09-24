@@ -93,7 +93,7 @@ class RentDatesAgreeControllerSpec extends ControllerSpecSupport {
           .withFormUrlEncodedBody(
             "date.day" -> "12",
             "date.month" -> "12",
-            "date.year" -> "2026",
+            "date.year" -> "2026"
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -105,9 +105,9 @@ class RentDatesAgreeControllerSpec extends ControllerSpecSupport {
       "Return Form with Errors when no day is added" in {
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeController.submit(NormalMode))
           .withFormUrlEncodedBody(
-            "rentDatesAgreeInput.day" -> "",
-            "rentDatesAgreeInput.month" -> "12",
-            "rentDatesAgreeInput.year" -> "2026",
+            "date.day" -> "",
+            "date.month" -> "12",
+            "date.year" -> "2026"
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -120,9 +120,9 @@ class RentDatesAgreeControllerSpec extends ControllerSpecSupport {
       "Return Form with Errors when no month is added" in {
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeController.submit(NormalMode))
           .withFormUrlEncodedBody(
-            "rentDatesAgreeInput.day" -> "12",
-            "rentDatesAgreeInput.month" -> "",
-            "rentDatesAgreeInput.year" -> "2026",
+            "date.day" -> "12",
+            "date.month" -> "",
+            "date.year" -> "2026"
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -135,9 +135,9 @@ class RentDatesAgreeControllerSpec extends ControllerSpecSupport {
       "Return Form with Errors when no year is added" in {
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeController.submit(NormalMode))
           .withFormUrlEncodedBody(
-            "rentDatesAgreeInput.day" -> "12",
-            "rentDatesAgreeInput.month" -> "12",
-            "rentDatesAgreeInput.year" -> "",
+            "date.day" -> "12",
+            "date.month" -> "12",
+            "date.year" -> "",
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {

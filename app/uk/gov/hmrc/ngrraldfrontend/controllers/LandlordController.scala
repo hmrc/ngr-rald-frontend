@@ -81,7 +81,7 @@ class LandlordController @Inject()(view: LandlordView,
         case None => form
         case Some(value) => form.fill(LandlordForm(value.landlordName,value.landLordType,value.landlordOtherDesc))
       }
-      Future.successful(Ok(view(selectedPropertyAddress = request.property.addressFull, form = preparedForm, ngrRadio =  buildRadios(preparedForm, ngrRadio(form)), mode))
+      Future.successful(Ok(view(selectedPropertyAddress = request.property.addressFull, form = preparedForm, ngrRadio =  buildRadios(preparedForm, ngrRadio(preparedForm)), mode))
       )
 
     }
