@@ -41,7 +41,8 @@ object RentFreePeriodForm extends CommonFormValidators {
           .verifying(
             firstError(
               isNotEmpty(rentFreePeriodMonths, "rentFreePeriod.months.required.error"),
-              regexp(wholePositiveNumberRegexp.pattern(), "rentFreePeriod.months.invalid.error")
+              regexp(wholePositiveNumberRegexp.pattern(), "rentFreePeriod.months.invalid.error"),
+              isLargerThanInt(99, "rentFreePeriod.months.maximum.error")
             )
           )
           .transform[Int](_.toInt, _.toString)
