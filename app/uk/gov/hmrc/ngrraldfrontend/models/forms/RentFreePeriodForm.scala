@@ -48,13 +48,13 @@ object RentFreePeriodForm extends CommonFormValidators {
           .transform[Int](_.toInt, _.toString)
           .verifying(
             firstError(
-              minimumValue(1, "rentFreePeriod.months.minimum.error"),
-              maximumValue(99, "rentFreePeriod.months.maximum.error")
+              minimumValue(1, "rentFreePeriod.months.minimum.error")
             )
           ),
         reasons -> text()
           .verifying(
-            isNotEmpty(reasons, "rentFreePeriod.reasons.required.error")
+            isNotEmpty(reasons, "rentFreePeriod.reasons.required.error"),
+            maxLength(250, "rentFreePeriod.reasons.length.error")
           )
       )(RentFreePeriodForm.apply)(RentFreePeriodForm.unapply)
     )
