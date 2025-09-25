@@ -123,8 +123,8 @@ class LandlordControllerSpec extends ControllerSpecSupport {
         val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
           .withFormUrlEncodedBody(
             "landlord-name-value" -> "Bob",
-            "landlord-radio" -> "OtherRelationship",
-            "landlordOther" -> "",
+            "landlord-radio" -> "LandlordYes",
+            "landlord-yes" -> "",
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {

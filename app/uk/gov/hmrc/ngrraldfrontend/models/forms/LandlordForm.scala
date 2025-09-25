@@ -24,7 +24,7 @@ import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatIsYourRentBasedOnForm.firstError
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 
-final case class LandlordForm(landlordName: String, landLordType: String, landlordOther: Option[String])
+final case class LandlordForm(landlordName: String, landLordType: String, landlordYesSelected: Option[String])
 
 object LandlordForm extends CommonFormValidators with Mappings{
   implicit val format: OFormat[LandlordForm] = Json.format[LandlordForm]
@@ -37,7 +37,7 @@ object LandlordForm extends CommonFormValidators with Mappings{
 
   private val landlord = "landlord-name-value"
   private val landlordRadio = "landlord-radio"
-  private val landlordOther = "landlord-radio-other"
+  private val landlordYesSelected = "landlord-yes"
 
 
   val messagesApi: MessagesApi = new DefaultMessagesApi()
@@ -46,12 +46,12 @@ object LandlordForm extends CommonFormValidators with Mappings{
 
 
   def unapply(landlordForm: LandlordForm): Option[(String, String, Option[String])] =
-    Some((landlordForm.landlordName, landlordForm.landLordType, landlordForm.landlordOther))
+    Some((landlordForm.landlordName, landlordForm.landLordType, landlordForm.landlordYesSelected))
 
   private def isOtherTextEmpty[A]: Constraint[A] =
     Constraint((input: A) =>
       val rentBasedOnForm = input.asInstanceOf[LandlordForm]
-      if (rentBasedOnForm.landLordType.equals("OtherRelationship") && rentBasedOnForm.landlordOther.getOrElse("").isBlank)
+      if (rentBasedOnForm.landLordType.equals("LandlordYes") && rentBasedOnForm.landlordYesSelected.getOrElse("").isBlank)
         Invalid(otherRadioEmptyError)
       else
         Valid
@@ -60,7 +60,7 @@ object LandlordForm extends CommonFormValidators with Mappings{
   private def otherTextMaxLength[A]: Constraint[A] =
     Constraint((input: A) =>
       val rentBasedOnForm = input.asInstanceOf[LandlordForm]
-      if (rentBasedOnForm.landLordType.equals("OtherRelationship") && rentBasedOnForm.landlordOther.getOrElse("").length > 250)
+      if (rentBasedOnForm.landLordType.equals("LandlordYes") && rentBasedOnForm.landlordYesSelected.getOrElse("").length > 250)
         Invalid(otherRadioTooLongError)
       else
         Valid
@@ -78,7 +78,7 @@ object LandlordForm extends CommonFormValidators with Mappings{
             
           ),
         landlordRadio -> radioText(radioUnselectedError),
-        landlordOther -> optional(
+        landlordYesSelected -> optional(
           play.api.data.Forms.text
           .transform[String](_.strip(), identity)
         )
