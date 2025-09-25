@@ -86,6 +86,26 @@ class RentFreePeriodFormSpec extends AnyWordSpec with Matchers {
       boundForm.errors should contain(FormError("rentFreePeriodMonths", List("rentFreePeriod.months.maximum.error"), ArraySeq(99)))
     }
 
+    "fail to bind when months is a very large number" in {
+      val data = Map("rentFreePeriodMonths" -> "1000000000000000000",
+        "reasons" -> "Any reasons"
+      )
+      val boundForm = RentFreePeriodForm.form.bind(data)
+
+      boundForm.hasErrors shouldBe true
+      boundForm.errors should contain(FormError("rentFreePeriodMonths", List("rentFreePeriod.months.maximum.error"), ArraySeq(99)))
+    }
+
+    "fail to bind when reasons are longer than 250" in {
+      val data = Map("rentFreePeriodMonths" -> "100",
+        "reasons" -> "1dscsdce4343erfrfwfewfwefwefwefwefrf8988234uiml44bscbdsncsomkqmkwdqdbq3u98484nkwnfjkwenskpwekpowekjnfhwiuedojwedjkwedjknwedjkas9x9832jerfkjerfkma9090ui32nje23deioweokwjn138989wefweoijdeioiowdejknw78891329023jwenjdkde909023njknwewed8923uewdnwedwu8u23juwedw"
+      )
+      val boundForm = RentFreePeriodForm.form.bind(data)
+
+      boundForm.hasErrors shouldBe true
+      boundForm.errors should contain(FormError("reasons", List("rentFreePeriod.reasons.length.error"), ArraySeq(250)))
+    }
+
     "serialize to JSON correctly" in {
       val form = RentFreePeriodForm(5, "Any reasons")
       val json = Json.toJson(form)

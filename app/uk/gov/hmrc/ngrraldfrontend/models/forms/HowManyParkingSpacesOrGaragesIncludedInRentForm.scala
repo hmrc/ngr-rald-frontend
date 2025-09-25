@@ -21,6 +21,7 @@ import play.api.data.Forms.{mapping, optional, text}
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreementVerbalForm.firstError
+import uk.gov.hmrc.ngrraldfrontend.models.forms.RentFreePeriodForm.isLargerThanInt
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 
 final case class HowManyParkingSpacesOrGaragesIncludedInRentForm(
@@ -66,21 +67,33 @@ object HowManyParkingSpacesOrGaragesIncludedInRentForm extends CommonFormValidat
         "uncoveredSpaces" -> optional(
           text()
             .transform[String](_.strip().replaceAll(",", ""), identity)
-            .verifying(regexp(wholePositiveNumberRegexp.pattern(), uncoveredSpacesWholeNumError))
-        ).transform[Int](_.map(_.toInt).getOrElse(-1), value => Some(value.toString))
-          .verifying(maximumValue[Int](maxValue, uncoveredSpacesTooHighError)),
+            .verifying(
+              firstError(
+                regexp(wholePositiveNumberRegexp.pattern(), uncoveredSpacesWholeNumError),
+                isLargerThanInt(maxValue, uncoveredSpacesTooHighError)
+              )
+            )
+        ).transform[Int](_.map(_.toInt).getOrElse(-1), value => Some(value.toString)),
         "coveredSpaces" -> optional(
           text()
             .transform[String](_.strip().replaceAll(",", ""), identity)
-            .verifying(regexp(wholePositiveNumberRegexp.pattern(), coveredSpacesWholeNumError))
-        ).transform[Int](_.map(_.toInt).getOrElse(-1), value => Some(value.toString))
-          .verifying(maximumValue[Int](maxValue, coveredSpacesTooHighError)),
+            .verifying(
+              firstError(
+                regexp(wholePositiveNumberRegexp.pattern(), coveredSpacesWholeNumError),
+                isLargerThanInt(maxValue, coveredSpacesTooHighError)
+              )
+            )
+        ).transform[Int](_.map(_.toInt).getOrElse(-1), value => Some(value.toString)),
         "garages" -> optional(
           text()
             .transform[String](_.strip().replaceAll(",", ""), identity)
-            .verifying(regexp(wholePositiveNumberRegexp.pattern(), garagesWholeNumError))
-        ).transform[Int](_.map(_.toInt).getOrElse(-1), value => Some(value.toString))
-          .verifying(maximumValue[Int](maxValue, garagesTooHighError)),
+            .verifying(
+              firstError(
+                regexp(wholePositiveNumberRegexp.pattern(), garagesWholeNumError),
+                isLargerThanInt(maxValue, garagesTooHighError)
+              )
+            )
+        ).transform[Int](_.map(_.toInt).getOrElse(-1), value => Some(value.toString)),
       )
       (HowManyParkingSpacesOrGaragesIncludedInRentForm.apply)(HowManyParkingSpacesOrGaragesIncludedInRentForm.unapply)
         .verifying(

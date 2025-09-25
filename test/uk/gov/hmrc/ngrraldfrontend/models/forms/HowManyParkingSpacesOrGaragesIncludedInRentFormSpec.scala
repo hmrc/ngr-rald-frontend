@@ -46,7 +46,6 @@ class HowManyParkingSpacesOrGaragesIncludedInRentFormSpec extends AnyWordSpec wi
         "garages" -> "100"
       )
       val boundForm = HowManyParkingSpacesOrGaragesIncludedInRentForm.form.bind(data)
-
       boundForm.hasErrors shouldBe false
     }
 
@@ -57,7 +56,6 @@ class HowManyParkingSpacesOrGaragesIncludedInRentFormSpec extends AnyWordSpec wi
         "garages" -> "100"
       )
       val boundForm = HowManyParkingSpacesOrGaragesIncludedInRentForm.form.bind(data)
-
       boundForm.hasErrors shouldBe false
     }
 
@@ -67,7 +65,6 @@ class HowManyParkingSpacesOrGaragesIncludedInRentFormSpec extends AnyWordSpec wi
         "coveredSpaces" -> "100",
         "garages" -> "100"
       )
-
 
       val boundForm = HowManyParkingSpacesOrGaragesIncludedInRentForm.form.bind(data)
       boundForm.hasErrors shouldBe true
@@ -88,6 +85,18 @@ class HowManyParkingSpacesOrGaragesIncludedInRentFormSpec extends AnyWordSpec wi
     "fail to bind input greater than 9,999" in {
       val data = Map(
         "uncoveredSpaces" -> "10000",
+        "coveredSpaces" -> "100",
+        "garages" -> "100"
+      )
+      val boundForm = HowManyParkingSpacesOrGaragesIncludedInRentForm.form.bind(data)
+
+      boundForm.hasErrors shouldBe true
+      boundForm.errors shouldBe List(FormError("uncoveredSpaces", List("howManyParkingSpacesOrGaragesIncludedInRent.uncoveredSpaces.tooHigh.error"), ArraySeq(9999)))
+    }
+
+    "fail to bind input is a very large number" in {
+      val data = Map(
+        "uncoveredSpaces" -> "100000000000000000",
         "coveredSpaces" -> "100",
         "garages" -> "100"
       )

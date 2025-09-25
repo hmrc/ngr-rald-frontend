@@ -59,6 +59,14 @@ trait CommonFormValidators {
         Invalid(errorKey, value)
     }
 
+  protected def isLargerThanInt(maximum: Int, errorKey: String): Constraint[String] =
+    Constraint {
+      case str if str.toDoubleOption.getOrElse(0d) <= maximum.toDouble  =>
+        Valid
+      case _ =>
+        Invalid(errorKey, maximum)
+    }
+
   protected def maximumValue[A](maximum: A, errorKey: String)(implicit ev: Ordering[A]): Constraint[A] =
     Constraint { input =>
       import ev._

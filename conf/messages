@@ -369,6 +369,7 @@ interimRentSetByTheCourt.required.error = Enter the date you started paying inte
 interimRentSetByTheCourt.month.required.error = Date you started paying the interim rent must include a month
 interimRentSetByTheCourt.year.required.error = Date you started paying the interim rent must include a year
 interimRentSetByTheCourt.startDate.before.1900.error = The date you started paying interim rent must be 1900 or after
+
 #RentFreePeriod
 rentFreePeriod.title = Rent-free period
 rentFreePeriod.months.label = How many months is your rent-free period?
@@ -380,3 +381,4 @@ rentFreePeriod.months.invalid.error = Rent-free period must be a number, like 6
 rentFreePeriod.months.minimum.error = Rent-free period must be more more than 0
 rentFreePeriod.months.maximum.error = Rent-free period must be 99 months or less
 rentFreePeriod.reasons.required.error = Tell us why you have a rent-free period
+rentFreePeriod.reasons.length.error = What you tell us about why you have a rent-free period must be 250 characters or less
