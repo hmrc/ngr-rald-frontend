@@ -189,5 +189,20 @@ class WhatYourRentIncludesFormSpec extends AnyWordSpec with Matchers {
       boundForm.hasErrors shouldBe true
       boundForm.errors should contain(FormError("", List("whatYourRentIncludes.bedroom.number.maximum.error")))
     }
+    "fail to bind when bedroomNumbers input is 12 digits long" in {
+      val data = Map(
+        "livingAccommodationRadio" -> "livingAccommodationYes",
+        "rentPartAddressRadio" -> "Yes",
+        "rentEmptyShellRadio" -> "Yes",
+        "rentIncBusinessRatesRadio" -> "Yes",
+        "rentIncWaterChargesRadio" -> "Yes",
+        "rentIncServiceRadio" -> "Yes",
+        "bedroomNumbers" -> "123123123123"
+      )
+      val boundForm = WhatYourRentIncludesForm.form.bind(data)
+
+      boundForm.hasErrors shouldBe true
+      boundForm.errors should contain(FormError("", List("whatYourRentIncludes.bedroom.number.maximum.error")))
+    }
   }
 }
