@@ -29,10 +29,10 @@
   saveAndContinueButton: saveAndContinueButton
 )
 
-@(form:Form[InterimRentSetByTheCourtForm], propertyAddress: String, interimAmount: Html)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+@(form:Form[InterimRentSetByTheCourtForm], propertyAddress: String, interimAmount: Html, mode: Mode)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
 @layout(pageTitle = Some(messages("interimRentSetByTheCourt.title")), showBackLink = true, fullWidth = false) {
-  @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.InterimRentSetByTheCourtController.submit, Symbol("autoComplete") -> "off") {
+  @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.InterimRentSetByTheCourtController.submit(mode), Symbol("autoComplete") -> "off") {
     @if(form.errors.nonEmpty) {
       @govukErrorSummary(ErrorSummaryViewModel(form))
     }

@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.ngrraldfrontend.controllers
 
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.test.FakeRequest
@@ -25,8 +26,9 @@ import uk.gov.hmrc.auth.core.Nino
 import uk.gov.hmrc.http.{HeaderNames, NotFoundException}
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
-import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, RaldUserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, NormalMode, RaldUserAnswers, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
+import uk.gov.hmrc.ngrraldfrontend.pages.{AgreedRentChangePage, RentDatesAgreePage}
 import uk.gov.hmrc.ngrraldfrontend.views.html.RentDatesAgreeView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 
@@ -35,57 +37,77 @@ import scala.concurrent.Future
 class RentDatesAgreeControllerSpec extends ControllerSpecSupport {
   val pageTitle = "Rent dates"
   val view: RentDatesAgreeView = inject[RentDatesAgreeView]
-  val controller: RentDatesAgreeController = new RentDatesAgreeController(
+  val controllerNoProperty: RentDatesAgreeController = new RentDatesAgreeController(
     view,
-    mockAuthJourney,
-    mockPropertyLinkingAction,
-    mockRaldRepo,
-    mcc
+    fakeAuth,
+    mcc,
+    fakeData(None),
+    mockNavigator,
+    mockSessionRepository
   )(mockConfig, ec)
 
-  "Agreement controller" must {
+  val controllerProperty: Option[UserAnswers] => RentDatesAgreeController = answers => new RentDatesAgreeController(
+    view,
+    fakeAuth,
+    mcc,
+    fakeDataProperty(Some(property), answers),
+    mockNavigator,
+    mockSessionRepository
+  )(mockConfig, ec)
+
+  val rentDatesAgreeAnswers: Option[UserAnswers] = UserAnswers("id").set(RentDatesAgreePage, "2025-02-01").toOption
+
+
+
+  "Rent Date Agree controller" must {
     "method show" must {
       "Return OK and the correct view" in {
-        when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(Some(RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property))))
-        val result = controller.show()(authenticatedFakeRequest())
+        val result = controllerProperty(None).show(NormalMode)(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
         content must include(pageTitle)
       }
+      "Return OK and the correct view with prepopulated answers" in {
+        val result = controllerProperty(rentDatesAgreeAnswers).show(NormalMode)(authenticatedFakeRequest)
+        status(result) mustBe OK
+        val content = contentAsString(result)
+        val document = Jsoup.parse(content)
+        document.select("input[name=date.day]").attr("value") mustBe "1"
+        document.select("input[name=date.month]").attr("value") mustBe "2"
+        document.select("input[name=date.year]").attr("value") mustBe "2025"
+      }
       "Return NotFoundException when property is not found in the mongo" in {
-        mockRequestWithoutProperty()
+        when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(None))
         val exception = intercept[NotFoundException] {
-          await(controller.show(authenticatedFakeRequest()))
+          await(controllerNoProperty.show(NormalMode)(authenticatedFakeRequest))
         }
-        exception.getMessage contains "Couldn't find property in mongo" mustBe true
+        exception.getMessage contains "Could not find answers in backend mongo" mustBe true
       }
     }
 
     "method submit" must {
       "Return OK and the correct view after submitting with first start date, first end date no radio button selected for first rent period" +
         "and second rent date start, end and amount is added" in {
-        when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(Some(RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property))))
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeController.submit)
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "date.day" -> "12",
             "date.month" -> "12",
-            "date.year" -> "2026",
+            "date.year" -> "2026"
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
-          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/what-type-of-lease-renewal-is-it")
+          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/rent-dates-agree")
         })
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.WhatTypeOfLeaseRenewalController.show.url)
+        redirectLocation(result) mustBe Some(routes.WhatYourRentIncludesController.show(NormalMode).url)
       }
       "Return Form with Errors when no day is added" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeController.submit)
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "date.day" -> "",
             "date.month" -> "12",
-            "date.year" -> "2026",
+            "date.year" -> "2026"
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -94,15 +116,13 @@ class RentDatesAgreeControllerSpec extends ControllerSpecSupport {
         status(result) mustBe BAD_REQUEST
         val content = contentAsString(result)
         content must include(pageTitle)
-        content must include("<a href=\"#date.day\">Date you agreed your rent must include a day.</a>")
       }
       "Return Form with Errors when no month is added" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeController.submit)
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "date.day" -> "12",
             "date.month" -> "",
-            "date.year" -> "2026",
+            "date.year" -> "2026"
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -111,11 +131,9 @@ class RentDatesAgreeControllerSpec extends ControllerSpecSupport {
         status(result) mustBe BAD_REQUEST
         val content = contentAsString(result)
         content must include(pageTitle)
-        content must include("<a href=\"#date.month\">Date you agreed your rent must include a month.</a>")
       }
       "Return Form with Errors when no year is added" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeController.submit)
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "date.day" -> "12",
             "date.month" -> "12",
@@ -128,15 +146,13 @@ class RentDatesAgreeControllerSpec extends ControllerSpecSupport {
         status(result) mustBe BAD_REQUEST
         val content = contentAsString(result)
         content must include(pageTitle)
-        content must include("<a href=\"#date.year\">Date you agreed your rent must include a year.</a>")
       }
       "Return Exception if no address is in the mongo" in {
-        mockRequestWithoutProperty()
         val exception = intercept[NotFoundException] {
-          await(controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeController.submit)
+          await(controllerNoProperty.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeController.submit(NormalMode))
             .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some("")))))
         }
-        exception.getMessage contains "Couldn't find property in mongo" mustBe true
+        exception.getMessage contains "Could not find answers in backend mongo" mustBe true
       }
     }
   }

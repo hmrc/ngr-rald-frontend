@@ -31,11 +31,11 @@
  saveAndContinueButton: saveAndContinueButton
 )
 
-@(form: Form[RentFreePeriodForm], selectedPropertyAddress: String)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+@(form: Form[RentFreePeriodForm], selectedPropertyAddress: String, mode: Mode)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
 @layout(pageTitle = Some(messages("rentFreePeriod.title")), showBackLink = true, fullWidth = false) {
 
- @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentFreePeriodController.submit, Symbol("autoComplete") -> "off") {
+ @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentFreePeriodController.submit(mode), Symbol("autoComplete") -> "off") {
     @if(form.errors.nonEmpty) {
       @govukErrorSummary(ErrorSummaryViewModel(form))
     }

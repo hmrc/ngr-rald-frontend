@@ -40,6 +40,11 @@ object NGRMonthYear {
     date.format(outputFormatter)
   }
 
+  def fromString(dateString: String): NGRMonthYear = {
+    val parts = dateString.split("-").map(_.toInt)
+    NGRMonthYear(parts(1).toString, parts(0).toString)
+  }
+
 
   def unapply(ngrMonthYear: NGRMonthYear): Option[(String, String)] =
     Some(ngrMonthYear.month, ngrMonthYear.year)

@@ -22,6 +22,7 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.Legend
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.Radios
 import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
+import uk.gov.hmrc.ngrraldfrontend.models.NormalMode
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{buildRadios, noButton, yesButton}
 import uk.gov.hmrc.ngrraldfrontend.models.components.{NGRRadio, NGRRadioName}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.DoesYourRentIncludeParkingForm
@@ -50,11 +51,11 @@ class DoesYourRentIncludeParkingViewSpec extends ViewBaseSpec {
   val radio: Radios = buildRadios(form, ngrRadio)
 
   "DidYouAgreeRentWithLandlordView" must {
-    val whatTypeOfAgreementView = view(address, form, radio)
+    val whatTypeOfAgreementView = view(address, form, radio, NormalMode)
     lazy implicit val document: Document = Jsoup.parse(whatTypeOfAgreementView.body)
-    val htmlApply = view.apply(address, form, radio).body
-    val htmlRender = view.render(address, form, radio, request, messages, mockConfig).body
-    lazy val htmlF = view.f(address, form, radio)
+    val htmlApply = view.apply(address, form, radio, NormalMode).body
+    val htmlRender = view.render(address, form, radio, NormalMode, request, messages, mockConfig).body
+    lazy val htmlF = view.f(address, form, radio, NormalMode)
 
     "htmlF is not empty" in {
       htmlF.toString() must not be empty

@@ -18,14 +18,16 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
+import uk.gov.hmrc.ngrraldfrontend.models.{Mode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatTypeOfLeaseRenewalForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatTypeOfLeaseRenewalForm.{RenewedAgreement, SurrenderAndRenewal, form}
-import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
+import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
+import uk.gov.hmrc.ngrraldfrontend.pages.WhatTypeOfLeaseRenewalPage
+import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
+import uk.gov.hmrc.ngrraldfrontend.utils.Constants
 import uk.gov.hmrc.ngrraldfrontend.utils.Constants.{renewedAgreement, surrenderAndRenewal}
 import uk.gov.hmrc.ngrraldfrontend.views.html.WhatTypeOfLeaseRenewalView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -36,43 +38,56 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class WhatTypeOfLeaseRenewalController @Inject()(whatTypeOfLeaseRenewalView: WhatTypeOfLeaseRenewalView,
                                                  authenticate: AuthRetrievals,
-                                                 hasLinkedProperties: PropertyLinkingAction,
-                                                 raldRepo: RaldRepo,
+                                                 getData: DataRetrievalAction,
+                                                 sessionRepository: SessionRepository,
+                                                 navigator: Navigator,
                                                  mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport {
 
 
-  def show: Action[AnyContent] = {
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
-      request.propertyLinking.map(property =>
-        Future.successful(Ok(whatTypeOfLeaseRenewalView(
-          form = form,
-          radios = buildRadios(form, WhatTypeOfLeaseRenewalForm.ngrRadio),
-          propertyAddress = property.addressFull,
-        )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
+  def show(mode: Mode): Action[AnyContent] = {
+    (authenticate andThen getData).async { implicit request =>
+
+      val preparedForm = request.userAnswers
+        .getOrElse(UserAnswers(request.credId))
+        .get(WhatTypeOfLeaseRenewalPage) match {
+        case None => WhatTypeOfLeaseRenewalForm.form
+        case Some(value) =>
+          val selectedOption = value match {
+            case Constants.renewedAgreement     => WhatTypeOfLeaseRenewalForm.RenewedAgreement
+            case Constants.surrenderAndRenewal => WhatTypeOfLeaseRenewalForm.SurrenderAndRenewal
+          }
+          WhatTypeOfLeaseRenewalForm.form.fill(selectedOption)
+
+    }
+      Future.successful(Ok(whatTypeOfLeaseRenewalView(
+        form = preparedForm,
+        radios = buildRadios(preparedForm, WhatTypeOfLeaseRenewalForm.ngrRadio),
+        propertyAddress = request.property.addressFull,
+        mode = mode
+      )))
     }
   }
 
-  def submit: Action[AnyContent] =
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
+  def submit(mode: Mode): Action[AnyContent] =
+    (authenticate andThen getData).async { implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
-          request.propertyLinking.map(property =>
             Future.successful(BadRequest(whatTypeOfLeaseRenewalView(
               form = formWithErrors,
               radios = buildRadios(formWithErrors, WhatTypeOfLeaseRenewalForm.ngrRadio),
-              propertyAddress = property.addressFull
-            )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
+              propertyAddress = request.property.addressFull,
+              mode
+            )))
         },
         radioValue =>
           val typeOfLeaseRenewal = radioValue match
             case RenewedAgreement => renewedAgreement
             case SurrenderAndRenewal => surrenderAndRenewal
-          raldRepo.insertTypeOfRenewal(
-            credId = CredId(request.credId.getOrElse("")),
-            whatTypeOfRenewal = typeOfLeaseRenewal
-          )
-          Future.successful(Redirect(routes.LandlordController.show.url))
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(WhatTypeOfLeaseRenewalPage, typeOfLeaseRenewal))
+            _ <- sessionRepository.set(updatedAnswers)
+          } yield Redirect(navigator.nextPage(WhatTypeOfLeaseRenewalPage, mode, updatedAnswers))
       )
     }
 }

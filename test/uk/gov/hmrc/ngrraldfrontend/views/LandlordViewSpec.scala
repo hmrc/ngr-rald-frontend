@@ -23,6 +23,7 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{ErrorMessage, Label, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.Radios
 import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
+import uk.gov.hmrc.ngrraldfrontend.models.NormalMode
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.LandlordForm
@@ -81,12 +82,12 @@ class LandlordViewSpec extends ViewBaseSpec {
     val form = LandlordForm.form.fillAndValidate(LandlordForm(landlordName = "Bob", landLordType = "FamilyMember", None))
     val radio: Radios = buildRadios(form, ngrRadio)
 
-    "TellUsAboutYourNewAgreementView" must {
-      val landlordView = view(address, form, radio)
+    "LandlordView" must {
+      val landlordView = view(address, form, radio , NormalMode)
       lazy implicit val document: Document = Jsoup.parse(landlordView.body)
-      val htmlApply = view.apply(address, form, radio).body
-      val htmlRender = view.render(address, form, radio, request, messages, mockConfig).body
-      lazy val htmlF = view.f(address, form, radio)
+      val htmlApply = view.apply(address, form, radio, NormalMode).body
+      val htmlRender = view.render(address, form, radio, NormalMode, request, messages, mockConfig).body
+      lazy val htmlF = view.f(address, form, radio, NormalMode)
 
       "htmlF is not empty" in {
         htmlF.toString() must not be empty

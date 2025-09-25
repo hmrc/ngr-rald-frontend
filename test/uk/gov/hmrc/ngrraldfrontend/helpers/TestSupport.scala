@@ -25,15 +25,15 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.mvc.{AnyContentAsEmpty, MessagesControllerComponents}
+import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded, MessagesControllerComponents}
 import play.api.test.{FakeRequest, Injecting}
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name}
 import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, Nino}
 import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames}
 import uk.gov.hmrc.ngrraldfrontend.connectors.NGRConnector
 import uk.gov.hmrc.ngrraldfrontend.mocks.MockAppConfig
+import uk.gov.hmrc.ngrraldfrontend.models.requests.{IdentifierRequest, OptionalDataRequest}
 import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, Postcode}
-import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
 
 import scala.concurrent.ExecutionContext
 
@@ -56,7 +56,7 @@ trait TestSupport extends PlaySpec
   }
 
   override implicit lazy val app: Application = localGuiceApplicationBuilder().build()
-  
+
 
   lazy val mcc: MessagesControllerComponents = inject[MessagesControllerComponents]
 
@@ -72,15 +72,22 @@ trait TestSupport extends PlaySpec
   lazy val testName: Name = Name(name = Some("testUser"), lastName = Some("testUserLastName"))
   lazy val testNoResultsFoundPostCode: Postcode = Postcode("LS1 6RE")
   lazy implicit val mockConfig: MockAppConfig = new MockAppConfig(app.configuration)
-  lazy implicit val mockRaldRepo: RaldRepo = mock[RaldRepo]
   lazy implicit val mockNGRConnector: NGRConnector = mock[NGRConnector]
   lazy val messagesApi: MessagesApi = inject[MessagesApi]
   implicit lazy val messages: Messages = MessagesImpl(Lang("en"), messagesApi)
   lazy val fakeRequest: FakeRequest[AnyContentAsEmpty.type] =
-      FakeRequest("", "").withHeaders(HeaderNames.authorisation -> "Bearer 1")
+    FakeRequest("", "").withHeaders(HeaderNames.authorisation -> "Bearer 1")
 
-  def authenticatedFakeRequest[A](fakeRequest: FakeRequest[A] = fakeRequest): AuthenticatedUserRequest[A] =
-      AuthenticatedUserRequest[A](fakeRequest, None, None, None, None, credId = Some("1234"), None, None, nino = Nino(true, Some("")))
+  lazy val authenticatedFakeRequest: AuthenticatedUserRequest[AnyContentAsEmpty.type] = {
+    AuthenticatedUserRequest(fakeRequest, None, None, None, None, credId = Some("1234"), None, None, nino = Nino(true, Some("")))
+  }
+
+  def authenticatedFakePostRequest[A](fakeRequest: FakeRequest[A]): AuthenticatedUserRequest[A] = {
+    AuthenticatedUserRequest[A](
+      fakeRequest,
+      None, None, None, Some(property), credId = Some("1234"), None, None, nino = Nino(true, Some(""))
+    )
+  }
 
 }
 

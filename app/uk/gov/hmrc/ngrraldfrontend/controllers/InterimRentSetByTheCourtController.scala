@@ -21,13 +21,14 @@ import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Hint, PrefixOrSuffix, Text}
-import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
+import uk.gov.hmrc.ngrraldfrontend.models.{InterimRentSetByTheCourt, Mode, NGRMonthYear, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.InterimRentSetByTheCourtForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.InterimRentSetByTheCourtForm.form
-import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
+import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
+import uk.gov.hmrc.ngrraldfrontend.pages.InterimSetByTheCourtPage
+import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.views.html.InterimRentSetByTheCourtView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -37,9 +38,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class InterimRentSetByTheCourtController @Inject()(interimRentSetByTheCourtView: InterimRentSetByTheCourtView,
                                                    authenticate: AuthRetrievals,
-                                                   hasLinkedProperties: PropertyLinkingAction,
                                                    inputText: InputText,
-                                                   raldRepo: RaldRepo,
+                                                   getData: DataRetrievalAction,
+                                                   sessionRepository: SessionRepository,
+                                                   navigator: Navigator,
                                                    mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport {
 
@@ -57,19 +59,23 @@ class InterimRentSetByTheCourtController @Inject()(interimRentSetByTheCourtView:
     )
   }
 
-  def show: Action[AnyContent] = {
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
-      request.propertyLinking.map(property =>
+  def show(mode: Mode): Action[AnyContent] = {
+    (authenticate andThen getData).async { implicit request =>
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(InterimSetByTheCourtPage) match {
+        case None => form
+        case Some(value) => form.fill(InterimRentSetByTheCourtForm(BigDecimal(value.amount), NGRMonthYear.fromString(value.date)))
+      }
         Future.successful(Ok(interimRentSetByTheCourtView(
-          form = form,
-          propertyAddress = property.addressFull,
-          interimAmount = generateInputText(form, "interimAmount")
-        )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
+          form = preparedForm,
+          propertyAddress = request.property.addressFull,
+          interimAmount = generateInputText(preparedForm, "interimAmount"),
+          mode = mode
+        )))
     }
   }
 
-  def submit: Action[AnyContent] =
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
+  def submit(mode: Mode): Action[AnyContent] =
+    (authenticate andThen getData).async { implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
           val correctedFormErrors = formWithErrors.errors.map { formError =>
@@ -77,26 +83,27 @@ class InterimRentSetByTheCourtController @Inject()(interimRentSetByTheCourtView:
               case (key, messages) if messages.contains("interimRentSetByTheCourt.startDate.before.1900.error") ||
                 messages.contains("interimRentSetByTheCourt.year.required.error") =>
                 formError.copy(key = "date.year")
+              case ("date", messages) if messages.contains("interimRentSetByTheCourt.year.format.error") =>
+                formError.copy(key = "date.year")
               case ("date", messages) =>
                 formError.copy(key = "date.month")
               case _ =>
                 formError
           }
           val formWithCorrectedErrors = formWithErrors.copy(errors = correctedFormErrors)
-          request.propertyLinking.map(property =>
             Future.successful(BadRequest(interimRentSetByTheCourtView(
               form = formWithCorrectedErrors,
-              propertyAddress = property.addressFull,
-              interimAmount = generateInputText(formWithCorrectedErrors, "interimAmount")
-            )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
+              propertyAddress = request.property.addressFull,
+              interimAmount = generateInputText(formWithCorrectedErrors, "interimAmount"),
+              mode = mode
+            )))
         },
         interimRent =>
-          raldRepo.insertInterimRentSetByTheCourt(
-            credId = CredId(request.credId.getOrElse("")),
-            amount = interimRent.amount,
-            date = interimRent.date.makeString
-          )
-          Future.successful(Redirect(routes.CheckRentFreePeriodController.show.url))
+          val answers = InterimRentSetByTheCourt(interimRent.amount.toString(),interimRent.date.makeString)
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(InterimSetByTheCourtPage, answers))
+            _ <- sessionRepository.set(updatedAnswers)
+          } yield Redirect(navigator.nextPage(InterimSetByTheCourtPage, mode, updatedAnswers))
       )
     }
   }

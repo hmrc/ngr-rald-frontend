@@ -20,15 +20,16 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.govukfrontend.views.Aliases.*
-import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-import uk.gov.hmrc.ngrraldfrontend.models.components.{NGRRadioButtons, *}
+import uk.gov.hmrc.ngrraldfrontend.models.{Landlord, Mode, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.LandlordForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.LandlordForm.form
-import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
+import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
+import uk.gov.hmrc.ngrraldfrontend.pages.LandlordPage
+import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.views.html.LandlordView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.NGRCharacterCountComponent
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -39,10 +40,11 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class LandlordController @Inject()(view: LandlordView,
                                    authenticate: AuthRetrievals,
-                                   hasLinkedProperties: PropertyLinkingAction,
-                                   raldRepo: RaldRepo,
                                    ngrCharacterCountComponent: NGRCharacterCountComponent,
-                                   mcc: MessagesControllerComponents
+                                   mcc: MessagesControllerComponents,
+                                   getData : DataRetrievalAction,
+                                   sessionRepository: SessionRepository,
+                                   navigator: Navigator
                                   )(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
 
@@ -80,25 +82,24 @@ class LandlordController @Inject()(view: LandlordView,
       NGRRadioButtons = ngrRadioButtons
     )
 
-  def show: Action[AnyContent] = {
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
-      request.propertyLinking.map(property =>
-        Future.successful(Ok(view(
-          selectedPropertyAddress = property.addressFull,
-          form,
-          buildRadios(form, ngrRadio(form))
-        )))
-      ).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
+  def show(mode: Mode): Action[AnyContent] = {
+    (authenticate andThen getData).async { implicit request =>
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(LandlordPage) match {
+        case None => form
+        case Some(value) => form.fill(LandlordForm(value.landlordName,value.landLordType,value.landlordOtherDesc))
+      }
+      Future.successful(Ok(view(selectedPropertyAddress = request.property.addressFull, form = preparedForm, ngrRadio =  buildRadios(preparedForm, ngrRadio(preparedForm)), mode))
+      )
+
     }
   }
 
-  def submit: Action[AnyContent] = {
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
+  def submit(mode: Mode): Action[AnyContent] = {
+    (authenticate andThen getData).async { implicit request =>
       form
         .bindFromRequest()
         .fold(
           formWithErrors =>
-
             val correctedFormErrors = formWithErrors.errors.map { formError =>
               (formError.key, formError.messages) match
                 case ("", messages) if messages.contains("landlord.radio.other.empty.error") =>
@@ -109,21 +110,18 @@ class LandlordController @Inject()(view: LandlordView,
                   formError
             }
             val formWithCorrectedErrors = formWithErrors.copy(errors = correctedFormErrors)
-
-            request.propertyLinking.map(property =>
               Future.successful(BadRequest(view(
-                selectedPropertyAddress = property.addressFull,
+                selectedPropertyAddress = request.property.addressFull,
                 formWithCorrectedErrors,
-                buildRadios(formWithErrors, ngrRadio(formWithCorrectedErrors))
-              )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo")),
+                buildRadios(formWithErrors, ngrRadio(formWithCorrectedErrors)),
+                mode
+              ))),
           landlordForm =>
-            raldRepo.insertLandlord(
-              CredId(request.credId.getOrElse("")),
-              landlordForm.landlordName,
-              landlordForm.landLordType,
-              landlordForm.landlordYesSelected
-            )
-            Future.successful(Redirect(routes.WhatTypeOfAgreementController.show.url))
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
+                .set(LandlordPage, Landlord(landlordForm.landlordName, landlordForm.landLordType, landlordForm.landlordYesSelected)))
+              _ <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(LandlordPage, mode, updatedAnswers))
         )
     }
   }

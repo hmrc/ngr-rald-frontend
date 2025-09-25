@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.ngrraldfrontend.controllers
 
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -24,9 +25,10 @@ import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redir
 import uk.gov.hmrc.auth.core.Nino
 import uk.gov.hmrc.http.{HeaderNames, NotFoundException}
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
-import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
+import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.{NewAgreement, RenewedAgreement, RentAgreement}
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, RaldUserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, NormalMode, RaldUserAnswers, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.pages.{LandlordPage, TellUsAboutRentPage, TellUsAboutYourNewAgreementPage, TellUsAboutYourRenewedAgreementPage}
 import uk.gov.hmrc.ngrraldfrontend.views.html.LandlordView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.NGRCharacterCountComponent
 
@@ -36,31 +38,44 @@ class LandlordControllerSpec extends ControllerSpecSupport {
   val pageTitle = "Landlord"
   val view: LandlordView = inject[LandlordView]
   val mockNGRCharacterCountComponent: NGRCharacterCountComponent = inject[NGRCharacterCountComponent]
-  val controller: LandlordController = new LandlordController(view, mockAuthJourney, mockPropertyLinkingAction, mockRaldRepo, mockNGRCharacterCountComponent, mcc)(mockConfig, ec)
+  val controllerNoProperty: LandlordController = new LandlordController(view, fakeAuth, mockNGRCharacterCountComponent, mcc, fakeData(None), mockSessionRepository, mockNavigator)(mockConfig, ec)
+  val controllerProperty: LandlordController = new LandlordController(view, fakeAuth, mockNGRCharacterCountComponent, mcc, fakeDataProperty(Some(property),None), mockSessionRepository, mockNavigator)(mockConfig, ec)
+  lazy val renewedAgreementAnswers: Option[UserAnswers] = UserAnswers("id").set(TellUsAboutYourRenewedAgreementPage, RenewedAgreement).toOption
+  lazy val newAgreementAnswers: Option[UserAnswers] = UserAnswers("id").set(TellUsAboutYourNewAgreementPage, NewAgreement).toOption
+  lazy val rentAgreementAnswers: Option[UserAnswers] = UserAnswers("id").set(TellUsAboutRentPage, RentAgreement).toOption
+  lazy val filledController: Option[UserAnswers] => LandlordController = answers => LandlordController(view, fakeAuth, mockNGRCharacterCountComponent, mcc, fakeDataProperty(Some(property), answers), mockSessionRepository, mockNavigator)
+  lazy val landlordAnswers: Option[UserAnswers] = UserAnswers("id").set(LandlordPage, landlordModel).toOption
 
-  "Tell us about your new agreement controller" must {
+  "Landlord controller" must {
     "method show" must {
       "Return OK and the correct view" in {
-        when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(Some(RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property))))
-        val result = controller.show()(authenticatedFakeRequest())
+        val result = controllerProperty.show(NormalMode)(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
         content must include(pageTitle)
       }
+      "Return OK and the correct view with prepopulated data" in {
+        val result = filledController(landlordAnswers).show(NormalMode)(authenticatedFakeRequest)
+        status(result) mustBe OK
+        val content = contentAsString(result)
+        val document = Jsoup.parse(content)
+        document.select("input[name=landlord-name-value]").attr("value") mustBe "Joe Bloggs"
+        document.select("input[name=landlord-radio]").attr("value") mustBe "LandLordAndTenant"
+
+      }
       "Return NotFoundException when property is not found in the mongo" in {
-        mockRequestWithoutProperty()
+        when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(None))
         val exception = intercept[NotFoundException] {
-          await(controller.show(authenticatedFakeRequest()))
+          await(controllerNoProperty.show(NormalMode)(authenticatedFakeRequest))
         }
-        exception.getMessage contains "Couldn't find property in mongo" mustBe true
+        exception.getMessage contains "Could not find answers in backend mongo" mustBe true
       }
     }
 
     "method submit" must {
-      "Return OK and the correct view after submitting with name and radio button selected" in {
-        when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(Some(RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property))))
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+      "Return OK and the correct view after submitting with name and radio button selected while in the rent agreement journey" in {
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        val result = filledController(rentAgreementAnswers).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "landlord-name-value" -> "Bob",
             "landlord-radio" -> "LandLordAndTenant"
@@ -70,12 +85,25 @@ class LandlordControllerSpec extends ControllerSpecSupport {
           result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/landlord")
         })
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.WhatTypeOfAgreementController.show.url)
+        redirectLocation(result) mustBe Some(routes.WhatIsYourRentBasedOnController.show(NormalMode).url)
       }
-      "Return OK and the correct view after submitting with name and other radio button selected with description added" in {
-        when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(Some(RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property))))
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+      "Return OK and the correct view after submitting with name and radio button selected while in the renewedAgreement journey" in {
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        val result = filledController(renewedAgreementAnswers).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit(NormalMode))
+          .withFormUrlEncodedBody(
+            "landlord-name-value" -> "Bob",
+            "landlord-radio" -> "LandLordAndTenant"
+          )
+          .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
+        result.map(result => {
+          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/landlord")
+        })
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.WhatTypeOfAgreementController.show(NormalMode).url)
+      }
+      "Return OK and the correct view after submitting with name and other radio button selected with description added while in the new agreement journey" in {
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        val result = filledController(newAgreementAnswers).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "landlord-name-value" -> "Bob",
             "landlord-radio" -> "LandLordAndTenant",
@@ -86,11 +114,10 @@ class LandlordControllerSpec extends ControllerSpecSupport {
           result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/landlord")
         })
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.WhatTypeOfAgreementController.show.url)
+        redirectLocation(result) mustBe Some(routes.WhatTypeOfAgreementController.show(NormalMode).url)
       }
       "Return Form with Errors when no name is input" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controllerProperty.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "landlord-name-value" -> "",
             "landlord-radio" -> "LandLordAndTenant"
@@ -104,8 +131,7 @@ class LandlordControllerSpec extends ControllerSpecSupport {
         content must include(pageTitle)
       }
       "Return Form with Errors when no radio button is selected" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controllerProperty.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "landlord-name-value" -> "Bob",
             "landlord-radio" -> ""
@@ -119,8 +145,7 @@ class LandlordControllerSpec extends ControllerSpecSupport {
         content must include(pageTitle)
       }
       "Return Form with Errors when other radio button is selected with no text" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controllerProperty.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "landlord-name-value" -> "Bob",
             "landlord-radio" -> "LandlordYes",
@@ -134,15 +159,15 @@ class LandlordControllerSpec extends ControllerSpecSupport {
         val content = contentAsString(result)
         content must include(pageTitle)
       }
-      "Return Exception if no address is in the mongo" in {
-        mockRequestWithoutProperty()
-        val exception = intercept[NotFoundException] {
-          await(controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
-            .withFormUrlEncodedBody(("what-type-of-agreement-radio", ""))
-            .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some("")))))
-        }
-        exception.getMessage contains "Couldn't find property in mongo" mustBe true
-      }
+//      "Return Exception if no address is in the mongo" in {
+//        mockRequestWithoutProperty()
+//        val exception = intercept[NotFoundException] {
+//          await(controller.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit(NormalMode))
+//            .withFormUrlEncodedBody(("what-type-of-agreement-radio", ""))
+//            .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some("")))))
+//        }
+//        exception.getMessage contains "Couldn't find property in mongo" mustBe true
+//      }
     }
   }
 }

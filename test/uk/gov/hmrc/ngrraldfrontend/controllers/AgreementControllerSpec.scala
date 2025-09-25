@@ -25,10 +25,12 @@ import uk.gov.hmrc.auth.core.Nino
 import uk.gov.hmrc.http.{HeaderNames, NotFoundException}
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
-import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, RaldUserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, NormalMode, RaldUserAnswers, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
+import uk.gov.hmrc.ngrraldfrontend.pages.{AgreedRentChangePage, AgreementPage}
 import uk.gov.hmrc.ngrraldfrontend.views.html.AgreementView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.{DateTextFields, NGRCharacterCountComponent}
+import org.jsoup.Jsoup
 
 import scala.concurrent.Future
 
@@ -37,33 +39,60 @@ class AgreementControllerSpec extends ControllerSpecSupport {
   val view: AgreementView = inject[AgreementView]
   val mockNGRCharacterCountComponent: NGRCharacterCountComponent = inject[NGRCharacterCountComponent]
   val mockDateTextFieldsComponent: DateTextFields = inject[DateTextFields]
-  val controller: AgreementController = new AgreementController(view, mockAuthJourney,mockDateTextFieldsComponent, mockPropertyLinkingAction, mockRaldRepo, mockNGRCharacterCountComponent, mcc)(mockConfig, ec)
+  val controllerNoProperty: AgreementController = new AgreementController(view, fakeAuth, mockDateTextFieldsComponent, mockNGRCharacterCountComponent, mcc, fakeData(None),mockNavigator, mockSessionRepository)(mockConfig, ec)
+  val controllerProperty: Option[UserAnswers] => AgreementController = answers => new AgreementController(view, fakeAuth, mockDateTextFieldsComponent, mockNGRCharacterCountComponent, mcc, fakeDataProperty(Some(property),answers),mockNavigator, mockSessionRepository)(mockConfig, ec)
   val over250Characters = "Bug Me Not PVT LTD, RODLEY LANE, RODLEY, LEEDS, BH1 1HU What is your rent based on?Open market value This is the rent a landlord could rent the property for if, it was available to anyoneA percentage of open market value This is a percentage of the rent a landlord could rent the property for if, it was available to anyoneTurnover top-up The rent is a fixed base rent with an additional payment based on a percentage of your turnoverA percentage of expected turnover The rent paid is based on a percentage of turnoverTotal Occupancy Cost leases (TOCs)The rent is the total cost of leasing the property. It includes base rent, business rates, insurance and utilities. It also includes common area maintenance and tenant improvements Indexation The rent is reviewed according to an index (such as Retail Price Index)Other The rent was agreed another way Can you tell us how your rent was agreed?"
+  val agreementAnswers: Option[UserAnswers] = UserAnswers("id").set(AgreementPage, agreementModel).toOption
+  val agreementAnswersMin: Option[UserAnswers] = UserAnswers("id").set(AgreementPage, agreementModelMin).toOption
 
   "Agreement controller" must {
     "method show" must {
       "Return OK and the correct view" in {
-        when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(Some(RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property))))
-        val result = controller.show()(authenticatedFakeRequest())
+        val result = controllerProperty(None).show(NormalMode)(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
         content must include(pageTitle)
       }
+      "return OK and the correct view with prepopulated answers" in {
+        val result = controllerProperty(agreementAnswers).show(NormalMode)(authenticatedFakeRequest)
+        status(result) mustBe OK
+        val content = contentAsString(result)
+        val document = Jsoup.parse(content)
+        document.select("input[name=agreementStartDate.day]").attr("value") mustBe "1"
+        document.select("input[name=agreementStartDate.month]").attr("value") mustBe "1"
+        document.select("input[name=agreementStartDate.year]").attr("value") mustBe "2025"
+        document.select("input[type=radio][name=agreement-radio-openEnded][value=YesOpenEnded]").hasAttr("checked") mustBe true
+        document.select("input[name=agreementEndDate.day]").attr("value") mustBe "2"
+        document.select("input[name=agreementEndDate.month]").attr("value") mustBe "2"
+        document.select("input[name=agreementEndDate.year]").attr("value") mustBe "2025"
+        document.select("input[type=radio][name=agreement-breakClause-radio][value=YesBreakClause]").hasAttr("checked") mustBe true
+        document.select("textarea[name=about-break-clause]").text() mustBe "he has a break clause"
+      }
+      "return OK and the correct view with minimum prepopulated answers" in {
+        val result = controllerProperty(agreementAnswersMin).show(NormalMode)(authenticatedFakeRequest)
+        status(result) mustBe OK
+        val content = contentAsString(result)
+        val document = Jsoup.parse(content)
+        document.select("input[name=agreementStartDate.day]").attr("value") mustBe "1"
+        document.select("input[name=agreementStartDate.month]").attr("value") mustBe "1"
+        document.select("input[name=agreementStartDate.year]").attr("value") mustBe "2025"
+        document.select("input[type=radio][name=agreement-radio-openEnded][value=NoOpenEnded]").hasAttr("checked") mustBe true
+        document.select("input[type=radio][name=agreement-breakClause-radio][value=NoBreakClause]").hasAttr("checked") mustBe true
+      }
       "Return NotFoundException when property is not found in the mongo" in {
-        mockRequestWithoutProperty()
+        when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(None))
         val exception = intercept[NotFoundException] {
-          await(controller.show(authenticatedFakeRequest()))
+          await(controllerNoProperty.show(NormalMode)(authenticatedFakeRequest))
         }
-        exception.getMessage contains "Couldn't find property in mongo" mustBe true
+        exception.getMessage contains "Could not find answers in backend mongo" mustBe true
       }
     }
 
     "method submit" must {
       "Return OK and the correct view after submitting with start date, yes radio button selected for open ended " +
         "and no radio button selected for break clause" in {
-        when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(Some(RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property))))
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "12",
             "agreementStartDate.month" -> "12",
@@ -76,15 +105,12 @@ class AgreementControllerSpec extends ControllerSpecSupport {
           result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/what-is-your-rent-based-on")
         })
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.WhatIsYourRentBasedOnController.show.url)
+        redirectLocation(result) mustBe Some(routes.WhatIsYourRentBasedOnController.show(NormalMode).url)
       }
       "Return OK and the correct view after submitting with start date, no radio button selected for open ended" +
         "with an end date added in the conditional field and no radio button selected for break clause" in {
-        when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(
-          Some(RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property))
-        ))
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "12",
             "agreementStartDate.month" -> "12",
@@ -100,14 +126,12 @@ class AgreementControllerSpec extends ControllerSpecSupport {
           result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/what-is-your-rent-based-on")
         })
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.WhatIsYourRentBasedOnController.show.url)
+        redirectLocation(result) mustBe Some(routes.WhatIsYourRentBasedOnController.show(NormalMode).url)
       }
       "Return OK and the correct view after submitting with start date, no radio button selected for open ended" +
         "with an end date added in the conditional field and yes radio button selected for break clause with" +
         "reason in the conditional text box" in {
-        when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(Some(RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property))))
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "12",
             "agreementStartDate.month" -> "12",
@@ -124,11 +148,10 @@ class AgreementControllerSpec extends ControllerSpecSupport {
           result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/what-is-your-rent-based-on")
         })
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.WhatIsYourRentBasedOnController.show.url)
+        redirectLocation(result) mustBe Some(routes.WhatIsYourRentBasedOnController.show(NormalMode).url)
       }
       "Return Form with Errors when no day is input for the start date" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "",
             "agreementStartDate.month" -> "12",
@@ -145,8 +168,7 @@ class AgreementControllerSpec extends ControllerSpecSupport {
         content must include(pageTitle)
       }
       "Return Form with Errors when no month is input for the start date" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "12",
             "agreementStartDate.month" -> "",
@@ -163,8 +185,7 @@ class AgreementControllerSpec extends ControllerSpecSupport {
         content must include(pageTitle)
       }
       "Return Form with Errors when no year is input for the start date" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "12",
             "agreementStartDate.month" -> "12",
@@ -181,8 +202,7 @@ class AgreementControllerSpec extends ControllerSpecSupport {
         content must include(pageTitle)
       }
       "Return Form with Errors when no day and month is input for the start date" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "",
             "agreementStartDate.month" -> "",
@@ -199,8 +219,7 @@ class AgreementControllerSpec extends ControllerSpecSupport {
         content must include(pageTitle)
       }
       "Return Form with Errors when no month and year is input for the start date" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "12",
             "agreementStartDate.month" -> "",
@@ -217,8 +236,7 @@ class AgreementControllerSpec extends ControllerSpecSupport {
         content must include(pageTitle)
       }
       "Return Form with Errors when no day and year is input for the start date" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "",
             "agreementStartDate.month" -> "12",
@@ -235,8 +253,7 @@ class AgreementControllerSpec extends ControllerSpecSupport {
         content must include(pageTitle)
       }
       "Return Form with Errors when no date is input for the start date" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "",
             "agreementStartDate.month" -> "",
@@ -253,8 +270,7 @@ class AgreementControllerSpec extends ControllerSpecSupport {
         content must include(pageTitle)
       }
       "Return Form with Errors when date is not numbers for the start date" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "one",
             "agreementStartDate.month" -> "one",
@@ -271,8 +287,7 @@ class AgreementControllerSpec extends ControllerSpecSupport {
         content must include(pageTitle)
       }
       "Return Form with Errors when no open ended radio is selected" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "12",
             "agreementStartDate.month" -> "12",
@@ -289,8 +304,7 @@ class AgreementControllerSpec extends ControllerSpecSupport {
         content must include(pageTitle)
       }
       "Return Form with Errors when open ended radio is selected and no date is input" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "12",
             "agreementStartDate.month" -> "12",
@@ -311,8 +325,7 @@ class AgreementControllerSpec extends ControllerSpecSupport {
         content must include(pageTitle)
       }
       "Return Form with Errors when open ended radio is selected and incorrect date format is input" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "12",
             "agreementStartDate.month" -> "12",
@@ -333,8 +346,7 @@ class AgreementControllerSpec extends ControllerSpecSupport {
         content must include(pageTitle)
       }
       "Return Form with Errors when open ended radio is selected and no day is input" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "12",
             "agreementStartDate.month" -> "12",
@@ -355,8 +367,7 @@ class AgreementControllerSpec extends ControllerSpecSupport {
         content must include(pageTitle)
       }
       "Return Form with Errors when open ended radio is selected and no month is input" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "12",
             "agreementStartDate.month" -> "12",
@@ -377,8 +388,7 @@ class AgreementControllerSpec extends ControllerSpecSupport {
         content must include(pageTitle)
       }
       "Return Form with Errors when open ended radio is selected and no year is input" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "12",
             "agreementStartDate.month" -> "12",
@@ -399,8 +409,7 @@ class AgreementControllerSpec extends ControllerSpecSupport {
         content must include(pageTitle)
       }
       "Return Form with Errors when open ended radio is selected and no month and year is input" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "12",
             "agreementStartDate.month" -> "12",
@@ -421,8 +430,7 @@ class AgreementControllerSpec extends ControllerSpecSupport {
         content must include(pageTitle)
       }
       "Return Form with Errors when open ended radio is selected and no day and year is input" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "12",
             "agreementStartDate.month" -> "12",
@@ -443,8 +451,7 @@ class AgreementControllerSpec extends ControllerSpecSupport {
         content must include(pageTitle)
       }
       "Return Form with Errors when open ended radio is selected and no day and month is input" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "12",
             "agreementStartDate.month" -> "12",
@@ -465,8 +472,7 @@ class AgreementControllerSpec extends ControllerSpecSupport {
         content must include(pageTitle)
       }
       "Return Form with Errors when break clause radio is not selected" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "12",
             "agreementStartDate.month" -> "12",
@@ -486,8 +492,7 @@ class AgreementControllerSpec extends ControllerSpecSupport {
         content must include(pageTitle)
       }
       "Return Form with Errors when break clause radio is selected as yes and no reason is input" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "12",
             "agreementStartDate.month" -> "12",
@@ -508,8 +513,7 @@ class AgreementControllerSpec extends ControllerSpecSupport {
         content must include(pageTitle)
       }
       "Return Form with Errors when break clause radio is selected as yes and reason input is too long" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "agreementStartDate.day" -> "12",
             "agreementStartDate.month" -> "12",
@@ -530,13 +534,12 @@ class AgreementControllerSpec extends ControllerSpecSupport {
         content must include(pageTitle)
       }
       "Return Exception if no address is in the mongo" in {
-        mockRequestWithoutProperty()
         val exception = intercept[NotFoundException] {
-          await(controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit)
+          await(controllerNoProperty.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementController.submit(NormalMode))
             .withFormUrlEncodedBody(("what-type-of-agreement-radio", ""))
             .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some("")))))
         }
-        exception.getMessage contains "Couldn't find property in mongo" mustBe true
+        exception.getMessage contains "Could not find answers in backend mongo" mustBe true
       }
     }
   }

@@ -157,7 +157,7 @@ class InterimRentSetByTheCourtFormSpec extends AnyWordSpec with Matchers {
       )
       val boundForm = InterimRentSetByTheCourtForm.form.bind(data)
 
-      boundForm.errors should contain(FormError("date", "interimRentSetByTheCourt.monthYear.format.error"))
+      boundForm.errors should contain(FormError("date", "interimRentSetByTheCourt.month.format.error"))
     }
     "fail to bind year before 1900 for year input field" in {
       val data = Map(
@@ -200,7 +200,7 @@ class InterimRentSetByTheCourtFormSpec extends AnyWordSpec with Matchers {
       )
       val boundForm = InterimRentSetByTheCourtForm.form.bind(data)
 
-      boundForm.errors should contain(FormError("date", "interimRentSetByTheCourt.monthYear.format.error"))
+      boundForm.errors should contain(FormError("date", "interimRentSetByTheCourt.month.format.error"))
     }
 
     "fail to bind non numeric format for year input" in {
@@ -211,7 +211,7 @@ class InterimRentSetByTheCourtFormSpec extends AnyWordSpec with Matchers {
       )
       val boundForm = InterimRentSetByTheCourtForm.form.bind(data)
 
-      boundForm.errors should contain(FormError("date", "interimRentSetByTheCourt.monthYear.format.error"))
+      boundForm.errors should contain(FormError("date", "interimRentSetByTheCourt.year.format.error"))
     }
 
   }

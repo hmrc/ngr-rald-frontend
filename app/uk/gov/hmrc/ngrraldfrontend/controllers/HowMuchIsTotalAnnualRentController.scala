@@ -18,13 +18,14 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
+import uk.gov.hmrc.ngrraldfrontend.models.{Mode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.HowMuchIsTotalAnnualRentForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.HowMuchIsTotalAnnualRentForm.form
-import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
+import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
+import uk.gov.hmrc.ngrraldfrontend.pages.HowMuchIsTotalAnnualRentPage
+import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.views.html.HowMuchIsTotalAnnualRentView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -34,38 +35,42 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class HowMuchIsTotalAnnualRentController @Inject()(howMuchIsTotalAnnualRentView: HowMuchIsTotalAnnualRentView,
                                                    authenticate: AuthRetrievals,
-                                                   hasLinkedProperties: PropertyLinkingAction,
-                                                   raldRepo: RaldRepo,
+                                                   getData: DataRetrievalAction,
+                                                   sessionRepository: SessionRepository,
+                                                   navigator: Navigator,
                                                    mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport {
 
 
-  def show: Action[AnyContent] = {
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
-      request.propertyLinking.map(property =>
+  def show(mode: Mode): Action[AnyContent] = {
+    (authenticate andThen getData).async { implicit request =>
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(HowMuchIsTotalAnnualRentPage) match {
+        case None => form
+        case Some(value) => form.fill(HowMuchIsTotalAnnualRentForm(value))
+      }
         Future.successful(Ok(howMuchIsTotalAnnualRentView(
-          form = form,
-          propertyAddress = property.addressFull,
-        )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
+          form = preparedForm,
+          propertyAddress = request.property.addressFull,
+          mode = mode
+        )))
     }
   }
 
-  def submit: Action[AnyContent] =
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
+  def submit(mode: Mode): Action[AnyContent] =
+    (authenticate andThen getData).async { implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
-          request.propertyLinking.map(property =>
             Future.successful(BadRequest(howMuchIsTotalAnnualRentView(
               form = formWithErrors,
-              propertyAddress = property.addressFull
-            )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
+              propertyAddress = request.property.addressFull,
+              mode = mode
+            )))
         },
         rentAmount =>
-          raldRepo.insertAnnualRent(
-            credId = CredId(request.credId.getOrElse("")),
-            rentAmount = rentAmount.annualRent
-          )
-          Future.successful(Redirect(routes.CheckRentFreePeriodController.show.url))
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(HowMuchIsTotalAnnualRentPage, rentAmount.annualRent))
+            _ <- sessionRepository.set(updatedAnswers)
+          } yield Redirect(navigator.nextPage(HowMuchIsTotalAnnualRentPage, mode, updatedAnswers))
       )
     }
 }
