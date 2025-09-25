@@ -29,6 +29,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.forms.InterimRentSetByTheCourtForm.for
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.InterimSetByTheCourtPage
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
+import uk.gov.hmrc.ngrraldfrontend.utils.DateKeyFinder
 import uk.gov.hmrc.ngrraldfrontend.views.html.InterimRentSetByTheCourtView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -43,7 +44,7 @@ class InterimRentSetByTheCourtController @Inject()(interimRentSetByTheCourtView:
                                                    sessionRepository: SessionRepository,
                                                    navigator: Navigator,
                                                    mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport {
+  extends FrontendController(mcc) with I18nSupport with DateKeyFinder {
 
   def generateInputText(form: Form[InterimRentSetByTheCourtForm], inputFieldName: String)(implicit messages: Messages): HtmlFormat.Appendable = {
     inputText(
@@ -80,13 +81,8 @@ class InterimRentSetByTheCourtController @Inject()(interimRentSetByTheCourtView:
         formWithErrors => {
           val correctedFormErrors = formWithErrors.errors.map { formError =>
             (formError.key, formError.messages) match
-              case (key, messages) if messages.contains("interimRentSetByTheCourt.startDate.before.1900.error") ||
-                messages.contains("interimRentSetByTheCourt.year.required.error") =>
-                formError.copy(key = "date.year")
-              case ("date", messages) if messages.contains("interimRentSetByTheCourt.year.format.error") =>
-                formError.copy(key = "date.year")
-              case ("date", messages) =>
-                formError.copy(key = "date.month")
+              case (key, messages) if messages.head.contains("interimRentSetByTheCourt.date") =>
+                setCorrectKey(formError, "interimRentSetByTheCourt", "date")
               case _ =>
                 formError
           }
