@@ -60,7 +60,7 @@ class LandlordControllerSpec extends ControllerSpecSupport {
         val content = contentAsString(result)
         val document = Jsoup.parse(content)
         document.select("input[name=landlord-name-value]").attr("value") mustBe "Joe Bloggs"
-        document.select("input[name=landlord-radio]").attr("value") mustBe "LandLordAndTenant"
+        document.select("input[name=landlord-radio]").attr("value") mustBe "LandlordYes"
 
       }
       "Return NotFoundException when property is not found in the mongo" in {
