@@ -149,11 +149,11 @@ object WhatYourRentIncludesForm extends CommonFormValidators with Mappings {
       if (whatYourRentIncludesForm.livingAccommodationRadio.equals("livingAccommodationYes")) {
         if (bedroomNumber.isEmpty)
           Invalid("whatYourRentIncludes.bedroom.number.required.error")
-        else if (Try(Integer.parseInt(bedroomNumber.get)).isFailure)
+        else if (Try(bedroomNumber.get.toLong).isFailure)
           Invalid("whatYourRentIncludes.bedroom.number.invalid.error")
-        else if (Integer.parseInt(bedroomNumber.get) < 1)
+        else if (bedroomNumber.get.toLong < 1)
           Invalid("whatYourRentIncludes.bedroom.number.minimum.error")
-        else if (Integer.parseInt(bedroomNumber.get) > 99)
+        else if (bedroomNumber.get.toLong > 99)
           Invalid("whatYourRentIncludes.bedroom.number.maximum.error")
         else
           Valid
