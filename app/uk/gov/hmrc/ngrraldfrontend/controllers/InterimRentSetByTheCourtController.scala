@@ -77,6 +77,8 @@ class InterimRentSetByTheCourtController @Inject()(interimRentSetByTheCourtView:
               case (key, messages) if messages.contains("interimRentSetByTheCourt.startDate.before.1900.error") ||
                 messages.contains("interimRentSetByTheCourt.year.required.error") =>
                 formError.copy(key = "date.year")
+              case ("date", messages) if messages.contains("interimRentSetByTheCourt.year.format.error") =>
+                formError.copy(key = "date.year")
               case ("date", messages) =>
                 formError.copy(key = "date.month")
               case _ =>
