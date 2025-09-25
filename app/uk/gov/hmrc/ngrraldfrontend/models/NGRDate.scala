@@ -45,11 +45,8 @@ object NGRDate {
   }
 
   def fromString(dateString: String): NGRDate = {
-    val parts = dateString.split("-").map(_.toInt)
-    val year = parts(0).toString
-    val month = f"${parts(1)}%02d"
-    val day = f"${parts(2)}%02d"
-    NGRDate(day, month, year)
+    val date = LocalDate.parse(dateString)
+    NGRDate(date.getDayOfMonth.toString, date.getMonthValue.toString, date.getYear.toString)
   }
 
 

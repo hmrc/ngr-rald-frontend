@@ -72,8 +72,8 @@ class RentDatesAgreeControllerSpec extends ControllerSpecSupport {
         status(result) mustBe OK
         val content = contentAsString(result)
         val document = Jsoup.parse(content)
-        document.select("input[name=date.day]").attr("value") mustBe "01"
-        document.select("input[name=date.month]").attr("value") mustBe "02"
+        document.select("input[name=date.day]").attr("value") mustBe "1"
+        document.select("input[name=date.month]").attr("value") mustBe "2"
         document.select("input[name=date.year]").attr("value") mustBe "2025"
       }
       "Return NotFoundException when property is not found in the mongo" in {

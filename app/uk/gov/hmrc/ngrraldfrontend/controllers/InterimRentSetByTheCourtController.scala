@@ -63,7 +63,7 @@ class InterimRentSetByTheCourtController @Inject()(interimRentSetByTheCourtView:
     (authenticate andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(InterimSetByTheCourtPage) match {
         case None => form
-        case Some(value) => form.fill(InterimRentSetByTheCourtForm(BigDecimal(value.amount.toDouble), NGRMonthYear.fromString(value.date)))
+        case Some(value) => form.fill(InterimRentSetByTheCourtForm(BigDecimal(value.amount), NGRMonthYear.fromString(value.date)))
       }
         Future.successful(Ok(interimRentSetByTheCourtView(
           form = preparedForm,

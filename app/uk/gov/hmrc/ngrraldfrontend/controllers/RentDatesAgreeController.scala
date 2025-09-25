@@ -61,7 +61,7 @@ class RentDatesAgreeController @Inject()(rentDatesAgreeView: RentDatesAgreeView,
       content = Text(messages("rentDatesAgree.hint"))
     ))
   )
-  //TODO Add in preparedForm
+
   def show(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(RentDatesAgreePage) match {
@@ -83,14 +83,10 @@ class RentDatesAgreeController @Inject()(rentDatesAgreeView: RentDatesAgreeView,
         formWithErrors => {
           val correctedFormErrors = formWithErrors.errors.map { formError =>
             (formError.key, formError.messages) match
-              case (key, messages) if messages.contains("rentDatesAgree.date.month.required.error") =>
-                formError.copy(key = "rentDatesAgreeInput.month")
-              case (key, messages) if messages.contains("rentDatesAgree.date.month.year.required.error") =>
-                formError.copy(key = "rentDatesAgreeInput.month")
-              case (key, messages) if messages.contains("rentDatesAgree.date.year.required.error") =>
-                formError.copy(key = "rentDatesAgreeInput.year")
+              case (key, messages) if messages.head.contains("rentDatesAgree.date") =>
+                setCorrectKey(formError, "rentDatesAgree", "date")
               case _ =>
-                formError.copy(key = "rentDatesAgreeInput.day")
+                formError
           }
           val formWithCorrectedErrors = formWithErrors.copy(errors = correctedFormErrors)
             Future.successful(BadRequest(rentDatesAgreeView(

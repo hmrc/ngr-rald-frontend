@@ -50,7 +50,7 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
                                      )(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with CurrencyHelper {
 
-  def firstTable(userAnswers: ProvideDetailsOfFirstSecondRentPeriod)(implicit messages: Messages): Table =
+  def firstTable(rentPeriods: ProvideDetailsOfFirstSecondRentPeriod)(implicit messages: Messages): Table =
     Table(
       rows = Seq(
         Seq(
@@ -58,7 +58,7 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
             content = Text(messages("rentPeriods.first.startDate"))
           ),
           TableRow(
-            content = Text(userAnswers.firstDateStart),
+            content = Text(rentPeriods.firstDateStart),
             attributes = Map(
               "id" -> "first-period-start-date-id"
             )
@@ -69,13 +69,13 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
             content = Text(messages("rentPeriods.first.endDate"))
           ),
           TableRow(
-            content = Text(userAnswers.firstDateEnd),
+            content = Text(rentPeriods.firstDateEnd),
             attributes = Map(
               "id" -> "first-period-end-date-id"
             )
           )
         ),
-        userAnswers.firstRentPeriodAmount match
+        rentPeriods.firstRentPeriodAmount match
             case Some(answer) => Seq(
               TableRow(
                 content = Text(messages("rentPeriods.first.rentValue"))
@@ -94,7 +94,7 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
           ),
           TableRow(
             content = Text(
-              if (userAnswers.firstRentPeriodRadio) {
+              if (rentPeriods.firstRentPeriodRadio) {
                 "Yes"
               } else {
                 "No"
@@ -112,14 +112,14 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
       firstCellIsHeader = true
     )
 
-  def secondTable(userAnswers: ProvideDetailsOfFirstSecondRentPeriod)(implicit messages: Messages): Table = Table(
+  def secondTable(rentPeriods: ProvideDetailsOfFirstSecondRentPeriod)(implicit messages: Messages): Table = Table(
     rows = Seq(
       Seq(
         TableRow(
           content = Text(messages("rentPeriods.second.startDate"))
         ),
         TableRow(
-          content = Text(userAnswers.secondDateStart),
+          content = Text(rentPeriods.secondDateStart),
           attributes = Map(
             "id" -> "second-period-start-date-id"
           )
@@ -130,7 +130,7 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
           content = Text(messages("rentPeriods.second.endDate"))
         ),
         TableRow(
-          content = Text(userAnswers.secondDateEnd),
+          content = Text(rentPeriods.secondDateEnd),
           attributes = Map(
             "id" -> "second-period-end-date-id"
           )
@@ -141,7 +141,7 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
           content = Text(messages("rentPeriods.second.rentValue"))
         ),
         TableRow(
-          content = Text(userAnswers.secondHowMuchIsRent),
+          content = Text(rentPeriods.secondHowMuchIsRent),
           attributes = Map(
             "id" -> "second-period-rent-value-id"
           )

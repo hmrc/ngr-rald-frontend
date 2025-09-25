@@ -98,8 +98,8 @@ class HowManyParkingSpacesOrGaragesIncludedInRentController @Inject()(howManyPar
               mode = mode
             )))
         },
-        rentAmount =>
-          val answers = HowManyParkingSpacesOrGarages(rentAmount.uncoveredSpaces.toString, rentAmount.coveredSpaces.toString, rentAmount.garages.toString)
+        parkingSpacesOrGaragesIncluded =>
+          val answers = HowManyParkingSpacesOrGarages(parkingSpacesOrGaragesIncluded.uncoveredSpaces.toString, parkingSpacesOrGaragesIncluded.coveredSpaces.toString, parkingSpacesOrGaragesIncluded.garages.toString)
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(HowManyParkingSpacesOrGaragesIncludedInRentPage, answers))
             _ <- sessionRepository.set(updatedAnswers)

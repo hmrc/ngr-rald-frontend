@@ -75,18 +75,18 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
         status(result) mustBe OK
         val content = contentAsString(result)
         val document = Jsoup.parse(content)
-        document.select("input[name=first.startDate.day]").attr("value") mustBe "01"
-        document.select("input[name=first.startDate.month]").attr("value") mustBe "01"
+        document.select("input[name=first.startDate.day]").attr("value") mustBe "1"
+        document.select("input[name=first.startDate.month]").attr("value") mustBe "1"
         document.select("input[name=first.startDate.year]").attr("value") mustBe "2025"
         document.select("input[name=first.endDate.day]").attr("value") mustBe "31"
-        document.select("input[name=first.endDate.month]").attr("value") mustBe "01"
+        document.select("input[name=first.endDate.month]").attr("value") mustBe "1"
         document.select("input[name=first.endDate.year]").attr("value") mustBe "2025"
         document.select("input[type=radio][name=provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio][value=yesPayedRent]").hasAttr("checked") mustBe true
-        document.select("input[name=second.startDate.day]").attr("value") mustBe "01"
-        document.select("input[name=second.startDate.month]").attr("value") mustBe "02"
+        document.select("input[name=second.startDate.day]").attr("value") mustBe "1"
+        document.select("input[name=second.startDate.month]").attr("value") mustBe "2"
         document.select("input[name=second.startDate.year]").attr("value") mustBe "2025"
         document.select("input[name=second.endDate.day]").attr("value") mustBe "28"
-        document.select("input[name=second.endDate.month]").attr("value") mustBe "02"
+        document.select("input[name=second.endDate.month]").attr("value") mustBe "2"
         document.select("input[name=second.endDate.year]").attr("value") mustBe "2025"
         document.select("input[name=SecondRentPeriodAmount]").attr("value") mustBe "1000"
       }
@@ -95,18 +95,18 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
         status(result) mustBe OK
         val content = contentAsString(result)
         val document = Jsoup.parse(content)
-        document.select("input[name=first.startDate.day]").attr("value") mustBe "01"
-        document.select("input[name=first.startDate.month]").attr("value") mustBe "01"
+        document.select("input[name=first.startDate.day]").attr("value") mustBe "1"
+        document.select("input[name=first.startDate.month]").attr("value") mustBe "1"
         document.select("input[name=first.startDate.year]").attr("value") mustBe "2025"
         document.select("input[name=first.endDate.day]").attr("value") mustBe "31"
-        document.select("input[name=first.endDate.month]").attr("value") mustBe "01"
+        document.select("input[name=first.endDate.month]").attr("value") mustBe "1"
         document.select("input[name=first.endDate.year]").attr("value") mustBe "2025"
         document.select("input[type=radio][name=provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio][value=noRentPayed]").hasAttr("checked") mustBe true
-        document.select("input[name=second.startDate.day]").attr("value") mustBe "01"
-        document.select("input[name=second.startDate.month]").attr("value") mustBe "02"
+        document.select("input[name=second.startDate.day]").attr("value") mustBe "1"
+        document.select("input[name=second.startDate.month]").attr("value") mustBe "2"
         document.select("input[name=second.startDate.year]").attr("value") mustBe "2025"
         document.select("input[name=second.endDate.day]").attr("value") mustBe "28"
-        document.select("input[name=second.endDate.month]").attr("value") mustBe "02"
+        document.select("input[name=second.endDate.month]").attr("value") mustBe "2"
         document.select("input[name=second.endDate.year]").attr("value") mustBe "2025"
         document.select("input[name=SecondRentPeriodAmount]").attr("value") mustBe "1000"
       }

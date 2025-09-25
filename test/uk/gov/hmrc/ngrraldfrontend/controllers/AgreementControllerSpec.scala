@@ -58,12 +58,12 @@ class AgreementControllerSpec extends ControllerSpecSupport {
         status(result) mustBe OK
         val content = contentAsString(result)
         val document = Jsoup.parse(content)
-        document.select("input[name=agreementStartDate.day]").attr("value") mustBe "01"
-        document.select("input[name=agreementStartDate.month]").attr("value") mustBe "01"
+        document.select("input[name=agreementStartDate.day]").attr("value") mustBe "1"
+        document.select("input[name=agreementStartDate.month]").attr("value") mustBe "1"
         document.select("input[name=agreementStartDate.year]").attr("value") mustBe "2025"
         document.select("input[type=radio][name=agreement-radio-openEnded][value=YesOpenEnded]").hasAttr("checked") mustBe true
-        document.select("input[name=agreementEndDate.day]").attr("value") mustBe "02"
-        document.select("input[name=agreementEndDate.month]").attr("value") mustBe "02"
+        document.select("input[name=agreementEndDate.day]").attr("value") mustBe "2"
+        document.select("input[name=agreementEndDate.month]").attr("value") mustBe "2"
         document.select("input[name=agreementEndDate.year]").attr("value") mustBe "2025"
         document.select("input[type=radio][name=agreement-breakClause-radio][value=YesBreakClause]").hasAttr("checked") mustBe true
         document.select("textarea[name=about-break-clause]").text() mustBe "he has a break clause"
@@ -73,8 +73,8 @@ class AgreementControllerSpec extends ControllerSpecSupport {
         status(result) mustBe OK
         val content = contentAsString(result)
         val document = Jsoup.parse(content)
-        document.select("input[name=agreementStartDate.day]").attr("value") mustBe "01"
-        document.select("input[name=agreementStartDate.month]").attr("value") mustBe "01"
+        document.select("input[name=agreementStartDate.day]").attr("value") mustBe "1"
+        document.select("input[name=agreementStartDate.month]").attr("value") mustBe "1"
         document.select("input[name=agreementStartDate.year]").attr("value") mustBe "2025"
         document.select("input[type=radio][name=agreement-radio-openEnded][value=NoOpenEnded]").hasAttr("checked") mustBe true
         document.select("input[type=radio][name=agreement-breakClause-radio][value=NoBreakClause]").hasAttr("checked") mustBe true

@@ -87,8 +87,8 @@ class InterimRentSetByTheCourtControllerSpec extends ControllerSpecSupport {
         status(result) mustBe OK
         val content = contentAsString(result)
         val document = Jsoup.parse(content)
-        document.select("input[name=interimAmount]").attr("value") mustBe "10000.0"
-        document.select("input[name=date.month]").attr("value") mustBe "01"
+        document.select("input[name=interimAmount]").attr("value") mustBe "10000"
+        document.select("input[name=date.month]").attr("value") mustBe "1"
         document.select("input[name=date.year]").attr("value") mustBe "1990"
 
       }

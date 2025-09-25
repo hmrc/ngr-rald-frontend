@@ -22,7 +22,6 @@ import uk.gov.hmrc.ngrraldfrontend.models.AgreementType
 case object TellUsAboutYourNewAgreementPage extends QuestionPage[AgreementType] {
 
   override def path: JsPath = JsPath \ toString
-
   override def toString: String = "tellUsAboutYourNewAgreement"
 
 }
