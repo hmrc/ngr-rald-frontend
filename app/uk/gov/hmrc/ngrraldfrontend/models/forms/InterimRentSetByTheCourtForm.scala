@@ -37,12 +37,6 @@ object InterimRentSetByTheCourtForm extends CommonFormValidators with MonthYearM
 
   def unapply(interimRentSetByTheCourtForm: InterimRentSetByTheCourtForm): Option[(BigDecimal, NGRMonthYear)] = Some(interimRentSetByTheCourtForm.amount, interimRentSetByTheCourtForm.date)
 
-  private def errorKeys(whichDate: String): Map[DateErrorKeys, String] = Map(
-    Required -> s"$whichDate.required.error",
-    Month -> s"$whichDate.month.required.error",
-    Year -> s"$whichDate.year.required.error"
-  )
-
   val form: Form[InterimRentSetByTheCourtForm] = Form(
     mapping(
       "interimAmount" -> text()
@@ -60,9 +54,9 @@ object InterimRentSetByTheCourtForm extends CommonFormValidators with MonthYearM
       "date" -> monthYearMapping
         .verifying(
           firstError(
-            isMonthYearEmpty(errorKeys("interimRentSetByTheCourt")),
-            isMonthYearValid(monthError = "interimRentSetByTheCourt.month.format.error", yearError = "interimRentSetByTheCourt.year.format.error"),
-            isMonthYearAfter1900("interimRentSetByTheCourt.startDate.before.1900.error")
+            isMonthYearEmpty(errorKeys("interimRentSetByTheCourt", "date")),
+            isMonthYearValid("interimRentSetByTheCourt.date.invalid.error"),
+            isMonthYearAfter1900("interimRentSetByTheCourt.date.before.1900.error")
           )
         ),
     )(InterimRentSetByTheCourtForm.apply)(InterimRentSetByTheCourtForm.unapply)

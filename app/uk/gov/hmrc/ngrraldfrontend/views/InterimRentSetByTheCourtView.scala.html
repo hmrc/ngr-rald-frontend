@@ -34,7 +34,7 @@
 @layout(pageTitle = Some(messages("interimRentSetByTheCourt.title")), showBackLink = true, fullWidth = false) {
   @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.InterimRentSetByTheCourtController.submit(mode), Symbol("autoComplete") -> "off") {
     @if(form.errors.nonEmpty) {
-      @govukErrorSummary(ErrorSummaryViewModel(form))
+      @govukErrorSummary(ErrorSummaryViewModel(form, Some("interimRentSetByTheCourt"), Some(Seq("date"))))
     }
     <span class="govuk-caption-m">@propertyAddress</span>
     <h1 class="govuk-heading-l">@messages("interimRentSetByTheCourt.title")</h1>
