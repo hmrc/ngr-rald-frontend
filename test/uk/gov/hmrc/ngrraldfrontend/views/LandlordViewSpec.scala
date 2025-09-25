@@ -120,18 +120,6 @@ class LandlordViewSpec extends ViewBaseSpec {
         elementText(Selectors.radio2) mustBe Strings.radio2
       }
 
-//      "show correct radio 3" in {
-//        elementText(Selectors.radio3) mustBe Strings.radio3
-//      }
-//
-//      "show correct radio 4" in {
-//        elementText(Selectors.radio4) mustBe Strings.radio4
-//      }
-//
-//      "show correct radio 5" in {
-//        elementText(Selectors.radio5) mustBe Strings.radio5
-//      }
-
       "show correct continue button" in {
         elementText(Selectors.continue) mustBe Strings.continue
       }
