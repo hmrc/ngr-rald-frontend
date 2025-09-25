@@ -28,7 +28,6 @@ trait AppConfig {
   val ngrLoginRegistrationHost: String
   val ngrDashboardUrl: String
   val ngrLogoutUrl: String
-  val timeToLive: String
   def getString(key: String): String
   val cacheTtl: Long
 }

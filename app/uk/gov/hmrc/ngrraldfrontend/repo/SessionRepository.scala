@@ -80,7 +80,7 @@ class SessionRepository @Inject()(
 
     collection
       .replaceOne(
-        filter      = byId(updatedAnswers.id),
+        filter      = byId(updatedAnswers.credId),
         replacement = updatedAnswers,
         options     = ReplaceOptions().upsert(true)
       )
@@ -88,9 +88,9 @@ class SessionRepository @Inject()(
       .map(_ => true)
   }
 
-  def clear(id: String): Future[Boolean] = Mdc.preservingMdc {
+  def clear(credId: String): Future[Boolean] = Mdc.preservingMdc {
     collection
-      .deleteOne(byId(id))
+      .deleteOne(byId(credId))
       .toFuture()
       .map(_ => true)
   }
