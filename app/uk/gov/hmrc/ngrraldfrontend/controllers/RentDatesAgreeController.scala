@@ -16,17 +16,19 @@
 
 package uk.gov.hmrc.ngrraldfrontend.controllers
 
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.govukfrontend.views.Aliases.*
 import uk.gov.hmrc.govukfrontend.views.viewmodels.dateinput.DateInput
-import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentDatesAgreeForm
+import uk.gov.hmrc.ngrraldfrontend.models.{Mode, NGRDate, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentDatesAgreeForm.form
-import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
+import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
+import uk.gov.hmrc.ngrraldfrontend.pages.{AgreedRentChangePage, RentDatesAgreePage}
+import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.utils.DateKeyFinder
 import uk.gov.hmrc.ngrraldfrontend.views.html.RentDatesAgreeView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -38,11 +40,11 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class RentDatesAgreeController @Inject()(rentDatesAgreeView: RentDatesAgreeView,
                                          authenticate: AuthRetrievals,
-                                         hasLinkedProperties: PropertyLinkingAction,
-                                         raldRepo: RaldRepo,
-                                         mcc: MessagesControllerComponents
-                                        )(implicit appConfig: AppConfig, ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport with DateKeyFinder {
+                                         mcc: MessagesControllerComponents,
+                                         getData: DataRetrievalAction,
+                                         navigator: Navigator,
+                                         sessionRepository: SessionRepository
+                                        )(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport with DateKeyFinder{
 
   def dateInput()(implicit messages: Messages): DateInput = DateInput(
     id = "date",
@@ -60,19 +62,23 @@ class RentDatesAgreeController @Inject()(rentDatesAgreeView: RentDatesAgreeView,
     ))
   )
 
-  def show: Action[AnyContent] = {
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
-      request.propertyLinking.map(property =>
+  def show(mode: Mode): Action[AnyContent] = {
+    (authenticate andThen getData).async { implicit request =>
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(RentDatesAgreePage) match {
+      case None => form
+      case Some(value) => form.fill(RentDatesAgreeForm(NGRDate.fromString(value)))
+    }
         Future.successful(Ok(rentDatesAgreeView(
-          form = form,
+          form = preparedForm,
           dateInput = dateInput(),
-          propertyAddress = property.addressFull,
-        )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
+          propertyAddress = request.property.addressFull,
+          mode = mode
+        )))
     }
   }
 
-  def submit: Action[AnyContent] =
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
+  def submit(mode: Mode): Action[AnyContent] =
+    (authenticate andThen getData).async { implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
           val correctedFormErrors = formWithErrors.errors.map { formError =>
@@ -83,19 +89,18 @@ class RentDatesAgreeController @Inject()(rentDatesAgreeView: RentDatesAgreeView,
                 formError
           }
           val formWithCorrectedErrors = formWithErrors.copy(errors = correctedFormErrors)
-          request.propertyLinking.map(property =>
             Future.successful(BadRequest(rentDatesAgreeView(
               form = formWithCorrectedErrors,
               dateInput = dateInput(),
-              propertyAddress = property.addressFull
-            )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
+              propertyAddress = request.property.addressFull,
+              mode = mode
+            )))
         },
         dateValue =>
-          raldRepo.insertRentDates(
-            credId = CredId(request.credId.getOrElse("")),
-            rentDates = dateValue.dateInput.makeString
-          )
-          Future.successful(Redirect(routes.WhatTypeOfLeaseRenewalController.show.url))
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(RentDatesAgreePage, dateValue.dateInput.makeString))
+            _ <- sessionRepository.set(updatedAnswers)
+          } yield Redirect(navigator.nextPage(RentDatesAgreePage, mode, updatedAnswers))
       )
     }
 }

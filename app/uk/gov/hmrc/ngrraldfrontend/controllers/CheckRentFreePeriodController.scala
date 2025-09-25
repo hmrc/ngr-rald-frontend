@@ -19,13 +19,15 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
+import uk.gov.hmrc.ngrraldfrontend.models.{Landlord, Mode, NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.CheckRentFreePeriodForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.CheckRentFreePeriodForm.form
-import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
+import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
+import uk.gov.hmrc.ngrraldfrontend.pages.CheckRentFreePeriodPage
+import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.views.html.CheckRentFreePeriodView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -34,42 +36,45 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CheckRentFreePeriodController @Inject()(checkRentFreePeriodView: CheckRentFreePeriodView,
-                                              authenticate: AuthRetrievals,
-                                              hasLinkedProperties: PropertyLinkingAction,
-                                              raldRepo: RaldRepo,
+                                              authenticate : AuthRetrievals,
+                                              getData: DataRetrievalAction,
+                                              navigator: Navigator,
+                                              sessionRepository: SessionRepository,
                                               mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport {
 
-  def show: Action[AnyContent] = {
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
-      request.propertyLinking.map(property =>
+  def show(mode: Mode): Action[AnyContent] = {
+    (authenticate andThen getData).async { implicit request =>
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(CheckRentFreePeriodPage) match {
+        case None => form
+        case Some(value) => form.fill(CheckRentFreePeriodForm(value))
+      }
         Future.successful(Ok(checkRentFreePeriodView(
-          form = form,
-          radios = buildRadios(form, CheckRentFreePeriodForm.ngrRadio(form)),
-          propertyAddress = property.addressFull,
-        )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
+          form = preparedForm,
+          radios = buildRadios(preparedForm, CheckRentFreePeriodForm.ngrRadio(preparedForm)),
+          propertyAddress = request.property.addressFull,
+          mode = mode
+        )))
     }
   }
 
-  def submit: Action[AnyContent] =
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
+  def submit(mode: Mode): Action[AnyContent] =
+    (authenticate andThen getData).async { implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
-          request.propertyLinking.map(property =>
             Future.successful(BadRequest(checkRentFreePeriodView(
               form = formWithErrors,
               radios = buildRadios(formWithErrors, CheckRentFreePeriodForm.ngrRadio(formWithErrors)),
-              propertyAddress = property.addressFull
-            )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
+              propertyAddress = request.property.addressFull,
+              mode = mode
+            )))
         },
         radioValue =>
-          raldRepo.insertHasRentFreePeriod(
-            credId = CredId(request.credId.getOrElse("")),
-            hasRentFreePeriod = radioValue.radioValue
-          )
-          radioValue.radioValue match
-            case "No" => Future.successful(Redirect(routes.RentDatesAgreeStartController.show.url))
-            case _ => Future.successful(Redirect(routes.RentFreePeriodController.show.url))
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
+              .set(CheckRentFreePeriodPage, radioValue.radioValue))
+            _ <- sessionRepository.set(updatedAnswers)
+          } yield Redirect(navigator.nextPage(CheckRentFreePeriodPage, mode, updatedAnswers))
       )
     }
 

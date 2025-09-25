@@ -1,50 +1,132 @@
 # microservice specific routes
+->         /hmrc-frontend                               hmrcfrontend.Routes
+GET        /assets/*file                                controllers.Assets.versioned(path = "/public", file: Asset)
 
-->         /hmrc-frontend                                          hmrcfrontend.Routes
-GET        /assets/*file                                           controllers.Assets.versioned(path = "/public", file: Asset)
-GET        /tell-us-about-your-new-agreement                       uk.gov.hmrc.ngrraldfrontend.controllers.TellUsAboutYourNewAgreementController.show
-POST       /tell-us-about-your-new-agreement                       uk.gov.hmrc.ngrraldfrontend.controllers.TellUsAboutYourNewAgreementController.submit
-GET        /tell-us-about-your-renewed-agreement                   uk.gov.hmrc.ngrraldfrontend.controllers.TellUsAboutYourRenewedAgreementController.show
-POST       /tell-us-about-your-renewed-agreement                   uk.gov.hmrc.ngrraldfrontend.controllers.TellUsAboutYourRenewedAgreementController.submit
-GET        /tell-us-about-rent-review                              uk.gov.hmrc.ngrraldfrontend.controllers.TellUsAboutRentController.show
-POST       /tell-us-about-rent-review                              uk.gov.hmrc.ngrraldfrontend.controllers.TellUsAboutRentController.submit
-GET        /what-type-of-lease-renewal-is-it                       uk.gov.hmrc.ngrraldfrontend.controllers.WhatTypeOfLeaseRenewalController.show
-POST       /what-type-of-lease-renewal-is-it                       uk.gov.hmrc.ngrraldfrontend.controllers.WhatTypeOfLeaseRenewalController.submit
-GET        /what-type-of-agreement-do-you-have                     uk.gov.hmrc.ngrraldfrontend.controllers.WhatTypeOfAgreementController.show
-POST       /what-type-of-agreement-do-you-have                     uk.gov.hmrc.ngrraldfrontend.controllers.WhatTypeOfAgreementController.submit
-GET        /landlord                                               uk.gov.hmrc.ngrraldfrontend.controllers.LandlordController.show
-POST       /landlord                                               uk.gov.hmrc.ngrraldfrontend.controllers.LandlordController.submit
-GET        /what-is-your-rent-based-on                             uk.gov.hmrc.ngrraldfrontend.controllers.WhatIsYourRentBasedOnController.show
-POST       /what-is-your-rent-based-on                             uk.gov.hmrc.ngrraldfrontend.controllers.WhatIsYourRentBasedOnController.submit
-GET        /how-much-is-total-annual-rent                          uk.gov.hmrc.ngrraldfrontend.controllers.HowMuchIsTotalAnnualRentController.show
-POST       /how-much-is-total-annual-rent                          uk.gov.hmrc.ngrraldfrontend.controllers.HowMuchIsTotalAnnualRentController.submit
-GET        /have-you-agreed-rent-changes-with-landlord             uk.gov.hmrc.ngrraldfrontend.controllers.AgreedRentChangeController.show
-POST       /have-you-agreed-rent-changes-with-landlord             uk.gov.hmrc.ngrraldfrontend.controllers.AgreedRentChangeController.submit
-GET        /agreement-verbal                                       uk.gov.hmrc.ngrraldfrontend.controllers.AgreementVerbalController.show
-POST       /agreement-verbal                                       uk.gov.hmrc.ngrraldfrontend.controllers.AgreementVerbalController.submit
-GET        /do-you-have-a-rent-free-period                         uk.gov.hmrc.ngrraldfrontend.controllers.CheckRentFreePeriodController.show
-POST       /do-you-have-a-rent-free-period                         uk.gov.hmrc.ngrraldfrontend.controllers.CheckRentFreePeriodController.submit
-GET        /agreement                                              uk.gov.hmrc.ngrraldfrontend.controllers.AgreementController.show
-POST       /agreement                                              uk.gov.hmrc.ngrraldfrontend.controllers.AgreementController.submit
-GET        /did-you-agree-rent-with-landlord                       uk.gov.hmrc.ngrraldfrontend.controllers.DidYouAgreeRentWithLandlordController.show
-POST       /did-you-agree-rent-with-landlord                       uk.gov.hmrc.ngrraldfrontend.controllers.DidYouAgreeRentWithLandlordController.submit
-GET        /provide-details-of-first-second-rent-period            uk.gov.hmrc.ngrraldfrontend.controllers.ProvideDetailsOfFirstSecondRentPeriodController.show
-POST       /provide-details-of-first-second-rent-period            uk.gov.hmrc.ngrraldfrontend.controllers.ProvideDetailsOfFirstSecondRentPeriodController.submit
-GET        /rent-periods                                           uk.gov.hmrc.ngrraldfrontend.controllers.RentPeriodsController.show
-POST       /rent-periods                                           uk.gov.hmrc.ngrraldfrontend.controllers.RentPeriodsController.submit
-GET        /did-the-court-set-an-interim-rent                      uk.gov.hmrc.ngrraldfrontend.controllers.RentInterimController.show
-POST       /did-the-court-set-an-interim-rent                      uk.gov.hmrc.ngrraldfrontend.controllers.RentInterimController.submit
-GET        /rent-dates-agree                                       uk.gov.hmrc.ngrraldfrontend.controllers.RentDatesAgreeController.show
-POST       /rent-dates-agree                                       uk.gov.hmrc.ngrraldfrontend.controllers.RentDatesAgreeController.submit
-GET        /rent-dates-agree-start                                 uk.gov.hmrc.ngrraldfrontend.controllers.RentDatesAgreeStartController.show
-POST       /rent-dates-agree-start                                 uk.gov.hmrc.ngrraldfrontend.controllers.RentDatesAgreeStartController.submit
-GET        /what-rent-includes                                     uk.gov.hmrc.ngrraldfrontend.controllers.WhatYourRentIncludesController.show
-POST       /what-rent-includes                                     uk.gov.hmrc.ngrraldfrontend.controllers.WhatYourRentIncludesController.submit
-GET        /does-rent-include-parking-spaces-or-garages            uk.gov.hmrc.ngrraldfrontend.controllers.DoesYourRentIncludeParkingController.show
-POST       /does-rent-include-parking-spaces-or-garages            uk.gov.hmrc.ngrraldfrontend.controllers.DoesYourRentIncludeParkingController.submit
-GET        /how-many-parking-spaces-or-garages-included-in-rent    uk.gov.hmrc.ngrraldfrontend.controllers.HowManyParkingSpacesOrGaragesIncludedInRentController.show
-POST       /how-many-parking-spaces-or-garages-included-in-rent    uk.gov.hmrc.ngrraldfrontend.controllers.HowManyParkingSpacesOrGaragesIncludedInRentController.submit
-GET        /interim-rent-set-by-court                              uk.gov.hmrc.ngrraldfrontend.controllers.InterimRentSetByTheCourtController.show
-POST       /interim-rent-set-by-court                              uk.gov.hmrc.ngrraldfrontend.controllers.InterimRentSetByTheCourtController.submit
-GET        /rent-free-period                                       uk.gov.hmrc.ngrraldfrontend.controllers.RentFreePeriodController.show
-POST       /rent-free-period                                       uk.gov.hmrc.ngrraldfrontend.controllers.RentFreePeriodController.submit
+#Interstitial Pages
+GET        /tell-us-about-your-new-agreement            uk.gov.hmrc.ngrraldfrontend.controllers.TellUsAboutYourNewAgreementController.show
+POST       /tell-us-about-your-new-agreement            uk.gov.hmrc.ngrraldfrontend.controllers.TellUsAboutYourNewAgreementController.submit
+GET        /tell-us-about-your-renewed-agreement        uk.gov.hmrc.ngrraldfrontend.controllers.TellUsAboutYourRenewedAgreementController.show
+POST       /tell-us-about-your-renewed-agreement        uk.gov.hmrc.ngrraldfrontend.controllers.TellUsAboutYourRenewedAgreementController.submit
+GET        /tell-us-about-rent-review                   uk.gov.hmrc.ngrraldfrontend.controllers.TellUsAboutRentController.show
+POST       /tell-us-about-rent-review                   uk.gov.hmrc.ngrraldfrontend.controllers.TellUsAboutRentController.submit
+
+#What type of lease renewal is it
+GET        /what-type-of-lease-renewal-is-it            uk.gov.hmrc.ngrraldfrontend.controllers.WhatTypeOfLeaseRenewalController.show(mode: Mode = NormalMode)
+POST       /what-type-of-lease-renewal-is-it            uk.gov.hmrc.ngrraldfrontend.controllers.WhatTypeOfLeaseRenewalController.submit(mode: Mode = NormalMode)
+GET        /what-type-of-lease-renewal-is-it/change     uk.gov.hmrc.ngrraldfrontend.controllers.WhatTypeOfLeaseRenewalController.show(mode: Mode = CheckMode)
+POST       /what-type-of-lease-renewal-is-it/change     uk.gov.hmrc.ngrraldfrontend.controllers.WhatTypeOfLeaseRenewalController.submit(mode: Mode = CheckMode)
+
+#What type of agreement do you have
+GET        /what-type-of-agreement-do-you-have          uk.gov.hmrc.ngrraldfrontend.controllers.WhatTypeOfAgreementController.show(mode: Mode = NormalMode)
+POST       /what-type-of-agreement-do-you-have          uk.gov.hmrc.ngrraldfrontend.controllers.WhatTypeOfAgreementController.submit(mode: Mode = NormalMode)
+GET        /what-type-of-agreement-do-you-have/change   uk.gov.hmrc.ngrraldfrontend.controllers.WhatTypeOfAgreementController.show(mode: Mode = CheckMode)
+POST       /what-type-of-agreement-do-you-have/change   uk.gov.hmrc.ngrraldfrontend.controllers.WhatTypeOfAgreementController.submit(mode: Mode = CheckMode)
+
+#Landlord
+GET        /landlord                                    uk.gov.hmrc.ngrraldfrontend.controllers.LandlordController.show(mode: Mode = NormalMode)
+POST       /landlord                                    uk.gov.hmrc.ngrraldfrontend.controllers.LandlordController.submit(mode: Mode = NormalMode)
+GET        /landlord/change                             uk.gov.hmrc.ngrraldfrontend.controllers.LandlordController.show(mode: Mode = CheckMode)
+POST       /landlord/change                             uk.gov.hmrc.ngrraldfrontend.controllers.LandlordController.submit(mode: Mode = CheckMode)
+
+#What is your rent based on
+GET        /what-is-your-rent-based-on                  uk.gov.hmrc.ngrraldfrontend.controllers.WhatIsYourRentBasedOnController.show(mode: Mode = NormalMode)
+POST       /what-is-your-rent-based-on                  uk.gov.hmrc.ngrraldfrontend.controllers.WhatIsYourRentBasedOnController.submit(mode: Mode = NormalMode)
+GET        /what-is-your-rent-based-on/change           uk.gov.hmrc.ngrraldfrontend.controllers.WhatIsYourRentBasedOnController.show(mode: Mode =  CheckMode)
+POST       /what-is-your-rent-based-on/change           uk.gov.hmrc.ngrraldfrontend.controllers.WhatIsYourRentBasedOnController.submit(mode: Mode = CheckMode)
+
+#How much is total annual rent
+GET        /how-much-is-total-annual-rent               uk.gov.hmrc.ngrraldfrontend.controllers.HowMuchIsTotalAnnualRentController.show(mode: Mode = NormalMode)
+POST       /how-much-is-total-annual-rent               uk.gov.hmrc.ngrraldfrontend.controllers.HowMuchIsTotalAnnualRentController.submit(mode: Mode = NormalMode)
+GET        /how-much-is-total-annual-rent/change        uk.gov.hmrc.ngrraldfrontend.controllers.HowMuchIsTotalAnnualRentController.show(mode: Mode = CheckMode)
+POST       /how-much-is-total-annual-rent/change        uk.gov.hmrc.ngrraldfrontend.controllers.HowMuchIsTotalAnnualRentController.submit(mode: Mode = CheckMode)
+
+#Have you agreed rent changes with the landlord
+GET        /have-you-agreed-rent-changes-with-landlord         uk.gov.hmrc.ngrraldfrontend.controllers.AgreedRentChangeController.show(mode: Mode = NormalMode)
+POST       /have-you-agreed-rent-changes-with-landlord         uk.gov.hmrc.ngrraldfrontend.controllers.AgreedRentChangeController.submit(mode: Mode = NormalMode)
+GET        /have-you-agreed-rent-changes-with-landlord/change  uk.gov.hmrc.ngrraldfrontend.controllers.AgreedRentChangeController.show(mode: Mode = CheckMode)
+POST       /have-you-agreed-rent-changes-with-landlord/change  uk.gov.hmrc.ngrraldfrontend.controllers.AgreedRentChangeController.submit(mode: Mode = CheckMode)
+
+#Agreement verbal
+GET        /agreement-verbal                            uk.gov.hmrc.ngrraldfrontend.controllers.AgreementVerbalController.show(mode: Mode = NormalMode)
+POST       /agreement-verbal                            uk.gov.hmrc.ngrraldfrontend.controllers.AgreementVerbalController.submit(mode: Mode = NormalMode)
+GET        /agreement-verbal/change                     uk.gov.hmrc.ngrraldfrontend.controllers.AgreementVerbalController.show(mode: Mode = CheckMode)
+POST       /agreement-verbal/change                     uk.gov.hmrc.ngrraldfrontend.controllers.AgreementVerbalController.submit(mode: Mode = CheckMode)
+
+#Do you have a rent free period
+GET        /do-you-have-a-rent-free-period              uk.gov.hmrc.ngrraldfrontend.controllers.CheckRentFreePeriodController.show(mode: Mode = NormalMode)
+POST       /do-you-have-a-rent-free-period              uk.gov.hmrc.ngrraldfrontend.controllers.CheckRentFreePeriodController.submit(mode: Mode = NormalMode)
+GET        /do-you-have-a-rent-free-period/change       uk.gov.hmrc.ngrraldfrontend.controllers.CheckRentFreePeriodController.show(mode: Mode = CheckMode)
+POST       /do-you-have-a-rent-free-period/change       uk.gov.hmrc.ngrraldfrontend.controllers.CheckRentFreePeriodController.submit(mode: Mode = CheckMode)
+
+#Agreement
+GET        /agreement                                   uk.gov.hmrc.ngrraldfrontend.controllers.AgreementController.show(mode: Mode = NormalMode)
+POST       /agreement                                   uk.gov.hmrc.ngrraldfrontend.controllers.AgreementController.submit(mode: Mode = NormalMode)
+GET        /agreement/change                            uk.gov.hmrc.ngrraldfrontend.controllers.AgreementController.show(mode: Mode = CheckMode)
+POST       /agreement/change                            uk.gov.hmrc.ngrraldfrontend.controllers.AgreementController.submit(mode: Mode = CheckMode)
+
+#Did you agree rent with landlord
+GET        /did-you-agree-rent-with-landlord            uk.gov.hmrc.ngrraldfrontend.controllers.DidYouAgreeRentWithLandlordController.show(mode: Mode = NormalMode)
+POST       /did-you-agree-rent-with-landlord            uk.gov.hmrc.ngrraldfrontend.controllers.DidYouAgreeRentWithLandlordController.submit(mode: Mode = NormalMode)
+GET        /did-you-agree-rent-with-landlord/change     uk.gov.hmrc.ngrraldfrontend.controllers.DidYouAgreeRentWithLandlordController.show(mode: Mode = CheckMode)
+POST       /did-you-agree-rent-with-landlord/change     uk.gov.hmrc.ngrraldfrontend.controllers.DidYouAgreeRentWithLandlordController.submit(mode: Mode = CheckMode)
+
+#Provide details of first second rent period
+GET        /provide-details-of-first-second-rent-period            uk.gov.hmrc.ngrraldfrontend.controllers.ProvideDetailsOfFirstSecondRentPeriodController.show(mode: Mode = NormalMode)
+POST       /provide-details-of-first-second-rent-period            uk.gov.hmrc.ngrraldfrontend.controllers.ProvideDetailsOfFirstSecondRentPeriodController.submit(mode: Mode = NormalMode)
+GET        /provide-details-of-first-second-rent-period/change     uk.gov.hmrc.ngrraldfrontend.controllers.ProvideDetailsOfFirstSecondRentPeriodController.show(mode: Mode = CheckMode)
+POST       /provide-details-of-first-second-rent-period/change     uk.gov.hmrc.ngrraldfrontend.controllers.ProvideDetailsOfFirstSecondRentPeriodController.submit(mode: Mode = CheckMode)
+
+#Rent Periods
+GET        /rent-periods                                    uk.gov.hmrc.ngrraldfrontend.controllers.RentPeriodsController.show(mode: Mode = NormalMode)
+POST       /rent-periods                                    uk.gov.hmrc.ngrraldfrontend.controllers.RentPeriodsController.submit(mode: Mode = NormalMode)
+GET        /rent-periods/change                             uk.gov.hmrc.ngrraldfrontend.controllers.RentPeriodsController.show(mode: Mode = CheckMode)
+POST       /rent-periods/change                             uk.gov.hmrc.ngrraldfrontend.controllers.RentPeriodsController.submit(mode: Mode = CheckMode)
+
+#Did the court sent an interim rent
+GET        /did-the-court-set-an-interim-rent           uk.gov.hmrc.ngrraldfrontend.controllers.RentInterimController.show(mode: Mode = NormalMode)
+POST       /did-the-court-set-an-interim-rent           uk.gov.hmrc.ngrraldfrontend.controllers.RentInterimController.submit(mode: Mode = NormalMode)
+GET        /did-the-court-set-an-interim-rent/change    uk.gov.hmrc.ngrraldfrontend.controllers.RentInterimController.show(mode: Mode = CheckMode)
+POST       /did-the-court-set-an-interim-rent/change    uk.gov.hmrc.ngrraldfrontend.controllers.RentInterimController.submit(mode: Mode = CheckMode)
+
+#Rent dates agree
+GET        /rent-dates-agree                            uk.gov.hmrc.ngrraldfrontend.controllers.RentDatesAgreeController.show(mode: Mode = NormalMode)
+POST       /rent-dates-agree                            uk.gov.hmrc.ngrraldfrontend.controllers.RentDatesAgreeController.submit(mode: Mode = NormalMode)
+GET        /rent-dates-agree/change                     uk.gov.hmrc.ngrraldfrontend.controllers.RentDatesAgreeController.show(mode: Mode = CheckMode)
+POST       /rent-dates-agree/change                     uk.gov.hmrc.ngrraldfrontend.controllers.RentDatesAgreeController.submit(mode: Mode = CheckMode)
+
+#Rent dates agree start
+GET        /rent-dates-agree-start                       uk.gov.hmrc.ngrraldfrontend.controllers.RentDatesAgreeStartController.show(mode: Mode = NormalMode)
+POST       /rent-dates-agree-start                       uk.gov.hmrc.ngrraldfrontend.controllers.RentDatesAgreeStartController.submit(mode: Mode = NormalMode)
+GET        /rent-dates-agree-start/change                uk.gov.hmrc.ngrraldfrontend.controllers.RentDatesAgreeStartController.show(mode: Mode = CheckMode)
+POST       /rent-dates-agree-start/change                uk.gov.hmrc.ngrraldfrontend.controllers.RentDatesAgreeStartController.submit(mode: Mode = CheckMode)
+
+#What your rent includes
+GET        /what-rent-includes                                     uk.gov.hmrc.ngrraldfrontend.controllers.WhatYourRentIncludesController.show(mode: Mode = NormalMode)
+POST       /what-rent-includes                                     uk.gov.hmrc.ngrraldfrontend.controllers.WhatYourRentIncludesController.submit(mode: Mode = NormalMode)
+GET        /what-rent-includes/change                              uk.gov.hmrc.ngrraldfrontend.controllers.WhatYourRentIncludesController.show(mode: Mode = CheckMode)
+POST       /what-rent-includes/change                              uk.gov.hmrc.ngrraldfrontend.controllers.WhatYourRentIncludesController.submit(mode: Mode = CheckMode)
+
+#Does your rent include parking spaces or garages
+GET        /does-rent-include-parking-spaces-or-garages            uk.gov.hmrc.ngrraldfrontend.controllers.DoesYourRentIncludeParkingController.show(mode: Mode = NormalMode)
+POST       /does-rent-include-parking-spaces-or-garages            uk.gov.hmrc.ngrraldfrontend.controllers.DoesYourRentIncludeParkingController.submit(mode: Mode = NormalMode)
+GET        /does-rent-include-parking-spaces-or-garages/change     uk.gov.hmrc.ngrraldfrontend.controllers.DoesYourRentIncludeParkingController.show(mode: Mode = CheckMode)
+POST       /does-rent-include-parking-spaces-or-garages/change     uk.gov.hmrc.ngrraldfrontend.controllers.DoesYourRentIncludeParkingController.submit(mode: Mode = CheckMode)
+
+
+#How many parking spaces or garages included in rent
+GET        /how-many-parking-spaces-or-garages-included-in-rent           uk.gov.hmrc.ngrraldfrontend.controllers.HowManyParkingSpacesOrGaragesIncludedInRentController.show(mode: Mode = NormalMode)
+POST       /how-many-parking-spaces-or-garages-included-in-rent           uk.gov.hmrc.ngrraldfrontend.controllers.HowManyParkingSpacesOrGaragesIncludedInRentController.submit(mode: Mode = NormalMode)
+GET        /how-many-parking-spaces-or-garages-included-in-rent/change    uk.gov.hmrc.ngrraldfrontend.controllers.HowManyParkingSpacesOrGaragesIncludedInRentController.show(mode: Mode = CheckMode)
+POST       /how-many-parking-spaces-or-garages-included-in-rent/change    uk.gov.hmrc.ngrraldfrontend.controllers.HowManyParkingSpacesOrGaragesIncludedInRentController.submit(mode: Mode = CheckMode)
+
+#Interim rent set by the court
+GET        /interim-rent-set-by-court                              uk.gov.hmrc.ngrraldfrontend.controllers.InterimRentSetByTheCourtController.show(mode: Mode = NormalMode)
+POST       /interim-rent-set-by-court                              uk.gov.hmrc.ngrraldfrontend.controllers.InterimRentSetByTheCourtController.submit(mode: Mode = NormalMode)
+GET        /interim-rent-set-by-court/change                       uk.gov.hmrc.ngrraldfrontend.controllers.InterimRentSetByTheCourtController.show(mode: Mode = CheckMode)
+POST       /interim-rent-set-by-court/change                       uk.gov.hmrc.ngrraldfrontend.controllers.InterimRentSetByTheCourtController.submit(mode: Mode = CheckMode)
+
+#Rent Free Period
+GET        /rent-free-period                                       uk.gov.hmrc.ngrraldfrontend.controllers.RentFreePeriodController.show(mode: Mode = NormalMode)
+POST       /rent-free-period                                       uk.gov.hmrc.ngrraldfrontend.controllers.RentFreePeriodController.submit(mode: Mode = NormalMode)
+GET        /rent-free-period/change                                uk.gov.hmrc.ngrraldfrontend.controllers.RentFreePeriodController.show(mode: Mode = CheckMode)
+POST       /rent-free-period/change                                uk.gov.hmrc.ngrraldfrontend.controllers.RentFreePeriodController.submit(mode: Mode = CheckMode)

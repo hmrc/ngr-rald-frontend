@@ -23,6 +23,7 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Label, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.Radios
 import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
+import uk.gov.hmrc.ngrraldfrontend.models.NormalMode
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatIsYourRentBasedOnForm
@@ -104,11 +105,11 @@ class WhatIsYourRentBasedOnViewSpec extends ViewBaseSpec {
   }
 
   "WhatIsYourRentBasedOnView" must {
-    val rentBasedOnView = view(form, radio, address)
+    val rentBasedOnView = view(form, radio, address, NormalMode)
     lazy implicit val document: Document = Jsoup.parse(rentBasedOnView.body)
-    val htmlApply = view.apply(form, radio, address).body
-    val htmlRender = view.render(form, radio, address, request, messages, mockConfig).body
-    lazy val htmlF = view.f(form, radio, address)
+    val htmlApply = view.apply(form, radio, address, NormalMode).body
+    val htmlRender = view.render(form, radio, address, NormalMode, request, messages, mockConfig).body
+    lazy val htmlF = view.f(form, radio, address, NormalMode)
 
     "htmlF is not empty" in {
       htmlF.toString() must not be empty

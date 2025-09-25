@@ -18,13 +18,14 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
+import uk.gov.hmrc.ngrraldfrontend.models.{Mode, RentFreePeriod, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentFreePeriodForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentFreePeriodForm.form
-import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
+import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
+import uk.gov.hmrc.ngrraldfrontend.pages.RentFreePeriodPage
+import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.utils.DateKeyFinder
 import uk.gov.hmrc.ngrraldfrontend.views.html.RentFreePeriodView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -35,37 +36,36 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class RentFreePeriodController @Inject()(view: RentFreePeriodView,
                                          authenticate: AuthRetrievals,
-                                         hasLinkedProperties: PropertyLinkingAction,
-                                         raldRepo: RaldRepo,
+                                         getData: DataRetrievalAction,
+                                         sessionRepository: SessionRepository,
+                                         navigator: Navigator,
                                          mcc: MessagesControllerComponents
                                              )(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with DateKeyFinder {
 
-  def show: Action[AnyContent] = {
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
-      request.propertyLinking.map(property =>
-        Future.successful(Ok(view(form, property.addressFull)))
-      ).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
+  def show(mode: Mode): Action[AnyContent] = {
+    (authenticate andThen getData).async { implicit request =>
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(RentFreePeriodPage) match {
+        case None => form
+        case Some(value) => form.fill(RentFreePeriodForm(value.months,value.reasons))
+      }
+      Future.successful(Ok(view(preparedForm, request.property.addressFull, mode)))
     }
   }
 
-  def submit: Action[AnyContent] = {
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors =>
-            request.propertyLinking.map(property =>
-                Future.successful(BadRequest(view(formWithErrors, property.addressFull))))
-              .getOrElse(throw new NotFoundException("Couldn't find property in mongo")),
-          rentFreePeriodForm =>
-            raldRepo.insertRentFreePeriod(
-              CredId(request.credId.getOrElse("")),
-              rentFreePeriodForm.rentFreePeriodMonths,
-              rentFreePeriodForm.reasons
-            )
-            Future.successful(Redirect(routes.RentDatesAgreeStartController.show.url))
-        )
+    def submit(mode: Mode): Action[AnyContent] = {
+      (authenticate andThen getData).async { implicit request =>
+        form
+          .bindFromRequest()
+          .fold(
+            formWithErrors =>
+              Future.successful(BadRequest(view(formWithErrors, request.property.addressFull, mode))),
+            rentFreePeriodForm =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(RentFreePeriodPage, RentFreePeriod(rentFreePeriodForm.rentFreePeriodMonths, rentFreePeriodForm.reasons)))
+                _ <- sessionRepository.set(updatedAnswers)
+              } yield Redirect(navigator.nextPage(RentFreePeriodPage, mode, updatedAnswers))
+          )
+      }
     }
   }
-}

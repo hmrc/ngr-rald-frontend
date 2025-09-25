@@ -18,15 +18,16 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
+import uk.gov.hmrc.ngrraldfrontend.models.{Mode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.DidYouAgreeRentWithLandlordForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.DidYouAgreeRentWithLandlordForm.form
-import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
+import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
+import uk.gov.hmrc.ngrraldfrontend.pages.DidYouAgreeRentWithLandlordPage
+import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.views.html.DidYouAgreeRentWithLandlordView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -36,45 +37,44 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class DidYouAgreeRentWithLandlordController @Inject()(didYouAgreeRentWithLandlordView: DidYouAgreeRentWithLandlordView,
                                                       authenticate: AuthRetrievals,
-                                                      hasLinkedProperties: PropertyLinkingAction,
-                                                      raldRepo: RaldRepo,
+                                                      getData: DataRetrievalAction,
+                                                      sessionRepository: SessionRepository,
+                                                      navigator: Navigator,
                                                       mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport {
 
 
-  def show: Action[AnyContent] = {
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
-      request.propertyLinking.map(property =>
+  def show(mode: Mode): Action[AnyContent] = {
+    (authenticate andThen getData).async { implicit request =>
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(DidYouAgreeRentWithLandlordPage) match {
+        case None => form
+        case Some(value) => form.fill(DidYouAgreeRentWithLandlordForm(value))
+      }
         Future.successful(Ok(didYouAgreeRentWithLandlordView(
-          selectedPropertyAddress = property.addressFull,
-          form = form,
-          ngrRadio = buildRadios(form, DidYouAgreeRentWithLandlordForm.ngrRadio(form)),
-        )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
+          selectedPropertyAddress = request.property.addressFull,
+          form = preparedForm,
+          ngrRadio = buildRadios(preparedForm, DidYouAgreeRentWithLandlordForm.ngrRadio(preparedForm)),
+          mode = mode
+        )))
     }
   }
 
-  def submit: Action[AnyContent] =
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
+  def submit(mode: Mode): Action[AnyContent] =
+    (authenticate andThen getData).async { implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
-          request.propertyLinking.map(property =>
             Future.successful(BadRequest(didYouAgreeRentWithLandlordView(
               form = formWithErrors,
               ngrRadio = buildRadios(formWithErrors, DidYouAgreeRentWithLandlordForm.ngrRadio(formWithErrors)),
-              selectedPropertyAddress = property.addressFull
-            )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
+              selectedPropertyAddress = request.property.addressFull,
+              mode = mode
+            )))
         },
         radioValue =>
-          raldRepo.insertDidYouAgreeRentWithLandlord(
-            credId = CredId(request.credId.getOrElse("")),
-            radioValue = radioValue.toString
-          )
-          if (radioValue.radioValue.toString == "YesTheLandlord") {
-            Future.successful(Redirect(routes.CheckRentFreePeriodController.show.url))
-          } else {
-            //TODO
-            Future.successful(Redirect(routes.CheckRentFreePeriodController.show.url))
-          }
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(DidYouAgreeRentWithLandlordPage, radioValue.radioValue))
+            _ <- sessionRepository.set(updatedAnswers)
+          } yield Redirect(navigator.nextPage(DidYouAgreeRentWithLandlordPage, mode, updatedAnswers))
 
       )
     }

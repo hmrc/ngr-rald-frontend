@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.ngrraldfrontend.controllers
 
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -25,8 +26,9 @@ import uk.gov.hmrc.auth.core.Nino
 import uk.gov.hmrc.http.{HeaderNames, NotFoundException}
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
-import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, RaldUserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, NormalMode, RaldUserAnswers, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
+import uk.gov.hmrc.ngrraldfrontend.pages.WhatYourRentIncludesPage
 import uk.gov.hmrc.ngrraldfrontend.views.html.WhatYourRentIncludesView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.NGRCharacterCountComponent
 
@@ -36,37 +38,70 @@ class WhatYourRentIncludesControllerSpec  extends ControllerSpecSupport {
   val pageTitle = "What your rent includes"
   val view:  WhatYourRentIncludesView = inject[ WhatYourRentIncludesView]
   val mockNGRCharacterCountComponent: NGRCharacterCountComponent = inject[NGRCharacterCountComponent]
-  val controller:WhatYourRentIncludesController = new WhatYourRentIncludesController(
+  val controllerNoProperty :WhatYourRentIncludesController = new WhatYourRentIncludesController(
     view,
-    mockAuthJourney,
+    fakeAuth,
     mockInputText,
-    mockPropertyLinkingAction,
-    mockRaldRepo,
+    fakeData(None),
+    mockSessionRepository,
+    mockNavigator,
     mcc)(mockConfig, ec)
+  val controllerProperty: Option[UserAnswers] => WhatYourRentIncludesController = answers => new WhatYourRentIncludesController(
+    view,
+    fakeAuth,
+    mockInputText,
+    fakeDataProperty(Some(property), answers),
+    mockSessionRepository,
+    mockNavigator,
+    mcc)(mockConfig, ec)
+  val whatYourRentIncludesAnswersAllYes: Option[UserAnswers] = UserAnswers("id").set(WhatYourRentIncludesPage, whatYourRentIncludesModelAllYes).toOption
+  val whatYourRentIncludesAnswersAllNo: Option[UserAnswers] = UserAnswers("id").set(WhatYourRentIncludesPage, whatYourRentIncludesModelAllNo).toOption
 
   "Tell us about what your rent includes controller" must {
     "method show" must {
       "Return OK and the correct view" in {
-        when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(Some(RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property))))
-        val result = controller.show()(authenticatedFakeRequest())
+        val result = controllerProperty(None).show(NormalMode)(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
         content must include(pageTitle)
       }
+      "Return OK and the correct view with prepopulated answers all Yes" in {
+        val result = controllerProperty(whatYourRentIncludesAnswersAllYes).show(NormalMode)(authenticatedFakeRequest)
+        status(result) mustBe OK
+        val content = contentAsString(result)
+        val document = Jsoup.parse(content)
+        document.select("input[type=radio][name=livingAccommodationRadio][value=livingAccommodationYes]").hasAttr("checked") mustBe true
+        document.select("input[type=radio][name=rentPartAddressRadio][value=rentPartAddressYes]").hasAttr("checked") mustBe true
+        document.select("input[type=radio][name=rentEmptyShellRadio][value=rentEmptyShellYes]").hasAttr("checked") mustBe true
+        document.select("input[type=radio][name=rentIncBusinessRatesRadio][value=rentIncBusinessRatesYes]").hasAttr("checked") mustBe true
+        document.select("input[type=radio][name=rentIncWaterChargesRadio][value=rentIncWaterChargesYes]").hasAttr("checked") mustBe true
+        document.select("input[type=radio][name=rentIncServiceRadio][value=rentIncServiceYes]").hasAttr("checked") mustBe true
+      }
+      "Return OK and the correct view with prepopulated answers all No" in {
+        val result = controllerProperty(whatYourRentIncludesAnswersAllNo).show(NormalMode)(authenticatedFakeRequest)
+        status(result) mustBe OK
+        val content = contentAsString(result)
+        val document = Jsoup.parse(content)
+        document.select("input[type=radio][name=livingAccommodationRadio][value=livingAccommodationNo]").hasAttr("checked") mustBe true
+        document.select("input[type=radio][name=rentPartAddressRadio][value=rentPartAddressNo]").hasAttr("checked") mustBe true
+        document.select("input[type=radio][name=rentEmptyShellRadio][value=rentEmptyShellNo]").hasAttr("checked") mustBe true
+        document.select("input[type=radio][name=rentIncBusinessRatesRadio][value=rentIncBusinessRatesNo]").hasAttr("checked") mustBe true
+        document.select("input[type=radio][name=rentIncWaterChargesRadio][value=rentIncWaterChargesNo]").hasAttr("checked") mustBe true
+        document.select("input[type=radio][name=rentIncServiceRadio][value=rentIncServiceNo]").hasAttr("checked") mustBe true
+      }
       "Return NotFoundException when property is not found in the mongo" in {
-        mockRequestWithoutProperty()
+        when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(None))
         val exception = intercept[NotFoundException] {
-          await(controller.show(authenticatedFakeRequest()))
+          await(controllerNoProperty.show(NormalMode)(authenticatedFakeRequest))
         }
-        exception.getMessage contains "Couldn't find property in mongo" mustBe true
+        exception.getMessage contains "Could not find answers in backend mongo" mustBe true
       }
     }
 
     "method submit" must {
       "Return OK and the correct view after submitting with all radio buttons selected" in {
-        when(mockRaldRepo.findByCredId(any())) thenReturn (Future.successful(Some(RaldUserAnswers(credId = CredId(null), NewAgreement, selectedProperty = property))))
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.WhatYourRentIncludesController.submit)
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.WhatYourRentIncludesController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "livingAccommodationRadio" -> "livingAccommodationYes",
             "rentPartAddressRadio" -> "No",
@@ -81,11 +116,28 @@ class WhatYourRentIncludesControllerSpec  extends ControllerSpecSupport {
           result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/does-rent-include-parking-spaces-or-garages")
         })
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.DoesYourRentIncludeParkingController.show.url)
+        redirectLocation(result) mustBe Some(routes.DoesYourRentIncludeParkingController.show(NormalMode).url)
+      }
+      "Return OK and the correct view after submitting with all radio buttons selected but no bedrooms" in {
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.WhatYourRentIncludesController.submit(NormalMode))
+          .withFormUrlEncodedBody(
+            "livingAccommodationRadio" -> "livingAccommodationNo",
+            "rentPartAddressRadio" -> "Yes",
+            "rentEmptyShellRadio" -> "No",
+            "rentIncBusinessRatesRadio" -> "Yes",
+            "rentIncWaterChargesRadio" -> "Yes",
+            "rentIncServiceRadio" -> "No"
+          )
+          .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
+        result.map(result => {
+          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/does-rent-include-parking-spaces-or-garages")
+        })
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.DoesYourRentIncludeParkingController.show(NormalMode).url)
       }
       "Return Form with Errors when no radio button is selected" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.WhatYourRentIncludesController.submit)
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.WhatYourRentIncludesController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "livingAccommodationRadio" -> "",
             "rentPartAddressRadio" -> "No",
@@ -104,8 +156,7 @@ class WhatYourRentIncludesControllerSpec  extends ControllerSpecSupport {
         content must include("<a href=\"#livingAccommodationRadio\">Select yes if your rent includes any living accommodation</a>")
       }
       "Return Form with Errors when bedroom numbers is not provide" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.WhatYourRentIncludesController.submit)
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.WhatYourRentIncludesController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "livingAccommodationRadio" -> "livingAccommodationYes",
             "rentPartAddressRadio" -> "No",
@@ -125,8 +176,7 @@ class WhatYourRentIncludesControllerSpec  extends ControllerSpecSupport {
         content must include("<a href=\"#bedroomNumbers\">Enter how many bedrooms the living accommodation has</a>")
       }
       "Return Form with Errors when bedroom numbers is not numeric" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.WhatYourRentIncludesController.submit)
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.WhatYourRentIncludesController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "livingAccommodationRadio" -> "livingAccommodationYes",
             "rentPartAddressRadio" -> "No",
@@ -146,8 +196,7 @@ class WhatYourRentIncludesControllerSpec  extends ControllerSpecSupport {
         content must include("<a href=\"#bedroomNumbers\">How many bedrooms must be a number, like 6</a>")
       }
       "Return Form with Errors when bedroom numbers is less than 1" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.WhatYourRentIncludesController.submit)
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.WhatYourRentIncludesController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "livingAccommodationRadio" -> "livingAccommodationYes",
             "rentPartAddressRadio" -> "No",
@@ -167,8 +216,7 @@ class WhatYourRentIncludesControllerSpec  extends ControllerSpecSupport {
         content must include("<a href=\"#bedroomNumbers\">How many bedrooms must be 1 or more</a>")
       }
       "Return Form with Errors when bedroom numbers is greater than 99" in {
-        mockRequest(hasCredId = true)
-        val result = controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.WhatYourRentIncludesController.submit)
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.WhatYourRentIncludesController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "livingAccommodationRadio" -> "livingAccommodationYes",
             "rentPartAddressRadio" -> "No",
@@ -188,13 +236,13 @@ class WhatYourRentIncludesControllerSpec  extends ControllerSpecSupport {
         content must include("<a href=\"#bedroomNumbers\">How many bedrooms must be 99 or less</a>")
       }
       "Return Exception if no address is in the mongo" in {
-        mockRequestWithoutProperty()
+        
         val exception = intercept[NotFoundException] {
-          await(controller.submit()(AuthenticatedUserRequest(FakeRequest(routes.WhatYourRentIncludesController.submit)
+          await(controllerNoProperty.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.WhatYourRentIncludesController.submit(NormalMode))
             .withFormUrlEncodedBody(("what-type-of-agreement-radio", ""))
             .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some("")))))
         }
-        exception.getMessage contains "Couldn't find property in mongo" mustBe true
+        exception.getMessage contains "Could not find answers in backend mongo" mustBe true
       }
     }
   }

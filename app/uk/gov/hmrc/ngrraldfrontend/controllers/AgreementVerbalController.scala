@@ -24,14 +24,16 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.dateinput.DateInput
 import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.Fieldset
 import uk.gov.hmrc.govukfrontend.views.viewmodels.hint.Hint
 import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
+import uk.gov.hmrc.ngrraldfrontend.models.{Mode, AgreementVerbal, NGRDate, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreementVerbalForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreementVerbalForm.form
-import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
+import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
+import uk.gov.hmrc.ngrraldfrontend.pages.AgreementVerbalPage
+import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.views.html.AgreementVerbalView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.DateTextFields
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -42,10 +44,11 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class AgreementVerbalController @Inject()(view: AgreementVerbalView,
                                           authenticate: AuthRetrievals,
-                                          hasLinkedProperties: PropertyLinkingAction,
-                                          raldRepo: RaldRepo,
                                           dateTextFields: DateTextFields,
-                                          mcc: MessagesControllerComponents
+                                          mcc: MessagesControllerComponents,
+                                          getData: DataRetrievalAction,
+                                          sessionRepository: SessionRepository,
+                                          navigator: Navigator
                                          )(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
   val yesButton: NGRRadioButtons = NGRRadioButtons("agreementVerbal.yes", Yes)
@@ -63,16 +66,25 @@ class AgreementVerbalController @Inject()(view: AgreementVerbalView,
       Some(Legend(content = Text(messages("agreementVerbal.radio.title")), classes = "govuk-fieldset__legend--m", isPageHeading = true)),
       Some("agreementVerbal.radio.hint"))
 
-  def show: Action[AnyContent] = {
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
-      request.propertyLinking.map(property =>
-        Future.successful(Ok(view(form, buildRadios(form, ngrRadio(form)), property.addressFull)))
-      ).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
+  def show(mode: Mode): Action[AnyContent] = {
+    (authenticate andThen getData).async { implicit request =>
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(AgreementVerbalPage) match {
+        case None => form
+        case Some(value) => form.fill(AgreementVerbalForm(if (value.openEnded) {
+          "Yes"
+        } else {
+          "No"
+        },NGRDate.fromString(value.startDate), value.endDate match {
+          case Some(value) => Some(NGRDate.fromString(value))
+          case None => None
+        }))
+      }
+        Future.successful(Ok(view(preparedForm, buildRadios(preparedForm, ngrRadio(preparedForm)), request.property.addressFull, mode)))
     }
   }
 
-  def submit: Action[AnyContent] = {
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
+  def submit(mode: Mode): Action[AnyContent] = {
+    (authenticate andThen getData).async { implicit request =>
       form
         .bindFromRequest()
         .fold(
@@ -97,20 +109,19 @@ class AgreementVerbalController @Inject()(view: AgreementVerbalView,
                   formError
             }
             val formWithCorrectedErrors = formWithErrors.copy(errors = correctedFormErrors)
-
-            request.propertyLinking.map(property =>
                 Future.successful(BadRequest(view(formWithCorrectedErrors,
-                  buildRadios(formWithErrors, ngrRadio(formWithCorrectedErrors)), property.addressFull))))
-              .getOrElse(throw new NotFoundException("Couldn't find property in mongo")),
+                  buildRadios(formWithErrors, ngrRadio(formWithCorrectedErrors)), request.property.addressFull, mode))),
           agreementVerbalForm =>
             val openEnded: Boolean = agreementVerbalForm.radioValue.equals("Yes")
-            raldRepo.insertAgreementVerbal(
-              CredId(request.credId.getOrElse("")),
+            val answers: AgreementVerbal = AgreementVerbal(
               agreementVerbalForm.agreementStartDate.makeString,
               openEnded,
-              if (openEnded) None else agreementVerbalForm.agreementEndDate.map(_.makeString)
-            )
-            Future.successful(Redirect(routes.HowMuchIsTotalAnnualRentController.show.url))
+              if (openEnded) None else agreementVerbalForm.agreementEndDate.map(_.makeString))
+
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(AgreementVerbalPage, answers))
+              _ <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(AgreementVerbalPage, mode, updatedAnswers))
         )
     }
   }

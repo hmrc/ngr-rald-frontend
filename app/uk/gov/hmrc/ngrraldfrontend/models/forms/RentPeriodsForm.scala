@@ -57,8 +57,8 @@ object RentPeriodsForm extends Mappings {
     )
   }
 
-  private val yes: NGRRadioButtons = NGRRadioButtons(radioContent = "rentPeriods.yes", radioValue = No)
-  private val no: NGRRadioButtons = NGRRadioButtons(radioContent = "rentPeriods.no", radioValue = Yes)
+  private val yes: NGRRadioButtons = NGRRadioButtons(radioContent = "rentPeriods.yes", radioValue = Yes)
+  private val no: NGRRadioButtons = NGRRadioButtons(radioContent = "rentPeriods.no", radioValue = No)
 
   def ngrRadio(form: Form[RentPeriodsForm])(implicit messages: Messages): NGRRadio =
     NGRRadio(ngrTitle = Some(Legend(content = Text(messages("rentPeriods.radio.heading")), classes = "govuk-fieldset__legend--m", isPageHeading = true)), radioGroupName =  NGRRadioName("rent-periods-radio"), NGRRadioButtons = Seq(yes, no))

@@ -28,11 +28,11 @@
  formHelper: FormWithCSRF
 )
 
-@(selectedPropertyAddress: String, form: Form[WhatTypeOfAgreementForm], ngrRadio: Radios)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+@(selectedPropertyAddress: String, form: Form[WhatTypeOfAgreementForm], ngrRadio: Radios, mode: Mode)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
 @layout(pageTitle = Some(messages("tellUsAboutYourNewAgreement.title")), showBackLink = true, fullWidth = true) {
 
- @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatTypeOfAgreementController.submit, Symbol("autoComplete") -> "off") {
+ @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatTypeOfAgreementController.submit(mode), Symbol("autoComplete") -> "off") {
     @if(form.errors.nonEmpty) {
       @govukErrorSummary(ErrorSummaryViewModel(form))
     }

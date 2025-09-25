@@ -20,7 +20,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.Form
 import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
-import uk.gov.hmrc.ngrraldfrontend.models.NGRDate
+import uk.gov.hmrc.ngrraldfrontend.models.{NGRDate, NormalMode}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentDatesAgreeStartForm
 import uk.gov.hmrc.ngrraldfrontend.views.html.RentDatesAgreeStartView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.DateTextFields
@@ -61,11 +61,11 @@ class RentDatesAgreeStartViewSpec extends ViewBaseSpec {
   }
 
   "RentDatesAgreeStartView" must {
-    val rentDatesAgreeStartView = view(form, address)
+    val rentDatesAgreeStartView = view(form, address, NormalMode)
     lazy implicit val document: Document = Jsoup.parse(rentDatesAgreeStartView.body)
-    val htmlApply = view.apply(form, address).body
-    val htmlRender = view.render(form, address, request, messages, mockConfig).body
-    lazy val htmlF = view.f(form, address)
+    val htmlApply = view.apply(form, address, NormalMode).body
+    val htmlRender = view.render(form, address, NormalMode, request, messages, mockConfig).body
+    lazy val htmlF = view.f(form, address, NormalMode)
 
     "htmlF is not empty" in {
       htmlF.toString() must not be empty
