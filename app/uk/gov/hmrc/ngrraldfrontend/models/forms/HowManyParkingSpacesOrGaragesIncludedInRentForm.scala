@@ -25,9 +25,9 @@ import uk.gov.hmrc.ngrraldfrontend.models.forms.RentFreePeriodForm.isLargerThanI
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 
 final case class HowManyParkingSpacesOrGaragesIncludedInRentForm(
-                                                                  uncoveredSpaces: Int,
-                                                                  coveredSpaces: Int,
-                                                                  garages: Int,
+                                                                  uncoveredSpaces: Option[Int],
+                                                                  coveredSpaces: Option[Int],
+                                                                  garages: Option[Int],
                                                                 )
 
 object HowManyParkingSpacesOrGaragesIncludedInRentForm extends CommonFormValidators with Mappings {
@@ -43,7 +43,7 @@ object HowManyParkingSpacesOrGaragesIncludedInRentForm extends CommonFormValidat
   private lazy val allFieldsRequiredError  = "howManyParkingSpacesOrGaragesIncludedInRent.allFields.error.required"
   private val maxValue = 9999
 
-  def unapply(howManyParkingSpacesOrGaragesIncludedInRentForm: HowManyParkingSpacesOrGaragesIncludedInRentForm): Option[(Int, Int, Int)] =
+  def unapply(howManyParkingSpacesOrGaragesIncludedInRentForm: HowManyParkingSpacesOrGaragesIncludedInRentForm): Option[(Option[Int], Option[Int], Option[Int])] =
     Some(
       howManyParkingSpacesOrGaragesIncludedInRentForm.uncoveredSpaces,
       howManyParkingSpacesOrGaragesIncludedInRentForm.coveredSpaces,
@@ -54,8 +54,8 @@ object HowManyParkingSpacesOrGaragesIncludedInRentForm extends CommonFormValidat
   Constraint[A] =
     Constraint((input: A) => {
       val formData = input.asInstanceOf[HowManyParkingSpacesOrGaragesIncludedInRentForm]
-      (formData.uncoveredSpaces, formData.coveredSpaces, formData.garages) match {
-        case (-1,-1,-1) => Invalid(allFieldsRequiredError)
+      (formData.uncoveredSpaces.getOrElse(0), formData.coveredSpaces.getOrElse(0), formData.garages.getOrElse(0)) match {
+        case (0,0,0) => Invalid(allFieldsRequiredError)
         case (uncoveredSpaces, coveredSpaces, garages) if uncoveredSpaces + coveredSpaces + garages <= 0  =>  Invalid(fieldRequired)
         case (_,_,_)=> Valid
       }
@@ -73,7 +73,7 @@ object HowManyParkingSpacesOrGaragesIncludedInRentForm extends CommonFormValidat
                 isLargerThanInt(maxValue, uncoveredSpacesTooHighError)
               )
             )
-        ).transform[Int](_.map(_.toInt).getOrElse(-1), value => Some(value.toString)),
+        ).transform[Option[Int]](_.map(_.toInt), value => Some(value.toString)),
         "coveredSpaces" -> optional(
           text()
             .transform[String](_.strip().replaceAll(",", ""), identity)
@@ -83,7 +83,7 @@ object HowManyParkingSpacesOrGaragesIncludedInRentForm extends CommonFormValidat
                 isLargerThanInt(maxValue, coveredSpacesTooHighError)
               )
             )
-        ).transform[Int](_.map(_.toInt).getOrElse(-1), value => Some(value.toString)),
+        ).transform[Option[Int]](_.map(_.toInt), value => Some(value.toString)),
         "garages" -> optional(
           text()
             .transform[String](_.strip().replaceAll(",", ""), identity)
@@ -93,7 +93,7 @@ object HowManyParkingSpacesOrGaragesIncludedInRentForm extends CommonFormValidat
                 isLargerThanInt(maxValue, garagesTooHighError)
               )
             )
-        ).transform[Int](_.map(_.toInt).getOrElse(-1), value => Some(value.toString)),
+        ).transform[Option[Int]](_.map(_.toInt), value => Some(value.toString)),
       )
       (HowManyParkingSpacesOrGaragesIncludedInRentForm.apply)(HowManyParkingSpacesOrGaragesIncludedInRentForm.unapply)
         .verifying(

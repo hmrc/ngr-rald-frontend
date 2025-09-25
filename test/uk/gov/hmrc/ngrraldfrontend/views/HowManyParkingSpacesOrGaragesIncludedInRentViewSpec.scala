@@ -50,7 +50,7 @@ class HowManyParkingSpacesOrGaragesIncludedInRentViewSpec extends ViewBaseSpec {
 
   val address = "5 Brixham Marina, Berry Head Road, Brixham, Devon, TQ5 9BW"
 
-  val form = HowManyParkingSpacesOrGaragesIncludedInRentForm.form.fillAndValidate(HowManyParkingSpacesOrGaragesIncludedInRentForm(10000,0,0))
+  val form = HowManyParkingSpacesOrGaragesIncludedInRentForm.form.fillAndValidate(HowManyParkingSpacesOrGaragesIncludedInRentForm(Some(10000), Some(0), Some(0)))
   val mockInputText: InputText = inject[InputText]
   def generateInputText(form: Form[HowManyParkingSpacesOrGaragesIncludedInRentForm], inputFieldName: String)(implicit messages: Messages): HtmlFormat.Appendable = {
     mockInputText(
