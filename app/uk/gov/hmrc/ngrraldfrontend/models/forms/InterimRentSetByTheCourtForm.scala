@@ -61,7 +61,7 @@ object InterimRentSetByTheCourtForm extends CommonFormValidators with MonthYearM
         .verifying(
           firstError(
             isMonthYearEmpty(errorKeys("interimRentSetByTheCourt")),
-            isMonthYearValid,
+            isMonthYearValid(monthError = "interimRentSetByTheCourt.month.format.error", yearError = "interimRentSetByTheCourt.year.format.error"),
             isMonthYearAfter1900("interimRentSetByTheCourt.startDate.before.1900.error")
           )
         ),
