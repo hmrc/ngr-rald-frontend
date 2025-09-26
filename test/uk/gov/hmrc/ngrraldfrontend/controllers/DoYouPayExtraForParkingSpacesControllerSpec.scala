@@ -36,7 +36,7 @@ class DoYouPayExtraForParkingSpacesControllerSpec extends ControllerSpecSupport{
   val view: DoYouPayExtraForParkingSpacesView = inject[DoYouPayExtraForParkingSpacesView]
   val controllerNoProperty : DoYouPayExtraForParkingSpacesController = new DoYouPayExtraForParkingSpacesController(view,fakeAuth, fakeData(None), mockNavigator, mockSessionRepository, mcc)(mockConfig)
   val controllerProperty : Option[UserAnswers] => DoYouPayExtraForParkingSpacesController = answers => new DoYouPayExtraForParkingSpacesController(view,fakeAuth, fakeDataProperty(Some(property), answers), mockNavigator, mockSessionRepository, mcc)(mockConfig)
-  val doYouPayExtraForParkingSpacesAnswers: Option[UserAnswers] = UserAnswers("id").set(DoYouPayExtraForParkingSpacesPage, "Yes").toOption
+  val doYouPayExtraForParkingSpacesAnswers: Option[UserAnswers] = UserAnswers("id").set(DoYouPayExtraForParkingSpacesPage, true).toOption
 
   "DoYouPayExtraForParkingSpacesController" when {
     "calling show method" should {

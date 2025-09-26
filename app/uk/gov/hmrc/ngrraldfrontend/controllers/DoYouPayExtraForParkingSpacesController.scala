@@ -47,7 +47,7 @@ class DoYouPayExtraForParkingSpacesController @Inject()(doYouPayExtraForParkingS
     (authenticate andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(DoYouPayExtraForParkingSpacesPage) match {
         case None => form
-        case Some(value) => form.fill(DoYouPayExtraForParkingSpacesForm(value))
+        case Some(value) => form.fill(DoYouPayExtraForParkingSpacesForm(if (value) "Yes" else "No"))
       }
         Future.successful(Ok(doYouPayExtraForParkingSpacesView(
           form = preparedForm,
@@ -72,7 +72,12 @@ class DoYouPayExtraForParkingSpacesController @Inject()(doYouPayExtraForParkingS
         radioValue =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
-              .set(DoYouPayExtraForParkingSpacesPage, radioValue.radioValue))
+              .set(DoYouPayExtraForParkingSpacesPage,
+                radioValue.radioValue match
+                  case "Yes" => true
+                  case _ => false
+              )
+            )
             _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(DoYouPayExtraForParkingSpacesPage, mode, updatedAnswers))
       )
