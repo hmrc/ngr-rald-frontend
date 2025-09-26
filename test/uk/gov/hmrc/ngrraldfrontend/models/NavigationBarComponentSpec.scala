@@ -20,10 +20,11 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.matchers.should.Matchers.shouldBe
 import play.api.mvc.Call
 import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
+import uk.gov.hmrc.ngrraldfrontend.mocks.MockAppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.components.{NavBarContents, NavBarCurrentPage, NavBarPageContents, NavButton}
 
 class NavigationBarComponentSpec extends ViewBaseSpec {
-
+  
   "NavButton" should {
     "store all fields correctly" in {
       val call = Call("GET", "/test")

@@ -48,6 +48,25 @@ final case class UserAnswers(
     }
   }
 
+  def remove[A](page: Settable[A])(implicit writes: Writes[A]): Try[UserAnswers] = {
+    val updatedData = data.keys.contains(page.toString) match {
+      case true =>
+        data.removeObject(page.path) match {
+          case JsSuccess(jsValue, _) =>
+            Success(jsValue)
+          case JsError(errors) =>
+            Failure(JsResultException(errors))
+        }
+      case false => Success(data)
+    }
+
+    updatedData.flatMap {
+      d =>
+        val updatedAnswers = copy(data = d)
+        page.cleanup(None, updatedAnswers)
+    }
+  }
+
   def getCurrentJourneyUserAnswers[A](page: Gettable[A], userAnswers: UserAnswers, credId: String)(implicit rds: Reads[A]): UserAnswers =
     userAnswers.get(page) match
       case Some(_) => userAnswers
