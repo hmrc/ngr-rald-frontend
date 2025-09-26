@@ -16,14 +16,18 @@
 
 package uk.gov.hmrc.ngrraldfrontend.models
 
-import play.api.libs.json.{Json, OFormat}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
+import uk.gov.hmrc.ngrraldfrontend.pages.Page
 
-case class HowManyParkingSpacesOrGarages(
-                                          uncoveredSpaces: Int,
-                                          coveredSpaces: Int,
-                                          garages: Int,
-                                        )
+class TestPage extends Page {
+  override def toString: String = "TestPage"
+}
 
-object HowManyParkingSpacesOrGarages {
-  implicit val format: OFormat[HowManyParkingSpacesOrGarages] = Json.format[HowManyParkingSpacesOrGarages]
+class PageSpec extends AnyFlatSpec with Matchers {
+  "Page.toString" should "implicitly convert Page to String using toString" in {
+    val page: Page = new TestPage
+    val str: String = page // implicit conversion
+    str shouldEqual "TestPage"
+  }
 }

@@ -149,4 +149,6 @@ trait TestData {
  val whatYourRentIncludesModelAllNo: WhatYourRentIncludes = WhatYourRentIncludes(false,false,false,false,false,false,None)
  
  val rentBasedOnModel: RentBasedOn = RentBasedOn("Other",Some("The rent was agreed"))
+
+ val repairsAndInsuranceModel  = RepairsAndInsurance("internalRepairs", "externalRepairs", "buildingInsurance")
 }

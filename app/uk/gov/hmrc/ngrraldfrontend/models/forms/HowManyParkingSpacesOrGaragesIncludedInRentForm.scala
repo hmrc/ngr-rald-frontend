@@ -55,8 +55,7 @@ object HowManyParkingSpacesOrGaragesIncludedInRentForm extends CommonFormValidat
     Constraint((input: A) => {
       val formData = input.asInstanceOf[HowManyParkingSpacesOrGaragesIncludedInRentForm]
       (formData.uncoveredSpaces, formData.coveredSpaces, formData.garages) match {
-        case (-1,-1,-1) => Invalid(allFieldsRequiredError)
-        case (0, 0, 0) =>  Invalid(fieldRequired)
+        case (uncoveredSpaces, coveredSpaces, garages) if uncoveredSpaces + coveredSpaces + garages <= 0  =>  Invalid(fieldRequired)
         case (_,_,_)=> Valid
       }
     })
@@ -73,7 +72,7 @@ object HowManyParkingSpacesOrGaragesIncludedInRentForm extends CommonFormValidat
                 isLargerThanInt(maxValue, uncoveredSpacesTooHighError)
               )
             )
-        ).transform[Int](_.map(_.toInt).getOrElse(-1), value => Some(value.toString)),
+        ).transform[Int](_.map(_.toInt).getOrElse(0), value => Some(value.toString)),
         "coveredSpaces" -> optional(
           text()
             .transform[String](_.strip().replaceAll(",", ""), identity)
@@ -83,7 +82,7 @@ object HowManyParkingSpacesOrGaragesIncludedInRentForm extends CommonFormValidat
                 isLargerThanInt(maxValue, coveredSpacesTooHighError)
               )
             )
-        ).transform[Int](_.map(_.toInt).getOrElse(-1), value => Some(value.toString)),
+        ).transform[Int](_.map(_.toInt).getOrElse(0), value => Some(value.toString)),
         "garages" -> optional(
           text()
             .transform[String](_.strip().replaceAll(",", ""), identity)
@@ -93,7 +92,7 @@ object HowManyParkingSpacesOrGaragesIncludedInRentForm extends CommonFormValidat
                 isLargerThanInt(maxValue, garagesTooHighError)
               )
             )
-        ).transform[Int](_.map(_.toInt).getOrElse(-1), value => Some(value.toString)),
+        ).transform[Int](_.map(_.toInt).getOrElse(0), value => Some(value.toString)),
       )
       (HowManyParkingSpacesOrGaragesIncludedInRentForm.apply)(HowManyParkingSpacesOrGaragesIncludedInRentForm.unapply)
         .verifying(

@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,14 +12,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.input.Input
+package uk.gov.hmrc.ngrraldfrontend.models
 
-@this(govukInput : GovukInput)
+import play.api.libs.json.{Json, OFormat}
 
-@(input: Input)
+case class RepairsAndInsurance(
+                               internalRepairs: String,
+                               externalRepairs: String,
+                               buildingInsurance: String
+                              )
 
-
-@govukInput(input)
+object RepairsAndInsurance {
+  implicit val format: OFormat[RepairsAndInsurance] = Json.format[RepairsAndInsurance]
+}

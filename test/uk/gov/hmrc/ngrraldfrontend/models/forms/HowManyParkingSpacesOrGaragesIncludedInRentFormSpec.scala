@@ -39,14 +39,37 @@ class HowManyParkingSpacesOrGaragesIncludedInRentFormSpec extends AnyWordSpec wi
       boundForm.value shouldBe Some(HowManyParkingSpacesOrGaragesIncludedInRentForm(uncoveredSpaces = 100, coveredSpaces = 100, garages = 100))
     }
 
-    "bind empty input" in {
+    "bind with 2 empty inputs" in {
       val data = Map(
         "uncoveredSpaces" -> "",
-        "coveredSpaces" -> "100",
-        "garages" -> "100"
+        "coveredSpaces" -> "1",
+        "garages" -> ""
       )
       val boundForm = HowManyParkingSpacesOrGaragesIncludedInRentForm.form.bind(data)
       boundForm.hasErrors shouldBe false
+      boundForm.errors shouldBe List()
+    }
+
+    "bind with 1 empty input" in {
+      val data = Map(
+        "uncoveredSpaces" -> "1",
+        "coveredSpaces" -> "1",
+        "garages" -> ""
+      )
+      val boundForm = HowManyParkingSpacesOrGaragesIncludedInRentForm.form.bind(data)
+      boundForm.hasErrors shouldBe false
+      boundForm.errors shouldBe List()
+    }
+
+    "fail to bind with 3 empty input" in {
+      val data = Map(
+        "uncoveredSpaces" -> "",
+        "coveredSpaces" -> "",
+        "garages" -> ""
+      )
+      val boundForm = HowManyParkingSpacesOrGaragesIncludedInRentForm.form.bind(data)
+      boundForm.hasErrors shouldBe true
+      boundForm.errors shouldBe List(FormError("", "howManyParkingSpacesOrGaragesIncludedInRent.error.required"))
     }
 
     "bind field with commas input" in {
@@ -115,7 +138,7 @@ class HowManyParkingSpacesOrGaragesIncludedInRentFormSpec extends AnyWordSpec wi
       val boundForm = HowManyParkingSpacesOrGaragesIncludedInRentForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors shouldBe List(FormError("", "howManyParkingSpacesOrGaragesIncludedInRent.allFields.error.required"))
+      boundForm.errors shouldBe List(FormError("", "howManyParkingSpacesOrGaragesIncludedInRent.error.required"))
     }
 
     "fail to bind when input fields are all 0" in {
@@ -163,7 +186,7 @@ class HowManyParkingSpacesOrGaragesIncludedInRentFormSpec extends AnyWordSpec wi
     val result = json.validate[HowManyParkingSpacesOrGaragesIncludedInRentForm]
 
     result.isSuccess shouldBe true
-    result.get shouldBe HowManyParkingSpacesOrGaragesIncludedInRentForm(10,10,10)
+    result.get shouldBe HowManyParkingSpacesOrGaragesIncludedInRentForm(10, 10, 10)
   }
 
   "fail deserialization if value is missing" in {
