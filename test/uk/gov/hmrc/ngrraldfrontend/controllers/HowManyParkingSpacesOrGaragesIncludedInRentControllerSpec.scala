@@ -52,7 +52,7 @@ class HowManyParkingSpacesOrGaragesIncludedInRentControllerSpec extends Controll
     navigator = mockNavigator,
     mcc = mcc)(mockConfig)
 
-  val howManyParkingGaragesAnswers: Option[UserAnswers] = UserAnswers("id").set(HowManyParkingSpacesOrGaragesIncludedInRentPage, HowManyParkingSpacesOrGarages("1","2","3")).toOption
+  val howManyParkingGaragesAnswers: Option[UserAnswers] = UserAnswers("id").set(HowManyParkingSpacesOrGaragesIncludedInRentPage, HowManyParkingSpacesOrGarages(1,2,3)).toOption
 
   "HowManyParkingSpacesOrGaragesIncludedInRentController" must {
     "method show" must {
@@ -67,9 +67,9 @@ class HowManyParkingSpacesOrGaragesIncludedInRentControllerSpec extends Controll
         status(result) mustBe OK
         val content = contentAsString(result)
         val document = Jsoup.parse(content)
-        document.select("input[name=uncoveredSpaces]").attr("value") mustBe "1"
-        document.select("input[name=coveredSpaces]").attr("value") mustBe "2"
-        document.select("input[name=garages]").attr("value") mustBe "3"
+        document.select("input[name=uncoveredSpaces]").attr("value") mustEqual  "1"
+        document.select("input[name=coveredSpaces]").attr("value") mustEqual "2"
+        document.select("input[name=garages]").attr("value")  mustEqual "3"
       }
       "Return NotFoundException when property is not found in the mongo" in {
         when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(None))

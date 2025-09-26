@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,14 +12,22 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.input.Input
+package uk.gov.hmrc.ngrraldfrontend.models
 
-@this(govukInput : GovukInput)
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
+import uk.gov.hmrc.ngrraldfrontend.pages.Page
 
-@(input: Input)
+class TestPage extends Page {
+  override def toString: String = "TestPage"
+}
 
-
-@govukInput(input)
+class PageSpec extends AnyFlatSpec with Matchers {
+  "Page.toString" should "implicitly convert Page to String using toString" in {
+    val page: Page = new TestPage
+    val str: String = page // implicit conversion
+    str shouldEqual "TestPage"
+  }
+}
