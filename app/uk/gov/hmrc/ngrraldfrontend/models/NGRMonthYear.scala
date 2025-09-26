@@ -41,8 +41,8 @@ object NGRMonthYear {
   }
 
   def fromString(dateString: String): NGRMonthYear = {
-    val parts = dateString.split("-").map(_.toInt)
-    NGRMonthYear(parts(1).toString, parts(0).toString)
+    val parts = dateString.split("-")
+    NGRMonthYear(parts(1), parts(0))
   }
 
 

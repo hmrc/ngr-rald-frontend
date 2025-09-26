@@ -24,7 +24,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{Table, TableRow}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-import uk.gov.hmrc.ngrraldfrontend.models.{Mode, ProvideDetailsOfFirstSecondRentPeriod}
+import uk.gov.hmrc.ngrraldfrontend.models.{Mode, NGRDate, ProvideDetailsOfFirstSecondRentPeriod}
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentPeriodsForm
@@ -58,7 +58,7 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
             content = Text(messages("rentPeriods.first.startDate"))
           ),
           TableRow(
-            content = Text(rentPeriods.firstDateStart),
+            content = Text(NGRDate.formatDate(rentPeriods.firstDateStart)),
             attributes = Map(
               "id" -> "first-period-start-date-id"
             )
@@ -69,7 +69,7 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
             content = Text(messages("rentPeriods.first.endDate"))
           ),
           TableRow(
-            content = Text(rentPeriods.firstDateEnd),
+            content = Text(NGRDate.formatDate(rentPeriods.firstDateEnd)),
             attributes = Map(
               "id" -> "first-period-end-date-id"
             )
@@ -119,7 +119,7 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
           content = Text(messages("rentPeriods.second.startDate"))
         ),
         TableRow(
-          content = Text(rentPeriods.secondDateStart),
+          content = Text(NGRDate.formatDate(rentPeriods.secondDateStart)),
           attributes = Map(
             "id" -> "second-period-start-date-id"
           )
@@ -130,7 +130,7 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
           content = Text(messages("rentPeriods.second.endDate"))
         ),
         TableRow(
-          content = Text(rentPeriods.secondDateEnd),
+          content = Text(NGRDate.formatDate(rentPeriods.secondDateEnd)),
           attributes = Map(
             "id" -> "second-period-end-date-id"
           )
@@ -141,7 +141,7 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
           content = Text(messages("rentPeriods.second.rentValue"))
         ),
         TableRow(
-          content = Text(rentPeriods.secondHowMuchIsRent),
+          content = Text(formatRentValue(rentPeriods.secondHowMuchIsRent.toDouble)),
           attributes = Map(
             "id" -> "second-period-rent-value-id"
           )
