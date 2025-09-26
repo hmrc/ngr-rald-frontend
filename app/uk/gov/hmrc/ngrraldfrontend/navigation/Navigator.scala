@@ -131,17 +131,26 @@ class Navigator @Inject()() {
       answers.get(DoesYourRentIncludeParkingPage) match {
         case Some(value) => value match {
           case "Yes" => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowManyParkingSpacesOrGaragesIncludedInRentController.show(NormalMode)
-          case _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(NormalMode)
+          case _     => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DoYouPayExtraForParkingSpacesController.show(NormalMode)
         }
         case None => throw new NotFoundException("Failed to find answers")
       }
-    case HowManyParkingSpacesOrGaragesIncludedInRentPage => _ =>  uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(NormalMode)
+    case HowManyParkingSpacesOrGaragesIncludedInRentPage => _ =>  uk.gov.hmrc.ngrraldfrontend.controllers.routes.DoYouPayExtraForParkingSpacesController.show(NormalMode)
     case InterimSetByTheCourtPage => answers =>
       answers.get(ProvideDetailsOfFirstSecondRentPeriodPage) match {
         case Some(_) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeController.show(NormalMode)
-        case None => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(NormalMode)
+        case None    => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(NormalMode)
       }
     case RentFreePeriodPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeStartController.show(NormalMode)
+    //TODO need to connect to next pages when they are done
+    case DoYouPayExtraForParkingSpacesPage => answers =>
+      answers.get(DoYouPayExtraForParkingSpacesPage) match {
+        case Some(value) => value match {
+          case "Yes" => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DoYouPayExtraForParkingSpacesController.show(NormalMode)
+          case _     => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DoYouPayExtraForParkingSpacesController.show(NormalMode)
+        }
+        case None => throw new NotFoundException("Failed to find answers")
+      }
   }
 
   //TODO change to check your answers page
