@@ -345,7 +345,6 @@ howManyParkingSpacesOrGaragesIncludedInRent.coveredSpaces.label = Covered spaces
 howManyParkingSpacesOrGaragesIncludedInRent.garages.label = Garages
 
 howManyParkingSpacesOrGaragesIncludedInRent.error.required = Total number of uncovered spaces, covered spaces and garages included in your rent must be more than 0
-howManyParkingSpacesOrGaragesIncludedInRent.allFields.error.required = Enter how many parking spaces or garages are included in your rent
 howManyParkingSpacesOrGaragesIncludedInRent.uncoveredSpaces.wholeNum.error = Number of uncovered parking spaces included in your rent must be a number, like 9
 howManyParkingSpacesOrGaragesIncludedInRent.coveredSpaces.wholeNum.error = Number of covered parking spaces included in your rent must be a number, like 9
 howManyParkingSpacesOrGaragesIncludedInRent.garages.wholeNum.error = Number of garages included in your rent must be a number, like 9
@@ -387,3 +386,15 @@ rentFreePeriod.reasons.length.error = What you tell us about why you have a rent
 #DoYouPayExtraForParkingSpaces
 doYouPayExtraForParkingSpaces.title = Do you pay extra for parking spaces or garages that are not included in your rent?
 doYouPayExtraForParkingSpaces.required.error = Select yes if your rent includes extra parking spaces or garages
+
+#RepairsAndInsurance
+repairsAndInsurance.title = Repairs and insurance
+repairsAndInsurance.internalRepairs.radio.label = who pays for internal repairs?
+repairsAndInsurance.externalRepairs.radio.label = who pays for external repairs?
+repairsAndInsurance.buildingInsurance.radio.label = who pays for building insurance repairs?
+repairsAndInsurance.radio.you = You
+repairsAndInsurance.radio.landlord = The landlord
+repairsAndInsurance.radio.youAndLandlord = You and the landlord
+repairsAndInsurance.internalRepairs.radio.required.error = Select who pays for internal repairs
+repairsAndInsurance.externalRepairs.radio.required.error = Select who pays for external repairs
+repairsAndInsurance.buildingInsurance.radio.required.error = Select who pays for buildings insurance
