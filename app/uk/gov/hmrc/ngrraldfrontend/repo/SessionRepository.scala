@@ -75,7 +75,6 @@ class SessionRepository @Inject()(
   }
 
   def set(answers: UserAnswers): Future[Boolean] = Mdc.preservingMdc {
-    println(Console.GREEN + s"*************** ${answers.data}" + Console.RESET)
     val updatedAnswers = answers.copy(lastUpdated = Instant.now(clock))
 
     collection
