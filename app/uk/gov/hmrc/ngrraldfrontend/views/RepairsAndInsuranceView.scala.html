@@ -31,7 +31,7 @@
 
 @(form:Form[RepairsAndInsuranceForm], internalRepairs: Radios, externalRepairs: Radios, buildingInsurance: Radios, propertyAddress: String, mode: Mode)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
-@layout(pageTitle = Some(messages("agreedRentChange.title")), showBackLink = true, fullWidth = false) {
+@layout(pageTitle = Some(messages("repairsAndInsurance.title")), showBackLink = true, fullWidth = false) {
   @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.RepairsAndInsuranceController.submit(mode), Symbol("autoComplete") -> "off") {
     @if(form.errors.nonEmpty) {
       @govukErrorSummary(ErrorSummaryViewModel(form))
