@@ -93,7 +93,7 @@ class HowManyParkingSpacesOrGaragesIncludedInRentControllerSpec extends Controll
 
         val result = controllerProperty(None).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.CheckRentFreePeriodController.show(NormalMode).url)
+        redirectLocation(result) mustBe Some(routes.DoYouPayExtraForParkingSpacesController.show(NormalMode).url)
       }
       "Return BAD_REQUEST for inputting 0 in all fields and the correct view" in {
         val fakePostRequest =  FakeRequest(routes.HowManyParkingSpacesOrGaragesIncludedInRentController.submit(NormalMode))

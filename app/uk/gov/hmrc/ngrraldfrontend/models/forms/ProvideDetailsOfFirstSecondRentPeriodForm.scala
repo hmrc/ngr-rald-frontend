@@ -69,7 +69,39 @@ object ProvideDetailsOfFirstSecondRentPeriodForm extends CommonFormValidators wi
       provideDetailsOfFirstSecondRentPeriodForm.secondDateEndInput,
       provideDetailsOfFirstSecondRentPeriodForm.secondHowMuchIsRent
     )
-  
+
+  def answerToForm(value: ProvideDetailsOfFirstSecondRentPeriod): Form[ProvideDetailsOfFirstSecondRentPeriodForm] =
+    form.fill(
+      ProvideDetailsOfFirstSecondRentPeriodForm(
+        NGRDate.fromString(value.firstDateStart),
+        NGRDate.fromString(value.firstDateEnd),
+        value.firstRentPeriodRadio match {
+          case true => "yesPayedRent"
+          case false => "noRentPayed"
+        },
+        value.firstRentPeriodAmount,
+        NGRDate.fromString(value.secondDateStart),
+        NGRDate.fromString(value.secondDateEnd),
+        BigDecimal(value.secondHowMuchIsRent))
+    )
+
+  def formToAnswers(provideDetailsOfFirstSecondRentPeriodForm: ProvideDetailsOfFirstSecondRentPeriodForm): ProvideDetailsOfFirstSecondRentPeriod =
+    ProvideDetailsOfFirstSecondRentPeriod(
+      provideDetailsOfFirstSecondRentPeriodForm.firstDateStartInput.makeString,
+      provideDetailsOfFirstSecondRentPeriodForm.firstDateEndInput.makeString,
+      provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodRadio match {
+        case "yesPayedRent" => true
+        case _ => false
+      },
+      provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodAmount match {
+        case Some(value) if provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodRadio.equals("yesPayedRent") => Some(value)
+        case _ => None
+      },
+      provideDetailsOfFirstSecondRentPeriodForm.secondDateStartInput.makeString,
+      provideDetailsOfFirstSecondRentPeriodForm.secondDateEndInput.makeString,
+      provideDetailsOfFirstSecondRentPeriodForm.secondHowMuchIsRent.toString()
+    )
+
   private def firstRentPeriodAmountValidation[A]: Constraint[A] =
     Constraint((input: A) =>
       val provideDetailsOfFirstSecondRentPeriodForm = input.asInstanceOf[ProvideDetailsOfFirstSecondRentPeriodForm]
