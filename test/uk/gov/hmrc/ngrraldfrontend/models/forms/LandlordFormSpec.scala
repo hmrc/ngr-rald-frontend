@@ -92,7 +92,7 @@ class LandlordFormSpec extends AnyFlatSpec with Matchers {
     val form = LandlordForm("Jane Smith", "LandLordAndTenant", None)
     val result = LandlordForm.unapply(form)
 
-    result shouldBe Some(("Jane Smith", "LandLordAndTenant", None))
+    result shouldBe Some(("Jane Smith", "LandlordYes", None))
   }
 
   "LandlordForm.format" should "serialize to JSON correctly" in {
@@ -109,28 +109,27 @@ class LandlordFormSpec extends AnyFlatSpec with Matchers {
   it should "deserialize from JSON correctly" in {
     val json = Json.obj(
       "landlordName" -> "Jane Smith",
-      "landLordType" -> "LandLordAndTenant",
+      "landLordType" -> "LandlordYes",
       "landlordYes" -> JsNull
     )
 
     val result = json.validate[LandlordForm]
     result.isSuccess shouldBe true
-    result.get shouldBe LandlordForm("Jane Smith", "LandLordAndTenant", None)
+    result.get shouldBe LandlordForm("Jane Smith", "LandlordYes", None)
   }
 
   def validate(form: LandlordForm): Boolean = {
-    form.landLordType != "OtherRelationship" ||
-      form.landlordYesSelected.forall(_.length <= 250)
+    form.landlordYesSelected.forall(_.length <= 250)
   }
 
   it should "pass if landLordType is OtherRelationship and landlordOther is <= 250 characters" in {
-    val form = LandlordForm("Jane Smith","OtherRelationship", Some("This is a valid description."))
+    val form = LandlordForm("Jane Smith","LandlordYes", Some("This is a valid description."))
     validate(form) shouldBe true
   }
 
   it should "fail if landLordType is OtherRelationship and landlordOther is > 250 characters" in {
     val longText = "x" * 251
-    val form = LandlordForm("Jane Smith", "OtherRelationship", Some(longText))
+    val form = LandlordForm("Jane Smith", "LandlordYes", Some(longText))
     validate(form) shouldBe false
   }
 

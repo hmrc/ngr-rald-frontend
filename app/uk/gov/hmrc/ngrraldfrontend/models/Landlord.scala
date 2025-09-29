@@ -19,7 +19,7 @@ package uk.gov.hmrc.ngrraldfrontend.models
 import play.api.libs.json.{Json, OFormat}
 
 final case class Landlord(landlordName: String,
-                          landLordType: String,
+                          landlordRelationship: Boolean,
                           landlordOtherDesc: Option[String] = None)
 
 object Landlord {

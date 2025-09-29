@@ -53,8 +53,8 @@ class LandlordController @Inject()(view: LandlordView,
     radioValue = LandlordYes,
     conditionalHtml = Some(ngrCharacterCountComponent(form,
       NGRCharacterCount(
-        id = "landlord-yes",
-        name = "landlord-yes",
+        id = "landlord-relationship",
+        name = "landlord-relationship",
         maxLength = Some(250),
         label = Label(
           classes = "govuk-label govuk-label--s",
@@ -62,7 +62,7 @@ class LandlordController @Inject()(view: LandlordView,
         ),
         hint = Some(
           Hint(
-            id = Some("landlord-yes-hint"),
+            id = Some("landlord-relationship-hint"),
             classes = "",
             attributes = Map.empty,
             content = Text(messages("landlord.radio.yes.hint"))
@@ -86,7 +86,7 @@ class LandlordController @Inject()(view: LandlordView,
     (authenticate andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(LandlordPage) match {
         case None => form
-        case Some(value) => form.fill(LandlordForm(value.landlordName,value.landLordType,value.landlordOtherDesc))
+        case Some(value) => form.fill(LandlordForm(value.landlordName,value.landlordRelationship,value.landlordOtherDesc))
       }
       Future.successful(Ok(view(selectedPropertyAddress = request.property.addressFull, form = preparedForm, ngrRadio =  buildRadios(preparedForm, ngrRadio(preparedForm)), mode))
       )
@@ -119,7 +119,7 @@ class LandlordController @Inject()(view: LandlordView,
           landlordForm =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
-                .set(LandlordPage, Landlord(landlordForm.landlordName, landlordForm.landLordType, landlordForm.landlordYesSelected)))
+                .set(LandlordPage, Landlord(landlordForm.landlordName, landlordForm.landlordRelationship, landlordForm.landlordYesSelected)))
               _ <- sessionRepository.set(updatedAnswers)
             } yield Redirect(navigator.nextPage(LandlordPage, mode, updatedAnswers))
         )
