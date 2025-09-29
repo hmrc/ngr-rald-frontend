@@ -62,7 +62,11 @@ class HowManyParkingSpacesOrGaragesIncludedInRentController @Inject()(howManyPar
     (authenticate andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(HowManyParkingSpacesOrGaragesIncludedInRentPage) match {
         case None => form
-        case Some(value) => form.fill(HowManyParkingSpacesOrGaragesIncludedInRentForm(value.uncoveredSpaces.toInt, value.coveredSpaces.toInt, value.garages.toInt))
+        case Some(value) => form.fill(HowManyParkingSpacesOrGaragesIncludedInRentForm(
+          value.uncoveredSpaces,
+          value.coveredSpaces,
+          value.garages
+        ))
       }
         Future.successful(Ok(howManyParkingSpacesOrGaragesIncludedInRentView(
           form = preparedForm,
@@ -81,7 +85,6 @@ class HowManyParkingSpacesOrGaragesIncludedInRentController @Inject()(howManyPar
         formWithErrors => {
           val formWithCorrectedErrors = formWithErrors.errors.head match {
             case value if value.key.isEmpty &&
-              value.messages.contains("howManyParkingSpacesOrGaragesIncludedInRent.allFields.error.required") ||
               value.messages.contains("howManyParkingSpacesOrGaragesIncludedInRent.error.required") =>
               val uncoveredSpaces = value.copy(key = "uncoveredSpaces")
               val coveredSpaces = value.copy(key = "coveredSpaces")
@@ -99,7 +102,7 @@ class HowManyParkingSpacesOrGaragesIncludedInRentController @Inject()(howManyPar
             )))
         },
         parkingSpacesOrGaragesIncluded =>
-          val answers = HowManyParkingSpacesOrGarages(parkingSpacesOrGaragesIncluded.uncoveredSpaces.toString, parkingSpacesOrGaragesIncluded.coveredSpaces.toString, parkingSpacesOrGaragesIncluded.garages.toString)
+          val answers = HowManyParkingSpacesOrGarages(parkingSpacesOrGaragesIncluded.uncoveredSpaces, parkingSpacesOrGaragesIncluded.coveredSpaces, parkingSpacesOrGaragesIncluded.garages)
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(HowManyParkingSpacesOrGaragesIncludedInRentPage, answers))
             _ <- sessionRepository.set(updatedAnswers)

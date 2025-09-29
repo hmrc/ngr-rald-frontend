@@ -18,15 +18,16 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, PropertyLinkingAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RepairsAndInsuranceForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RepairsAndInsuranceForm.form
-import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.repo.RaldRepo
+import uk.gov.hmrc.ngrraldfrontend.models.{Mode, RepairsAndInsurance, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
+import uk.gov.hmrc.ngrraldfrontend.pages.RepairsAndInsurancePage
+import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.views.html.RepairsAndInsuranceView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -35,45 +36,48 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class RepairsAndInsuranceController @Inject()(repairsAndInsuranceView: RepairsAndInsuranceView,
                                               authenticate: AuthRetrievals,
-                                              hasLinkedProperties: PropertyLinkingAction,
-                                              raldRepo: RaldRepo,
+                                              navigator: Navigator,
+                                              getData: DataRetrievalAction,
+                                              sessionRepository: SessionRepository,
                                               mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport {
 
-  def show: Action[AnyContent] = {
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
-      request.propertyLinking.map(property =>
+  def show(mode: Mode): Action[AnyContent] = {
+    (authenticate andThen getData).async { implicit request =>
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(RepairsAndInsurancePage) match {
+        case None => form
+        case Some(value) => form.fill(RepairsAndInsuranceForm(value.internalRepairs, value.externalRepairs, value.buildingInsurance))
+      }
         Future.successful(Ok(repairsAndInsuranceView(
-          form = form,
-          internalRepairs = buildRadios(form, RepairsAndInsuranceForm.ngrRadio(form, "internalRepairs")),
-          externalRepairs = buildRadios(form, RepairsAndInsuranceForm.ngrRadio(form, "externalRepairs")),
-          buildingInsurance = buildRadios(form, RepairsAndInsuranceForm.ngrRadio(form, "externalRepairs")),
-          propertyAddress = property.addressFull,
-        )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
+          form = preparedForm,
+          internalRepairs = buildRadios(preparedForm, RepairsAndInsuranceForm.ngrRadio(preparedForm, "internalRepairs")),
+          externalRepairs = buildRadios(preparedForm, RepairsAndInsuranceForm.ngrRadio(preparedForm, "externalRepairs")),
+          buildingInsurance = buildRadios(preparedForm, RepairsAndInsuranceForm.ngrRadio(preparedForm, "buildingInsurance")),
+          propertyAddress = request.property.addressFull,
+          mode
+        )))
     }
   }
 
-  def submit: Action[AnyContent] =
-    (authenticate andThen hasLinkedProperties).async { implicit request =>
+  def submit(mode: Mode): Action[AnyContent] =
+    (authenticate andThen getData).async { implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
-          request.propertyLinking.map(property =>
             Future.successful(BadRequest(repairsAndInsuranceView(
               form = formWithErrors,
               internalRepairs = buildRadios(formWithErrors, RepairsAndInsuranceForm.ngrRadio(formWithErrors, "internalRepairs")),
               externalRepairs = buildRadios(formWithErrors, RepairsAndInsuranceForm.ngrRadio(formWithErrors, "externalRepairs")),
               buildingInsurance = buildRadios(formWithErrors, RepairsAndInsuranceForm.ngrRadio(formWithErrors, "buildingInsurance")),
-              propertyAddress = property.addressFull
-            )))).getOrElse(throw new NotFoundException("Couldn't find property in mongo"))
+              propertyAddress = request.property.addressFull,
+              mode
+            )))
         },
-        radioValue =>
-          raldRepo.insertRepairsAndInsurance(
-            credId = CredId(request.credId.getOrElse("")),
-            internalRepairs = radioValue.internalRepairs,
-            externalRepairs = radioValue.externalRepairs,
-            buildingInsurance = radioValue.buildingInsurance
-          )
-          Future.successful(Redirect(routes.InterimRentSetByTheCourtController.show.url))
+        repairsAndInsurance =>
+          val answers = RepairsAndInsurance(repairsAndInsurance.internalRepairs, repairsAndInsurance.externalRepairs, repairsAndInsurance.buildingInsurance)
+          for{
+            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(RepairsAndInsurancePage, answers))
+            _ <- sessionRepository.set(updatedAnswers)
+          } yield Redirect(navigator.nextPage(RepairsAndInsurancePage, mode, updatedAnswers))
       )
     }
 }

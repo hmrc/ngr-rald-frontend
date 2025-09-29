@@ -142,6 +142,7 @@ class Navigator @Inject()() {
         case None    => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(NormalMode)
       }
     case RentFreePeriodPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeStartController.show(NormalMode)
+    case RepairsAndInsurancePage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeStartController.show(NormalMode) //TODO Page not made yet
     //TODO need to connect to next pages when they are done
     case DoYouPayExtraForParkingSpacesPage => answers =>
       answers.get(DoYouPayExtraForParkingSpacesPage) match {

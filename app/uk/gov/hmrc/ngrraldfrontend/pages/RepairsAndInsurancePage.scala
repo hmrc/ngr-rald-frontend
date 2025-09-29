@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.ngrraldfrontend.models
+package uk.gov.hmrc.ngrraldfrontend.pages
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.JsPath
+import uk.gov.hmrc.ngrraldfrontend.models.{HowManyParkingSpacesOrGarages, RepairsAndInsurance}
 
-case class HowManyParkingSpacesOrGarages(
-                                          uncoveredSpaces: Int,
-                                          coveredSpaces: Int,
-                                          garages: Int,
-                                        )
+object RepairsAndInsurancePage extends QuestionPage[RepairsAndInsurance] {
 
-object HowManyParkingSpacesOrGarages {
-  implicit val format: OFormat[HowManyParkingSpacesOrGarages] = Json.format[HowManyParkingSpacesOrGarages]
+  override def toString: String = "repairsAndInsurance"
+
+  override def path: JsPath = JsPath \ toString
+
 }
+

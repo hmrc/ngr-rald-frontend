@@ -24,7 +24,7 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.Legend
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.Radios
 import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
-import uk.gov.hmrc.ngrraldfrontend.models.AgreementType
+import uk.gov.hmrc.ngrraldfrontend.models.{AgreementType, NormalMode}
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.components.{BuildingInsuranceLandlord, BuildingInsuranceYou, ExternalRepairsLandlord, ExternalRepairsYou, ExternalRepairsYouAndLandlord, InternalRepairsLandlord, InternalRepairsYou, InternalRepairsYouAndLandlord, LandlordYouAndLandlord, NGRRadio, NGRRadioButtons, NGRRadioName}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RepairsAndInsuranceForm
@@ -78,11 +78,11 @@ class RepairsAndInsuranceViewSpec extends ViewBaseSpec {
   val buildingInsurance: Radios = buildRadios(form, RepairsAndInsuranceForm.ngrRadio(form, "buildingInsurance"))
 
   "RepairsAndInsuranceView" must {
-    val repairsAndInsuranceView = view(form,internalRepairs, externalRepairs, buildingInsurance, address)
+    val repairsAndInsuranceView = view(form,internalRepairs, externalRepairs, buildingInsurance, address, NormalMode)
     lazy implicit val document: Document = Jsoup.parse(repairsAndInsuranceView.body)
-    val htmlApply = view.apply(form, internalRepairs, externalRepairs, buildingInsurance, address).body
-    val htmlRender = view.render(form,internalRepairs, externalRepairs, buildingInsurance, address, request, messages, mockConfig).body
-    lazy val htmlF = view.f(form,internalRepairs, externalRepairs, buildingInsurance, address)
+    val htmlApply = view.apply(form, internalRepairs, externalRepairs, buildingInsurance, address, NormalMode).body
+    val htmlRender = view.render(form,internalRepairs, externalRepairs, buildingInsurance, address, NormalMode, request, messages, mockConfig).body
+    lazy val htmlF = view.f(form,internalRepairs, externalRepairs, buildingInsurance, address, NormalMode)
 
     "htmlF is not empty" in {
       htmlF.toString() must not be empty

@@ -27,7 +27,7 @@ import uk.gov.hmrc.http.{HeaderNames, NotFoundException}
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, NormalMode, RaldUserAnswers, RentDatesAgreeStart, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, NormalMode, RentDatesAgreeStart, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.pages.RentDatesAgreeStartPage
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.DateTextFields
 import uk.gov.hmrc.ngrraldfrontend.views.html.RentDatesAgreeStartView

@@ -62,7 +62,7 @@ object RepairsAndInsuranceForm extends CommonFormValidators with Mappings {
     NGRRadio(
       NGRRadioName(s"repairsAndInsurance-$radioType-radio-value"),
       ngrTitle = Some(Legend(content = Text(messages(s"repairsAndInsurance.$radioType.radio.label")),
-        classes = "govuk-fieldset__legend--l", isPageHeading = true)),
+        classes = "govuk-fieldset__legend--m", isPageHeading = true)),
       NGRRadioButtons = buttons
     )
   }
