@@ -56,7 +56,7 @@ object HowManyParkingSpacesOrGaragesIncludedInRentForm extends CommonFormValidat
       val formData = input.asInstanceOf[HowManyParkingSpacesOrGaragesIncludedInRentForm]
       (formData.uncoveredSpaces, formData.coveredSpaces, formData.garages) match {
         case (-1,-1,-1) => Invalid(allFieldsRequiredError)
-        case (0, 0, 0) =>  Invalid(fieldRequired)
+        case (uncoveredSpaces, coveredSpaces, garages) if uncoveredSpaces + coveredSpaces + garages <= 0  =>  Invalid(fieldRequired)
         case (_,_,_)=> Valid
       }
     })
