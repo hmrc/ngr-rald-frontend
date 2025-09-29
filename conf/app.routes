@@ -82,6 +82,12 @@ POST       /rent-periods                                    uk.gov.hmrc.ngrraldf
 GET        /rent-periods/change                             uk.gov.hmrc.ngrraldfrontend.controllers.RentPeriodsController.show(mode: Mode = CheckMode)
 POST       /rent-periods/change                             uk.gov.hmrc.ngrraldfrontend.controllers.RentPeriodsController.submit(mode: Mode = CheckMode)
 
+#Confirm Break Clause
+GET        /did-agreement-allow-to-trigger-break-clause             uk.gov.hmrc.ngrraldfrontend.controllers.ConfirmBreakClauseController.show(mode: Mode = NormalMode)
+POST       /did-agreement-allow-to-trigger-break-clause             uk.gov.hmrc.ngrraldfrontend.controllers.ConfirmBreakClauseController.submit(mode: Mode = NormalMode)
+GET        /did-agreement-allow-to-trigger-break-clause/change      uk.gov.hmrc.ngrraldfrontend.controllers.ConfirmBreakClauseController.show(mode: Mode = CheckMode)
+POST       /did-agreement-allow-to-trigger-break-clause/change      uk.gov.hmrc.ngrraldfrontend.controllers.ConfirmBreakClauseController.submit(mode: Mode = CheckMode)
+
 #Did the court sent an interim rent
 GET        /did-the-court-set-an-interim-rent           uk.gov.hmrc.ngrraldfrontend.controllers.RentInterimController.show(mode: Mode = NormalMode)
 POST       /did-the-court-set-an-interim-rent           uk.gov.hmrc.ngrraldfrontend.controllers.RentInterimController.submit(mode: Mode = NormalMode)
