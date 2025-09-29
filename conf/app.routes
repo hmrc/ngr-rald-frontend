@@ -136,3 +136,9 @@ GET        /rent-free-period                                       uk.gov.hmrc.n
 POST       /rent-free-period                                       uk.gov.hmrc.ngrraldfrontend.controllers.RentFreePeriodController.submit(mode: Mode = NormalMode)
 GET        /rent-free-period/change                                uk.gov.hmrc.ngrraldfrontend.controllers.RentFreePeriodController.show(mode: Mode = CheckMode)
 POST       /rent-free-period/change                                uk.gov.hmrc.ngrraldfrontend.controllers.RentFreePeriodController.submit(mode: Mode = CheckMode)
+
+#Do you pay extra for parking spaces or garages not included in rent
+GET        /do-you-pay-extra-for-parking-spaces-or-garages-not-included-in-rent          uk.gov.hmrc.ngrraldfrontend.controllers.DoYouPayExtraForParkingSpacesController.show(mode: Mode = NormalMode)
+POST       /do-you-pay-extra-for-parking-spaces-or-garages-not-included-in-rent          uk.gov.hmrc.ngrraldfrontend.controllers.DoYouPayExtraForParkingSpacesController.submit(mode: Mode = NormalMode)
+GET        /do-you-pay-extra-for-parking-spaces-or-garages-not-included-in-rent/change   uk.gov.hmrc.ngrraldfrontend.controllers.DoYouPayExtraForParkingSpacesController.show(mode: Mode = CheckMode)
+POST       /do-you-pay-extra-for-parking-spaces-or-garages-not-included-in-rent/change   uk.gov.hmrc.ngrraldfrontend.controllers.DoYouPayExtraForParkingSpacesController.submit(mode: Mode = CheckMode)

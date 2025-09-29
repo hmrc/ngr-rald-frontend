@@ -28,7 +28,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.{Mode, NGRDate, NormalMode, ProvideDet
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.ProvideDetailsOfFirstSecondRentPeriodForm
-import uk.gov.hmrc.ngrraldfrontend.models.forms.ProvideDetailsOfFirstSecondRentPeriodForm.form
+import uk.gov.hmrc.ngrraldfrontend.models.forms.ProvideDetailsOfFirstSecondRentPeriodForm._
 import uk.gov.hmrc.ngrraldfrontend.utils.DateKeyFinder
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.ProvideDetailsOfFirstSecondRentPeriodPage
@@ -148,15 +148,7 @@ class ProvideDetailsOfFirstSecondRentPeriodController @Inject()(view: ProvideDet
     (authenticate andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(ProvideDetailsOfFirstSecondRentPeriodPage) match {
         case None => form
-        case Some(value) => form.fill(ProvideDetailsOfFirstSecondRentPeriodForm(NGRDate.fromString(value.firstDateStart),NGRDate.fromString(value.firstDateEnd),value.firstRentPeriodRadio match {
-          case true => "yesPayedRent"
-          case false => "noRentPayed"
-        }, value.firstRentPeriodAmount match {
-          case Some(value) => Some(value)
-          case None => None
-        },
-          NGRDate.fromString(value.secondDateStart),NGRDate.fromString(value.secondDateEnd),BigDecimal(value.secondHowMuchIsRent)))
-
+        case Some(value) => answerToForm(value)
       }
         Future.successful(Ok(view(
           selectedPropertyAddress = request.property.addressFull,
@@ -204,22 +196,8 @@ class ProvideDetailsOfFirstSecondRentPeriodController @Inject()(view: ProvideDet
                 mode
               ))),
           provideDetailsOfFirstSecondRentPeriodForm =>
-            val provideDetailsOfFirstSecondRentPeriod: ProvideDetailsOfFirstSecondRentPeriod = ProvideDetailsOfFirstSecondRentPeriod(
-              provideDetailsOfFirstSecondRentPeriodForm.firstDateStartInput.makeString,
-              provideDetailsOfFirstSecondRentPeriodForm.firstDateEndInput.makeString,
-              provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodRadio match {
-                case "yesPayedRent" => true
-                case _ => false
-              },
-              provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodAmount match {
-                case Some(value) => Some(value)
-                case None => None
-              },
-              provideDetailsOfFirstSecondRentPeriodForm.secondDateStartInput.makeString,
-              provideDetailsOfFirstSecondRentPeriodForm.secondDateEndInput.makeString,
-              provideDetailsOfFirstSecondRentPeriodForm.secondHowMuchIsRent.toString())
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(ProvideDetailsOfFirstSecondRentPeriodPage, provideDetailsOfFirstSecondRentPeriod))
+              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(ProvideDetailsOfFirstSecondRentPeriodPage, formToAnswers(provideDetailsOfFirstSecondRentPeriodForm)))
               _ <- sessionRepository.set(updatedAnswers)
             } yield Redirect(navigator.nextPage(ProvideDetailsOfFirstSecondRentPeriodPage, NormalMode, updatedAnswers))
         )
