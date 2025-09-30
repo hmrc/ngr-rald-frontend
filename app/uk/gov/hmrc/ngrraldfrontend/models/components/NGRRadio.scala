@@ -42,6 +42,8 @@ case object FamilyMember extends Landlord
 case object CompanyPensionFund extends Landlord
 case object BusinessPartnerOrSharedDirector extends Landlord
 case object OtherRelationship extends Landlord
+case object LandlordYes extends Landlord
+case object LandlordNo extends Landlord
 
 
 sealed trait RentBasedOn extends RadioEntry

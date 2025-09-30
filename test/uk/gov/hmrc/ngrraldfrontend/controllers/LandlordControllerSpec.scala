@@ -60,7 +60,7 @@ class LandlordControllerSpec extends ControllerSpecSupport {
         val content = contentAsString(result)
         val document = Jsoup.parse(content)
         document.select("input[name=landlord-name-value]").attr("value") mustBe "Joe Bloggs"
-        document.select("input[name=landlord-radio]").attr("value") mustBe "LandLordAndTenant"
+        document.select("input[name=landlord-radio]").attr("value") mustBe "LandlordYes"
 
       }
       "Return NotFoundException when property is not found in the mongo" in {
@@ -148,8 +148,8 @@ class LandlordControllerSpec extends ControllerSpecSupport {
         val result = controllerProperty.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "landlord-name-value" -> "Bob",
-            "landlord-radio" -> "OtherRelationship",
-            "landlordOther" -> "",
+            "landlord-radio" -> "LandlordYes",
+            "landlord-yes" -> "",
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
