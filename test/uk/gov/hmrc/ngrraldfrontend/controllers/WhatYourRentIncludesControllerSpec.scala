@@ -204,7 +204,7 @@ class WhatYourRentIncludesControllerSpec  extends ControllerSpecSupport {
             "rentIncBusinessRatesRadio" -> "No",
             "rentIncWaterChargesRadio" -> "No",
             "rentIncServiceRadio" -> "Yes",
-            "bedroomNumbers" -> "-1"
+            "bedroomNumbers" -> "0"
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {

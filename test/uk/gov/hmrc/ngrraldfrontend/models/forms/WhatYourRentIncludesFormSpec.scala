@@ -159,7 +159,7 @@ class WhatYourRentIncludesFormSpec extends AnyWordSpec with Matchers {
       boundForm.hasErrors shouldBe true
       boundForm.errors should contain(FormError("", List("whatYourRentIncludes.bedroom.number.invalid.error")))
     }
-    "fail to bind when bedroomNumbers input is less than 1" in {
+    "fail to bind when bedroomNumbers input is mines" in {
       val data = Map(
         "livingAccommodationRadio" -> "livingAccommodationYes",
         "rentPartAddressRadio" -> "Yes",
@@ -168,6 +168,21 @@ class WhatYourRentIncludesFormSpec extends AnyWordSpec with Matchers {
         "rentIncWaterChargesRadio" -> "Yes",
         "rentIncServiceRadio" -> "Yes",
         "bedroomNumbers" -> "-2"
+      )
+      val boundForm = WhatYourRentIncludesForm.form.bind(data)
+
+      boundForm.hasErrors shouldBe true
+      boundForm.errors should contain(FormError("", List("whatYourRentIncludes.bedroom.number.invalid.error")))
+    }
+    "fail to bind when bedroomNumbers input is less than 1" in {
+      val data = Map(
+        "livingAccommodationRadio" -> "livingAccommodationYes",
+        "rentPartAddressRadio" -> "Yes",
+        "rentEmptyShellRadio" -> "Yes",
+        "rentIncBusinessRatesRadio" -> "Yes",
+        "rentIncWaterChargesRadio" -> "Yes",
+        "rentIncServiceRadio" -> "Yes",
+        "bedroomNumbers" -> "0"
       )
       val boundForm = WhatYourRentIncludesForm.form.bind(data)
 
@@ -189,7 +204,7 @@ class WhatYourRentIncludesFormSpec extends AnyWordSpec with Matchers {
       boundForm.hasErrors shouldBe true
       boundForm.errors should contain(FormError("", List("whatYourRentIncludes.bedroom.number.maximum.error")))
     }
-    "fail to bind when bedroomNumbers input is 12 digits long" in {
+    "fail to bind when bedroomNumbers input is 30 digits long" in {
       val data = Map(
         "livingAccommodationRadio" -> "livingAccommodationYes",
         "rentPartAddressRadio" -> "Yes",
@@ -197,7 +212,7 @@ class WhatYourRentIncludesFormSpec extends AnyWordSpec with Matchers {
         "rentIncBusinessRatesRadio" -> "Yes",
         "rentIncWaterChargesRadio" -> "Yes",
         "rentIncServiceRadio" -> "Yes",
-        "bedroomNumbers" -> "123123123123"
+        "bedroomNumbers" -> "123123123123123123123123345678"
       )
       val boundForm = WhatYourRentIncludesForm.form.bind(data)
 
