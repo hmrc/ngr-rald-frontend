@@ -24,12 +24,11 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{Table, TableRow}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-import uk.gov.hmrc.ngrraldfrontend.models.{Mode, NGRDate, ProvideDetailsOfFirstSecondRentPeriod}
+import uk.gov.hmrc.ngrraldfrontend.models.{Mode, NGRDate, ProvideDetailsOfFirstSecondRentPeriod, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentPeriodsForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentPeriodsForm.form
-import uk.gov.hmrc.ngrraldfrontend.models.UserAnswers
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.{ProvideDetailsOfFirstSecondRentPeriodPage, RentPeriodsPage}
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
