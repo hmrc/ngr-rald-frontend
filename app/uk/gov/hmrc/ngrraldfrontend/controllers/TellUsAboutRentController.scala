@@ -49,7 +49,9 @@ class TellUsAboutRentController @Inject()(view: TellUsAboutYourAgreementView,
   def submit: Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
       for {
-        updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(TellUsAboutRentPage, RentAgreement))
+        updatedAnswers <- Future.fromTry(request.userAnswers
+          .map(answers => answers.getCurrentJourneyUserAnswers(TellUsAboutRentPage, answers, request.credId))
+          .getOrElse(UserAnswers(request.credId)).set(TellUsAboutRentPage, RentAgreement))
         _ <- sessionRepository.set(updatedAnswers)
       } yield Redirect(navigator.nextPage(TellUsAboutRentPage, NormalMode, updatedAnswers))
     }

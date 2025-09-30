@@ -47,6 +47,11 @@ final case class UserAnswers(
         page.cleanup(Some(value), updatedAnswers)
     }
   }
+
+  def getCurrentJourneyUserAnswers[A](page: Gettable[A], userAnswers: UserAnswers, credId: String)(implicit rds: Reads[A]): UserAnswers =
+    userAnswers.get(page) match
+      case Some(_) => userAnswers
+      case _ => UserAnswers(credId)
 }
 
 object UserAnswers {

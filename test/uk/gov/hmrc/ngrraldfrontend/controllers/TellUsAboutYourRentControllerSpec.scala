@@ -20,25 +20,27 @@ import org.scalatest.matchers.should.Matchers.shouldBe
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.libs.json.Json
 import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
-import uk.gov.hmrc.ngrraldfrontend.models.NormalMode
+import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.views.html.TellUsAboutYourAgreementView
 
+import java.time.Instant
 import scala.concurrent.Future
 
 class TellUsAboutYourRentControllerSpec extends ControllerSpecSupport {
   val pageTitle = "Tell us about your rent review"
   val view: TellUsAboutYourAgreementView = inject[TellUsAboutYourAgreementView]
-  val controllerProperty: TellUsAboutRentController = new TellUsAboutRentController(view, fakeAuth, mockNavigator, mcc, fakeDataProperty(Some(property),None), mockSessionRepository)(mockConfig)
+  val controllerProperty = (answers: Option[UserAnswers]) => new TellUsAboutRentController(view, fakeAuth, mockNavigator, mcc, fakeDataProperty(Some(property), answers), mockSessionRepository)(mockConfig)
   val controllerNoProperty: TellUsAboutRentController = new TellUsAboutRentController(view, fakeAuth, mockNavigator, mcc, fakeData(None), mockSessionRepository)(mockConfig)
 
   "Tell us about your rent controller" must {
     "method show" must {
       "Return OK and the correct view" in {
-        val result = controllerProperty.show()(authenticatedFakeRequest)
+        val result = controllerProperty(None).show()(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
         content must include(pageTitle)
@@ -52,9 +54,29 @@ class TellUsAboutYourRentControllerSpec extends ControllerSpecSupport {
       }
     }
     "method submit" must {
-      "Return OK and the correct view" in {
+      "Return SEE_OTHER and the correct view" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        val result = controllerProperty.submit()(authenticatedFakeRequest)
+        val result = controllerProperty(None).submit()(authenticatedFakeRequest)
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(routes.LandlordController.show(NormalMode).url)
+      }
+      "Return SEE_OTHER and the correct view when user resumes rent review journey" in {
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        val result = controllerProperty(Some(UserAnswers(credId.value, Json.obj(
+          "tellUsAboutRent" -> "RentAgreement",
+          "landlord" -> Json.obj(
+            "landlordName" -> "Anna"
+          )
+        ), Instant.now))).submit()(authenticatedFakeRequest)
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(routes.LandlordController.show(NormalMode).url)
+      }
+      "Return SEE_OTHER and the correct view when user switched to rent review journey" in {
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        val result = controllerProperty(Some(UserAnswers(credId.value, Json.obj(
+          "tellUsAboutRenewedAgreement" -> "RenewedAgreement",
+          "whatTypeOfLeaseRenewal" -> "SurrenderAndRenewal"
+        ), Instant.now))).submit()(authenticatedFakeRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) shouldBe Some(routes.LandlordController.show(NormalMode).url)
       }
