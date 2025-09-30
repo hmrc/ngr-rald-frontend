@@ -108,9 +108,9 @@ class LandlordController @Inject()(view: LandlordView,
           formWithErrors =>
             val correctedFormErrors = formWithErrors.errors.map { formError =>
               (formError.key, formError.messages) match
-                case ("", messages) if messages.contains("landlord.radio.other.empty.error") =>
+                case ("", messages) if messages.contains("landlord.radio.empty.error") =>
                   formError.copy(key = "landlord-relationship")
-                case ("", messages) if messages.contains("landlord.radio.other.tooLong.error") =>
+                case ("", messages) if messages.contains("landlord.radio.tooLong.error") =>
                   formError.copy(key = "landlord-relationship")
                 case _ =>
                   formError

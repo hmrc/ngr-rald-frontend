@@ -65,7 +65,7 @@ class LandlordFormSpec extends AnyFlatSpec with Matchers {
 
     val boundForm = LandlordForm.form.bind(data)
 
-    boundForm.errors shouldBe List(FormError("", List("landlord.radio.other.empty.error"), List()))
+    boundForm.errors shouldBe List(FormError("", List("landlord.radio.empty.error"), List()))
   }
 
   it should "pass when 'Yes' is selected and description is provided" in {

@@ -32,8 +32,8 @@ object LandlordForm extends CommonFormValidators with Mappings{
   private lazy val landlordNameEmptyError = "landlord.name.empty.error"
   private lazy val landlordNameTooLongError = "landlord.name.empty.tooLong.error"
   private lazy val radioUnselectedError = "landlord.radio.empty.error"
-  private lazy val landlordRadioEmptyError = "landlord.radio.other.empty.error"
-  private lazy val landlordRadioTooLongError = "landlord.radio.other.tooLong.error"
+  private lazy val landlordRelationshipEmptyError = "landlord.radio.empty.error"
+  private lazy val landlordRelationshipTooLongError = "landlord.radio.tooLong.error"
 
   private val landlord = "landlord-name-value"
   private val landlordRadio = "landlord-radio"
@@ -48,20 +48,20 @@ object LandlordForm extends CommonFormValidators with Mappings{
   def unapply(landlordForm: LandlordForm): Option[(String, String, Option[String])] =
     Some((landlordForm.landlordName, landlordForm.hasRelationship, landlordForm.landlordRelationship))
 
-  private def isOtherTextEmpty[A]: Constraint[A] =
+  private def isLandlordRelationshipTextEmpty[A]: Constraint[A] =
     Constraint((input: A) =>
-      val rentBasedOnForm = input.asInstanceOf[LandlordForm]
-      if (rentBasedOnForm.hasRelationship.equals("LandlordRelationshipYes") && rentBasedOnForm.landlordRelationship.getOrElse("").isBlank)
-        Invalid(landlordRadioEmptyError)
+      val landlordForm = input.asInstanceOf[LandlordForm]
+      if (landlordForm.hasRelationship.equals("LandlordRelationshipYes") && landlordForm.landlordRelationship.getOrElse("").isBlank)
+        Invalid(landlordRelationshipEmptyError)
       else
         Valid
     )
 
-  private def otherTextMaxLength[A]: Constraint[A] =
+  private def isLandlordRelationshipTextMaxLength[A]: Constraint[A] =
     Constraint((input: A) =>
-      val rentBasedOnForm = input.asInstanceOf[LandlordForm]
-      if (rentBasedOnForm.hasRelationship.equals("LandlordRelationshipYes") && rentBasedOnForm.landlordRelationship.getOrElse("").length > 250)
-        Invalid(landlordRadioTooLongError)
+      val landlordForm = input.asInstanceOf[LandlordForm]
+      if (landlordForm.hasRelationship.equals("LandlordRelationshipYes") && landlordForm.landlordRelationship.getOrElse("").length > 250)
+        Invalid(landlordRelationshipTooLongError)
       else
         Valid
     )
@@ -85,8 +85,8 @@ object LandlordForm extends CommonFormValidators with Mappings{
       )(LandlordForm.apply)(LandlordForm.unapply)
         .verifying(
           firstError(
-            isOtherTextEmpty,
-            otherTextMaxLength
+            isLandlordRelationshipTextEmpty,
+            isLandlordRelationshipTextMaxLength
           )
         )
     )
