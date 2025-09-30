@@ -140,7 +140,7 @@ trait TestData {
 
  val interimRentSetByTheCourtModel: InterimRentSetByTheCourt = InterimRentSetByTheCourt("10000", "1990-01")
 
- val landlordModel: Landlord = Landlord("Joe Bloggs", "LandLordAndTenant", None)
+ val landlordModel: Landlord = Landlord("Joe Bloggs", false, None)
 
  val rentDatesAgreeStartModel: RentDatesAgreeStart = RentDatesAgreeStart("2025-01-01", "2025-02-02")
 

@@ -47,39 +47,52 @@ class LandlordController @Inject()(view: LandlordView,
                                    navigator: Navigator
                                   )(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
-  def otherRelationship(form: Form[LandlordForm])(implicit messages: Messages): NGRRadioButtons = NGRRadioButtons(
-    radioContent = "landlord.radio5",
-    radioValue = OtherRelationship,
+  def landlordRelationship(form: Form[LandlordForm])(implicit messages: Messages): NGRRadioButtons = NGRRadioButtons(
+    radioContent = "service.yes",
+    radioValue = LandlordRelationshipYes,
     conditionalHtml = Some(ngrCharacterCountComponent(form,
       NGRCharacterCount(
-        id = "landlord-radio-other",
-        name = "landlord-radio-other",
+        id = "landlord-relationship",
+        name = "landlord-relationship",
         maxLength = Some(250),
         label = Label(
           classes = "govuk-label govuk-label--s",
-          content = Text(Messages("landlord.radio5.dropdown"))
-        )
+          content = Text(Messages("landlord.radio.yes"))
+        ),
+        hint = Some(
+          Hint(
+            id = Some("landlord-relationship-hint"),
+            classes = "",
+            attributes = Map.empty,
+            content = Text(messages("landlord.radio.yes.hint"))
+          )
       )))
+  )
   )
 
   def ngrRadio(form: Form[LandlordForm])(implicit messages: Messages): NGRRadio =
     val ngrRadioButtons: Seq[NGRRadioButtons] = Seq(
-      NGRRadioButtons(radioContent = "landlord.radio1", radioValue = LandLordAndTenant),
-      NGRRadioButtons(radioContent = "landlord.radio2", radioValue = FamilyMember),
-      NGRRadioButtons(radioContent = "landlord.radio3", radioValue = CompanyPensionFund),
-      NGRRadioButtons(radioContent = "landlord.radio4", radioValue = BusinessPartnerOrSharedDirector)
+      landlordRelationship(form),
+      NGRRadioButtons(radioContent = "service.no", radioValue = LandlordRelationshipNo)
     )
     NGRRadio(
       NGRRadioName("landlord-radio"),
       ngrTitle = Some(Legend(content = Text(messages("landlord.p2")), classes = "govuk-fieldset__legend--m", isPageHeading = true)),
-      NGRRadioButtons = ngrRadioButtons :+ otherRelationship(form)
+      NGRRadioButtons = ngrRadioButtons
     )
 
   def show(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(LandlordPage) match {
         case None => form
-        case Some(value) => form.fill(LandlordForm(value.landlordName,value.landLordType,value.landlordOtherDesc))
+        case Some(value) => form.fill(LandlordForm(
+          value.landlordName,
+          if(value.hasRelationship) {
+            "LandlordRelationshipYes"
+          } else {
+            "LandlordRelationshipNo"
+          },
+          value.landlordRelationship))
       }
       Future.successful(Ok(view(selectedPropertyAddress = request.property.addressFull, form = preparedForm, ngrRadio =  buildRadios(preparedForm, ngrRadio(preparedForm)), mode))
       )
@@ -96,9 +109,9 @@ class LandlordController @Inject()(view: LandlordView,
             val correctedFormErrors = formWithErrors.errors.map { formError =>
               (formError.key, formError.messages) match
                 case ("", messages) if messages.contains("landlord.radio.other.empty.error") =>
-                  formError.copy(key = "landlord-radio-other")
+                  formError.copy(key = "landlord-relationship")
                 case ("", messages) if messages.contains("landlord.radio.other.tooLong.error") =>
-                  formError.copy(key = "landlord-radio-other")
+                  formError.copy(key = "landlord-relationship")
                 case _ =>
                   formError
             }
@@ -110,9 +123,17 @@ class LandlordController @Inject()(view: LandlordView,
                 mode
               ))),
           landlordForm =>
+            val answers: Landlord = Landlord(
+              landlordForm.landlordName,
+              landlordForm.hasRelationship match {
+                case "LandlordRelationshipYes" => true
+                case _ => false
+              },
+              landlordForm.landlordRelationship
+            )
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
-                .set(LandlordPage, Landlord(landlordForm.landlordName, landlordForm.landLordType, landlordForm.landlordOther)))
+                .set(LandlordPage, answers))
               _ <- sessionRepository.set(updatedAnswers)
             } yield Redirect(navigator.nextPage(LandlordPage, mode, updatedAnswers))
         )

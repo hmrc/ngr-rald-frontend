@@ -19,8 +19,8 @@ package uk.gov.hmrc.ngrraldfrontend.models
 import play.api.libs.json.{Json, OFormat}
 
 final case class Landlord(landlordName: String,
-                          landLordType: String,
-                          landlordOtherDesc: Option[String] = None)
+                          hasRelationship: Boolean,
+                          landlordRelationship: Option[String] = None)
 
 object Landlord {
   implicit val format: OFormat[Landlord] = Json.format[Landlord]

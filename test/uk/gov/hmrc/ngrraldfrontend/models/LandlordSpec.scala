@@ -21,14 +21,14 @@ import uk.gov.hmrc.ngrraldfrontend.helpers.TestSupport
 
 class LandlordSpec extends TestSupport {
 
-  val landlord: Landlord = Landlord("John Doe", "OtherRelationship", Some("Other description"))
+  val landlord: Landlord = Landlord("John Doe", true, Some("Other description"))
 
   val landlordJson: JsValue = Json.parse(
     """
       |{
       |"landlordName": "John Doe",
-      |"landLordType":"OtherRelationship",
-      |"landlordOtherDesc":"Other description"
+      |"hasRelationship": true,
+      |"landlordRelationship":"Other description"
       |}
       |""".stripMargin
   )

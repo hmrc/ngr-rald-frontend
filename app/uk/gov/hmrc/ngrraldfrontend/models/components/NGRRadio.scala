@@ -37,11 +37,8 @@ case object Written extends TypeOfAgreement
 case object Verbal extends TypeOfAgreement
 
 sealed trait Landlord extends RadioEntry
-case object LandLordAndTenant extends Landlord
-case object FamilyMember extends Landlord
-case object CompanyPensionFund extends Landlord
-case object BusinessPartnerOrSharedDirector extends Landlord
-case object OtherRelationship extends Landlord
+case object LandlordRelationshipYes extends Landlord
+case object LandlordRelationshipNo extends Landlord
 
 
 sealed trait RentBasedOn extends RadioEntry
