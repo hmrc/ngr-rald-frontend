@@ -19,9 +19,9 @@ package uk.gov.hmrc.ngrraldfrontend.models
 import play.api.libs.json.{Json, OFormat}
 
 case class HowManyParkingSpacesOrGarages(
-                                          uncoveredSpaces: String,
-                                          coveredSpaces: String,
-                                          garages: String,
+                                          uncoveredSpaces: Int,
+                                          coveredSpaces: Int,
+                                          garages: Int,
                                         )
 
 object HowManyParkingSpacesOrGarages {

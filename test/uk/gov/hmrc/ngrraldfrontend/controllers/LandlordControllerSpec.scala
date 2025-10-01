@@ -27,7 +27,7 @@ import uk.gov.hmrc.http.{HeaderNames, NotFoundException}
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.{NewAgreement, RenewedAgreement, RentAgreement}
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, NormalMode, RaldUserAnswers, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.pages.{LandlordPage, TellUsAboutRentPage, TellUsAboutYourNewAgreementPage, TellUsAboutYourRenewedAgreementPage}
 import uk.gov.hmrc.ngrraldfrontend.views.html.LandlordView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.NGRCharacterCountComponent
@@ -60,7 +60,7 @@ class LandlordControllerSpec extends ControllerSpecSupport {
         val content = contentAsString(result)
         val document = Jsoup.parse(content)
         document.select("input[name=landlord-name-value]").attr("value") mustBe "Joe Bloggs"
-        document.select("input[name=landlord-radio]").attr("value") mustBe "LandLordAndTenant"
+        document.select("input[name=landlord-radio]").attr("value") mustBe "LandlordRelationshipYes"
 
       }
       "Return NotFoundException when property is not found in the mongo" in {
@@ -78,7 +78,7 @@ class LandlordControllerSpec extends ControllerSpecSupport {
         val result = filledController(rentAgreementAnswers).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "landlord-name-value" -> "Bob",
-            "landlord-radio" -> "LandLordAndTenant"
+            "landlord-radio" -> "LandlordRelationshipNo"
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -92,7 +92,7 @@ class LandlordControllerSpec extends ControllerSpecSupport {
         val result = filledController(renewedAgreementAnswers).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "landlord-name-value" -> "Bob",
-            "landlord-radio" -> "LandLordAndTenant"
+            "landlord-radio" -> "LandlordRelationshipNo"
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -144,11 +144,11 @@ class LandlordControllerSpec extends ControllerSpecSupport {
         val content = contentAsString(result)
         content must include(pageTitle)
       }
-      "Return Form with Errors when other radio button is selected with no text" in {
+      "Return Form with Errors when yes radio button is selected with no text" in {
         val result = controllerProperty.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "landlord-name-value" -> "Bob",
-            "landlord-radio" -> "OtherRelationship",
+            "landlord-radio" -> "LandlordRelationshipYes",
             "landlordOther" -> "",
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))

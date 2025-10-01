@@ -81,7 +81,7 @@ class DoYouPayExtraForParkingSpacesControllerSpec extends ControllerSpecSupport{
 
         val result = controllerProperty(None).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.DoYouPayExtraForParkingSpacesController.show(NormalMode).url)
+        redirectLocation(result) mustBe Some(routes.RepairsAndInsuranceController.show(NormalMode).url)
       }
       "Return BAD_REQUEST for missing input and the correct view" in {
         val fakePostRequest = FakeRequest(routes.WhatTypeOfLeaseRenewalController.submit(NormalMode))

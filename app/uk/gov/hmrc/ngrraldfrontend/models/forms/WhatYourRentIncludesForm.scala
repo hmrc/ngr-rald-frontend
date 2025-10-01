@@ -149,12 +149,12 @@ object WhatYourRentIncludesForm extends CommonFormValidators with Mappings {
       if (whatYourRentIncludesForm.livingAccommodationRadio.equals("livingAccommodationYes")) {
         if (bedroomNumber.isEmpty)
           Invalid("whatYourRentIncludes.bedroom.number.required.error")
-        else if (Try(bedroomNumber.get.toLong).isFailure)
+        else if (!bedroomNumber.get.matches(wholePositiveNumberRegexp.pattern()))
           Invalid("whatYourRentIncludes.bedroom.number.invalid.error")
+        else if (bedroomNumber.get.toDoubleOption.getOrElse(0d) > 99)
+          Invalid("whatYourRentIncludes.bedroom.number.maximum.error")
         else if (bedroomNumber.get.toLong < 1)
           Invalid("whatYourRentIncludes.bedroom.number.minimum.error")
-        else if (bedroomNumber.get.toLong > 99)
-          Invalid("whatYourRentIncludes.bedroom.number.maximum.error")
         else
           Valid
       }
@@ -165,13 +165,13 @@ object WhatYourRentIncludesForm extends CommonFormValidators with Mappings {
   def form: Form[WhatYourRentIncludesForm] = {
     Form(
       mapping(
-        livingAccommodationRadio -> radioText(livingAccommodationRadioError),
-        rentPartAddressRadio -> radioText(rentPartAddressRadioError),
-        rentEmptyShellRadio -> radioText(rentEmptyShellRadioError),
+        livingAccommodationRadio  -> radioText(livingAccommodationRadioError),
+        rentPartAddressRadio      -> radioText(rentPartAddressRadioError),
+        rentEmptyShellRadio       -> radioText(rentEmptyShellRadioError),
         rentIncBusinessRatesRadio -> radioText(rentIncBusinessRatesRadioError),
-        rentIncWaterChargesRadio -> radioText(rentIncWaterChargesRadioError),
-        rentIncServiceRadio -> radioText(rentIncServiceRadioError),
-        bedroomNumbers -> optional(text().transform[String](_.strip(), identity))
+        rentIncWaterChargesRadio  -> radioText(rentIncWaterChargesRadioError),
+        rentIncServiceRadio       -> radioText(rentIncServiceRadioError),
+        bedroomNumbers            -> optional(text().transform[String](_.strip(), identity))
       )(WhatYourRentIncludesForm.apply)(WhatYourRentIncludesForm.unapply)
         .verifying(isBedroomNumberValid)
     )

@@ -19,32 +19,28 @@
 @import uk.gov.hmrc.ngrraldfrontend.views.html.components._
 @import uk.gov.hmrc.ngrraldfrontend.viewmodels.govuk.all._
 @import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-@import uk.gov.hmrc.ngrraldfrontend.models.forms.InterimRentSetByTheCourtForm
+@import uk.gov.hmrc.ngrraldfrontend.models.forms.RepairsAndInsuranceForm
 
 @this(
   layout: Layout,
+  govukRadios : GovukRadios,
   formHelper: FormWithCSRF,
-  inputDateForMonthYear: components.InputDateForMonthYear,
   govukErrorSummary: GovukErrorSummary,
   saveAndContinueButton: saveAndContinueButton
 )
 
-@(form:Form[InterimRentSetByTheCourtForm], propertyAddress: String, interimAmount: Html, mode: Mode)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+@(form:Form[RepairsAndInsuranceForm], internalRepairs: Radios, externalRepairs: Radios, buildingInsurance: Radios, propertyAddress: String, mode: Mode)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
-@layout(pageTitle = Some(messages("interimRentSetByTheCourt.title")), showBackLink = true, fullWidth = false) {
-  @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.InterimRentSetByTheCourtController.submit(mode), Symbol("autoComplete") -> "off") {
+@layout(pageTitle = Some(messages("repairsAndInsurance.title")), showBackLink = true, fullWidth = false) {
+  @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.RepairsAndInsuranceController.submit(mode), Symbol("autoComplete") -> "off") {
     @if(form.errors.nonEmpty) {
-      @govukErrorSummary(ErrorSummaryViewModel(form, Some("interimRentSetByTheCourt"), Some(Seq("date"))))
+      @govukErrorSummary(ErrorSummaryViewModel(form))
     }
     <span class="govuk-caption-m">@propertyAddress</span>
-    <h1 class="govuk-heading-l">@messages("interimRentSetByTheCourt.title")</h1>
-    @interimAmount
-    @inputDateForMonthYear(
-        form,
-        legendContent = messages("interimRentSetByTheCourt.label.2"),
-        legendAsPageHeading = false,
-        hintText = Some(messages("interimRentSetByTheCourt.hint.2"))
-    )
+    <h1 class="govuk-heading-l">@messages("repairsAndInsurance.title")</h1>
+    @govukRadios(internalRepairs)
+    @govukRadios(externalRepairs)
+    @govukRadios(buildingInsurance)
     @saveAndContinueButton(msg = messages("service.continue"), isStartButton = false)
   }
 }

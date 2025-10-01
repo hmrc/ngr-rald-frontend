@@ -24,7 +24,7 @@ import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatIsYourRentBasedOnForm.firstError
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 
-final case class LandlordForm(landlordName: String, landLordType: String, landlordOther: Option[String])
+final case class LandlordForm(landlordName: String, hasRelationship: String, landlordRelationship: Option[String])
 
 object LandlordForm extends CommonFormValidators with Mappings{
   implicit val format: OFormat[LandlordForm] = Json.format[LandlordForm]
@@ -32,12 +32,12 @@ object LandlordForm extends CommonFormValidators with Mappings{
   private lazy val landlordNameEmptyError = "landlord.name.empty.error"
   private lazy val landlordNameTooLongError = "landlord.name.empty.tooLong.error"
   private lazy val radioUnselectedError = "landlord.radio.empty.error"
-  private lazy val otherRadioEmptyError = "landlord.radio.other.empty.error"
-  private lazy val otherRadioTooLongError = "landlord.radio.other.tooLong.error"
+  private lazy val landlordRelationshipEmptyError = "landlord.radio.empty.error"
+  private lazy val landlordRelationshipTooLongError = "landlord.radio.tooLong.error"
 
   private val landlord = "landlord-name-value"
   private val landlordRadio = "landlord-radio"
-  private val landlordOther = "landlord-radio-other"
+  private val landlordRelationshipYes = "landlord-relationship"
 
 
   val messagesApi: MessagesApi = new DefaultMessagesApi()
@@ -46,22 +46,22 @@ object LandlordForm extends CommonFormValidators with Mappings{
 
 
   def unapply(landlordForm: LandlordForm): Option[(String, String, Option[String])] =
-    Some((landlordForm.landlordName, landlordForm.landLordType, landlordForm.landlordOther))
+    Some((landlordForm.landlordName, landlordForm.hasRelationship, landlordForm.landlordRelationship))
 
-  private def isOtherTextEmpty[A]: Constraint[A] =
+  private def isLandlordRelationshipTextEmpty[A]: Constraint[A] =
     Constraint((input: A) =>
-      val rentBasedOnForm = input.asInstanceOf[LandlordForm]
-      if (rentBasedOnForm.landLordType.equals("OtherRelationship") && rentBasedOnForm.landlordOther.getOrElse("").isBlank)
-        Invalid(otherRadioEmptyError)
+      val landlordForm = input.asInstanceOf[LandlordForm]
+      if (landlordForm.hasRelationship.equals("LandlordRelationshipYes") && landlordForm.landlordRelationship.getOrElse("").isBlank)
+        Invalid(landlordRelationshipEmptyError)
       else
         Valid
     )
 
-  private def otherTextMaxLength[A]: Constraint[A] =
+  private def isLandlordRelationshipTextMaxLength[A]: Constraint[A] =
     Constraint((input: A) =>
-      val rentBasedOnForm = input.asInstanceOf[LandlordForm]
-      if (rentBasedOnForm.landLordType.equals("OtherRelationship") && rentBasedOnForm.landlordOther.getOrElse("").length > 250)
-        Invalid(otherRadioTooLongError)
+      val landlordForm = input.asInstanceOf[LandlordForm]
+      if (landlordForm.hasRelationship.equals("LandlordRelationshipYes") && landlordForm.landlordRelationship.getOrElse("").length > 250)
+        Invalid(landlordRelationshipTooLongError)
       else
         Valid
     )
@@ -78,15 +78,15 @@ object LandlordForm extends CommonFormValidators with Mappings{
             
           ),
         landlordRadio -> radioText(radioUnselectedError),
-        landlordOther -> optional(
+        landlordRelationshipYes -> optional(
           play.api.data.Forms.text
           .transform[String](_.strip(), identity)
         )
       )(LandlordForm.apply)(LandlordForm.unapply)
         .verifying(
           firstError(
-            isOtherTextEmpty,
-            otherTextMaxLength
+            isLandlordRelationshipTextEmpty,
+            isLandlordRelationshipTextMaxLength
           )
         )
     )

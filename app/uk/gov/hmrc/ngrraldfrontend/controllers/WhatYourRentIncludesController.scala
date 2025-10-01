@@ -151,7 +151,8 @@ class WhatYourRentIncludesController @Inject()(whatYourRentIncludesView: WhatYou
             }
           )
             for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(WhatYourRentIncludesPage, answers))
+            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
+              .set(WhatYourRentIncludesPage, answers))
             _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(WhatYourRentIncludesPage, mode, updatedAnswers))
       )

@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.ngrraldfrontend.models
+package uk.gov.hmrc.ngrraldfrontend.pages
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.JsPath
+import uk.gov.hmrc.ngrraldfrontend.models.{HowManyParkingSpacesOrGarages, RepairsAndInsurance}
 
-final case class Landlord(landlordName: String,
-                          hasRelationship: Boolean,
-                          landlordRelationship: Option[String] = None)
+object RepairsAndInsurancePage extends QuestionPage[RepairsAndInsurance] {
 
-object Landlord {
-  implicit val format: OFormat[Landlord] = Json.format[Landlord]
+  override def toString: String = "repairsAndInsurance"
+
+  override def path: JsPath = JsPath \ toString
+
 }
+

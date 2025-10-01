@@ -16,29 +16,18 @@
 
 package uk.gov.hmrc.ngrraldfrontend.models
 
-import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.ngrraldfrontend.helpers.TestSupport
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
+import uk.gov.hmrc.ngrraldfrontend.pages.Page
 
-class LandlordSpec extends TestSupport {
+class TestPage extends Page {
+  override def toString: String = "TestPage"
+}
 
-  val landlord: Landlord = Landlord("John Doe", true, Some("Other description"))
-
-  val landlordJson: JsValue = Json.parse(
-    """
-      |{
-      |"landlordName": "John Doe",
-      |"hasRelationship": true,
-      |"landlordRelationship":"Other description"
-      |}
-      |""".stripMargin
-  )
-
-  "RentBasedOn" should {
-    "deserialize to json" in {
-      Json.toJson(landlord) mustBe landlordJson
-    }
-    "serialize to json" in {
-      landlordJson.as[Landlord] mustBe landlord
-    }
+class PageSpec extends AnyFlatSpec with Matchers {
+  "Page.toString" should "implicitly convert Page to String using toString" in {
+    val page: Page = new TestPage
+    val str: String = page // implicit conversion
+    str shouldEqual "TestPage"
   }
 }

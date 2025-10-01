@@ -49,7 +49,10 @@ class TellUsAboutYourNewAgreementController @Inject()(view: TellUsAboutYourAgree
     def submit: Action[AnyContent] = {
       (authenticate andThen getData).async { implicit request =>
         for {
-          updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(TellUsAboutYourNewAgreementPage, NewAgreement))
+          updatedAnswers <- Future.fromTry(request.userAnswers
+            .map(answers => answers.getCurrentJourneyUserAnswers(TellUsAboutYourNewAgreementPage, answers, request.credId))
+            .getOrElse(UserAnswers(request.credId))
+            .set(TellUsAboutYourNewAgreementPage, NewAgreement))
           _ <- sessionRepository.set(updatedAnswers)
         } yield Redirect(navigator.nextPage(TellUsAboutYourNewAgreementPage, NormalMode, updatedAnswers))
       }

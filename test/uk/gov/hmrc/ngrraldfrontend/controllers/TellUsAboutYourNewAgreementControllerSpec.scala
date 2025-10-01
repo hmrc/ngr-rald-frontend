@@ -20,14 +20,16 @@ import org.mockito.Mockito.when
 import org.mockito.ArgumentMatchers.any
 import org.scalatest.matchers.should.Matchers.shouldBe
 import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.libs.json.Json
 import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, RaldUserAnswers, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.views.html.TellUsAboutYourAgreementView
 
+import java.time.Instant
 import scala.concurrent.Future
 
 class TellUsAboutYourNewAgreementControllerSpec extends ControllerSpecSupport {
@@ -53,9 +55,29 @@ class TellUsAboutYourNewAgreementControllerSpec extends ControllerSpecSupport {
       }
     }
     "method submit" must {
-      "Return OK and the correct view" in {
+      "Return SEE_OTHER and the correct view" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val result = controllerProperty(None).submit(authenticatedFakeRequest)
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(routes.LandlordController.show(NormalMode).url)
+      }
+      "Return SEE_OTHER and the correct view when user resumes new agreement journey" in {
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        val result = controllerProperty(Some(UserAnswers(credId.value, Json.obj(
+          "tellUsAboutYourNewAgreement" -> "NewAgreement",
+          "landlord" -> Json.obj(
+            "landlordName" -> "Anna"
+          )
+        ), Instant.now))).submit(authenticatedFakeRequest)
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(routes.LandlordController.show(NormalMode).url)
+      }
+      "Return SEE_OTHER and the correct view when user switches to new agreement journey" in {
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        val result = controllerProperty(Some(UserAnswers(credId.value, Json.obj(
+          "tellUsAboutRenewedAgreement" -> "RenewedAgreement",
+          "whatTypeOfLeaseRenewal" -> "SurrenderAndRenewal"
+        ), Instant.now))).submit(authenticatedFakeRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) shouldBe Some(routes.LandlordController.show(NormalMode).url)
       }
