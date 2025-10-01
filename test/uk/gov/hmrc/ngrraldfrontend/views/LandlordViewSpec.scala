@@ -38,11 +38,8 @@ class LandlordViewSpec extends ViewBaseSpec {
     val heading = "Landlord"
     val textInputLabel = "What is the landlord's full name?"
     val radioLabel = "What is your relationship with the landlord?"
-    val radio1 = "Landlord and tenant relationship only"
-    val radio2 = "Family member"
-    val radio3 = "Company pension fund"
-    val radio4 = "Business partner or shared director"
-    val radio5 = "Other relationship"
+    val radio1 = "Yes"
+    val radio2 = "No"
     val continue = "Continue"
 
 
@@ -52,25 +49,18 @@ class LandlordViewSpec extends ViewBaseSpec {
       val radioLabel = "#main-content > div > div > form > div:nth-child(5) > fieldset > legend > h1"
       val radio1 = "#main-content > div > div > form > div:nth-child(5) > fieldset > div > div:nth-child(1) > label"
       val radio2 = "#main-content > div > div > form > div:nth-child(5) > fieldset > div > div:nth-child(2) > label"
-      val radio3 = "#main-content > div > div > form > div:nth-child(5) > fieldset > div > div:nth-child(3) > label"
-      val radio4 = "#main-content > div > div > form > div:nth-child(5) > fieldset > div > div:nth-child(4) > label"
-      val radio5 = "#main-content > div > div > form > div:nth-child(5) > fieldset > div > div:nth-child(5) > label"
       val continue = "#continue"
     }
 
     val address = "5 Brixham Marina, Berry Head Road, Brixham, Devon, TQ5 9BW"
-    private val landLordAndTennant: NGRRadioButtons = NGRRadioButtons("Landlord and tenant relationship only", LandLordAndTenant)
-    private val familyMember: NGRRadioButtons = NGRRadioButtons("Family member", FamilyMember)
-    private val companyPensionFund: NGRRadioButtons = NGRRadioButtons("Company pension fund", CompanyPensionFund)
-    private val businessPartnerOrSharedDirector: NGRRadioButtons = NGRRadioButtons("Company pension fund", BusinessPartnerOrSharedDirector)
 
-    private def otherRelationship(form: Form[LandlordForm])(implicit messages: Messages): NGRRadioButtons = NGRRadioButtons(
-      radioContent = "landlord.radio5",
-      radioValue = OtherRelationship,
+    private def landlordRelationship(form: Form[LandlordForm])(implicit messages: Messages): NGRRadioButtons = NGRRadioButtons(
+      radioContent = "service.yes",
+      radioValue = LandlordRelationshipYes,
       conditionalHtml = Some(ngrCharacterCountComponent(form,
         NGRCharacterCount(
-          id = "landlord-radio-other",
-          name = "landlord-radio-other",
+          id = "landlord-yes",
+          name = "landlord-yes",
           label = Label(
             classes = "govuk-label govuk-label--m",
             content = Text(Messages("landlord.radio5.dropdown"))
@@ -83,8 +73,8 @@ class LandlordViewSpec extends ViewBaseSpec {
       )
     )
 
-    private val ngrRadio: NGRRadio = NGRRadio(NGRRadioName("what-type-of-agreement-radio"), Seq(landLordAndTennant, familyMember, companyPensionFund, businessPartnerOrSharedDirector, otherRelationship(form)))
-    val form = LandlordForm.form.fillAndValidate(LandlordForm(landlordName = "Bob", landLordType = "FamilyMember", None))
+    private val ngrRadio: NGRRadio = NGRRadio(NGRRadioName("what-type-of-agreement-radio"), Seq(landlordRelationship(form)))
+    val form = LandlordForm.form.fillAndValidate(LandlordForm(landlordName = "Bob", hasRelationship = "LandlordRelationshipNo", None))
     val radio: Radios = buildRadios(form, ngrRadio)
 
     "LandlordView" must {
@@ -124,18 +114,6 @@ class LandlordViewSpec extends ViewBaseSpec {
 
       "show correct radio 2" in {
         elementText(Selectors.radio2) mustBe Strings.radio2
-      }
-
-      "show correct radio 3" in {
-        elementText(Selectors.radio3) mustBe Strings.radio3
-      }
-
-      "show correct radio 4" in {
-        elementText(Selectors.radio4) mustBe Strings.radio4
-      }
-
-      "show correct radio 5" in {
-        elementText(Selectors.radio5) mustBe Strings.radio5
       }
 
       "show correct continue button" in {

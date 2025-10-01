@@ -57,17 +57,13 @@ typeOfLeaseRenewal.required.error = Select what type of lease renewal it is
 landlord.title = Landlord
 landlord.p1 = What is the landlord''s full name?
 landlord.p2 = What is your relationship with the landlord?
-landlord.radio1 = Landlord and tenant relationship only
-landlord.radio2 = Family member
-landlord.radio3 = Company pension fund
-landlord.radio4 = Business partner or shared director
-landlord.radio5 = Other relationship
-landlord.radio5.dropdown = Can you tell us what your relationship with the landlord is?
 landlord.name.empty.error = Enter the landlord''s full name
 landlord.name.empty.tooLong.error = Landlord''s full name must be 50 characters or less
 landlord.radio.empty.error = Select what your relationship with the landlord is
-landlord.radio.other.empty.error = Tell us what your relationship with the landlord is
-landlord.radio.other.tooLong.error = Maximum character allowed is 250
+landlord.radio.empty.error = Tell us what your relationship with the landlord is
+landlord.radio.tooLong.error = Maximum character allowed is 250
+landlord.radio.yes = Can you tell us what your relationship with the landlord is?
+landlord.radio.yes.hint = For example, the landlord is a family member, business partner, shared director or company pension fund
 
 #WhatIsYourRentBasedOn
 whatIsYourRentBasedOn.title = What is your rent based on?
