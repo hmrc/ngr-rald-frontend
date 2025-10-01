@@ -33,7 +33,7 @@ class ConfirmBreakClauseViewSpec extends ViewBaseSpec {
 
   object Strings {
     val heading = "Did your agreement allow you to trigger a break clause?"
-    val hint = "Select yes if you have a break clause is a term in your agreement that allows you to end the agreement early."
+    val hint = "A break clause is a term in your agreement that allows you to end the agreement early"
     val radio1 = "Yes"
     val radio2 = "No"
     val continue = "Continue"
@@ -41,7 +41,7 @@ class ConfirmBreakClauseViewSpec extends ViewBaseSpec {
 
   object Selectors {
     val heading = "#main-content > div > div.govuk-grid-column-two-thirds > form > div > fieldset > legend > h1"
-    val hint = "#main-content > div > div.govuk-grid-column-two-thirds > form > div > fieldset > legend > hint"
+    val hint = "#main-content > div > div.govuk-grid-column-two-thirds > form > p"
     val radio1 = "#main-content > div > div.govuk-grid-column-two-thirds > form > div > fieldset > div > div:nth-child(1) > label"
     val radio2 = "#main-content > div > div.govuk-grid-column-two-thirds > form > div > fieldset > div > div:nth-child(2) > label"
     val continue = "#continue"

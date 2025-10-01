@@ -46,7 +46,7 @@ class ConfirmBreakClauseController  @Inject()(confirmBreakClauseView: ConfirmBre
     (authenticate andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(ConfirmBreakClausePage) match {
         case None => form
-        case Some(value) => form.fill(ConfirmBreakClauseForm(value))
+        case Some(value) => form.fill(ConfirmBreakClauseForm(if(value) {"Yes"} else {"No"}))
 
       }
         Future.successful(Ok(confirmBreakClauseView(
@@ -71,7 +71,10 @@ class ConfirmBreakClauseController  @Inject()(confirmBreakClauseView: ConfirmBre
         },
         radioValue =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(ConfirmBreakClausePage, radioValue.radio))
+            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(ConfirmBreakClausePage, radioValue.radio match {
+              case "Yes" => true
+              case _ => false
+            }))
             _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(ConfirmBreakClausePage, mode, updatedAnswers))
 

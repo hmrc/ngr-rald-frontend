@@ -18,7 +18,7 @@ package uk.gov.hmrc.ngrraldfrontend.pages
 
 import play.api.libs.json.JsPath
 
-case object ConfirmBreakClausePage extends QuestionPage[String] {
+case object ConfirmBreakClausePage extends QuestionPage[Boolean] {
 
   override def toString: String = "confirmBreakClause"
 

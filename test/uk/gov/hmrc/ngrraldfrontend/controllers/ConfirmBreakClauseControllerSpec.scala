@@ -38,7 +38,7 @@ class ConfirmBreakClauseControllerSpec extends ControllerSpecSupport {
   val view: ConfirmBreakClauseView = inject[ConfirmBreakClauseView]
   val controllerNoProperty: ConfirmBreakClauseController = new ConfirmBreakClauseController(view, fakeAuth, fakeData(None), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
   val controllerProperty: Option[UserAnswers] => ConfirmBreakClauseController = answers => new ConfirmBreakClauseController(view, fakeAuth, fakeDataProperty(Some(property),answers), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
-  val confirmBreakClauseAnswers: Option[UserAnswers] =  UserAnswers("id").set(ConfirmBreakClausePage, "Yes").toOption
+  val confirmBreakClauseAnswers: Option[UserAnswers] =  UserAnswers("id").set(ConfirmBreakClausePage, true).toOption
 
 
   "Confirm Break Clause Controller" must {
