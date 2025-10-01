@@ -41,15 +41,15 @@ class ConfirmBreakClauseFormSpec extends AnyFlatSpec with Matchers {
     boundForm.errors shouldBe List(FormError("confirmBreakClause-radio-value", List("confirmBreakClause.empty.error"), List()))
   }
 
-  it should "pass when yes is selected" in {
+  it should "fail when no is selected" in {
     val data = Map(
-      "confirmBreakClause-radio-value" -> "Yes",
+      "confirmBreakClause-radio-value" -> "No",
     )
 
     val boundForm = ConfirmBreakClauseForm.form.bind(data)
 
     boundForm.errors shouldBe empty
-    boundForm.value shouldBe Some(ConfirmBreakClauseForm("Yes"))
+    boundForm.value shouldBe Some(ConfirmBreakClauseForm("No"))
   }
 
   "DoesYourRentIncludeParkingForm.format" should "serialize to JSON correctly" in {

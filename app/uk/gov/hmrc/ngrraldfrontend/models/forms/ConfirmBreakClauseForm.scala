@@ -43,7 +43,7 @@ object ConfirmBreakClauseForm extends CommonFormValidators with Mappings{
     Some(ConfirmBreakClauseForm.radio)
 
   def ngrRadio(form: Form[ConfirmBreakClauseForm])(implicit messages: Messages): NGRRadio =
-    NGRRadio(NGRRadioName(radio),ngrTitle = Some(Legend(content = Text(messages("confirmBreakClause.title")), classes = "govuk-fieldset__legend--l", isPageHeading = true)) ,NGRRadioButtons = Seq(yesButton, noButton))
+    NGRRadio(NGRRadioName(radio),NGRRadioButtons = Seq(yesButton, noButton))
 
   def form: Form[ConfirmBreakClauseForm] = {
     Form(

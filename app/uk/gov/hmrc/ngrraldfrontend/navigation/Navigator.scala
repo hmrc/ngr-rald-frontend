@@ -142,6 +142,7 @@ class Navigator @Inject()() {
         case None    => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(NormalMode)
       }
     case RentFreePeriodPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeStartController.show(NormalMode)
+<<<<<<< HEAD
     case ConfirmBreakClausePage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.LandlordController.show(NormalMode) //TODO need to connect to next pages when they are done
 
     case DoYouPayExtraForParkingSpacesPage => answers =>
@@ -153,6 +154,7 @@ class Navigator @Inject()() {
         case None => throw new NotFoundException("Failed to find answers")
       }
     case RepairsAndInsurancePage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeStartController.show(NormalMode) //TODO Page not made yet
+    case ConfirmBreakClausePage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.LandlordController.show(NormalMode) //TODO This needs to be amended when the journey is completed
   }
 
   //TODO change to check your answers page

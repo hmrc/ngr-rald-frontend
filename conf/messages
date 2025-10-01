@@ -137,6 +137,8 @@ checkRentPeriod.empty.error = Select yes if you have a rent-free period at the s
 
 #Confirm Break Clause
 confirmBreakClause.title = Did your agreement allow you to trigger a break clause?
+confirmBreakClause.hint = A break clause is a term in your agreement that allows you to end the agreement early
+confirmBreakClause.empty.error = Select yes if you have a break clause is a term in your agreement that allows you to end the agreement early.
 
 #Agreement
 agreement.title = Agreement

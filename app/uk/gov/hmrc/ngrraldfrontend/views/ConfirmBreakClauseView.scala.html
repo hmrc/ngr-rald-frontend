@@ -16,9 +16,12 @@
 
 @import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 
-@import uk.gov.hmrc.ngrraldfrontend.viewmodels.govuk.all._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.Aliases._
 @import uk.gov.hmrc.ngrraldfrontend.views.html.components._
+@import uk.gov.hmrc.ngrraldfrontend.viewmodels.govuk.all._
+@import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
+@import uk.gov.hmrc.ngrraldfrontend.models.components.NavigationBarContent
 @import uk.gov.hmrc.ngrraldfrontend.models.forms.ConfirmBreakClauseForm
 
 @this(
@@ -37,6 +40,8 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
         <span class="govuk-caption-m">@selectedPropertyAddress</span>
+        <h1 class="govuk-heading-l">@messages("confirmBreakClause.title")</h1>
+        <p class="govuk-hint">@messages("confirmBreakClause.hint")</p>
         @govukRadios(ngrRadio)
         @saveAndContinueButton(msg = messages("service.continue"), isStartButton = false)
     }
