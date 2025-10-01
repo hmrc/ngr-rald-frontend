@@ -69,7 +69,7 @@ trait ErrorSummaryFluency {
         Some(s"#${findKey(form.data, fieldName)}")
       else if (messages.contains(s"$pageName.$fieldName.dayAndMonth.required.error") || messages.contains(s"$pageName.$fieldName.dayAndYear.required.error"))
         Some(s"#$fieldName.day")
-      else if (messages.contains(s"$pageName.$fieldName.monthAndYear.required.error"))
+      else if (messages.contains(s"$pageName.$fieldName.monthAndYear.required.error") || messages.contains("rentReview.date.required.error"))
         Some(s"#$fieldName.month")
       else
         Some(s"#${errorLinkOverrides.getOrElse(key, key)}")

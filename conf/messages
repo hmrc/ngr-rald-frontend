@@ -398,3 +398,20 @@ repairsAndInsurance.radio.youAndLandlord = You and the landlord
 repairsAndInsurance.internalRepairs.radio.required.error = Select who pays for internal repairs
 repairsAndInsurance.externalRepairs.radio.required.error = Select who pays for external repairs
 repairsAndInsurance.buildingInsurance.radio.required.error = Select who pays for buildings insurance
+
+#Rent review
+rentReview.months = Months
+rentReview.years = Years
+rentReview.title = Rent review
+rentReview.hasIncludeRentReview.radio.label = Does your agreement include a rent review?
+rentReview.hasIncludeRentReview.radio.hint = If you have a rent review, you and your landlord can agree a new rent on the date set out in your agreement. This is different to a stepped rent, where changes to your rent are described in your agreement.
+rentReview.howOftenReviewed.label = How often is your rent reviewed?
+rentReview.canRentGoDown.radio.label = Can the rent go down when it is reviewed?
+rentReview.hasIncludeRentReview.radio.empty.error = Select yes if your agreement includes a rent review
+rentReview.canRentGoDown.radio.empty.error = Select yes if the rent can go down when it is reviewed
+rentReview.date.required.error = Missing Select yes if your agreement includes a rent review
+rentReview.rentReviewMonthsYears.months.invalid.error = months needs to be numbers
+rentReview.rentReviewMonthsYears.months.maximum.12.error = The number of months for how often your rent is reviewed must be 12 or less
+rentReview.rentReviewMonthsYears.months.maximum.11.error = The number of months for how often your rent is reviewed must be 11 or less
+rentReview.rentReviewMonthsYears.years.invalid.error = years needs to be numbers
+rentReview.rentReviewMonthsYears.years.maximum.1000.error = Enter how often your rent is reviewed

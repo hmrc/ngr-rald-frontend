@@ -30,6 +30,8 @@ trait RadioEntry
 sealed trait YesNoItem extends RadioEntry
 case object Yes extends YesNoItem
 case object No extends YesNoItem
+case object True extends YesNoItem
+case object False extends YesNoItem
 
 sealed trait TypeOfAgreement extends RadioEntry
 case object LeaseOrTenancy extends TypeOfAgreement
@@ -109,6 +111,21 @@ object NGRRadio {
   val yesButton: NGRRadioButtons = NGRRadioButtons(radioContent = "service.yes", radioValue = Yes)
   val noButton: NGRRadioButtons = NGRRadioButtons(radioContent = "service.no", radioValue = No)
 
+  def yesButtonWithTrueValue(conditionalHtml: Option[Html] = None): NGRRadioButtons =
+    NGRRadioButtons(radioContent = "service.yes", radioValue = True, conditionalHtml = conditionalHtml)
+
+  def noButtonWithFalseValue(conditionalHtml: Option[Html] = None): NGRRadioButtons =
+    NGRRadioButtons(radioContent = "service.no", radioValue = False, conditionalHtml = conditionalHtml)
+
+  def ngrRadio(radioName: String, radioButtons: Seq[NGRRadioButtons], ngrTitleKey: String,
+               ngrTitleClass: String = "govuk-fieldset__legend--m", hintKey: Option[String] = None)(implicit messages: Messages): NGRRadio =
+    NGRRadio(
+      radioGroupName = NGRRadioName(radioName),
+      NGRRadioButtons = radioButtons,
+      ngrTitle = Some(Legend(content = Text(messages(ngrTitleKey)), classes = ngrTitleClass, isPageHeading = true)),
+      hint = hintKey
+    )  
+
   def buildRadios[A](
                       form: Form[A],
                       NGRRadios: NGRRadio
@@ -125,7 +142,7 @@ object NGRRadio {
           content = Text(Messages(item.radioContent)),
           value = Some(item.radioValue.toString),
           hint = Some(Hint(content = Text(Messages(item.buttonHint.getOrElse(""))))),
-          checked = form.data.values.toList.contains(item.radioValue.toString),
+          checked = form.data.get(NGRRadios.radioGroupName.key).exists(value => value.contains(item.radioValue.toString)),
           conditionalHtml = item.conditionalHtml
         )
       },

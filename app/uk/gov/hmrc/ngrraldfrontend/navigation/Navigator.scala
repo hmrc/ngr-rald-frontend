@@ -152,6 +152,8 @@ class Navigator @Inject()() {
         }
         case None => throw new NotFoundException("Failed to find answers")
       }
+    //TODO Next page not made yet
+    case RentReviewPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeStartController.show(NormalMode)
     case RepairsAndInsurancePage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.ConfirmBreakClauseController.show(NormalMode) //TODO Needs journey mapping
   }
 
