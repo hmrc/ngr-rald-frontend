@@ -54,7 +54,6 @@ class DoesYourRentIncludeParkingControllerSpec extends ControllerSpecSupport {
         status(result) mustBe OK
         val content = contentAsString(result)
         val document = Jsoup.parse(content)
-        println(document)
         document.select("input[type=radio][name=doesYourRentIncludeParking-radio-value][value=Yes]").hasAttr("checked") mustBe true
       }
       "Return NotFoundException when property is not found in the mongo" in {

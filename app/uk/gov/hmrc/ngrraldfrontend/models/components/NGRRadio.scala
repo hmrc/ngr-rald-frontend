@@ -30,8 +30,8 @@ trait RadioEntry
 sealed trait YesNoItem extends RadioEntry
 case object Yes extends YesNoItem
 case object No extends YesNoItem
-case object True extends YesNoItem
-case object False extends YesNoItem
+case object `true` extends YesNoItem
+case object `false` extends YesNoItem
 
 sealed trait TypeOfAgreement extends RadioEntry
 case object LeaseOrTenancy extends TypeOfAgreement
@@ -112,10 +112,10 @@ object NGRRadio {
   val noButton: NGRRadioButtons = NGRRadioButtons(radioContent = "service.no", radioValue = No)
 
   def yesButtonWithTrueValue(conditionalHtml: Option[Html] = None): NGRRadioButtons =
-    NGRRadioButtons(radioContent = "service.yes", radioValue = True, conditionalHtml = conditionalHtml)
+    NGRRadioButtons(radioContent = "service.yes", radioValue = `true`, conditionalHtml = conditionalHtml)
 
   def noButtonWithFalseValue(conditionalHtml: Option[Html] = None): NGRRadioButtons =
-    NGRRadioButtons(radioContent = "service.no", radioValue = False, conditionalHtml = conditionalHtml)
+    NGRRadioButtons(radioContent = "service.no", radioValue = `false`, conditionalHtml = conditionalHtml)
 
   def ngrRadio(radioName: String, radioButtons: Seq[NGRRadioButtons], ngrTitleKey: String,
                ngrTitleClass: String = "govuk-fieldset__legend--m", hintKey: Option[String] = None)(implicit messages: Messages): NGRRadio =

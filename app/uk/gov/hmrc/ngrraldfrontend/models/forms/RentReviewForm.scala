@@ -34,8 +34,8 @@ object RentReviewForm extends Mappings with MonthYearMappings {
   
   implicit val format: OFormat[RentReviewForm] = Json.format[RentReviewForm]
 
-  private val hasIncludeRentReviewRadio = "has-include-rent-review-radio"
-  private val canRentGoDownRadio = "can-rent-go-down-radio"
+  val hasIncludeRentReviewRadio = "has-include-rent-review-radio"
+  val canRentGoDownRadio = "can-rent-go-down-radio"
   
   def unapply(rentReviewForm: RentReviewForm): Option[(String, Option[NGRMonthYear], String)] =
     Some(rentReviewForm.hasIncludeRentReview, rentReviewForm.monthsYears, rentReviewForm.canRentGoDown)
@@ -70,9 +70,9 @@ object RentReviewForm extends Mappings with MonthYearMappings {
         else
           val ngrMonthYear: NGRMonthYear = rentReviewForm.monthsYears.get
           (ngrMonthYear.month, ngrMonthYear.year) match
-            case ("", years) => Valid
-            case (months, "") => isMonthsValidWhenNoYearsIsEmpty(months)
-            case (months, years) => isMonthsValidWithYears(months)
+            case ("" | "0", years)  => Valid
+            case (months, "" | "0") => isMonthsValidWhenNoYearsIsEmpty(months)
+            case (months, years)    => isMonthsValidWithYears(months)
       else
         Valid
     )

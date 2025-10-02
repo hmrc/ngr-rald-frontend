@@ -23,16 +23,16 @@ import play.api.libs.json.{JsValue, Json}
 
 class DoYouPayExtraForParkingSpacesFormSpec extends AnyWordSpec with Matchers {
   val requiredError = "doYouPayExtraForParkingSpaces.required.error"
-  val checkRentPeriodModel: DoYouPayExtraForParkingSpacesForm = DoYouPayExtraForParkingSpacesForm("Yes")
-  val checkRentPeriodJson: JsValue = Json.parse("""{"radioValue":"Yes"}
+  val doYouPayExtraParkingSpacesForm: DoYouPayExtraForParkingSpacesForm = DoYouPayExtraForParkingSpacesForm("Yes")
+  val doYouPayExtraParkingSpacesJson: JsValue = Json.parse("""{"radioValue":"Yes"}
                                                   |""".stripMargin)
 
   "DoYouPayExtraForParkingSpacesForm" should {
     "serialize into json" in {
-      Json.toJson(checkRentPeriodModel) shouldBe checkRentPeriodJson
+      Json.toJson(doYouPayExtraParkingSpacesForm) shouldBe doYouPayExtraParkingSpacesJson
     }
     "deserialize from json" in {
-      checkRentPeriodJson.as[DoYouPayExtraForParkingSpacesForm] shouldBe checkRentPeriodModel
+      doYouPayExtraParkingSpacesJson.as[DoYouPayExtraForParkingSpacesForm] shouldBe doYouPayExtraParkingSpacesForm
     }
     "bind successfully with a valid value yes" in {
       val data = Map(DoYouPayExtraForParkingSpacesForm.payExtraRadio -> "yes")
