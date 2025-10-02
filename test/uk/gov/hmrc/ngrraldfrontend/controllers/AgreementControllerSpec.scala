@@ -37,7 +37,6 @@ import scala.concurrent.Future
 class AgreementControllerSpec extends ControllerSpecSupport {
   val pageTitle = "Agreement"
   val view: AgreementView = inject[AgreementView]
-  val mockNGRCharacterCountComponent: NGRCharacterCountComponent = inject[NGRCharacterCountComponent]
   val mockDateTextFieldsComponent: DateTextFields = inject[DateTextFields]
   val controllerNoProperty: AgreementController = new AgreementController(view, fakeAuth, mockDateTextFieldsComponent, mockNGRCharacterCountComponent, mcc, fakeData(None),mockNavigator, mockSessionRepository)(mockConfig, ec)
   val controllerProperty: Option[UserAnswers] => AgreementController = answers => new AgreementController(view, fakeAuth, mockDateTextFieldsComponent, mockNGRCharacterCountComponent, mcc, fakeDataProperty(Some(property),answers),mockNavigator, mockSessionRepository)(mockConfig, ec)

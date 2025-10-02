@@ -152,6 +152,7 @@ class Navigator @Inject()() {
         }
         case None => throw new NotFoundException("Failed to find answers")
       }
+    case ParkingSpacesOrGaragesNotIncludedInYourRentPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RepairsAndInsuranceController.show(NormalMode)
     case RepairsAndInsurancePage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.ConfirmBreakClauseController.show(NormalMode) //TODO Needs journey mapping
   }
 

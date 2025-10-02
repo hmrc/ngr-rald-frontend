@@ -34,9 +34,10 @@ import uk.gov.hmrc.ngrraldfrontend.views.html.InterimRentSetByTheCourtView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class InterimRentSetByTheCourtController @Inject()(interimRentSetByTheCourtView: InterimRentSetByTheCourtView,
                                                    authenticate: AuthRetrievals,
                                                    inputText: InputText,

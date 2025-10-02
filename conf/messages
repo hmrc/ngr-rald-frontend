@@ -398,3 +398,16 @@ repairsAndInsurance.radio.youAndLandlord = You and the landlord
 repairsAndInsurance.internalRepairs.radio.required.error = Select who pays for internal repairs
 repairsAndInsurance.externalRepairs.radio.required.error = Select who pays for external repairs
 repairsAndInsurance.buildingInsurance.radio.required.error = Select who pays for buildings insurance
+
+#ParkingSpacesOrGaragesNotIncludedInYourRent
+parkingSpacesOrGaragesNotIncludedInYourRent.title = Parking spaces or garages not included in your rent
+parkingSpacesOrGaragesNotIncludedInYourRent.subheading = How many parking spaces or garages do you pay extra for?
+parkingSpacesOrGaragesNotIncludedInYourRent.hint = If spaces are in communal car park and you do not have a set number of spaces. Provide an approximate number of spaces
+parkingSpacesOrGaragesNotIncludedInYourRent.uncoveredSpaces.label = Uncovered spaces
+parkingSpacesOrGaragesNotIncludedInYourRent.coveredSpaces.label = Covered spaces
+parkingSpacesOrGaragesNotIncludedInYourRent.garages.label = Garages
+parkingSpacesOrGaragesNotIncludedInYourRent.totalCost.title = How much extra do you pay each year for parking and garages (excluding VAT)?
+parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.label = When was this payment agreed for parking and garages?
+
+parkingSpacesOrGaragesNotIncludedInYourRent.totalCost.required.error =
+parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.required.error =

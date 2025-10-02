@@ -31,9 +31,10 @@ import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.views.html.RepairsAndInsuranceView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class RepairsAndInsuranceController @Inject()(repairsAndInsuranceView: RepairsAndInsuranceView,
                                               authenticate: AuthRetrievals,
                                               navigator: Navigator,

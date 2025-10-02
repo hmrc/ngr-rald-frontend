@@ -32,7 +32,6 @@ import uk.gov.hmrc.ngrraldfrontend.views.html.components.NGRCharacterCountCompon
 
 class LandlordViewSpec extends ViewBaseSpec {
   lazy val view: LandlordView = inject[LandlordView]
-  lazy val ngrCharacterCountComponent: NGRCharacterCountComponent = inject[NGRCharacterCountComponent]
 
   object Strings {
     val heading = "Landlord"
@@ -57,7 +56,7 @@ class LandlordViewSpec extends ViewBaseSpec {
     private def landlordRelationship(form: Form[LandlordForm])(implicit messages: Messages): NGRRadioButtons = NGRRadioButtons(
       radioContent = "service.yes",
       radioValue = LandlordRelationshipYes,
-      conditionalHtml = Some(ngrCharacterCountComponent(form,
+      conditionalHtml = Some(mockNGRCharacterCountComponent(form,
         NGRCharacterCount(
           id = "landlord-yes",
           name = "landlord-yes",
