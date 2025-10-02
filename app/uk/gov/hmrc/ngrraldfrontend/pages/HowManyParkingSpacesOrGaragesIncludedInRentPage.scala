@@ -16,8 +16,8 @@
 
 package uk.gov.hmrc.ngrraldfrontend.pages
 
-import uk.gov.hmrc.ngrraldfrontend.models.HowManyParkingSpacesOrGarages
 import play.api.libs.json.JsPath
+import uk.gov.hmrc.ngrraldfrontend.models.HowManyParkingSpacesOrGarages
 
 case object HowManyParkingSpacesOrGaragesIncludedInRentPage extends QuestionPage[HowManyParkingSpacesOrGarages] {
 
