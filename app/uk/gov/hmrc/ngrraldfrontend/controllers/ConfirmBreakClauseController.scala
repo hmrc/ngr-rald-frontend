@@ -20,7 +20,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
+import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{buildRadios, simpleNgrRadio}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.ConfirmBreakClauseForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.ConfirmBreakClauseForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.{Mode, UserAnswers}
@@ -46,13 +46,13 @@ class ConfirmBreakClauseController  @Inject()(confirmBreakClauseView: ConfirmBre
     (authenticate andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(ConfirmBreakClausePage) match {
         case None => form
-        case Some(value) => form.fill(ConfirmBreakClauseForm(if(value) {"Yes"} else {"No"}))
+        case Some(value) => form.fill(ConfirmBreakClauseForm(value.toString))
 
       }
         Future.successful(Ok(confirmBreakClauseView(
           selectedPropertyAddress = request.property.addressFull,
           form = preparedForm,
-          ngrRadio = buildRadios(preparedForm, ConfirmBreakClauseForm.ngrRadio(preparedForm)),
+          ngrRadio = buildRadios(preparedForm, simpleNgrRadio(ConfirmBreakClauseForm.radio)),
           mode = mode
         )))
     }
@@ -64,17 +64,15 @@ class ConfirmBreakClauseController  @Inject()(confirmBreakClauseView: ConfirmBre
         formWithErrors => {
             Future.successful(BadRequest(confirmBreakClauseView(
               form = formWithErrors,
-              ngrRadio = buildRadios(formWithErrors, ConfirmBreakClauseForm .ngrRadio(formWithErrors)),
+              ngrRadio = buildRadios(formWithErrors, simpleNgrRadio(ConfirmBreakClauseForm.radio)),
               selectedPropertyAddress = request.property.addressFull,
               mode = mode
             )))
         },
         radioValue =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(ConfirmBreakClausePage, radioValue.radio match {
-              case "Yes" => true
-              case _ => false
-            }))
+            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
+              .set(ConfirmBreakClausePage, radioValue.radio.toBoolean))
             _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(ConfirmBreakClausePage, mode, updatedAnswers))
 

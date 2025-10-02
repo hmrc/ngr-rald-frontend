@@ -33,7 +33,7 @@ object ConfirmBreakClauseForm extends CommonFormValidators with Mappings{
   implicit val format: OFormat[ConfirmBreakClauseForm] = Json.format[ConfirmBreakClauseForm]
 
   private lazy val radioUnselectedError = "confirmBreakClause.empty.error"
-  private val radio = "confirmBreakClause-radio-value"
+  val radio = "confirmBreakClause-radio-value"
 
   val messagesApi: MessagesApi = new DefaultMessagesApi()
   val lang: Lang = Lang.defaultLang
@@ -41,9 +41,6 @@ object ConfirmBreakClauseForm extends CommonFormValidators with Mappings{
 
   def unapply(confirmBreakClauseForm: ConfirmBreakClauseForm): Option[(String)] =
     Some(ConfirmBreakClauseForm.radio)
-
-  def ngrRadio(form: Form[ConfirmBreakClauseForm])(implicit messages: Messages): NGRRadio =
-    NGRRadio(NGRRadioName(radio),NGRRadioButtons = Seq(yesButton, noButton))
 
   def form: Form[ConfirmBreakClauseForm] = {
     Form(
