@@ -97,22 +97,9 @@ class ConfirmBreakClauseControllerSpec extends ControllerSpecSupport {
         status(result) mustBe BAD_REQUEST
         val content = contentAsString(result)
         content must include(pageTitle)
-      }
-
-      "Return Form with error message when no radio selection is input" in {
-        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.ConfirmBreakClauseController.submit(NormalMode))
-          .withFormUrlEncodedBody(
-            "confirmBreakClause-radio-value" -> "",
-          )
-          .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
-        result.map(result => {
-          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/landlord") //TODO this is currently going to the wrong page as the journey hasn't yet been completed
-        })
-        status(result) mustBe BAD_REQUEST
-        val content = contentAsString(result)
         content must include("Select yes if you have a break clause is a term in your agreement that allows you to end the agreement early.")
       }
-
+      
       "Return Exception if no address is in the mongo" in {
         when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(None))
         val exception = intercept[NotFoundException] {
