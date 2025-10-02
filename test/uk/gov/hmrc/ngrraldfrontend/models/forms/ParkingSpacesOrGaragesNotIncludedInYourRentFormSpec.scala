@@ -321,6 +321,22 @@ class ParkingSpacesOrGaragesNotIncludedInYourRentFormSpec  extends AnyWordSpec w
       boundForm.hasErrors shouldBe true
       boundForm.errors shouldBe List(FormError("agreementDate", List("parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.year.required.error")))
     }
+
+    "fail to bind when the input field, day, month and year is missing in agreementDate" in {
+      val data = Map(
+        "uncoveredSpaces" -> "1",
+        "coveredSpaces" -> "0",
+        "garages" -> "0",
+        "totalCost" -> "1",
+        "agreementDate.day" -> "",
+        "agreementDate.month" -> "",
+        "agreementDate.year" -> ""
+      )
+      val boundForm = ParkingSpacesOrGaragesNotIncludedInYourRentForm.form.bind(data)
+
+      boundForm.hasErrors shouldBe true
+      boundForm.errors shouldBe List(FormError("agreementDate", List("parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.required.error")))
+    }
   }
 
 

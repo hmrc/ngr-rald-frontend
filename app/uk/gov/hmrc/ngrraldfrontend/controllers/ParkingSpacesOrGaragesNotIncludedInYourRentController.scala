@@ -108,7 +108,6 @@ class ParkingSpacesOrGaragesNotIncludedInYourRentController @Inject()(view: Park
             case _ =>
               formWithErrors
           }
-          println(Console.MAGENTA + s"$formWithCorrectedErrors" +  Console.RESET)
           Future.successful(BadRequest(view(
             form = formWithCorrectedErrors,
             propertyAddress = request.property.addressFull,
