@@ -178,8 +178,12 @@ class RentReviewFormSpec extends AnyWordSpec with Matchers {
       boundForm.errors should contain(FormError("", "rentReview.rentReviewMonthsYears.years.maximum.1000.error"))
     }
     "unbind correctly to a data map" in {
-      val form = DoYouPayExtraForParkingSpacesForm.form.fill(DoYouPayExtraForParkingSpacesForm("no"))
-      form.data shouldBe Map(DoYouPayExtraForParkingSpacesForm.payExtraRadio -> "no")
+      val form = RentReviewForm.form.fill(RentReviewForm("true", Some(NGRMonthYear("11", "1")), "false"))
+      form.data shouldBe Map(
+        RentReviewForm.hasIncludeRentReviewRadio -> "true",
+        "date.month" -> "11",
+        "date.year" -> "1",
+        RentReviewForm.canRentGoDownRadio -> "false")
     }
   }
 

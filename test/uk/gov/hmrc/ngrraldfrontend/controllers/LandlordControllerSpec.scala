@@ -40,9 +40,6 @@ class LandlordControllerSpec extends ControllerSpecSupport {
   val mockNGRCharacterCountComponent: NGRCharacterCountComponent = inject[NGRCharacterCountComponent]
   val controllerNoProperty: LandlordController = new LandlordController(view, fakeAuth, mockNGRCharacterCountComponent, mcc, fakeData(None), mockSessionRepository, mockNavigator)(mockConfig, ec)
   val controllerProperty: LandlordController = new LandlordController(view, fakeAuth, mockNGRCharacterCountComponent, mcc, fakeDataProperty(Some(property),None), mockSessionRepository, mockNavigator)(mockConfig, ec)
-  lazy val renewedAgreementAnswers: Option[UserAnswers] = UserAnswers("id").set(TellUsAboutYourRenewedAgreementPage, RenewedAgreement).toOption
-  lazy val newAgreementAnswers: Option[UserAnswers] = UserAnswers("id").set(TellUsAboutYourNewAgreementPage, NewAgreement).toOption
-  lazy val rentAgreementAnswers: Option[UserAnswers] = UserAnswers("id").set(TellUsAboutRentPage, RentAgreement).toOption
   lazy val filledController: Option[UserAnswers] => LandlordController = answers => LandlordController(view, fakeAuth, mockNGRCharacterCountComponent, mcc, fakeDataProperty(Some(property), answers), mockSessionRepository, mockNavigator)
   lazy val landlordAnswers: Option[UserAnswers] = UserAnswers("id").set(LandlordPage, landlordModel).toOption
 

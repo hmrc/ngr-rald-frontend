@@ -79,7 +79,7 @@ class RepairsAndInsuranceControllerSpec extends ControllerSpecSupport {
       }
     }
     "method submit" must {
-      "Return OK and the correct view" in {
+      "Return SEE_OTHER and the correct view when it's renewed agreement journey" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val fakePostRequest = FakeRequest(routes.RepairsAndInsuranceController.submit(NormalMode))
           .withFormUrlEncodedBody(
@@ -88,7 +88,33 @@ class RepairsAndInsuranceControllerSpec extends ControllerSpecSupport {
             "repairsAndInsurance-buildingInsurance-radio-value" -> "BuildingInsuranceYou"
           ).withHeaders(HeaderNames.authorisation -> "Bearer 1")
 
-        val result = controllerProperty(None).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
+        val result = controllerProperty(renewedAgreementAnswers).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.RentReviewController.show(NormalMode).url)
+      }
+      "Return SEE_OTHER and the correct view when it's new agreement journey" in {
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        val fakePostRequest = FakeRequest(routes.RepairsAndInsuranceController.submit(NormalMode))
+          .withFormUrlEncodedBody(
+            "repairsAndInsurance-internalRepairs-radio-value" -> "InternalRepairsYou",
+            "repairsAndInsurance-externalRepairs-radio-value" -> "ExternalRepairsYou",
+            "repairsAndInsurance-buildingInsurance-radio-value" -> "BuildingInsuranceYou"
+          ).withHeaders(HeaderNames.authorisation -> "Bearer 1")
+
+        val result = controllerProperty(newAgreementAnswers).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.RentReviewController.show(NormalMode).url)
+      }
+      "Return SEE_OTHER and the correct view when it's rent review journey" in {
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        val fakePostRequest = FakeRequest(routes.RepairsAndInsuranceController.submit(NormalMode))
+          .withFormUrlEncodedBody(
+            "repairsAndInsurance-internalRepairs-radio-value" -> "InternalRepairsYou",
+            "repairsAndInsurance-externalRepairs-radio-value" -> "ExternalRepairsYou",
+            "repairsAndInsurance-buildingInsurance-radio-value" -> "BuildingInsuranceYou"
+          ).withHeaders(HeaderNames.authorisation -> "Bearer 1")
+
+        val result = controllerProperty(rentAgreementAnswers).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.ConfirmBreakClauseController.show(NormalMode).url)
       }

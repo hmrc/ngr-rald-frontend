@@ -51,8 +51,8 @@ class DoYouPayExtraForParkingSpacesControllerSpec extends ControllerSpecSupport{
         status(result) mustBe OK
         val content = contentAsString(result)
         val document = Jsoup.parse(content)
-        document.select("input[type=radio][name=payExtra][value=Yes]").hasAttr("checked") mustBe true
-        document.select("input[type=radio][name=payExtra][value=No]").hasAttr("checked") mustBe false
+        document.select("input[type=radio][name=payExtra][value=true]").hasAttr("checked") mustBe true
+        document.select("input[type=radio][name=payExtra][value=false]").hasAttr("checked") mustBe false
       }
       "Return Not Found Exception where no property is found in mongo" in {
         when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(None))
@@ -66,7 +66,7 @@ class DoYouPayExtraForParkingSpacesControllerSpec extends ControllerSpecSupport{
       "Return OK and the correct view and the answer is Yes" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val fakePostRequest = FakeRequest(routes.DoYouPayExtraForParkingSpacesController.submit(NormalMode))
-          .withFormUrlEncodedBody("payExtra" -> "Yes")
+          .withFormUrlEncodedBody("payExtra" -> "true")
           .withHeaders(HeaderNames.authorisation -> "Bearer 1")
 
         val result = controllerProperty(None).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
@@ -76,7 +76,7 @@ class DoYouPayExtraForParkingSpacesControllerSpec extends ControllerSpecSupport{
       "Return OK and the correct view and the answer is No" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val fakePostRequest = FakeRequest(routes.CheckRentFreePeriodController.submit(NormalMode))
-          .withFormUrlEncodedBody("payExtra" -> "No")
+          .withFormUrlEncodedBody("payExtra" -> "false")
           .withHeaders(HeaderNames.authorisation -> "Bearer 1")
 
         val result = controllerProperty(None).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))

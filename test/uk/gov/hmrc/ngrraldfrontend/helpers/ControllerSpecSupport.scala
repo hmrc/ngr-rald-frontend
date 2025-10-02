@@ -22,12 +22,14 @@ import uk.gov.hmrc.auth.core.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalActionSpec, FakeAuthenticatedRequest, FakeDataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.connectors.NGRConnector
+import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.{NewAgreement, RenewedAgreement, RentAgreement}
 import uk.gov.hmrc.ngrraldfrontend.models.AuthenticatedUserRequest
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.models.UserAnswers
 import uk.gov.hmrc.ngrraldfrontend.models.requests.OptionalDataRequest
 import uk.gov.hmrc.ngrraldfrontend.models.vmvProperty.VMVProperty
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
+import uk.gov.hmrc.ngrraldfrontend.pages.{TellUsAboutRentPage, TellUsAboutYourNewAgreementPage, TellUsAboutYourRenewedAgreementPage}
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,6 +45,9 @@ trait ControllerSpecSupport extends TestSupport {
   val mockNgrConnector: NGRConnector = mock[NGRConnector]
   implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
   val fakeAuth = new FakeAuthenticatedRequest(mcc.parsers.defaultBodyParser)
+  val renewedAgreementAnswers: Option[UserAnswers] = UserAnswers("id").set(TellUsAboutYourRenewedAgreementPage, RenewedAgreement).toOption
+  val newAgreementAnswers: Option[UserAnswers] = UserAnswers("id").set(TellUsAboutYourNewAgreementPage, NewAgreement).toOption
+  val rentAgreementAnswers: Option[UserAnswers] = UserAnswers("id").set(TellUsAboutRentPage, RentAgreement).toOption
 
 
   //  def mockRequest(hasCredId: Boolean = false, hasNino: Boolean = true): Unit =

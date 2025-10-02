@@ -23,8 +23,8 @@ import play.api.libs.json.{JsValue, Json}
 
 class DoYouPayExtraForParkingSpacesFormSpec extends AnyWordSpec with Matchers {
   val requiredError = "doYouPayExtraForParkingSpaces.required.error"
-  val doYouPayExtraParkingSpacesForm: DoYouPayExtraForParkingSpacesForm = DoYouPayExtraForParkingSpacesForm("Yes")
-  val doYouPayExtraParkingSpacesJson: JsValue = Json.parse("""{"radioValue":"Yes"}
+  val doYouPayExtraParkingSpacesForm: DoYouPayExtraForParkingSpacesForm = DoYouPayExtraForParkingSpacesForm("true")
+  val doYouPayExtraParkingSpacesJson: JsValue = Json.parse("""{"radioValue":"true"}
                                                   |""".stripMargin)
 
   "DoYouPayExtraForParkingSpacesForm" should {
@@ -35,18 +35,18 @@ class DoYouPayExtraForParkingSpacesFormSpec extends AnyWordSpec with Matchers {
       doYouPayExtraParkingSpacesJson.as[DoYouPayExtraForParkingSpacesForm] shouldBe doYouPayExtraParkingSpacesForm
     }
     "bind successfully with a valid value yes" in {
-      val data = Map(DoYouPayExtraForParkingSpacesForm.payExtraRadio -> "yes")
+      val data = Map(DoYouPayExtraForParkingSpacesForm.payExtraRadio -> "true")
       val boundForm = DoYouPayExtraForParkingSpacesForm.form.bind(data)
 
       boundForm.hasErrors shouldBe false
-      boundForm.value shouldBe Some(DoYouPayExtraForParkingSpacesForm("yes"))
+      boundForm.value shouldBe Some(DoYouPayExtraForParkingSpacesForm("true"))
     }
     "bind successfully with a valid value no" in {
-      val data = Map(DoYouPayExtraForParkingSpacesForm.payExtraRadio -> "no")
+      val data = Map(DoYouPayExtraForParkingSpacesForm.payExtraRadio -> "false")
       val boundForm = DoYouPayExtraForParkingSpacesForm.form.bind(data)
 
       boundForm.hasErrors shouldBe false
-      boundForm.value shouldBe Some(DoYouPayExtraForParkingSpacesForm("no"))
+      boundForm.value shouldBe Some(DoYouPayExtraForParkingSpacesForm("false"))
     }
     "return an error when the radio value is empty" in {
       val data = Map(DoYouPayExtraForParkingSpacesForm.payExtraRadio -> "")
@@ -65,8 +65,8 @@ class DoYouPayExtraForParkingSpacesFormSpec extends AnyWordSpec with Matchers {
     }
 
     "unbind correctly to a data map" in {
-      val form = DoYouPayExtraForParkingSpacesForm.form.fill(DoYouPayExtraForParkingSpacesForm("no"))
-      form.data shouldBe Map(DoYouPayExtraForParkingSpacesForm.payExtraRadio -> "no")
+      val form = DoYouPayExtraForParkingSpacesForm.form.fill(DoYouPayExtraForParkingSpacesForm("false"))
+      form.data shouldBe Map(DoYouPayExtraForParkingSpacesForm.payExtraRadio -> "false")
     }
   }
 

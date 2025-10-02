@@ -117,6 +117,9 @@ object NGRRadio {
   def noButtonWithFalseValue(conditionalHtml: Option[Html] = None): NGRRadioButtons =
     NGRRadioButtons(radioContent = "service.no", radioValue = `false`, conditionalHtml = conditionalHtml)
 
+  def simpleNgrRadio(radioName: String)(implicit messages: Messages): NGRRadio =
+    NGRRadio(NGRRadioName(radioName), NGRRadioButtons = Seq(NGRRadio.yesButtonWithTrueValue(), NGRRadio.noButtonWithFalseValue()))  
+
   def ngrRadio(radioName: String, radioButtons: Seq[NGRRadioButtons], ngrTitleKey: String,
                ngrTitleClass: String = "govuk-fieldset__legend--m", hintKey: Option[String] = None)(implicit messages: Messages): NGRRadio =
     NGRRadio(

@@ -41,8 +41,4 @@ object DoYouPayExtraForParkingSpacesForm extends Mappings {
       )(DoYouPayExtraForParkingSpacesForm.apply)(DoYouPayExtraForParkingSpacesForm.unapply)
     )
   }
-  
-  def ngrRadio(form: Form[DoYouPayExtraForParkingSpacesForm])(implicit messages: Messages): NGRRadio =
-    NGRRadio(NGRRadioName(payExtraRadio), NGRRadioButtons = Seq(NGRRadio.yesButton, NGRRadio.noButton))
-
 }
