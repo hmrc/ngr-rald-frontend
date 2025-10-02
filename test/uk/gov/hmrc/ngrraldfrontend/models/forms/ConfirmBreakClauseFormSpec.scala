@@ -65,13 +65,13 @@ class ConfirmBreakClauseFormSpec extends AnyFlatSpec with Matchers {
     val json = Json.toJson(form)
 
     json shouldBe Json.obj(
-      "radio" -> "true",
+      "radioValue" -> "true",
     )
   }
 
   it should "deserialize from JSON correctly" in {
     val json = Json.obj(
-      "radio" -> "false",
+      "radioValue" -> "false",
     )
 
     val result = json.validate[ConfirmBreakClauseForm]

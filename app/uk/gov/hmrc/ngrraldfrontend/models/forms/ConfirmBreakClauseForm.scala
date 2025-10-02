@@ -27,7 +27,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{noButton, yesButt
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 
-final case class ConfirmBreakClauseForm(radio: String)
+final case class ConfirmBreakClauseForm(radioValue: String)
 
 object ConfirmBreakClauseForm extends CommonFormValidators with Mappings{
   implicit val format: OFormat[ConfirmBreakClauseForm] = Json.format[ConfirmBreakClauseForm]
@@ -40,7 +40,7 @@ object ConfirmBreakClauseForm extends CommonFormValidators with Mappings{
   val messages: Messages = MessagesImpl(lang, messagesApi)
 
   def unapply(confirmBreakClauseForm: ConfirmBreakClauseForm): Option[(String)] =
-    Some(ConfirmBreakClauseForm.radio)
+    Some(confirmBreakClauseForm.radioValue)
 
   def form: Form[ConfirmBreakClauseForm] = {
     Form(

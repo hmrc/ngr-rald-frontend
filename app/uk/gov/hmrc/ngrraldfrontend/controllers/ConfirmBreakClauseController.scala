@@ -47,7 +47,6 @@ class ConfirmBreakClauseController  @Inject()(confirmBreakClauseView: ConfirmBre
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(ConfirmBreakClausePage) match {
         case None => form
         case Some(value) => form.fill(ConfirmBreakClauseForm(value.toString))
-
       }
         Future.successful(Ok(confirmBreakClauseView(
           selectedPropertyAddress = request.property.addressFull,
@@ -72,7 +71,7 @@ class ConfirmBreakClauseController  @Inject()(confirmBreakClauseView: ConfirmBre
         radioValue =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
-              .set(ConfirmBreakClausePage, radioValue.radio.toBoolean))
+              .set(ConfirmBreakClausePage, radioValue.radioValue.toBoolean))
             _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(ConfirmBreakClausePage, mode, updatedAnswers))
 
