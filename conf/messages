@@ -389,9 +389,9 @@ doYouPayExtraForParkingSpaces.required.error = Select yes if your rent includes 
 
 #RepairsAndInsurance
 repairsAndInsurance.title = Repairs and insurance
-repairsAndInsurance.internalRepairs.radio.label = who pays for internal repairs?
-repairsAndInsurance.externalRepairs.radio.label = who pays for external repairs?
-repairsAndInsurance.buildingInsurance.radio.label = who pays for building insurance repairs?
+repairsAndInsurance.internalRepairs.radio.label = Who pays for internal repairs?
+repairsAndInsurance.externalRepairs.radio.label = Who pays for external repairs?
+repairsAndInsurance.buildingInsurance.radio.label = Who pays for building insurance repairs?
 repairsAndInsurance.radio.you = You
 repairsAndInsurance.radio.landlord = The landlord
 repairsAndInsurance.radio.youAndLandlord = You and the landlord
