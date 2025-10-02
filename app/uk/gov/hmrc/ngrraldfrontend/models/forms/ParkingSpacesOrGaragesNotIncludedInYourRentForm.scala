@@ -50,7 +50,7 @@ object ParkingSpacesOrGaragesNotIncludedInYourRentForm extends CommonFormValidat
   private val maxValue = 9999
 
   private val maxTotalCostAmount: BigDecimal = BigDecimal("9999999.99")
-  
+
   def unapply(parkingSpacesOrGaragesNotIncludedInYourRentForm: ParkingSpacesOrGaragesNotIncludedInYourRentForm): Option[(Int, Int, Int, BigDecimal, NGRDate)] =
     Some(
       parkingSpacesOrGaragesNotIncludedInYourRentForm.uncoveredSpaces,
@@ -112,6 +112,7 @@ object ParkingSpacesOrGaragesNotIncludedInYourRentForm extends CommonFormValidat
               )
             ).transform[BigDecimal](BigDecimal(_).setScale(2, RoundingMode.HALF_UP), _.toString)
             .verifying(
+              minimumValue[BigDecimal](1, "parkingSpacesOrGaragesNotIncludedInYourRent.totalCost.minimum.error"),
               maximumValue[BigDecimal](maxTotalCostAmount, "parkingSpacesOrGaragesNotIncludedInYourRent.totalCost.max.error")
             ),
           "agreementDate" -> dateMapping

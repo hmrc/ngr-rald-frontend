@@ -121,7 +121,7 @@ class ParkingSpacesOrGaragesNotIncludedInYourRentControllerSpec extends Controll
         val result = controllerProperty(None).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
         status(result) mustBe BAD_REQUEST
         val content = contentAsString(result)
-        content must include("")
+        content must include("Total number of uncovered spaces, covered spaces and garages you pay extra for must be more than 0")
       }
       "Return BAD_REQUEST for not inputting a total cost and show the correct view" in {
         val fakePostRequest = FakeRequest(routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.submit(NormalMode))
@@ -136,6 +136,8 @@ class ParkingSpacesOrGaragesNotIncludedInYourRentControllerSpec extends Controll
           ).withHeaders(HeaderNames.authorisation -> "Bearer 1")
         val result = controllerProperty(None).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
         status(result) mustBe BAD_REQUEST
+        val content = contentAsString(result)
+        content must include("Enter how much extra you pay each year for parking and garages (excluding VAT)")
       }
       "Return BAD_REQUEST for not inputting a day and show the correct view" in {
         val fakePostRequest = FakeRequest(routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.submit(NormalMode))
@@ -150,6 +152,8 @@ class ParkingSpacesOrGaragesNotIncludedInYourRentControllerSpec extends Controll
           ).withHeaders(HeaderNames.authorisation -> "Bearer 1")
         val result = controllerProperty(None).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
         status(result) mustBe BAD_REQUEST
+        val content = contentAsString(result)
+        content must include("Date this payment was agreed for parking and garages must include a day")
       }
       "Return Exception if no address is in the mongo" in {
         val fakePostRequest = FakeRequest(routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.submit(NormalMode))
