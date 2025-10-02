@@ -105,10 +105,10 @@ class ParkingSpacesOrGaragesNotIncludedInYourRentController @Inject()(view: Park
               val coveredSpaces = value.copy(key = "coveredSpaces")
               val garages = value.copy(key = "garages")
               formWithErrors.copy(errors = Seq(uncoveredSpaces, coveredSpaces, garages))
-            case Some(value) =>
-              println(Console.MAGENTA + s"$value" +  Console.RESET)
+            case _ =>
               formWithErrors
           }
+          println(Console.MAGENTA + s"$formWithCorrectedErrors" +  Console.RESET)
           Future.successful(BadRequest(view(
             form = formWithCorrectedErrors,
             propertyAddress = request.property.addressFull,
