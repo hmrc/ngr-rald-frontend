@@ -110,8 +110,8 @@ class Navigator @Inject()() {
     case CheckRentFreePeriodPage => answers =>
       answers.get(CheckRentFreePeriodPage) match {
         case Some(value) => value match {
-          case "Yes" => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentFreePeriodController.show(NormalMode)
-          case _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeStartController.show(NormalMode)
+          case true => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentFreePeriodController.show(NormalMode)
+          case _    => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeStartController.show(NormalMode)
         }
         case None => ???
       }
