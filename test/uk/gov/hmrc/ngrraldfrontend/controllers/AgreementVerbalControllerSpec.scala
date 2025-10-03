@@ -60,7 +60,7 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
         document.select("input[name=agreementStartDate.day]").attr("value") mustBe "1"
         document.select("input[name=agreementStartDate.month]").attr("value") mustBe "1"
         document.select("input[name=agreementStartDate.year]").attr("value") mustBe "2025"
-        document.select("input[type=radio][name=agreement-verbal-radio][value=Yes]").hasAttr("checked") mustBe true
+        document.select("input[type=radio][name=agreement-verbal-radio][value=true]").hasAttr("checked") mustBe true
       }
       "return OK and the correct view with prepopulated answers with an end date" in {
         val result = controllerProperty(agreementVerbalAnswers).show(NormalMode)(authenticatedFakeRequest)
@@ -70,7 +70,7 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
         document.select("input[name=agreementStartDate.day]").attr("value") mustBe "1"
         document.select("input[name=agreementStartDate.month]").attr("value") mustBe "1"
         document.select("input[name=agreementStartDate.year]").attr("value") mustBe "2025"
-        document.select("input[type=radio][name=agreement-verbal-radio][value=No]").hasAttr("checked") mustBe true
+        document.select("input[type=radio][name=agreement-verbal-radio][value=false]").hasAttr("checked") mustBe true
         document.select("input[name=agreementEndDate.day]").attr("value") mustBe "2"
         document.select("input[name=agreementEndDate.month]").attr("value") mustBe "2"
         document.select("input[name=agreementEndDate.year]").attr("value") mustBe "2025"
@@ -92,7 +92,7 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
             "agreementStartDate.day" -> "30",
             "agreementStartDate.month" -> "4",
             "agreementStartDate.year" -> "2025",
-            "agreement-verbal-radio" -> "Yes"
+            "agreement-verbal-radio" -> "true"
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         headers(result) mustBe TreeMap("Location" -> "/ngr-rald-frontend/how-much-is-total-annual-rent")
@@ -106,7 +106,7 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
             "agreementStartDate.day" -> "30",
             "agreementStartDate.month" -> "4",
             "agreementStartDate.year" -> "2025",
-            "agreement-verbal-radio" -> "No",
+            "agreement-verbal-radio" -> "false",
             "agreementEndDate.day" -> "30",
             "agreementEndDate.month" -> "4",
             "agreementEndDate.year" -> "2027"
@@ -137,7 +137,7 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
             "agreementStartDate.day" -> "30",
             "agreementStartDate.month" -> "4",
             "agreementStartDate.year" -> "2025",
-            "agreement-verbal-radio" -> "No",
+            "agreement-verbal-radio" -> "false",
             "agreementEndDate.day" -> "",
             "agreementEndDate.month" -> "",
             "agreementEndDate.year" -> ""
@@ -146,7 +146,7 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
         status(result) mustBe BAD_REQUEST
         val content = contentAsString(result)
         content must include(pageTitle)
-        content must include("<a href=\"#agreementEndDate\">Select yes if your agreement is open-ended</a>")
+        content must include("<a href=\"#agreementEndDate.day\">Select yes if your agreement is open-ended</a>")
       }
       "Return Form with Errors when radio button No is selected but end date is invalid" in {
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit(NormalMode))
@@ -154,7 +154,7 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
             "agreementStartDate.day" -> "30",
             "agreementStartDate.month" -> "4",
             "agreementStartDate.year" -> "2025",
-            "agreement-verbal-radio" -> "No",
+            "agreement-verbal-radio" -> "false",
             "agreementEndDate.day" -> "30",
             "agreementEndDate.month" -> "2",
             "agreementEndDate.year" -> "2027"
@@ -163,7 +163,7 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
         status(result) mustBe BAD_REQUEST
         val content = contentAsString(result)
         content must include(pageTitle)
-        content must include("<a href=\"#agreementEndDate\">Date your agreement ends must be a real date</a>")
+        content must include("<a href=\"#agreementEndDate.day\">Date your agreement ends must be a real date</a>")
       }
       "Return Form with Errors when start date is missing day" in {
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementVerbalController.submit(NormalMode))
@@ -213,7 +213,7 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
             "agreementStartDate.day" -> "30",
             "agreementStartDate.month" -> "4",
             "agreementStartDate.year" -> "2025",
-            "agreement-verbal-radio" -> "No",
+            "agreement-verbal-radio" -> "false",
             "agreementEndDate.day" -> "",
             "agreementEndDate.month" -> "2",
             "agreementEndDate.year" -> "2027"
@@ -230,7 +230,7 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
             "agreementStartDate.day" -> "30",
             "agreementStartDate.month" -> "4",
             "agreementStartDate.year" -> "2025",
-            "agreement-verbal-radio" -> "No",
+            "agreement-verbal-radio" -> "false",
             "agreementEndDate.day" -> "30",
             "agreementEndDate.month" -> "",
             "agreementEndDate.year" -> "2027"
@@ -247,7 +247,7 @@ class AgreementVerbalControllerSpec extends ControllerSpecSupport {
             "agreementStartDate.day" -> "30",
             "agreementStartDate.month" -> "4",
             "agreementStartDate.year" -> "2025",
-            "agreement-verbal-radio" -> "No",
+            "agreement-verbal-radio" -> "false",
             "agreementEndDate.day" -> "30",
             "agreementEndDate.month" -> "12",
             "agreementEndDate.year" -> ""

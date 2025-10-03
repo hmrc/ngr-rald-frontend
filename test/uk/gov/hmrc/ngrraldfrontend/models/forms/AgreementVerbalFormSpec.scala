@@ -29,40 +29,40 @@ class AgreementVerbalFormSpec extends AnyWordSpec with Matchers {
       val data = Map("agreementStartDate.day" -> "30",
         "agreementStartDate.month" -> "4",
         "agreementStartDate.year" -> "2025",
-        "agreement-verbal-radio" -> "Yes"
+        "agreement-verbal-radio" -> "true"
       )
       val boundForm = AgreementVerbalForm.form.bind(data)
 
       boundForm.hasErrors shouldBe false
-      boundForm.value shouldBe Some(AgreementVerbalForm("Yes", NGRDate("30", "4", "2025"), None))
+      boundForm.value shouldBe Some(AgreementVerbalForm("true", NGRDate("30", "4", "2025"), None))
     }
 
     "bind successfully with a radio value 'No' and agreement end date" in {
       val data = Map("agreementStartDate.day" -> "30",
         "agreementStartDate.month" -> "4",
         "agreementStartDate.year" -> "2025",
-        "agreement-verbal-radio" -> "No",
+        "agreement-verbal-radio" -> "false",
         "agreementEndDate.day" -> "30",
         "agreementEndDate.month" -> "4",
         "agreementEndDate.year" -> "2027")
       val boundForm = AgreementVerbalForm.form.bind(data)
 
       boundForm.hasErrors shouldBe false
-      boundForm.value shouldBe Some(AgreementVerbalForm("No", NGRDate("30", "4", "2025"), Some(NGRDate("30", "4", "2027"))))
+      boundForm.value shouldBe Some(AgreementVerbalForm("false", NGRDate("30", "4", "2025"), Some(NGRDate("30", "4", "2027"))))
     }
 
     "bind successfully with a radio value 'Yes' and invalid agreement end date" in {
       val data = Map("agreementStartDate.day" -> "30",
         "agreementStartDate.month" -> "4",
         "agreementStartDate.year" -> "2025",
-        "agreement-verbal-radio" -> "Yes",
+        "agreement-verbal-radio" -> "true",
         "agreementEndDate.day" -> "AS",
         "agreementEndDate.month" -> "4",
         "agreementEndDate.year" -> "2027")
       val boundForm = AgreementVerbalForm.form.bind(data)
 
       boundForm.hasErrors shouldBe false
-      boundForm.value shouldBe Some(AgreementVerbalForm("Yes", NGRDate("30", "4", "2025"), Some(NGRDate("AS", "4", "2027"))))
+      boundForm.value shouldBe Some(AgreementVerbalForm("true", NGRDate("30", "4", "2025"), Some(NGRDate("AS", "4", "2027"))))
     }
 
     "fail to bind when radio is unselected" in {
@@ -80,109 +80,109 @@ class AgreementVerbalFormSpec extends AnyWordSpec with Matchers {
       val data = Map("agreementStartDate.day" -> "",
         "agreementStartDate.month" -> "",
         "agreementStartDate.year" -> "",
-        "agreement-verbal-radio" -> "Yes")
+        "agreement-verbal-radio" -> "true")
       val boundForm = AgreementVerbalForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("agreementStartDate", List("agreementVerbal.startDate.required.error")))
+      boundForm.errors should contain(FormError("agreementStartDate", List("agreementVerbal.agreementStartDate.required.error")))
     }
 
     "fail to bind when agreement start dates are missing day" in {
       val data = Map("agreementStartDate.day" -> "",
         "agreementStartDate.month" -> "12",
         "agreementStartDate.year" -> "2025",
-        "agreement-verbal-radio" -> "Yes"
+        "agreement-verbal-radio" -> "true"
       )
       val boundForm = AgreementVerbalForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("agreementStartDate", List("agreementVerbal.startDate.day.required.error")))
+      boundForm.errors should contain(FormError("agreementStartDate", List("agreementVerbal.agreementStartDate.day.required.error")))
     }
 
     "fail to bind when agreement start date is missing month" in {
       val data = Map("agreementStartDate.day" -> "30",
         "agreementStartDate.month" -> "",
         "agreementStartDate.year" -> "2025",
-        "agreement-verbal-radio" -> "Yes")
+        "agreement-verbal-radio" -> "true")
       val boundForm = AgreementVerbalForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("agreementStartDate", List("agreementVerbal.startDate.month.required.error")))
+      boundForm.errors should contain(FormError("agreementStartDate", List("agreementVerbal.agreementStartDate.month.required.error")))
     }
 
     "fail to bind when agreement start date is missing year" in {
       val data = Map("agreementStartDate.day" -> "30",
         "agreementStartDate.month" -> "12",
         "agreementStartDate.year" -> "",
-        "agreement-verbal-radio" -> "Yes")
+        "agreement-verbal-radio" -> "true")
       val boundForm = AgreementVerbalForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("agreementStartDate", List("agreementVerbal.startDate.year.required.error")))
+      boundForm.errors should contain(FormError("agreementStartDate", List("agreementVerbal.agreementStartDate.year.required.error")))
     }
 
     "fail to bind when agreement start date is missing day and year" in {
       val data = Map("agreementStartDate.day" -> "",
         "agreementStartDate.month" -> "12",
         "agreementStartDate.year" -> "",
-        "agreement-verbal-radio" -> "Yes")
+        "agreement-verbal-radio" -> "true")
       val boundForm = AgreementVerbalForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("agreementStartDate", List("agreementVerbal.startDate.dayAndYear.required.error")))
+      boundForm.errors should contain(FormError("agreementStartDate", List("agreementVerbal.agreementStartDate.dayAndYear.required.error")))
     }
 
     "fail to bind when agreement start date is missing month and year" in {
       val data = Map("agreementStartDate.day" -> "30",
         "agreementStartDate.month" -> "",
         "agreementStartDate.year" -> "",
-        "agreement-verbal-radio" -> "Yes")
+        "agreement-verbal-radio" -> "true")
       val boundForm = AgreementVerbalForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("agreementStartDate", List("agreementVerbal.startDate.monthAndYear.required.error")))
+      boundForm.errors should contain(FormError("agreementStartDate", List("agreementVerbal.agreementStartDate.monthAndYear.required.error")))
     }
 
     "fail to bind when agreement start date is missing day and month" in {
       val data = Map("agreementStartDate.day" -> "",
         "agreementStartDate.month" -> "",
         "agreementStartDate.year" -> "2025",
-        "agreement-verbal-radio" -> "Yes")
+        "agreement-verbal-radio" -> "true")
       val boundForm = AgreementVerbalForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("agreementStartDate", List("agreementVerbal.startDate.dayAndMonth.required.error")))
+      boundForm.errors should contain(FormError("agreementStartDate", List("agreementVerbal.agreementStartDate.dayAndMonth.required.error")))
     }
 
     "fail to bind when agreement start date has characters" in {
       val data = Map("agreementStartDate.day" -> "AS",
         "agreementStartDate.month" -> "12",
         "agreementStartDate.year" -> "2025",
-        "agreement-verbal-radio" -> "Yes"
+        "agreement-verbal-radio" -> "true"
       )
       val boundForm = AgreementVerbalForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("agreementStartDate", List("agreementVerbal.startDate.invalid.error")))
+      boundForm.errors should contain(FormError("agreementStartDate", List("agreementVerbal.agreementStartDate.invalid.error")))
     }
 
     "fail to bind when agreement start dates is not a valid date" in {
       val data = Map("agreementStartDate.day" -> "50",
         "agreementStartDate.month" -> "30",
         "agreementStartDate.year" -> "2025",
-        "agreement-verbal-radio" -> "Yes"
+        "agreement-verbal-radio" -> "true"
       )
       val boundForm = AgreementVerbalForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("agreementStartDate", List("agreementVerbal.startDate.invalid.error")))
+      boundForm.errors should contain(FormError("agreementStartDate", List("agreementVerbal.agreementStartDate.invalid.error")))
     }
 
     "fail to bind when agreement end date is missing day" in {
       val data = Map("agreementStartDate.day" -> "30",
         "agreementStartDate.month" -> "12",
         "agreementStartDate.year" -> "2025",
-        "agreement-verbal-radio" -> "No",
+        "agreement-verbal-radio" -> "false",
         "agreementEndDate.day" -> "",
         "agreementEndDate.month" -> "4",
         "agreementEndDate.year" -> "2027"
@@ -190,14 +190,14 @@ class AgreementVerbalFormSpec extends AnyWordSpec with Matchers {
       val boundForm = AgreementVerbalForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("", List("agreementVerbal.endDate.day.required.error")))
+      boundForm.errors should contain(FormError("", List("agreementVerbal.agreementEndDate.day.required.error")))
     }
 
     "fail to bind when agreement end date is missing month" in {
       val data = Map("agreementStartDate.day" -> "30",
         "agreementStartDate.month" -> "12",
         "agreementStartDate.year" -> "2025",
-        "agreement-verbal-radio" -> "No",
+        "agreement-verbal-radio" -> "false",
         "agreementEndDate.day" -> "30",
         "agreementEndDate.month" -> "",
         "agreementEndDate.year" -> "2027"
@@ -205,14 +205,14 @@ class AgreementVerbalFormSpec extends AnyWordSpec with Matchers {
       val boundForm = AgreementVerbalForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("", List("agreementVerbal.endDate.month.required.error")))
+      boundForm.errors should contain(FormError("", List("agreementVerbal.agreementEndDate.month.required.error")))
     }
 
     "fail to bind when agreement end date is missing year" in {
       val data = Map("agreementStartDate.day" -> "30",
         "agreementStartDate.month" -> "12",
         "agreementStartDate.year" -> "2025",
-        "agreement-verbal-radio" -> "No",
+        "agreement-verbal-radio" -> "false",
         "agreementEndDate.day" -> "30",
         "agreementEndDate.month" -> "4",
         "agreementEndDate.year" -> ""
@@ -220,14 +220,14 @@ class AgreementVerbalFormSpec extends AnyWordSpec with Matchers {
       val boundForm = AgreementVerbalForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("", List("agreementVerbal.endDate.year.required.error")))
+      boundForm.errors should contain(FormError("", List("agreementVerbal.agreementEndDate.year.required.error")))
     }
 
     "fail to bind when agreement end date is missing day and year" in {
       val data = Map("agreementStartDate.day" -> "30",
         "agreementStartDate.month" -> "12",
         "agreementStartDate.year" -> "2025",
-        "agreement-verbal-radio" -> "No",
+        "agreement-verbal-radio" -> "false",
         "agreementEndDate.day" -> "",
         "agreementEndDate.month" -> "4",
         "agreementEndDate.year" -> ""
@@ -235,42 +235,42 @@ class AgreementVerbalFormSpec extends AnyWordSpec with Matchers {
       val boundForm = AgreementVerbalForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("", List("agreementVerbal.endDate.dayAndYear.required.error")))
+      boundForm.errors should contain(FormError("", List("agreementVerbal.agreementEndDate.dayAndYear.required.error")))
     }
 
     "fail to bind when agreement end date is missing month and year" in {
       val data = Map("agreementStartDate.day" -> "30",
         "agreementStartDate.month" -> "12",
         "agreementStartDate.year" -> "2025",
-        "agreement-verbal-radio" -> "No",
+        "agreement-verbal-radio" -> "false",
         "agreementEndDate.day" -> "30",
         "agreementEndDate.month" -> "",
         "agreementEndDate.year" -> "")
       val boundForm = AgreementVerbalForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("", List("agreementVerbal.endDate.monthAndYear.required.error")))
+      boundForm.errors should contain(FormError("", List("agreementVerbal.agreementEndDate.monthAndYear.required.error")))
     }
 
     "fail to bind when agreement end date is missing day and month" in {
       val data = Map("agreementStartDate.day" -> "30",
         "agreementStartDate.month" -> "12",
         "agreementStartDate.year" -> "2025",
-        "agreement-verbal-radio" -> "No",
+        "agreement-verbal-radio" -> "false",
         "agreementEndDate.day" -> "",
         "agreementEndDate.month" -> "",
         "agreementEndDate.year" -> "2027")
       val boundForm = AgreementVerbalForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("", List("agreementVerbal.endDate.dayAndMonth.required.error")))
+      boundForm.errors should contain(FormError("", List("agreementVerbal.agreementEndDate.dayAndMonth.required.error")))
     }
 
     "fail to bind when agreement end date has characters" in {
       val data = Map("agreementStartDate.day" -> "30",
         "agreementStartDate.month" -> "12",
         "agreementStartDate.year" -> "2025",
-        "agreement-verbal-radio" -> "No",
+        "agreement-verbal-radio" -> "false",
         "agreementEndDate.day" -> "AS",
         "agreementEndDate.month" -> "12",
         "agreementEndDate.year" -> "2027"
@@ -278,14 +278,14 @@ class AgreementVerbalFormSpec extends AnyWordSpec with Matchers {
       val boundForm = AgreementVerbalForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("", List("agreementVerbal.endDate.invalid.error")))
+      boundForm.errors should contain(FormError("", List("agreementVerbal.agreementEndDate.invalid.error")))
     }
 
     "fail to bind when agreement end dates is not a valid date" in {
       val data = Map("agreementStartDate.day" -> "30",
         "agreementStartDate.month" -> "12",
         "agreementStartDate.year" -> "2025",
-        "agreement-verbal-radio" -> "No",
+        "agreement-verbal-radio" -> "false",
         "agreementEndDate.day" -> "50",
         "agreementEndDate.month" -> "30",
         "agreementEndDate.year" -> "2027"
@@ -293,7 +293,7 @@ class AgreementVerbalFormSpec extends AnyWordSpec with Matchers {
       val boundForm = AgreementVerbalForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("", List("agreementVerbal.endDate.invalid.error")))
+      boundForm.errors should contain(FormError("", List("agreementVerbal.agreementEndDate.invalid.error")))
     }
 
     "fail to bind when input is missing" in {
@@ -308,11 +308,11 @@ class AgreementVerbalFormSpec extends AnyWordSpec with Matchers {
     }
 
     "serialize to JSON correctly" in {
-      val form = AgreementVerbalForm("No", NGRDate("30", "4", "2025"), Some(NGRDate("30", "4", "2027")))
+      val form = AgreementVerbalForm("false", NGRDate("30", "4", "2025"), Some(NGRDate("30", "4", "2027")))
       val json = Json.toJson(form)
 
       json shouldBe Json.obj(
-        "radioValue" -> "No",
+        "radioValue" -> "false",
         "agreementStartDate" -> Json.obj(
           "day" -> "30",
           "month" -> "4",
@@ -327,11 +327,11 @@ class AgreementVerbalFormSpec extends AnyWordSpec with Matchers {
     }
 
     "serialize to JSON correctly without end date" in {
-      val form = AgreementVerbalForm("Yes", NGRDate("30", "4", "2025"), None)
+      val form = AgreementVerbalForm("true", NGRDate("30", "4", "2025"), None)
       val json = Json.toJson(form)
 
       json shouldBe Json.obj(
-        "radioValue" -> "Yes",
+        "radioValue" -> "true",
         "agreementStartDate" -> Json.obj(
           "day" -> "30",
           "month" -> "4",
@@ -342,7 +342,7 @@ class AgreementVerbalFormSpec extends AnyWordSpec with Matchers {
 
     "deserialize from JSON correctly" in {
       val json = Json.obj(
-        "radioValue" -> "No",
+        "radioValue" -> "false",
         "agreementStartDate" -> Json.obj(
           "day" -> "30",
           "month" -> "4",
@@ -357,12 +357,12 @@ class AgreementVerbalFormSpec extends AnyWordSpec with Matchers {
       val result = json.validate[AgreementVerbalForm]
 
       result.isSuccess shouldBe true
-      result.get shouldBe AgreementVerbalForm("No", NGRDate("30", "4", "2025"), Some(NGRDate("30", "4", "2027")))
+      result.get shouldBe AgreementVerbalForm("false", NGRDate("30", "4", "2025"), Some(NGRDate("30", "4", "2027")))
     }
 
     "deserialize from JSON correctly without end date" in {
       val json = Json.obj(
-        "radioValue" -> "Yes",
+        "radioValue" -> "true",
         "agreementStartDate" -> Json.obj(
           "day" -> "30",
           "month" -> "4",
@@ -372,7 +372,7 @@ class AgreementVerbalFormSpec extends AnyWordSpec with Matchers {
       val result = json.validate[AgreementVerbalForm]
 
       result.isSuccess shouldBe true
-      result.get shouldBe AgreementVerbalForm("Yes", NGRDate("30", "4", "2025"), None)
+      result.get shouldBe AgreementVerbalForm("true", NGRDate("30", "4", "2025"), None)
     }
 
     "fail deserialization if value is missing" in {

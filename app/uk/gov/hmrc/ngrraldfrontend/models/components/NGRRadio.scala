@@ -111,11 +111,11 @@ object NGRRadio {
   val yesButton: NGRRadioButtons = NGRRadioButtons(radioContent = "service.yes", radioValue = Yes)
   val noButton: NGRRadioButtons = NGRRadioButtons(radioContent = "service.no", radioValue = No)
 
-  def yesButtonWithTrueValue(conditionalHtml: Option[Html] = None): NGRRadioButtons =
-    NGRRadioButtons(radioContent = "service.yes", radioValue = `true`, conditionalHtml = conditionalHtml)
+  def yesButtonWithTrueValue(radioContent: String = "service.yes", conditionalHtml: Option[Html] = None): NGRRadioButtons =
+    NGRRadioButtons(radioContent = radioContent, radioValue = `true`, conditionalHtml = conditionalHtml)
 
-  def noButtonWithFalseValue(conditionalHtml: Option[Html] = None): NGRRadioButtons =
-    NGRRadioButtons(radioContent = "service.no", radioValue = `false`, conditionalHtml = conditionalHtml)
+  def noButtonWithFalseValue(radioContent: String = "service.no", conditionalHtml: Option[Html] = None): NGRRadioButtons =
+    NGRRadioButtons(radioContent = radioContent, radioValue = `false`, conditionalHtml = conditionalHtml)
 
   def simpleNgrRadio(radioName: String, hint: Option[String] = None)(implicit messages: Messages): NGRRadio =
     NGRRadio(
