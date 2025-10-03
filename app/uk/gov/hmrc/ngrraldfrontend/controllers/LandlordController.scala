@@ -22,11 +22,11 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.govukfrontend.views.Aliases.*
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-import uk.gov.hmrc.ngrraldfrontend.models.{Landlord, Mode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.LandlordForm
-import uk.gov.hmrc.ngrraldfrontend.models.forms.LandlordForm.form
+import uk.gov.hmrc.ngrraldfrontend.models.forms.LandlordForm.{answerToForm, form, formToAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{Landlord, Mode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.LandlordPage
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
@@ -42,61 +42,22 @@ class LandlordController @Inject()(view: LandlordView,
                                    authenticate: AuthRetrievals,
                                    ngrCharacterCountComponent: NGRCharacterCountComponent,
                                    mcc: MessagesControllerComponents,
-                                   getData : DataRetrievalAction,
+                                   getData: DataRetrievalAction,
                                    sessionRepository: SessionRepository,
                                    navigator: Navigator
                                   )(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
-
-  def landlordRelationship(form: Form[LandlordForm])(implicit messages: Messages): NGRRadioButtons = NGRRadioButtons(
-    radioContent = "service.yes",
-    radioValue = LandlordRelationshipYes,
-    conditionalHtml = Some(ngrCharacterCountComponent(form,
-      NGRCharacterCount(
-        id = "landlord-relationship",
-        name = "landlord-relationship",
-        maxLength = Some(250),
-        label = Label(
-          classes = "govuk-label govuk-label--s",
-          content = Text(Messages("landlord.radio.yes"))
-        ),
-        hint = Some(
-          Hint(
-            id = Some("landlord-relationship-hint"),
-            classes = "",
-            attributes = Map.empty,
-            content = Text(messages("landlord.radio.yes.hint"))
-          )
-      )))
-  )
-  )
-
-  def ngrRadio(form: Form[LandlordForm])(implicit messages: Messages): NGRRadio =
-    val ngrRadioButtons: Seq[NGRRadioButtons] = Seq(
-      landlordRelationship(form),
-      NGRRadioButtons(radioContent = "service.no", radioValue = LandlordRelationshipNo)
-    )
-    NGRRadio(
-      NGRRadioName("landlord-radio"),
-      ngrTitle = Some(Legend(content = Text(messages("landlord.p2")), classes = "govuk-fieldset__legend--m", isPageHeading = true)),
-      NGRRadioButtons = ngrRadioButtons
-    )
 
   def show(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(LandlordPage) match {
         case None => form
-        case Some(value) => form.fill(LandlordForm(
-          value.landlordName,
-          if(value.hasRelationship) {
-            "LandlordRelationshipYes"
-          } else {
-            "LandlordRelationshipNo"
-          },
-          value.landlordRelationship))
+        case Some(value) => answerToForm(value)
       }
-      Future.successful(Ok(view(selectedPropertyAddress = request.property.addressFull, form = preparedForm, ngrRadio =  buildRadios(preparedForm, ngrRadio(preparedForm)), mode))
-      )
-
+      Future.successful(Ok(view(selectedPropertyAddress = request.property.addressFull,
+        form = preparedForm,
+        ngrRadio = buildRadios(preparedForm, LandlordForm.landlordRadio(preparedForm, ngrCharacterCountComponent)),
+        mode
+      )))
     }
   }
 
@@ -116,24 +77,16 @@ class LandlordController @Inject()(view: LandlordView,
                   formError
             }
             val formWithCorrectedErrors = formWithErrors.copy(errors = correctedFormErrors)
-              Future.successful(BadRequest(view(
-                selectedPropertyAddress = request.property.addressFull,
-                formWithCorrectedErrors,
-                buildRadios(formWithErrors, ngrRadio(formWithCorrectedErrors)),
-                mode
-              ))),
+            Future.successful(BadRequest(view(
+              selectedPropertyAddress = request.property.addressFull,
+              formWithCorrectedErrors,
+              buildRadios(formWithErrors, LandlordForm.landlordRadio(formWithCorrectedErrors, ngrCharacterCountComponent)),
+              mode
+            ))),
           landlordForm =>
-            val answers: Landlord = Landlord(
-              landlordForm.landlordName,
-              landlordForm.hasRelationship match {
-                case "LandlordRelationshipYes" => true
-                case _ => false
-              },
-              landlordForm.landlordRelationship
-            )
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
-                .set(LandlordPage, answers))
+                .set(LandlordPage, formToAnswers(landlordForm)))
               _ <- sessionRepository.set(updatedAnswers)
             } yield Redirect(navigator.nextPage(LandlordPage, mode, updatedAnswers))
         )
