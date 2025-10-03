@@ -89,8 +89,9 @@ object AgreementForm extends CommonFormValidators with Mappings with DateMapping
     ngrRadio(
       radioName = openEndedRadio,
       radioButtons = Seq(
-        yesButtonWithTrueValue(),
+        yesButtonWithTrueValue(radioContent = "agreement.radio.1"),
         noButtonWithFalseValue(
+          radioContent = "agreement.radio.2",
           conditionalHtml = Some(dateTextFields(form, DateInput(
             id = endDate,
             namePrefix = Some(""),
@@ -168,9 +169,9 @@ object AgreementForm extends CommonFormValidators with Mappings with DateMapping
     Agreement(
       agreementForm.agreementStart.makeString,
       agreementForm.openEndedRadio.toBoolean,
-      agreementForm.openEndedDate.map(_.makeString),
+      if (agreementForm.openEndedRadio.toBoolean) None else agreementForm.openEndedDate.map(_.makeString),
       agreementForm.breakClauseRadio.toBoolean,
-      agreementForm.breakClauseInfo
+      if (agreementForm.breakClauseRadio.toBoolean) agreementForm.breakClauseInfo else None
     )
 
   private def isEndDateEmpty[A](errorKeys: Map[DateErrorKeys, String]): Constraint[A] = {

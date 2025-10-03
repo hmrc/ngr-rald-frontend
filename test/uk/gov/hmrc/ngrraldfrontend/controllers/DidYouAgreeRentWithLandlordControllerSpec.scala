@@ -39,7 +39,7 @@ class DidYouAgreeRentWithLandlordControllerSpec  extends ControllerSpecSupport {
   val view: DidYouAgreeRentWithLandlordView = inject[DidYouAgreeRentWithLandlordView]
   val controllerNoProperty: DidYouAgreeRentWithLandlordController = new DidYouAgreeRentWithLandlordController(view, fakeAuth, fakeData(None), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
   val controllerProperty: Option[UserAnswers] => DidYouAgreeRentWithLandlordController = answers => new DidYouAgreeRentWithLandlordController(view, fakeAuth, fakeDataProperty(Some(property), answers), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
-  val didYouAgreeWithTheLandlordAnswers: Option[UserAnswers] = UserAnswers("id").set(DidYouAgreeRentWithLandlordPage, "YesTheLandlord").toOption
+  val didYouAgreeWithTheLandlordAnswers: Option[UserAnswers] = UserAnswers("id").set(DidYouAgreeRentWithLandlordPage, true).toOption
 
   "Did you agree rent with landlord controller" must {
     "method show" must {
@@ -54,8 +54,8 @@ class DidYouAgreeRentWithLandlordControllerSpec  extends ControllerSpecSupport {
         status(result) mustBe OK
         val content = contentAsString(result)
         val document = Jsoup.parse(content)
-        document.select("input[type=radio][name=did-you-agree-rent-with-landlord-radio][value=YesTheLandlord]").hasAttr("checked") mustBe true
-        document.select("input[type=radio][name=did-you-agree-rent-with-landlord-radio][value=NoACourtSet]").hasAttr("checked") mustBe false
+        document.select("input[type=radio][name=did-you-agree-rent-with-landlord-radio][value=true]").hasAttr("checked") mustBe true
+        document.select("input[type=radio][name=did-you-agree-rent-with-landlord-radio][value=false]").hasAttr("checked") mustBe false
       }
       "Return NotFoundException when property is not found in the mongo" in {
         when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(None))
@@ -67,10 +67,10 @@ class DidYouAgreeRentWithLandlordControllerSpec  extends ControllerSpecSupport {
     }
 
     "method submit" must {
-      "Return OK and the correct view after submitting with YesTheLandlord radio button" in {
+      "Return SEE_OTHER and the correct view after submitting with YesTheLandlord radio button" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.DidYouAgreeRentWithLandlordController.submit(NormalMode))
-          .withFormUrlEncodedBody(("did-you-agree-rent-with-landlord-radio", "YesTheLandlord"))
+          .withFormUrlEncodedBody(("did-you-agree-rent-with-landlord-radio", "true"))
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
           result.header.headers.get("Location") shouldBe Some("/ngr-rald-frontend/do-you-have-a-rent-free-period")
@@ -78,10 +78,10 @@ class DidYouAgreeRentWithLandlordControllerSpec  extends ControllerSpecSupport {
         status(result) mustBe SEE_OTHER
         redirectLocation(result) shouldBe Some(routes.CheckRentFreePeriodController.show(NormalMode).url)
       }
-      "Return OK and the correct view after submitting with NoACourtSet radio button" in {
+      "Return SEE_OTHER and the correct view after submitting with NoACourtSet radio button" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.DidYouAgreeRentWithLandlordController.submit(NormalMode))
-          .withFormUrlEncodedBody(("did-you-agree-rent-with-landlord-radio", "NoACourtSet"))
+          .withFormUrlEncodedBody(("did-you-agree-rent-with-landlord-radio", "false"))
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
           result.header.headers.get("Location") shouldBe Some("/ngr-rald-frontend/did-the-court-set-an-interim-rent")
