@@ -20,8 +20,8 @@ import play.api.data.Form
 import play.api.data.Forms.mapping
 import play.api.i18n.Messages
 import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.govukfrontend.views.Aliases.{Legend, Text}
-import uk.gov.hmrc.ngrraldfrontend.models.components.*
+import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio
+import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{ngrRadio, noButton, yesButton}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 
 final case class DidYouAgreeRentWithLandlordForm (radioValue: String)
@@ -42,19 +42,15 @@ object DidYouAgreeRentWithLandlordForm extends Mappings {
     )
   }
 
-  private val yes: NGRRadioButtons = NGRRadioButtons(radioContent = "didYouAgreeRentWithLandlord.yes", radioValue = YesTheLandlord)
-  private val no: NGRRadioButtons = NGRRadioButtons(radioContent  = "didYouAgreeRentWithLandlord.no", radioValue = NoACourtSet)
-
-  def ngrRadio(form: Form[DidYouAgreeRentWithLandlordForm])(implicit messages: Messages): NGRRadio =
-    NGRRadio(
-      NGRRadioName("did-you-agree-rent-with-landlord-radio"),
-      NGRRadioButtons = Seq(yes,no),
-      Some(
-        Legend(
-          content = Text(messages("didYouAgreeRentWithLandlord.title")),
-          classes = "govuk-fieldset__legend--l", isPageHeading = true
-        )
-      )
+  def agreeRentRadio(implicit messages: Messages): NGRRadio =
+    ngrRadio(
+      radioName = didYouAgreeRentWithLandlordRadio,
+      radioButtons = Seq(
+        yesButton(radioContent = "didYouAgreeRentWithLandlord.yes"),
+        noButton(radioContent  = "didYouAgreeRentWithLandlord.no")
+      ),
+      ngrTitle = "didYouAgreeRentWithLandlord.title",
+      ngrTitleClass = "govuk-fieldset__legend--l"
     )
 }
 

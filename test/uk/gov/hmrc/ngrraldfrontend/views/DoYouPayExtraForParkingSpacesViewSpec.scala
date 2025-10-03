@@ -22,8 +22,8 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.Radios
 import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
 import uk.gov.hmrc.ngrraldfrontend.models.NormalMode
-import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{buildRadios, noButton, yesButton}
-import uk.gov.hmrc.ngrraldfrontend.models.components.{NGRRadio, NGRRadioName}
+import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio
+import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{buildRadios, simpleNgrRadio}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.DoYouPayExtraForParkingSpacesForm
 import uk.gov.hmrc.ngrraldfrontend.views.html.DoYouPayExtraForParkingSpacesView
 
@@ -45,8 +45,8 @@ class DoYouPayExtraForParkingSpacesViewSpec extends ViewBaseSpec {
   }
 
   val address = "5 Brixham Marina, Berry Head Road, Brixham, Devon, TQ5 9BW"
-  private val ngrRadio: NGRRadio = NGRRadio(NGRRadioName(DoYouPayExtraForParkingSpacesForm.payExtraRadio), Seq(yesButton, noButton))
-  val form = DoYouPayExtraForParkingSpacesForm.form.fillAndValidate(DoYouPayExtraForParkingSpacesForm("Yes"))
+  private val ngrRadio: NGRRadio = simpleNgrRadio(DoYouPayExtraForParkingSpacesForm.payExtraRadio)
+  val form = DoYouPayExtraForParkingSpacesForm.form.fillAndValidate(DoYouPayExtraForParkingSpacesForm("true"))
   val radio: Radios = buildRadios(form, ngrRadio)
 
   "TellUsAboutYourNewAgreementView" must {
@@ -110,5 +110,5 @@ class DoYouPayExtraForParkingSpacesViewSpec extends ViewBaseSpec {
       result.isError mustBe true
     }
   }
-  
+
 }

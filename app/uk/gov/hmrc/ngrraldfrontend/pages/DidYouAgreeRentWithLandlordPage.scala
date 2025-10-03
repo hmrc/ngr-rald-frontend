@@ -18,7 +18,7 @@ package uk.gov.hmrc.ngrraldfrontend.pages
 
 import play.api.libs.json.JsPath
 
-case object DidYouAgreeRentWithLandlordPage extends QuestionPage[String] {
+case object DidYouAgreeRentWithLandlordPage extends QuestionPage[Boolean] {
 
   override def toString: String = "didYouAgreeRentWithLandlordPage"
 

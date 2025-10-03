@@ -37,7 +37,7 @@ class CheckRentFreePeriodControllerSpec extends ControllerSpecSupport{
   val view: CheckRentFreePeriodView = inject[CheckRentFreePeriodView]
   val controllerNoProperty : CheckRentFreePeriodController = new CheckRentFreePeriodController(view,fakeAuth, fakeData(None), mockNavigator, mockSessionRepository, mcc)(mockConfig)
   val controllerProperty : Option[UserAnswers] => CheckRentFreePeriodController = answers => new CheckRentFreePeriodController(view,fakeAuth, fakeDataProperty(Some(property), answers), mockNavigator, mockSessionRepository, mcc)(mockConfig)
-  val checkRentFreePeriodAnswers: Option[UserAnswers] = UserAnswers("id").set(CheckRentFreePeriodPage, "Yes").toOption
+  val checkRentFreePeriodAnswers: Option[UserAnswers] = UserAnswers("id").set(CheckRentFreePeriodPage, true).toOption
 
   "CheckRentFreePeriodController" when {
     "calling show method" should {
@@ -52,8 +52,8 @@ class CheckRentFreePeriodControllerSpec extends ControllerSpecSupport{
         status(result) mustBe OK
         val content = contentAsString(result)
         val document = Jsoup.parse(content)
-        document.select("input[type=radio][name=check-rent-period-radio][value=Yes]").hasAttr("checked") mustBe true
-        document.select("input[type=radio][name=check-rent-period-radio][value=No]").hasAttr("checked") mustBe false
+        document.select("input[type=radio][name=check-rent-period-radio][value=true]").hasAttr("checked") mustBe true
+        document.select("input[type=radio][name=check-rent-period-radio][value=false]").hasAttr("checked") mustBe false
       }
       "Return Not Found Exception where no property is found in mongo" in {
         when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(None))
@@ -67,7 +67,7 @@ class CheckRentFreePeriodControllerSpec extends ControllerSpecSupport{
       "Return OK and the correct view and the answer is Yes" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val fakePostRequest = FakeRequest(routes.CheckRentFreePeriodController.submit(NormalMode))
-          .withFormUrlEncodedBody((CheckRentFreePeriodForm.checkRentPeriodRadio, "Yes"))
+          .withFormUrlEncodedBody((CheckRentFreePeriodForm.checkRentPeriodRadio, "true"))
           .withHeaders(HeaderNames.authorisation -> "Bearer 1")
 
         val result = controllerProperty(None).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
@@ -77,7 +77,7 @@ class CheckRentFreePeriodControllerSpec extends ControllerSpecSupport{
       "Return OK and the correct view and the answer is No" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val fakePostRequest = FakeRequest(routes.CheckRentFreePeriodController.submit(NormalMode))
-          .withFormUrlEncodedBody((CheckRentFreePeriodForm.checkRentPeriodRadio, "No"))
+          .withFormUrlEncodedBody((CheckRentFreePeriodForm.checkRentPeriodRadio, "false"))
           .withHeaders(HeaderNames.authorisation -> "Bearer 1")
 
         val result = controllerProperty(None).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))

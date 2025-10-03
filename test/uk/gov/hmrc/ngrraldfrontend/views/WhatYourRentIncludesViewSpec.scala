@@ -30,6 +30,7 @@ import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 
 class WhatYourRentIncludesViewSpec  extends ViewBaseSpec {
   lazy val view: WhatYourRentIncludesView = inject[WhatYourRentIncludesView]
+  lazy val inputText: InputText = inject[InputText]
 
   object Strings {
     val heading = "What your rent includes"
@@ -67,76 +68,14 @@ class WhatYourRentIncludesViewSpec  extends ViewBaseSpec {
 
   val address = "5 Brixham Marina, Berry Head Road, Brixham, Devon, TQ5 9BW"
   val mockInputText: InputText = inject[InputText]
-  val form = WhatYourRentIncludesForm.form.fillAndValidate(WhatYourRentIncludesForm("Yes", "Yes", "Yes", "Yes", "Yes", "Yes", Some("6")))
-  private val ngrRadio1: NGRRadio = NGRRadio(
-    NGRRadioName("livingAccommodationRadio"),
-    Seq(
-      NGRRadioButtons(radioContent = "service.yes",
-        radioValue = livingAccommodationYes,
-        conditionalHtml = Some(mockInputText(
-          form = form,
-          id = "bedroomNumbers",
-          name = "bedroomNumbers",
-          label = messages("whatYourRentIncludes.radio.1.text.title"),
-          isVisible = true,
-          classes = Some("govuk-input--width-4"),
-          labelClasses = Some("govuk-label--s")
-        ))
-      ),
-      NGRRadioButtons(radioContent = "service.no", radioValue = livingAccommodationNo)
-    ),
-    Some(Legend(content = Text(messages("whatYourRentIncludes.radio.1.title")), classes = "govuk-fieldset__legend--m", isPageHeading = true)),
-    Some("whatYourRentIncludes.radio.1.hint")
-  )
-  private val ngrRadio2: NGRRadio =  NGRRadio(
-    NGRRadioName("rentPartAddressRadio"),
-    Seq(
-      NGRRadioButtons(radioContent = "service.yes", radioValue = rentPartAddressYes),
-      NGRRadioButtons(radioContent = "service.no", radioValue = rentPartAddressNo)
-    ),
-    hint = Some("whatYourRentIncludes.radio.2.hint")
-  )
-  private val ngrRadio3: NGRRadio = NGRRadio(
-    NGRRadioName("rentEmptyShellRadio"),
-    Seq(
-      NGRRadioButtons(radioContent = "service.yes", radioValue = rentEmptyShellYes),
-      NGRRadioButtons(radioContent = "service.no", radioValue = rentEmptyShellNo)
-    ),
-    Some(Legend(content = Text(messages("whatYourRentIncludes.radio.3.title")), classes = "govuk-fieldset__legend--m", isPageHeading = true)),
-    Some("whatYourRentIncludes.radio.3.hint")
-  )
-  private val ngrRadio4: NGRRadio = NGRRadio(
-    NGRRadioName("rentIncBusinessRatesRadio"),
-    Seq(
-      NGRRadioButtons(radioContent = "service.yes", radioValue = rentIncBusinessRatesYes),
-      NGRRadioButtons(radioContent = "service.no", radioValue = rentIncBusinessRatesNo)
-    ),
-    Some(Legend(content = Text(messages("whatYourRentIncludes.radio.4.title")), classes = "govuk-fieldset__legend--m", isPageHeading = true))
-  )
-  private val ngrRadio5: NGRRadio = NGRRadio(
-    NGRRadioName("rentIncWaterChargesRadio"),
-    Seq(
-      NGRRadioButtons(radioContent = "service.yes", radioValue = rentIncWaterChargesYes),
-      NGRRadioButtons(radioContent = "service.no", radioValue = rentIncWaterChargesNo)
-    ),
-    Some(Legend(content = Text(messages("whatYourRentIncludes.radio.5.title")), classes = "govuk-fieldset__legend--m", isPageHeading = true))
-  )
-  private val ngrRadio6: NGRRadio =  NGRRadio(
-    NGRRadioName("rentIncServiceRadio"),
-    Seq(
-      NGRRadioButtons(radioContent = "service.yes", radioValue = rentIncServiceYes),
-      NGRRadioButtons(radioContent = "service.no", radioValue = rentIncServiceNo)
-    ),
-    Some(Legend(content = Text(messages("whatYourRentIncludes.radio.6.title")), classes = "govuk-fieldset__legend--m", isPageHeading = true)),
-    Some("whatYourRentIncludes.radio.6.hint")
-  )
-  
-  val radio1: Radios = buildRadios(form, ngrRadio1)
-  val radio2: Radios = buildRadios(form, ngrRadio2)
-  val radio3: Radios = buildRadios(form, ngrRadio3)
-  val radio4: Radios = buildRadios(form, ngrRadio4)
-  val radio5: Radios = buildRadios(form, ngrRadio5)
-  val radio6: Radios = buildRadios(form, ngrRadio6)
+  val form = WhatYourRentIncludesForm.form.fillAndValidate(WhatYourRentIncludesForm("true", "true", "true", "true", "true", "true", Some("6")))
+
+  private val radio1: Radios = buildRadios(form, WhatYourRentIncludesForm.ngrRadio1(form, inputText))
+  private val radio2: Radios = buildRadios(form, WhatYourRentIncludesForm.ngrRadio2)
+  private val radio3: Radios = buildRadios(form, WhatYourRentIncludesForm.ngrRadio3)
+  private val radio4: Radios = buildRadios(form, WhatYourRentIncludesForm.ngrRadio4)
+  private val radio5: Radios = buildRadios(form, WhatYourRentIncludesForm.ngrRadio5)
+  private val radio6: Radios = buildRadios(form, WhatYourRentIncludesForm.ngrRadio6)
 
   "WhatYourRentIncludesView" must {
     val whatYourRentIncludesView = view(form, radio1, radio2, radio3, radio4, radio5, radio6, address, NormalMode)

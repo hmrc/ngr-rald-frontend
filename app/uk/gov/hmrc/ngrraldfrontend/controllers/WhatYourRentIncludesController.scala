@@ -23,7 +23,7 @@ import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.{Mode, UserAnswers, WhatYourRentIncludes}
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatYourRentIncludesForm
-import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatYourRentIncludesForm.form
+import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatYourRentIncludesForm.{answerToForm, form, formToAnswers}
 import uk.gov.hmrc.ngrraldfrontend.views.html.WhatYourRentIncludesView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -47,39 +47,7 @@ class WhatYourRentIncludesController @Inject()(whatYourRentIncludesView: WhatYou
   def show(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(WhatYourRentIncludesPage) match {
-      case Some(value) => form.fill(WhatYourRentIncludesForm(
-        livingAccommodationRadio = if (value.livingAccommodation) {
-          "livingAccommodationYes"
-        } else {
-          "livingAccommodationNo"
-        },
-        rentPartAddressRadio = if (value.rentPartAddress) {
-          "rentPartAddressYes"
-        } else {
-          "rentPartAddressNo"
-        },
-        rentEmptyShellRadio = if (value.rentEmptyShell) {
-          "rentEmptyShellYes"
-        } else {
-          "rentEmptyShellNo"
-        }, 
-        rentIncBusinessRatesRadio = if (value.rentIncBusinessRates) {
-          "rentIncBusinessRatesYes"
-        } else {
-          "rentIncBusinessRatesNo"
-        }, 
-        rentIncWaterChargesRadio = if (value.rentIncWaterCharges) {
-          "rentIncWaterChargesYes"
-        } else {
-          "rentIncWaterChargesNo"
-        }, 
-        rentIncServiceRadio = if (value.rentIncService) {
-          "rentIncServiceYes"
-        } else {
-          "rentIncServiceNo"
-        }, 
-        bedroomNumbers = value.bedroomNumbers.map(_.toString)
-      ))
+      case Some(value) => answerToForm(value)
       case None => form
     }
         Future.successful(Ok(whatYourRentIncludesView(
@@ -120,39 +88,9 @@ class WhatYourRentIncludesController @Inject()(whatYourRentIncludesView: WhatYou
             )))
         },
         whatYourRentIncludesForm =>
-          val answers: WhatYourRentIncludes = WhatYourRentIncludes(
-            livingAccommodation = whatYourRentIncludesForm.livingAccommodationRadio match {
-              case "livingAccommodationYes" => true
-              case _ => false
-            }, 
-            rentPartAddress = whatYourRentIncludesForm.rentPartAddressRadio match {
-              case "Yes" => true
-              case _ => false
-            }, 
-            rentEmptyShell = whatYourRentIncludesForm.rentEmptyShellRadio match {
-              case "Yes" => true
-              case _ => false
-            }, 
-            rentIncBusinessRates = whatYourRentIncludesForm.rentIncBusinessRatesRadio match {
-              case "Yes" => true
-              case _ => false
-            }, 
-            rentIncWaterCharges = whatYourRentIncludesForm.rentIncWaterChargesRadio match {
-              case "Yes" => true
-              case _ => false
-            }, 
-            rentIncService = whatYourRentIncludesForm.rentIncServiceRadio match {
-              case "Yes" => true
-              case _ => false
-            }, 
-            bedroomNumbers = whatYourRentIncludesForm.bedroomNumbers match {
-              case Some(value) if(whatYourRentIncludesForm.livingAccommodationRadio == "livingAccommodationYes") => Some(value.toInt)
-              case _ => None
-            }
-          )
-            for {
+          for {
             updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
-              .set(WhatYourRentIncludesPage, answers))
+              .set(WhatYourRentIncludesPage, formToAnswers(whatYourRentIncludesForm)))
             _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(WhatYourRentIncludesPage, mode, updatedAnswers))
       )

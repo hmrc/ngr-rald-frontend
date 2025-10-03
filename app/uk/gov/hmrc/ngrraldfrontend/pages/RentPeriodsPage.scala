@@ -18,7 +18,7 @@ package uk.gov.hmrc.ngrraldfrontend.pages
 
 import play.api.libs.json.JsPath
 
-case object RentPeriodsPage extends QuestionPage[String] {
+case object RentPeriodsPage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 

@@ -19,16 +19,12 @@ package uk.gov.hmrc.ngrraldfrontend.views
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.Form
-import uk.gov.hmrc.govukfrontend.views.Aliases.{Legend, Text}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.dateinput.DateInput
-import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.Fieldset
-import uk.gov.hmrc.govukfrontend.views.viewmodels.hint.Hint
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.Radios
 import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
-import uk.gov.hmrc.ngrraldfrontend.models.{NGRDate, NormalMode}
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreementVerbalForm
+import uk.gov.hmrc.ngrraldfrontend.models.{NGRDate, NormalMode}
 import uk.gov.hmrc.ngrraldfrontend.views.html.AgreementVerbalView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.DateTextFields
 
@@ -52,21 +48,8 @@ class AgreementVerbalViewSpec extends ViewBaseSpec {
   val yearInputLabel = "Year"
   val saveButton = "Continue"
 
-  private val form: Form[AgreementVerbalForm] = AgreementVerbalForm.form.fillAndValidate(AgreementVerbalForm("No", NGRDate("30", "4", "2025"), None))
-  private val ngrRadioButtons: Seq[NGRRadioButtons] =
-    Seq(
-      NGRRadioButtons("agreementVerbal.yes", Yes),
-      NGRRadioButtons(
-        radioContent = "agreementVerbal.no",
-        radioValue = No,
-        conditionalHtml = Some(dateTextFields(form, DateInput(id = "agreementEndDate",
-          fieldset = Some(Fieldset(legend = Some(Legend(content = Text(messages("agreementVerbal.endDate.title")), classes = "govuk-fieldset__legend--s")))),
-          hint = Some(Hint(content = Text(messages("agreementVerbal.endDate.hint")))))))
-      )
-    )
-  private val ngrRadio: NGRRadio = NGRRadio(NGRRadioName("agreement-verbal-radio"), ngrRadioButtons,
-    Some(Legend(content = Text(messages("agreementVerbal.radio.title")), classes = "govuk-fieldset__legend--m", isPageHeading = true)),
-    Some("agreementVerbal.radio.hint"))
+  private val form: Form[AgreementVerbalForm] = AgreementVerbalForm.form.fillAndValidate(AgreementVerbalForm("false", NGRDate("30", "4", "2025"), None))
+  private val ngrRadio: NGRRadio = AgreementVerbalForm.agreementVerbalRadio(form, dateTextFields)
   private val radio: Radios = buildRadios(form, ngrRadio)
 
   object Selectors {

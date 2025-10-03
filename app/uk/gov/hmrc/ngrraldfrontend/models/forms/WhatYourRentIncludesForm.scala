@@ -21,12 +21,11 @@ import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.data.{Form, Forms}
 import play.api.i18n.Messages
 import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.govukfrontend.views.Aliases.{Legend, Text}
+import uk.gov.hmrc.ngrraldfrontend.models.WhatYourRentIncludes
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
+import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{ngrRadio, noButton, simpleNgrRadio, yesButton}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
-
-import scala.util.Try
 
 final case class WhatYourRentIncludesForm(
                                            livingAccommodationRadio: String,
@@ -57,12 +56,10 @@ object WhatYourRentIncludesForm extends CommonFormValidators with Mappings {
   private lazy val rentIncServiceRadioError = "whatYourRentIncludes.radio.6.required"
 
   def ngrRadio1(form: Form[WhatYourRentIncludesForm], inputText: InputText)(implicit messages: Messages): NGRRadio =
-    NGRRadio(
-      NGRRadioName(livingAccommodationRadio),
-      Seq(
-        NGRRadioButtons(
-          radioContent = "service.yes",
-          radioValue = livingAccommodationYes,
+    ngrRadio(
+      radioName = livingAccommodationRadio,
+      radioButtons = Seq(
+        yesButton(
           conditionalHtml = Some(inputText(
             form = form,
             id = bedroomNumbers,
@@ -73,62 +70,43 @@ object WhatYourRentIncludesForm extends CommonFormValidators with Mappings {
             labelClasses = Some("govuk-label--s")
           ))
         ),
-        NGRRadioButtons(radioContent = "service.no", radioValue = livingAccommodationNo)
+        noButton()
       ),
-      Some(Legend(content = Text(messages("whatYourRentIncludes.radio.1.title")), classes = "govuk-fieldset__legend--m", isPageHeading = true)),
-      Some("whatYourRentIncludes.radio.1.hint")
+      ngrTitle = "whatYourRentIncludes.radio.1.title",
+      hint = Some("whatYourRentIncludes.radio.1.hint")
     )
 
   def ngrRadio2(implicit messages: Messages): NGRRadio =
-    NGRRadio(
-      NGRRadioName(rentPartAddressRadio),
-      Seq(
-        NGRRadioButtons(radioContent = "service.yes", radioValue = rentPartAddressYes),
-        NGRRadioButtons(radioContent = "service.no", radioValue = rentPartAddressNo)
-      ),
-      hint = Some("whatYourRentIncludes.radio.2.hint")
-    )
+    simpleNgrRadio(rentPartAddressRadio, Some("whatYourRentIncludes.radio.2.hint"))
 
   def ngrRadio3(implicit messages: Messages): NGRRadio =
-    NGRRadio(
-      NGRRadioName(rentEmptyShellRadio),
-      Seq(
-        NGRRadioButtons(radioContent = "service.yes", radioValue = rentEmptyShellYes),
-        NGRRadioButtons(radioContent = "service.no", radioValue = rentEmptyShellNo)
-      ),
-      Some(Legend(content = Text(messages("whatYourRentIncludes.radio.3.title")), classes = "govuk-fieldset__legend--m", isPageHeading = true)),
-      Some("whatYourRentIncludes.radio.3.hint")
+    ngrRadio(
+      radioName = rentEmptyShellRadio,
+      radioButtons = Seq(yesButton(), noButton()),
+      ngrTitle = "whatYourRentIncludes.radio.3.title",
+      hint = Some("whatYourRentIncludes.radio.3.hint")
     )
 
   def ngrRadio4(implicit messages: Messages): NGRRadio =
-    NGRRadio(
-      NGRRadioName(rentIncBusinessRatesRadio),
-      Seq(
-        NGRRadioButtons(radioContent = "service.yes", radioValue = rentIncBusinessRatesYes),
-        NGRRadioButtons(radioContent = "service.no", radioValue = rentIncBusinessRatesNo)
-      ),
-      Some(Legend(content = Text(messages("whatYourRentIncludes.radio.4.title")), classes = "govuk-fieldset__legend--m", isPageHeading = true))
+    ngrRadio(
+      radioName = rentIncBusinessRatesRadio,
+      radioButtons = Seq(yesButton(), noButton()),
+      ngrTitle = "whatYourRentIncludes.radio.4.title"
     )
 
   def ngrRadio5(implicit messages: Messages): NGRRadio =
-    NGRRadio(
-      NGRRadioName(rentIncWaterChargesRadio),
-      Seq(
-        NGRRadioButtons(radioContent = "service.yes", radioValue = rentIncWaterChargesYes),
-        NGRRadioButtons(radioContent = "service.no", radioValue = rentIncWaterChargesNo)
-      ),
-      Some(Legend(content = Text(messages("whatYourRentIncludes.radio.5.title")), classes = "govuk-fieldset__legend--m", isPageHeading = true))
+    ngrRadio(
+      radioName = rentIncWaterChargesRadio,
+      radioButtons = Seq(yesButton(), noButton()),
+      ngrTitle = "whatYourRentIncludes.radio.5.title"
     )
 
   def ngrRadio6(implicit messages: Messages): NGRRadio =
-    NGRRadio(
-      NGRRadioName(rentIncServiceRadio),
-      Seq(
-        NGRRadioButtons(radioContent = "service.yes", radioValue = rentIncServiceYes),
-        NGRRadioButtons(radioContent = "service.no", radioValue = rentIncServiceNo)
-      ),
-      Some(Legend(content = Text(messages("whatYourRentIncludes.radio.6.title")), classes = "govuk-fieldset__legend--m", isPageHeading = true)),
-      Some("whatYourRentIncludes.radio.6.hint")
+    ngrRadio(
+      radioName = rentIncServiceRadio,
+      radioButtons = Seq(yesButton(), noButton()),
+      ngrTitle = "whatYourRentIncludes.radio.6.title",
+      hint = Some("whatYourRentIncludes.radio.6.hint")
     )
 
   def unapply(whatYourRentIncludesForm: WhatYourRentIncludesForm): Option[(String, String, String, String, String, String, Option[String])] =
@@ -142,11 +120,36 @@ object WhatYourRentIncludesForm extends CommonFormValidators with Mappings {
       whatYourRentIncludesForm.bedroomNumbers
     ))
 
+  def answerToForm(whatYourRentIncludes: WhatYourRentIncludes): Form[WhatYourRentIncludesForm] =
+    form.fill(WhatYourRentIncludesForm(
+      livingAccommodationRadio = whatYourRentIncludes.livingAccommodation.toString,
+      rentPartAddressRadio = whatYourRentIncludes.rentPartAddress.toString,
+      rentEmptyShellRadio = whatYourRentIncludes.rentEmptyShell.toString,
+      rentIncBusinessRatesRadio = whatYourRentIncludes.rentIncBusinessRates.toString,
+      rentIncWaterChargesRadio = whatYourRentIncludes.rentIncWaterCharges.toString,
+      rentIncServiceRadio = whatYourRentIncludes.rentIncService.toString,
+      bedroomNumbers = whatYourRentIncludes.bedroomNumbers.map(_.toString)
+    ))
+
+  def formToAnswers(whatYourRentIncludesForm: WhatYourRentIncludesForm): WhatYourRentIncludes =
+    WhatYourRentIncludes(
+      livingAccommodation = whatYourRentIncludesForm.livingAccommodationRadio.toBoolean,
+      rentPartAddress = whatYourRentIncludesForm.rentPartAddressRadio.toBoolean,
+      rentEmptyShell = whatYourRentIncludesForm.rentEmptyShellRadio.toBoolean,
+      rentIncBusinessRates = whatYourRentIncludesForm.rentIncBusinessRatesRadio.toBoolean,
+      rentIncWaterCharges = whatYourRentIncludesForm.rentIncWaterChargesRadio.toBoolean,
+      rentIncService = whatYourRentIncludesForm.rentIncServiceRadio.toBoolean,
+      bedroomNumbers = whatYourRentIncludesForm.bedroomNumbers match {
+        case Some(value) if whatYourRentIncludesForm.livingAccommodationRadio == "true" => Some(value.toInt)
+        case _ => None
+      }
+    )
+
   private def isBedroomNumberValid[A]: Constraint[A] =
     Constraint((input: A) =>
       val whatYourRentIncludesForm = input.asInstanceOf[WhatYourRentIncludesForm]
       val bedroomNumber: Option[String] = whatYourRentIncludesForm.bedroomNumbers
-      if (whatYourRentIncludesForm.livingAccommodationRadio.equals("livingAccommodationYes")) {
+      if (whatYourRentIncludesForm.livingAccommodationRadio.equals("true")) {
         if (bedroomNumber.isEmpty)
           Invalid("whatYourRentIncludes.bedroom.number.required.error")
         else if (!bedroomNumber.get.matches(wholePositiveNumberRegexp.pattern()))

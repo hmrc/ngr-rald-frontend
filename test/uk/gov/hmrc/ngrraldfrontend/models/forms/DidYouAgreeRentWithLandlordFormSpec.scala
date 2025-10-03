@@ -27,11 +27,11 @@ class DidYouAgreeRentWithLandlordFormSpec extends AnyWordSpec with Matchers {
   "DidYouAgreeRentWithLandlordForm" should {
 
     "bind successfully with a valid DidYouAgreeRentWithLandlordRadio value" in {
-      val data = Map("did-you-agree-rent-with-landlord-radio" -> "YesTheLandlord")
+      val data = Map("did-you-agree-rent-with-landlord-radio" -> "true")
       val boundForm = DidYouAgreeRentWithLandlordForm.form.bind(data)
 
       boundForm.hasErrors shouldBe false
-      boundForm.value shouldBe Some(DidYouAgreeRentWithLandlordForm("YesTheLandlord"))
+      boundForm.value shouldBe Some(DidYouAgreeRentWithLandlordForm("true"))
     }
 
     "fail to bind when DidYouAgreeRentWithLandlordRadio is missing" in {
@@ -52,20 +52,20 @@ class DidYouAgreeRentWithLandlordFormSpec extends AnyWordSpec with Matchers {
 
 
     "serialize to JSON correctly" in {
-      val form = DidYouAgreeRentWithLandlordForm("YesTheLandlord")
+      val form = DidYouAgreeRentWithLandlordForm("true")
       val json = Json.toJson(form)
 
       json shouldBe Json.obj(
-        "radioValue" -> "YesTheLandlord"
+        "radioValue" -> "true"
       )
     }
 
     "deserialize from JSON correctly" in {
-      val json = Json.obj("radioValue" -> "NoACourtSet")
+      val json = Json.obj("radioValue" -> "false")
       val result = json.validate[DidYouAgreeRentWithLandlordForm]
 
       result.isSuccess shouldBe true
-      result.get shouldBe DidYouAgreeRentWithLandlordForm("NoACourtSet")
+      result.get shouldBe DidYouAgreeRentWithLandlordForm("false")
     }
 
     "fail deserialization if DidYouAgreeRentWithLandlordRadio is missing" in {

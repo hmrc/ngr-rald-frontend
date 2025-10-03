@@ -22,8 +22,8 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.Radios
 import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
 import uk.gov.hmrc.ngrraldfrontend.models.NormalMode
-import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{buildRadios, noButton, yesButton}
-import uk.gov.hmrc.ngrraldfrontend.models.components.{NGRRadio, NGRRadioName}
+import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio
+import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{buildRadios, simpleNgrRadio}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.CheckRentFreePeriodForm
 import uk.gov.hmrc.ngrraldfrontend.views.html.CheckRentFreePeriodView
 
@@ -47,8 +47,8 @@ class CheckRentFreePeriodViewSpec extends ViewBaseSpec {
   }
 
   val address = "5 Brixham Marina, Berry Head Road, Brixham, Devon, TQ5 9BW"
-  private val ngrRadio: NGRRadio = NGRRadio(NGRRadioName(CheckRentFreePeriodForm.checkRentPeriodRadio), Seq(yesButton, noButton))
-  val form = CheckRentFreePeriodForm.form.fillAndValidate(CheckRentFreePeriodForm("Yes"))
+  private val ngrRadio: NGRRadio = simpleNgrRadio(CheckRentFreePeriodForm.checkRentPeriodRadio)
+  val form = CheckRentFreePeriodForm.form.fillAndValidate(CheckRentFreePeriodForm("true"))
   val radio: Radios = buildRadios(form, ngrRadio)
 
   "TellUsAboutYourNewAgreementView" must {
@@ -112,5 +112,5 @@ class CheckRentFreePeriodViewSpec extends ViewBaseSpec {
       result.isError mustBe true
     }
   }
-  
+
 }

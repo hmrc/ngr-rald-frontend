@@ -158,7 +158,7 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
       request.userAnswers.getOrElse(UserAnswers(request.credId)).get(ProvideDetailsOfFirstSecondRentPeriodPage) match {
         case Some(value) =>
           val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(RentPeriodsPage) match {
-            case Some(value) => form.fill(RentPeriodsForm(value))
+            case Some(value) => form.fill(RentPeriodsForm(value.toString))
             case None => form
           }
           Future.successful(Ok(view(
@@ -166,7 +166,7 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
             preparedForm,
             firstTable = firstTable(value),
             secondTable = secondTable(value),
-            ngrRadio = buildRadios(preparedForm, RentPeriodsForm.ngrRadio(preparedForm)),
+            ngrRadio = buildRadios(preparedForm, RentPeriodsForm.rentPeriodsRadio(preparedForm)),
             mode = mode)))
         case None => throw new Exception("Not found answers")
       }
@@ -185,12 +185,13 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
                 formWithErrors,
                 firstTable = firstTable(value),
                 secondTable = secondTable(value),
-                buildRadios(formWithErrors, RentPeriodsForm.ngrRadio(formWithErrors)), mode = mode)))
+                buildRadios(formWithErrors, RentPeriodsForm.rentPeriodsRadio(formWithErrors)), mode = mode)))
               case None => throw new NotFoundException("Couldn't find user Answers")
             },
           rentPeriodsForm =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(RentPeriodsPage, rentPeriodsForm.radioValue))
+              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
+                .set(RentPeriodsPage, rentPeriodsForm.radioValue.toBoolean))
               _ <- sessionRepository.set(updatedAnswers)
             } yield Redirect(navigator.nextPage(RentPeriodsPage, mode, updatedAnswers))
         )

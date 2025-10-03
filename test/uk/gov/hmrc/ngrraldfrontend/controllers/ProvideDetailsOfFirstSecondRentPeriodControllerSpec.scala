@@ -81,7 +81,7 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
         document.select("input[name=first.endDate.day]").attr("value") mustBe "31"
         document.select("input[name=first.endDate.month]").attr("value") mustBe "1"
         document.select("input[name=first.endDate.year]").attr("value") mustBe "2025"
-        document.select("input[type=radio][name=provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio][value=yesPayedRent]").hasAttr("checked") mustBe true
+        document.select("input[type=radio][name=provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio][value=true]").hasAttr("checked") mustBe true
         document.select("input[name=second.startDate.day]").attr("value") mustBe "1"
         document.select("input[name=second.startDate.month]").attr("value") mustBe "2"
         document.select("input[name=second.startDate.year]").attr("value") mustBe "2025"
@@ -101,7 +101,7 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
         document.select("input[name=first.endDate.day]").attr("value") mustBe "31"
         document.select("input[name=first.endDate.month]").attr("value") mustBe "1"
         document.select("input[name=first.endDate.year]").attr("value") mustBe "2025"
-        document.select("input[type=radio][name=provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio][value=noRentPayed]").hasAttr("checked") mustBe true
+        document.select("input[type=radio][name=provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio][value=false]").hasAttr("checked") mustBe true
         document.select("input[name=second.startDate.day]").attr("value") mustBe "1"
         document.select("input[name=second.startDate.month]").attr("value") mustBe "2"
         document.select("input[name=second.startDate.year]").attr("value") mustBe "2025"
@@ -131,7 +131,7 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
             "first.endDate.day" -> "12",
             "first.endDate.month" -> "12",
             "first.endDate.year" -> "2026",
-            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "yesPayedRent",
+            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "true",
             "RentPeriodAmount" -> "20000.00",
             "second.startDate.day" -> "12",
             "second.startDate.month" -> "12",
@@ -159,7 +159,7 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
             "first.endDate.day" -> "12",
             "first.endDate.month" -> "12",
             "first.endDate.year" -> "2026",
-            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "noRentPayed",
+            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "false",
             "second.startDate.day" -> "12",
             "second.startDate.month" -> "12",
             "second.startDate.year" -> "2026",
@@ -184,7 +184,7 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
             "first.endDate.day" -> "12",
             "first.endDate.month" -> "12",
             "first.endDate.year" -> "2026",
-            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "yesPayedRent",
+            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "true",
             "RentPeriodAmount" -> "20000.00",
             "second.startDate.day" -> "12",
             "second.startDate.month" -> "12",
@@ -211,7 +211,7 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
             "first.endDate.day" -> "12",
             "first.endDate.month" -> "12",
             "first.endDate.year" -> "2026",
-            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "yesPayedRent",
+            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "true",
             "RentPeriodAmount" -> "20000.00",
             "second.startDate.day" -> "12",
             "second.startDate.month" -> "12",
@@ -238,7 +238,7 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
             "first.endDate.day" -> "12",
             "first.endDate.month" -> "12",
             "first.endDate.year" -> "2026",
-            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "yesPayedRent",
+            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "true",
             "RentPeriodAmount" -> "20000.00",
             "second.startDate.day" -> "12",
             "second.startDate.month" -> "12",
@@ -265,7 +265,7 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
             "first.endDate.day" -> "",
             "first.endDate.month" -> "12",
             "first.endDate.year" -> "2026",
-            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "yesPayedRent",
+            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "true",
             "RentPeriodAmount" -> "20000.00",
             "second.startDate.day" -> "12",
             "second.startDate.month" -> "12",
@@ -292,7 +292,7 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
             "first.endDate.day" -> "12",
             "first.endDate.month" -> "",
             "first.endDate.year" -> "2026",
-            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "yesPayedRent",
+            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "true",
             "RentPeriodAmount" -> "20000.00",
             "second.startDate.day" -> "12",
             "second.startDate.month" -> "12",
@@ -321,7 +321,7 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
             "first.endDate.day" -> "12",
             "first.endDate.month" -> "12",
             "first.endDate.year" -> "",
-            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "yesPayedRent",
+            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "true",
             "RentPeriodAmount" -> "20000.00",
             "second.startDate.day" -> "12",
             "second.startDate.month" -> "12",
@@ -348,7 +348,7 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
             "first.endDate.day" -> "12",
             "first.endDate.month" -> "12",
             "first.endDate.year" -> "2026",
-            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "yesPayedRent",
+            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "true",
             "RentPeriodAmount" -> "20000.00",
             "second.startDate.day" -> "",
             "second.startDate.month" -> "12",
@@ -376,7 +376,7 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
             "first.endDate.day" -> "12",
             "first.endDate.month" -> "12",
             "first.endDate.year" -> "2026",
-            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "yesPayedRent",
+            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "true",
             "RentPeriodAmount" -> "20000.00",
             "second.startDate.day" -> "12",
             "second.startDate.month" -> "",
@@ -403,7 +403,7 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
             "first.endDate.day" -> "12",
             "first.endDate.month" -> "12",
             "first.endDate.year" -> "2026",
-            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "yesPayedRent",
+            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "true",
             "RentPeriodAmount" -> "20000.00",
             "second.startDate.day" -> "12",
             "second.startDate.month" -> "12",
@@ -430,7 +430,7 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
             "first.endDate.day" -> "12",
             "first.endDate.month" -> "12",
             "first.endDate..year" -> "2026",
-            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "yesPayedRent",
+            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "true",
             "RentPeriodAmount" -> "20000.00",
             "second.startDate.day" -> "12",
             "second.startDate.month" -> "12",
@@ -457,7 +457,7 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
             "first.endDate.day" -> "12",
             "first.endDate.month" -> "12",
             "first.endDate.year" -> "2026",
-            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "yesPayedRent",
+            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "true",
             "RentPeriodAmount" -> "20000.00",
             "second.startDate.day" -> "12",
             "second.startDate.month" -> "12",
@@ -484,7 +484,7 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
             "first.endDate.day" -> "12",
             "first.endDate.month" -> "12",
             "first.endDate.year" -> "2026",
-            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "yesPayedRent",
+            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "true",
             "RentPeriodAmount" -> "20000.00",
             "second.startDate.day" -> "12",
             "second.startDate.month" -> "12",
@@ -538,7 +538,7 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
             "first.endDate.day" -> "12",
             "first.endDate.month" -> "12",
             "first.endDate.year" -> "2026",
-            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "yesPayedRent",
+            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "true",
             "RentPeriodAmount" -> "",
             "second.startDate.day" -> "12",
             "second.startDate.month" -> "12",
@@ -565,7 +565,7 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
             "first.endDate.day" -> "12",
             "first.endDate.month" -> "12",
             "first.endDate.year" -> "2026",
-            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "yesPayedRent",
+            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "true",
             "RentPeriodAmount" -> "20000.00",
             "second.startDate.day" -> "12",
             "second.startDate.month" -> "12",
@@ -619,7 +619,7 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
             "first.endDate.day" -> "12",
             "first.endDate.month" -> "12",
             "first.endDate.year" -> "2026",
-            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "yesPayedRent",
+            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "true",
             "RentPeriodAmount" -> "hello",
             "second.startDate.day" -> "12",
             "second.startDate.month" -> "12",
@@ -646,7 +646,7 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
             "first.endDate.day" -> "12",
             "first.endDate.month" -> "12",
             "first.endDate.year" -> "2026",
-            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "yesPayedRent",
+            "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio" -> "true",
             "RentPeriodAmount" -> "20000.00",
             "second.startDate.day" -> "12",
             "second.startDate.month" -> "12",

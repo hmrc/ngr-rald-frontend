@@ -46,13 +46,13 @@ class DoesYourRentIncludeParkingController  @Inject()(doesYourRentIncludeParking
     (authenticate andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(DoesYourRentIncludeParkingPage) match {
         case None => form
-        case Some(value) => form.fill(DoesYourRentIncludeParkingForm(value))
+        case Some(value) => form.fill(DoesYourRentIncludeParkingForm(value.toString))
 
       }
         Future.successful(Ok(doesYourRentIncludeParkingView(
           selectedPropertyAddress = request.property.addressFull,
           form = preparedForm,
-          ngrRadio = buildRadios(preparedForm, DoesYourRentIncludeParkingForm.ngrRadio(preparedForm)),
+          ngrRadio = buildRadios(preparedForm, DoesYourRentIncludeParkingForm.includeParkingRadio),
           mode = mode
         )))
     }
@@ -64,14 +64,15 @@ class DoesYourRentIncludeParkingController  @Inject()(doesYourRentIncludeParking
         formWithErrors => {
             Future.successful(BadRequest(doesYourRentIncludeParkingView(
               form = formWithErrors,
-              ngrRadio = buildRadios(formWithErrors, DoesYourRentIncludeParkingForm.ngrRadio(formWithErrors)),
+              ngrRadio = buildRadios(formWithErrors, DoesYourRentIncludeParkingForm.includeParkingRadio),
               selectedPropertyAddress = request.property.addressFull,
               mode = mode
             )))
         },
         radioValue =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(DoesYourRentIncludeParkingPage, radioValue.radio))
+            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
+              .set(DoesYourRentIncludeParkingPage, radioValue.radio.toBoolean))
             _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(DoesYourRentIncludeParkingPage, mode, updatedAnswers))
 

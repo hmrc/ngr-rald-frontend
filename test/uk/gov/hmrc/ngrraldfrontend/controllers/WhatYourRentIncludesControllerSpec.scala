@@ -70,24 +70,24 @@ class WhatYourRentIncludesControllerSpec  extends ControllerSpecSupport {
         status(result) mustBe OK
         val content = contentAsString(result)
         val document = Jsoup.parse(content)
-        document.select("input[type=radio][name=livingAccommodationRadio][value=livingAccommodationYes]").hasAttr("checked") mustBe true
-        document.select("input[type=radio][name=rentPartAddressRadio][value=rentPartAddressYes]").hasAttr("checked") mustBe true
-        document.select("input[type=radio][name=rentEmptyShellRadio][value=rentEmptyShellYes]").hasAttr("checked") mustBe true
-        document.select("input[type=radio][name=rentIncBusinessRatesRadio][value=rentIncBusinessRatesYes]").hasAttr("checked") mustBe true
-        document.select("input[type=radio][name=rentIncWaterChargesRadio][value=rentIncWaterChargesYes]").hasAttr("checked") mustBe true
-        document.select("input[type=radio][name=rentIncServiceRadio][value=rentIncServiceYes]").hasAttr("checked") mustBe true
+        document.select("input[type=radio][name=livingAccommodationRadio][value=true]").hasAttr("checked") mustBe true
+        document.select("input[type=radio][name=rentPartAddressRadio][value=true]").hasAttr("checked") mustBe true
+        document.select("input[type=radio][name=rentEmptyShellRadio][value=true]").hasAttr("checked") mustBe true
+        document.select("input[type=radio][name=rentIncBusinessRatesRadio][value=true]").hasAttr("checked") mustBe true
+        document.select("input[type=radio][name=rentIncWaterChargesRadio][value=true]").hasAttr("checked") mustBe true
+        document.select("input[type=radio][name=rentIncServiceRadio][value=true]").hasAttr("checked") mustBe true
       }
       "Return OK and the correct view with prepopulated answers all No" in {
         val result = controllerProperty(whatYourRentIncludesAnswersAllNo).show(NormalMode)(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
         val document = Jsoup.parse(content)
-        document.select("input[type=radio][name=livingAccommodationRadio][value=livingAccommodationNo]").hasAttr("checked") mustBe true
-        document.select("input[type=radio][name=rentPartAddressRadio][value=rentPartAddressNo]").hasAttr("checked") mustBe true
-        document.select("input[type=radio][name=rentEmptyShellRadio][value=rentEmptyShellNo]").hasAttr("checked") mustBe true
-        document.select("input[type=radio][name=rentIncBusinessRatesRadio][value=rentIncBusinessRatesNo]").hasAttr("checked") mustBe true
-        document.select("input[type=radio][name=rentIncWaterChargesRadio][value=rentIncWaterChargesNo]").hasAttr("checked") mustBe true
-        document.select("input[type=radio][name=rentIncServiceRadio][value=rentIncServiceNo]").hasAttr("checked") mustBe true
+        document.select("input[type=radio][name=livingAccommodationRadio][value=false]").hasAttr("checked") mustBe true
+        document.select("input[type=radio][name=rentPartAddressRadio][value=false]").hasAttr("checked") mustBe true
+        document.select("input[type=radio][name=rentEmptyShellRadio][value=false]").hasAttr("checked") mustBe true
+        document.select("input[type=radio][name=rentIncBusinessRatesRadio][value=false]").hasAttr("checked") mustBe true
+        document.select("input[type=radio][name=rentIncWaterChargesRadio][value=false]").hasAttr("checked") mustBe true
+        document.select("input[type=radio][name=rentIncServiceRadio][value=false]").hasAttr("checked") mustBe true
       }
       "Return NotFoundException when property is not found in the mongo" in {
         when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(None))
@@ -103,12 +103,12 @@ class WhatYourRentIncludesControllerSpec  extends ControllerSpecSupport {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.WhatYourRentIncludesController.submit(NormalMode))
           .withFormUrlEncodedBody(
-            "livingAccommodationRadio" -> "livingAccommodationYes",
-            "rentPartAddressRadio" -> "No",
-            "rentEmptyShellRadio" -> "Yes",
-            "rentIncBusinessRatesRadio" -> "No",
-            "rentIncWaterChargesRadio" -> "No",
-            "rentIncServiceRadio" -> "Yes",
+            "livingAccommodationRadio" -> "true",
+            "rentPartAddressRadio" -> "false",
+            "rentEmptyShellRadio" -> "true",
+            "rentIncBusinessRatesRadio" -> "false",
+            "rentIncWaterChargesRadio" -> "false",
+            "rentIncServiceRadio" -> "true",
             "bedroomNumbers" -> "6"
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
@@ -122,12 +122,12 @@ class WhatYourRentIncludesControllerSpec  extends ControllerSpecSupport {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.WhatYourRentIncludesController.submit(NormalMode))
           .withFormUrlEncodedBody(
-            "livingAccommodationRadio" -> "livingAccommodationNo",
-            "rentPartAddressRadio" -> "Yes",
-            "rentEmptyShellRadio" -> "No",
-            "rentIncBusinessRatesRadio" -> "Yes",
-            "rentIncWaterChargesRadio" -> "Yes",
-            "rentIncServiceRadio" -> "No"
+            "livingAccommodationRadio" -> "false",
+            "rentPartAddressRadio" -> "true",
+            "rentEmptyShellRadio" -> "false",
+            "rentIncBusinessRatesRadio" -> "true",
+            "rentIncWaterChargesRadio" -> "true",
+            "rentIncServiceRadio" -> "false"
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -140,11 +140,11 @@ class WhatYourRentIncludesControllerSpec  extends ControllerSpecSupport {
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.WhatYourRentIncludesController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "livingAccommodationRadio" -> "",
-            "rentPartAddressRadio" -> "No",
-            "rentEmptyShellRadio" -> "Yes",
-            "rentIncBusinessRatesRadio" -> "No",
-            "rentIncWaterChargesRadio" -> "No",
-            "rentIncServiceRadio" -> "Yes"
+            "rentPartAddressRadio" -> "false",
+            "rentEmptyShellRadio" -> "true",
+            "rentIncBusinessRatesRadio" -> "false",
+            "rentIncWaterChargesRadio" -> "false",
+            "rentIncServiceRadio" -> "true"
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -158,12 +158,12 @@ class WhatYourRentIncludesControllerSpec  extends ControllerSpecSupport {
       "Return Form with Errors when bedroom numbers is not provide" in {
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.WhatYourRentIncludesController.submit(NormalMode))
           .withFormUrlEncodedBody(
-            "livingAccommodationRadio" -> "livingAccommodationYes",
-            "rentPartAddressRadio" -> "No",
-            "rentEmptyShellRadio" -> "Yes",
-            "rentIncBusinessRatesRadio" -> "No",
-            "rentIncWaterChargesRadio" -> "No",
-            "rentIncServiceRadio" -> "Yes",
+            "livingAccommodationRadio" -> "true",
+            "rentPartAddressRadio" -> "false",
+            "rentEmptyShellRadio" -> "true",
+            "rentIncBusinessRatesRadio" -> "false",
+            "rentIncWaterChargesRadio" -> "false",
+            "rentIncServiceRadio" -> "true",
             "bedroomNumbers" -> ""
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
@@ -178,12 +178,12 @@ class WhatYourRentIncludesControllerSpec  extends ControllerSpecSupport {
       "Return Form with Errors when bedroom numbers is not numeric" in {
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.WhatYourRentIncludesController.submit(NormalMode))
           .withFormUrlEncodedBody(
-            "livingAccommodationRadio" -> "livingAccommodationYes",
-            "rentPartAddressRadio" -> "No",
-            "rentEmptyShellRadio" -> "Yes",
-            "rentIncBusinessRatesRadio" -> "No",
-            "rentIncWaterChargesRadio" -> "No",
-            "rentIncServiceRadio" -> "Yes",
+            "livingAccommodationRadio" -> "true",
+            "rentPartAddressRadio" -> "false",
+            "rentEmptyShellRadio" -> "true",
+            "rentIncBusinessRatesRadio" -> "false",
+            "rentIncWaterChargesRadio" -> "false",
+            "rentIncServiceRadio" -> "true",
             "bedroomNumbers" -> "AS&"
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
@@ -198,12 +198,12 @@ class WhatYourRentIncludesControllerSpec  extends ControllerSpecSupport {
       "Return Form with Errors when bedroom numbers is less than 1" in {
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.WhatYourRentIncludesController.submit(NormalMode))
           .withFormUrlEncodedBody(
-            "livingAccommodationRadio" -> "livingAccommodationYes",
-            "rentPartAddressRadio" -> "No",
-            "rentEmptyShellRadio" -> "Yes",
-            "rentIncBusinessRatesRadio" -> "No",
-            "rentIncWaterChargesRadio" -> "No",
-            "rentIncServiceRadio" -> "Yes",
+            "livingAccommodationRadio" -> "true",
+            "rentPartAddressRadio" -> "false",
+            "rentEmptyShellRadio" -> "true",
+            "rentIncBusinessRatesRadio" -> "false",
+            "rentIncWaterChargesRadio" -> "false",
+            "rentIncServiceRadio" -> "true",
             "bedroomNumbers" -> "0"
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
@@ -218,12 +218,12 @@ class WhatYourRentIncludesControllerSpec  extends ControllerSpecSupport {
       "Return Form with Errors when bedroom numbers is greater than 99" in {
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.WhatYourRentIncludesController.submit(NormalMode))
           .withFormUrlEncodedBody(
-            "livingAccommodationRadio" -> "livingAccommodationYes",
-            "rentPartAddressRadio" -> "No",
-            "rentEmptyShellRadio" -> "Yes",
-            "rentIncBusinessRatesRadio" -> "No",
-            "rentIncWaterChargesRadio" -> "No",
-            "rentIncServiceRadio" -> "Yes",
+            "livingAccommodationRadio" -> "true",
+            "rentPartAddressRadio" -> "false",
+            "rentEmptyShellRadio" -> "true",
+            "rentIncBusinessRatesRadio" -> "false",
+            "rentIncWaterChargesRadio" -> "false",
+            "rentIncServiceRadio" -> "true",
             "bedroomNumbers" -> "100"
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))

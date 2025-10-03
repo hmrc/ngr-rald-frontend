@@ -41,8 +41,4 @@ object CheckRentFreePeriodForm extends Mappings {
       )(CheckRentFreePeriodForm.apply)(CheckRentFreePeriodForm.unapply)
     )
   }
-  
-  def ngrRadio(form: Form[CheckRentFreePeriodForm])(implicit messages: Messages): NGRRadio =
-    NGRRadio(NGRRadioName(checkRentPeriodRadio), NGRRadioButtons = Seq(NGRRadio.yesButton, NGRRadio.noButton))
-
 }

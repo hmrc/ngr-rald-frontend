@@ -21,7 +21,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
+import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{buildRadios, simpleNgrRadio}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.DoYouPayExtraForParkingSpacesForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.DoYouPayExtraForParkingSpacesForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.{Landlord, Mode, NormalMode, UserAnswers}
@@ -47,11 +47,11 @@ class DoYouPayExtraForParkingSpacesController @Inject()(doYouPayExtraForParkingS
     (authenticate andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(DoYouPayExtraForParkingSpacesPage) match {
         case None => form
-        case Some(value) => form.fill(DoYouPayExtraForParkingSpacesForm(if (value) "Yes" else "No"))
+        case Some(value) => form.fill(DoYouPayExtraForParkingSpacesForm(value.toString))
       }
         Future.successful(Ok(doYouPayExtraForParkingSpacesView(
           form = preparedForm,
-          radios = buildRadios(preparedForm, DoYouPayExtraForParkingSpacesForm.ngrRadio(preparedForm)),
+          radios = buildRadios(preparedForm, simpleNgrRadio(DoYouPayExtraForParkingSpacesForm.payExtraRadio)),
           propertyAddress = request.property.addressFull,
           mode = mode
         )))
@@ -64,7 +64,7 @@ class DoYouPayExtraForParkingSpacesController @Inject()(doYouPayExtraForParkingS
         formWithErrors => {
             Future.successful(BadRequest(doYouPayExtraForParkingSpacesView(
               form = formWithErrors,
-              radios = buildRadios(formWithErrors, DoYouPayExtraForParkingSpacesForm.ngrRadio(formWithErrors)),
+              radios = buildRadios(formWithErrors, simpleNgrRadio(DoYouPayExtraForParkingSpacesForm.payExtraRadio)),
               propertyAddress = request.property.addressFull,
               mode = mode
             )))
@@ -72,11 +72,7 @@ class DoYouPayExtraForParkingSpacesController @Inject()(doYouPayExtraForParkingS
         radioValue =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
-              .set(DoYouPayExtraForParkingSpacesPage,
-                radioValue.radioValue match
-                  case "Yes" => true
-                  case _ => false
-              )
+              .set(DoYouPayExtraForParkingSpacesPage, radioValue.radioValue.toBoolean)
             )
             _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(DoYouPayExtraForParkingSpacesPage, mode, updatedAnswers))

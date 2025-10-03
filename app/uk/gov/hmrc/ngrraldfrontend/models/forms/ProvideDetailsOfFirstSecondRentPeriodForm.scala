@@ -16,28 +16,33 @@
 
 package uk.gov.hmrc.ngrraldfrontend.models.forms
 
-import play.api.data.Forms.{mapping, of, optional, text}
-import play.api.data.format.Formatter
+import play.api.data.Form
+import play.api.data.Forms.{mapping, optional, text}
 import play.api.data.validation.{Constraint, Invalid, Valid}
-import play.api.data.{Form, FormError}
 import play.api.i18n.*
 import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+import uk.gov.hmrc.govukfrontend.views.viewmodels.dateinput.DateInput
+import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.{Fieldset, Legend}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.hint.Hint
+import uk.gov.hmrc.govukfrontend.views.viewmodels.input.PrefixOrSuffix
 import uk.gov.hmrc.ngrraldfrontend.models.*
+import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio
+import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{ngrRadio, noButton, yesButton}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
+import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 
 import scala.math.BigDecimal.RoundingMode
-import scala.math.BigDecimal.RoundingMode.RoundingMode
-import scala.util.Try
 
 final case class ProvideDetailsOfFirstSecondRentPeriodForm(
-                                firstDateStartInput: NGRDate,
-                                firstDateEndInput: NGRDate,
-                                firstRentPeriodRadio: String,
-                                firstRentPeriodAmount: Option[String],
-                                secondDateStartInput: NGRDate,
-                                secondDateEndInput: NGRDate,
-                                secondHowMuchIsRent: BigDecimal,
-                              )
+                                                            firstDateStartInput: NGRDate,
+                                                            firstDateEndInput: NGRDate,
+                                                            firstRentPeriodRadio: String,
+                                                            firstRentPeriodAmount: Option[String],
+                                                            secondDateStartInput: NGRDate,
+                                                            secondDateEndInput: NGRDate,
+                                                            secondHowMuchIsRent: BigDecimal,
+                                                          )
 
 object ProvideDetailsOfFirstSecondRentPeriodForm extends CommonFormValidators with Mappings with DateMappings {
   implicit val format: OFormat[ProvideDetailsOfFirstSecondRentPeriodForm] = Json.format[ProvideDetailsOfFirstSecondRentPeriodForm]
@@ -58,6 +63,57 @@ object ProvideDetailsOfFirstSecondRentPeriodForm extends CommonFormValidators wi
   val lang: Lang = Lang.defaultLang
   val messages: Messages = MessagesImpl(lang, messagesApi)
 
+  private def dateInput(dateInputName: String, dateInputLabel: String)(implicit messages: Messages): DateInput = DateInput(
+    id = dateInputName,
+    namePrefix = Some(dateInputName),
+    fieldset = Some(Fieldset(
+      legend = Some(Legend(
+        content = Text(messages(dateInputLabel)),
+        classes = "govuk-fieldset__legend--s",
+        isPageHeading = true
+      ))
+    )),
+    hint = Some(Hint(
+      id = Some("provideDetailsOfFirstSecondRentPeriod.date.hint"),
+      content = Text(messages("provideDetailsOfFirstSecondRentPeriod.date.hint"))
+    ))
+  )
+
+  def firstDateStartInput(implicit messages: Messages): DateInput =
+    dateInput(firstDateStartInput, "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.label")
+
+  def firstDateEndInput(implicit messages: Messages): DateInput =
+    dateInput(firstDateEndInput, "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.label")
+
+  def secondDateStartInput(implicit messages: Messages): DateInput =
+    dateInput(secondDateStartInput, "provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.label")
+
+  def secondDateEndInput(implicit messages: Messages): DateInput =
+    dateInput(secondDateEndInput, "provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.label")
+
+  def firstRentPeriodRadio(form: Form[ProvideDetailsOfFirstSecondRentPeriodForm], inputText: InputText)(implicit messages: Messages): NGRRadio =
+    ngrRadio(
+      radioName = firstRentPeriodRadio,
+      radioButtons = Seq(
+        yesButton(
+          conditionalHtml = Some(inputText(
+            form = form,
+            id = RentPeriodAmount,
+            name = RentPeriodAmount,
+            label = messages("provideDetailsOfFirstSecondRentPeriod.firstPeriod.radio.conditional.hint.bold"),
+            isVisible = true,
+            hint = Some(Hint(
+              content = Text(messages("provideDetailsOfFirstSecondRentPeriod.firstPeriod.radio.conditional.hint"))
+            )),
+            classes = Some("govuk-input--width-10"),
+            prefix = Some(PrefixOrSuffix(content = Text("£")))
+          ))
+        ),
+        noButton(radioContent = "provideDetailsOfFirstSecondRentPeriod.firstPeriod.radio.no")
+      ),
+      ngrTitle = "provideDetailsOfFirstSecondRentPeriod.firstPeriod.radio.label",
+    )
+
   def unapply(provideDetailsOfFirstSecondRentPeriodForm: ProvideDetailsOfFirstSecondRentPeriodForm): Option[(
     NGRDate, NGRDate, String, Option[String], NGRDate, NGRDate, BigDecimal)] =
     Some(
@@ -75,10 +131,7 @@ object ProvideDetailsOfFirstSecondRentPeriodForm extends CommonFormValidators wi
       ProvideDetailsOfFirstSecondRentPeriodForm(
         NGRDate.fromString(value.firstDateStart),
         NGRDate.fromString(value.firstDateEnd),
-        value.firstRentPeriodRadio match {
-          case true => "yesPayedRent"
-          case false => "noRentPayed"
-        },
+        value.firstRentPeriodRadio.toString,
         value.firstRentPeriodAmount,
         NGRDate.fromString(value.secondDateStart),
         NGRDate.fromString(value.secondDateEnd),
@@ -89,14 +142,11 @@ object ProvideDetailsOfFirstSecondRentPeriodForm extends CommonFormValidators wi
     ProvideDetailsOfFirstSecondRentPeriod(
       provideDetailsOfFirstSecondRentPeriodForm.firstDateStartInput.makeString,
       provideDetailsOfFirstSecondRentPeriodForm.firstDateEndInput.makeString,
-      provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodRadio match {
-        case "yesPayedRent" => true
-        case _ => false
-      },
-      provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodAmount match {
-        case Some(value) if provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodRadio.equals("yesPayedRent") => Some(value)
-        case _ => None
-      },
+      provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodRadio.toBoolean,
+      if (provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodRadio.toBoolean)
+        provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodAmount
+      else
+        None,
       provideDetailsOfFirstSecondRentPeriodForm.secondDateStartInput.makeString,
       provideDetailsOfFirstSecondRentPeriodForm.secondDateEndInput.makeString,
       provideDetailsOfFirstSecondRentPeriodForm.secondHowMuchIsRent.toString()
@@ -106,7 +156,7 @@ object ProvideDetailsOfFirstSecondRentPeriodForm extends CommonFormValidators wi
     Constraint((input: A) =>
       val provideDetailsOfFirstSecondRentPeriodForm = input.asInstanceOf[ProvideDetailsOfFirstSecondRentPeriodForm]
       val rentAmount: Option[String] = provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodAmount
-      if (provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodRadio.equals("yesPayedRent")) {
+      if (provideDetailsOfFirstSecondRentPeriodForm.firstRentPeriodRadio.equals("true")) {
         if (rentAmount.isEmpty)
           Invalid(firstPeriodAmountEmptyError)
         else if (!rentAmount.get.matches(amountRegex.pattern()))

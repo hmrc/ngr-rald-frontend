@@ -63,7 +63,7 @@ class ConfirmBreakClauseControllerSpec extends ControllerSpecSupport {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.ConfirmBreakClauseController.submit(NormalMode))
           .withFormUrlEncodedBody(
-            "confirmBreakClause-radio-value" -> "Yes",
+            "confirmBreakClause-radio-value" -> "true",
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -76,7 +76,7 @@ class ConfirmBreakClauseControllerSpec extends ControllerSpecSupport {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.ConfirmBreakClauseController.submit(NormalMode))
           .withFormUrlEncodedBody(
-            "confirmBreakClause-radio-value" -> "No",
+            "confirmBreakClause-radio-value" -> "false",
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {

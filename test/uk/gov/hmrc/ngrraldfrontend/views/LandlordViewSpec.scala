@@ -18,9 +18,6 @@ package uk.gov.hmrc.ngrraldfrontend.views
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.api.data.Form
-import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.{ErrorMessage, Label, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.Radios
 import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
 import uk.gov.hmrc.ngrraldfrontend.models.NormalMode
@@ -53,32 +50,12 @@ class LandlordViewSpec extends ViewBaseSpec {
     }
 
     val address = "5 Brixham Marina, Berry Head Road, Brixham, Devon, TQ5 9BW"
-
-    private def landlordRelationship(form: Form[LandlordForm])(implicit messages: Messages): NGRRadioButtons = NGRRadioButtons(
-      radioContent = "service.yes",
-      radioValue = LandlordRelationshipYes,
-      conditionalHtml = Some(ngrCharacterCountComponent(form,
-        NGRCharacterCount(
-          id = "landlord-yes",
-          name = "landlord-yes",
-          label = Label(
-            classes = "govuk-label govuk-label--m",
-            content = Text(Messages("landlord.radio5.dropdown"))
-          ),
-          errorMessage = Some(ErrorMessage(
-            id = Some("radio-other-error"),
-            content = Text(Messages("landlord.radio.other.empty.error"))
-          ))
-        ))
-      )
-    )
-
-    private val ngrRadio: NGRRadio = NGRRadio(NGRRadioName("what-type-of-agreement-radio"), Seq(landlordRelationship(form)))
-    val form = LandlordForm.form.fillAndValidate(LandlordForm(landlordName = "Bob", hasRelationship = "LandlordRelationshipNo", None))
+    val form = LandlordForm.form.fillAndValidate(LandlordForm(landlordName = "Bob", hasRelationship = "false", None))
+    private val ngrRadio: NGRRadio = LandlordForm.landlordRadio(form, ngrCharacterCountComponent)
     val radio: Radios = buildRadios(form, ngrRadio)
 
     "LandlordView" must {
-      val landlordView = view(address, form, radio , NormalMode)
+      val landlordView = view(address, form, radio, NormalMode)
       lazy implicit val document: Document = Jsoup.parse(landlordView.body)
       val htmlApply = view.apply(address, form, radio, NormalMode).body
       val htmlRender = view.render(address, form, radio, NormalMode, request, messages, mockConfig).body

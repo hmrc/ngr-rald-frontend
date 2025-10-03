@@ -16,18 +16,18 @@
 
 package uk.gov.hmrc.ngrraldfrontend.controllers
 
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
+import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import uk.gov.hmrc.auth.core.Nino
-import uk.gov.hmrc.http.HeaderNames
+import uk.gov.hmrc.http.{HeaderNames, NotFoundException}
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
-import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, NormalMode, ProvideDetailsOfFirstSecondRentPeriod, UserAnswers}
-import uk.gov.hmrc.ngrraldfrontend.pages.ProvideDetailsOfFirstSecondRentPeriodPage
+import uk.gov.hmrc.ngrraldfrontend.pages.{ProvideDetailsOfFirstSecondRentPeriodPage, RentPeriodsPage}
 import uk.gov.hmrc.ngrraldfrontend.views.html.RentPeriodView
 
 import scala.concurrent.Future
@@ -35,7 +35,7 @@ import scala.concurrent.Future
 class RentPeriodsControllerSpec extends ControllerSpecSupport {
   val pageTitle = "Rent periods"
   val view: RentPeriodView = inject[RentPeriodView]
-  val controllerNoProperty: RentPeriodsController = new RentPeriodsController(view, fakeAuth, fakeData(None),mcc, mockSessionRepository, mockNavigator)(mockConfig, ec)
+  val controllerNoProperty: RentPeriodsController = new RentPeriodsController(view, fakeAuth, fakeData(None), mcc, mockSessionRepository, mockNavigator)(mockConfig, ec)
   val controllerProperty: Option[UserAnswers] => RentPeriodsController = answers => new RentPeriodsController(view, fakeAuth, fakeDataProperty(Some(property), answers), mcc, mockSessionRepository, mockNavigator)(mockConfig, ec)
 
   lazy val firstSecondRentPeriodAnswers: Option[UserAnswers] = UserAnswers("id").set(ProvideDetailsOfFirstSecondRentPeriodPage, firstSecondRentPeriod).toOption
@@ -47,46 +47,62 @@ class RentPeriodsControllerSpec extends ControllerSpecSupport {
       val content = contentAsString(result)
       content must include(pageTitle)
     }
-  }
-    "method submit" must {
-      "Return OK and the correct view after submitting yes" in {
-        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentPeriodsController.submit(NormalMode))
-          .withFormUrlEncodedBody(
-            "rent-periods-radio" -> "Yes"
-          )
-          .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
-        result.map(result => {
-          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/landlord")
-        })
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.ProvideDetailsOfFirstSecondRentPeriodController.show(NormalMode).url)
+    "Return OK and the correct view with prepopulated answers" in {
+      val answers = firstSecondRentPeriodAnswers.get.set(RentPeriodsPage, true).toOption
+      val result = controllerProperty(answers).show(NormalMode)(authenticatedFakeRequest)
+      status(result) mustBe OK
+      val content = contentAsString(result)
+      val document = Jsoup.parse(content)
+      document.select("input[type=radio][name=rent-periods-radio][value=true]").hasAttr("checked") mustBe true
+      document.select("input[type=radio][name=rent-periods-radio][value=false]").hasAttr("checked") mustBe false
+    }
+    "Return NotFoundException when property is not found in the mongo" in {
+      when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(None))
+      val exception = intercept[NotFoundException] {
+        await(controllerNoProperty.show(NormalMode)(authenticatedFakeRequest))
       }
-      "Return OK and the correct view after submitting no" in {
-        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentPeriodsController.submit(NormalMode))
-          .withFormUrlEncodedBody(
-            "rent-periods-radio" -> "No"
-          )
-          .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
-        result.map(result => {
-          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/landlord")
-        })
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.DidYouAgreeRentWithLandlordController.show(NormalMode).url)
-      }
-      "Return Form with Errors when no name is input" in {
-        val result = controllerProperty(firstSecondRentPeriodAnswers).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentPeriodsController.submit(NormalMode))
-          .withFormUrlEncodedBody(
-            "rent-periods-radio" -> ""
-          )
-          .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
-        result.map(result => {
-          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/landlord")
-        })
-        status(result) mustBe BAD_REQUEST
-        val content = contentAsString(result)
-        content must include(pageTitle)
-      }
+      exception.getMessage contains "Could not find answers in backend mongo" mustBe true
     }
   }
+  "method submit" must {
+    "Return SEE_OTHER and the correct view after submitting yes" in {
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+      val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentPeriodsController.submit(NormalMode))
+        .withFormUrlEncodedBody(
+          "rent-periods-radio" -> "true"
+        )
+        .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
+      result.map(result => {
+        result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/landlord")
+      })
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(routes.ProvideDetailsOfFirstSecondRentPeriodController.show(NormalMode).url)
+    }
+    "Return SEE_OTHER and the correct view after submitting no" in {
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+      val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentPeriodsController.submit(NormalMode))
+        .withFormUrlEncodedBody(
+          "rent-periods-radio" -> "false"
+        )
+        .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
+      result.map(result => {
+        result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/landlord")
+      })
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(routes.DidYouAgreeRentWithLandlordController.show(NormalMode).url)
+    }
+    "Return Form with Errors when no name is input" in {
+      val result = controllerProperty(firstSecondRentPeriodAnswers).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentPeriodsController.submit(NormalMode))
+        .withFormUrlEncodedBody(
+          "rent-periods-radio" -> ""
+        )
+        .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
+      result.map(result => {
+        result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/landlord")
+      })
+      status(result) mustBe BAD_REQUEST
+      val content = contentAsString(result)
+      content must include(pageTitle)
+    }
+  }
+}

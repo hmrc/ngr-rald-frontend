@@ -22,7 +22,7 @@ import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.{Landlord, Mode, NormalMode, UserAnswers}
-import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
+import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{buildRadios, simpleNgrRadio}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.CheckRentFreePeriodForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.CheckRentFreePeriodForm.form
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
@@ -47,11 +47,11 @@ class CheckRentFreePeriodController @Inject()(checkRentFreePeriodView: CheckRent
     (authenticate andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(CheckRentFreePeriodPage) match {
         case None => form
-        case Some(value) => form.fill(CheckRentFreePeriodForm(value))
+        case Some(value) => form.fill(CheckRentFreePeriodForm(value.toString))
       }
         Future.successful(Ok(checkRentFreePeriodView(
           form = preparedForm,
-          radios = buildRadios(preparedForm, CheckRentFreePeriodForm.ngrRadio(preparedForm)),
+          radios = buildRadios(preparedForm, simpleNgrRadio(CheckRentFreePeriodForm.checkRentPeriodRadio)),
           propertyAddress = request.property.addressFull,
           mode = mode
         )))
@@ -64,7 +64,7 @@ class CheckRentFreePeriodController @Inject()(checkRentFreePeriodView: CheckRent
         formWithErrors => {
             Future.successful(BadRequest(checkRentFreePeriodView(
               form = formWithErrors,
-              radios = buildRadios(formWithErrors, CheckRentFreePeriodForm.ngrRadio(formWithErrors)),
+              radios = buildRadios(formWithErrors, simpleNgrRadio(CheckRentFreePeriodForm.checkRentPeriodRadio)),
               propertyAddress = request.property.addressFull,
               mode = mode
             )))
@@ -72,7 +72,7 @@ class CheckRentFreePeriodController @Inject()(checkRentFreePeriodView: CheckRent
         radioValue =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
-              .set(CheckRentFreePeriodPage, radioValue.radioValue))
+              .set(CheckRentFreePeriodPage, radioValue.radioValue.toBoolean))
             _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(CheckRentFreePeriodPage, mode, updatedAnswers))
       )

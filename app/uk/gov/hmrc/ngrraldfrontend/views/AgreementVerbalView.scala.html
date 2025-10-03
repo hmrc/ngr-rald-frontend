@@ -36,7 +36,7 @@
 
  @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.AgreementVerbalController.submit(mode), Symbol("autoComplete") -> "off") {
     @if(form.errors.nonEmpty) {
-      @govukErrorSummary(ErrorSummaryViewModel(form))
+      @govukErrorSummary(ErrorSummaryViewModel(form, Some("agreementVerbal"), Some(Seq("agreementStartDate", "agreementEndDate"))))
     }
     <span class="govuk-caption-m">@selectedPropertyAddress</span>
     <h1 class="govuk-heading-l">@messages("agreementVerbal.title")</h1>

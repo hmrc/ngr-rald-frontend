@@ -25,8 +25,8 @@ class CheckRentFreePeriodFormSpec extends AnyWordSpec with Matchers {
   
   val fieldName = "check-rent-period-radio"
   val requiredError = "checkRentPeriod.empty.error"
-  val checkRentPeriodModel: CheckRentFreePeriodForm = CheckRentFreePeriodForm("Yes")
-  val checkRentPeriodJson: JsValue = Json.parse("""{"radioValue":"Yes"}
+  val checkRentPeriodModel: CheckRentFreePeriodForm = CheckRentFreePeriodForm("true")
+  val checkRentPeriodJson: JsValue = Json.parse("""{"radioValue":"true"}
                                                   |""".stripMargin)
 
   "CheckRentPeriod" should {
@@ -37,18 +37,18 @@ class CheckRentFreePeriodFormSpec extends AnyWordSpec with Matchers {
       checkRentPeriodJson.as[CheckRentFreePeriodForm] shouldBe checkRentPeriodModel
     }
     "bind successfully with a valid value yes" in {
-      val data = Map(fieldName -> "yes")
+      val data = Map(fieldName -> "true")
       val boundForm = CheckRentFreePeriodForm.form.bind(data)
 
       boundForm.hasErrors shouldBe false
-      boundForm.value shouldBe Some(CheckRentFreePeriodForm("yes"))
+      boundForm.value shouldBe Some(CheckRentFreePeriodForm("true"))
     }
     "bind successfully with a valid value no" in {
-      val data = Map(fieldName -> "no")
+      val data = Map(fieldName -> "false")
       val boundForm = CheckRentFreePeriodForm.form.bind(data)
 
       boundForm.hasErrors shouldBe false
-      boundForm.value shouldBe Some(CheckRentFreePeriodForm("no"))
+      boundForm.value shouldBe Some(CheckRentFreePeriodForm("false"))
     }
     "return an error when the radio value is missing" in {
       val data = Map.empty[String, String]
@@ -59,8 +59,8 @@ class CheckRentFreePeriodFormSpec extends AnyWordSpec with Matchers {
     }
 
     "unbind correctly to a data map" in {
-      val form = CheckRentFreePeriodForm.form.fill(CheckRentFreePeriodForm("no"))
-      form.data shouldBe Map(fieldName -> "no")
+      val form = CheckRentFreePeriodForm.form.fill(CheckRentFreePeriodForm("false"))
+      form.data shouldBe Map(fieldName -> "false")
     }
     
   }
