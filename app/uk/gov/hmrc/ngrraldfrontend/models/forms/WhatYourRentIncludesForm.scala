@@ -23,7 +23,7 @@ import play.api.i18n.Messages
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.ngrraldfrontend.models.WhatYourRentIncludes
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
-import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{ngrRadio, noButtonWithFalseValue, simpleNgrRadio, yesButtonWithTrueValue}
+import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{ngrRadio, noButton, simpleNgrRadio, yesButton}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 
@@ -59,7 +59,7 @@ object WhatYourRentIncludesForm extends CommonFormValidators with Mappings {
     ngrRadio(
       radioName = livingAccommodationRadio,
       radioButtons = Seq(
-        yesButtonWithTrueValue(
+        yesButton(
           conditionalHtml = Some(inputText(
             form = form,
             id = bedroomNumbers,
@@ -70,7 +70,7 @@ object WhatYourRentIncludesForm extends CommonFormValidators with Mappings {
             labelClasses = Some("govuk-label--s")
           ))
         ),
-        noButtonWithFalseValue()
+        noButton()
       ),
       ngrTitle = "whatYourRentIncludes.radio.1.title",
       hint = Some("whatYourRentIncludes.radio.1.hint")
@@ -82,7 +82,7 @@ object WhatYourRentIncludesForm extends CommonFormValidators with Mappings {
   def ngrRadio3(implicit messages: Messages): NGRRadio =
     ngrRadio(
       radioName = rentEmptyShellRadio,
-      radioButtons = Seq(yesButtonWithTrueValue(), noButtonWithFalseValue()),
+      radioButtons = Seq(yesButton(), noButton()),
       ngrTitle = "whatYourRentIncludes.radio.3.title",
       hint = Some("whatYourRentIncludes.radio.3.hint")
     )
@@ -90,21 +90,21 @@ object WhatYourRentIncludesForm extends CommonFormValidators with Mappings {
   def ngrRadio4(implicit messages: Messages): NGRRadio =
     ngrRadio(
       radioName = rentIncBusinessRatesRadio,
-      radioButtons = Seq(yesButtonWithTrueValue(), noButtonWithFalseValue()),
+      radioButtons = Seq(yesButton(), noButton()),
       ngrTitle = "whatYourRentIncludes.radio.4.title"
     )
 
   def ngrRadio5(implicit messages: Messages): NGRRadio =
     ngrRadio(
       radioName = rentIncWaterChargesRadio,
-      radioButtons = Seq(yesButtonWithTrueValue(), noButtonWithFalseValue()),
+      radioButtons = Seq(yesButton(), noButton()),
       ngrTitle = "whatYourRentIncludes.radio.5.title"
     )
 
   def ngrRadio6(implicit messages: Messages): NGRRadio =
     ngrRadio(
       radioName = rentIncServiceRadio,
-      radioButtons = Seq(yesButtonWithTrueValue(), noButtonWithFalseValue()),
+      radioButtons = Seq(yesButton(), noButton()),
       ngrTitle = "whatYourRentIncludes.radio.6.title",
       hint = Some("whatYourRentIncludes.radio.6.hint")
     )

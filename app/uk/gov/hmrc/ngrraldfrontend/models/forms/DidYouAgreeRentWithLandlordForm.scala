@@ -21,7 +21,7 @@ import play.api.data.Forms.mapping
 import play.api.i18n.Messages
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio
-import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{ngrRadio, noButtonWithFalseValue, yesButtonWithTrueValue}
+import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{ngrRadio, noButton, yesButton}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 
 final case class DidYouAgreeRentWithLandlordForm (radioValue: String)
@@ -46,8 +46,8 @@ object DidYouAgreeRentWithLandlordForm extends Mappings {
     ngrRadio(
       radioName = didYouAgreeRentWithLandlordRadio,
       radioButtons = Seq(
-        yesButtonWithTrueValue(radioContent = "didYouAgreeRentWithLandlord.yes"),
-        noButtonWithFalseValue(radioContent  = "didYouAgreeRentWithLandlord.no")
+        yesButton(radioContent = "didYouAgreeRentWithLandlord.yes"),
+        noButton(radioContent  = "didYouAgreeRentWithLandlord.no")
       ),
       ngrTitle = "didYouAgreeRentWithLandlord.title",
       ngrTitleClass = "govuk-fieldset__legend--l"

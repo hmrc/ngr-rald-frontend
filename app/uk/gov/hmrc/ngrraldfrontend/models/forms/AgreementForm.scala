@@ -28,7 +28,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.{Fieldset, Legend}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.hint.Hint
 import uk.gov.hmrc.ngrraldfrontend.models.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.{NGRCharacterCount, NGRRadio}
-import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{ngrRadio, noButtonWithFalseValue, yesButtonWithTrueValue}
+import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{ngrRadio, noButton, yesButton}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.{DateTextFields, NGRCharacterCountComponent}
 
@@ -89,8 +89,8 @@ object AgreementForm extends CommonFormValidators with Mappings with DateMapping
     ngrRadio(
       radioName = openEndedRadio,
       radioButtons = Seq(
-        yesButtonWithTrueValue(radioContent = "agreement.radio.1"),
-        noButtonWithFalseValue(
+        yesButton(radioContent = "agreement.radio.1"),
+        noButton(
           radioContent = "agreement.radio.2",
           conditionalHtml = Some(dateTextFields(form, DateInput(
             id = endDate,
@@ -116,7 +116,7 @@ object AgreementForm extends CommonFormValidators with Mappings with DateMapping
     ngrRadio(
       radioName = breakClauseRadio,
       radioButtons = Seq(
-        yesButtonWithTrueValue(
+        yesButton(
           conditionalHtml = Some(ngrCharacterCountComponent(form,
             NGRCharacterCount(
               id = aboutBreakClause,
@@ -136,7 +136,7 @@ object AgreementForm extends CommonFormValidators with Mappings with DateMapping
               )
             )))
         ),
-        noButtonWithFalseValue()
+        noButton()
       ),
       ngrTitle = "agreement.subheading.3",
       hint = Some("agreement.hint.3")

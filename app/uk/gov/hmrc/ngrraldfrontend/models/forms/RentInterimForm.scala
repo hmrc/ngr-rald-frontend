@@ -22,7 +22,7 @@ import play.api.i18n.Messages
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Legend, Text}
 import uk.gov.hmrc.ngrraldfrontend.models.components.{NGRRadio, NGRRadioName}
-import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{ngrRadio, noButtonWithFalseValue, yesButtonWithTrueValue}
+import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{ngrRadio, noButton, yesButton}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 
 case class RentInterimForm(radioValue: String)
@@ -47,8 +47,8 @@ object RentInterimForm extends Mappings {
     ngrRadio(
       radioName = agreedRentChangeRadio,
       radioButtons = Seq(
-        yesButtonWithTrueValue(),
-        noButtonWithFalseValue()
+        yesButton(),
+        noButton()
       ),
       ngrTitle = "rentInterim.title",
       ngrTitleClass = "govuk-fieldset__legend--l"

@@ -27,7 +27,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.{Fieldset, Legend}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.hint.Hint
 import uk.gov.hmrc.ngrraldfrontend.models.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio
-import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{ngrRadio, noButtonWithFalseValue, yesButtonWithTrueValue}
+import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{ngrRadio, noButton, yesButton}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.DateTextFields
 
@@ -45,8 +45,8 @@ object AgreementVerbalForm extends CommonFormValidators with DateMappings with M
     ngrRadio(
       radioName = "agreement-verbal-radio",
       radioButtons = Seq(
-        yesButtonWithTrueValue(radioContent = "agreementVerbal.yes"),
-        noButtonWithFalseValue(
+        yesButton(radioContent = "agreementVerbal.yes"),
+        noButton(
           radioContent = "agreementVerbal.no",
           conditionalHtml = Some(dateTextFields(form, DateInput(id = "agreementEndDate",
             fieldset = Some(Fieldset(legend = Some(Legend(content = Text(messages("agreementVerbal.endDate.title")), classes = "govuk-fieldset__legend--s")))),

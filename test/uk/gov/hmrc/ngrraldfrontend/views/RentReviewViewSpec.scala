@@ -60,7 +60,7 @@ class RentReviewViewSpec extends ViewBaseSpec {
   }
 
   val address = "5 Brixham Marina, Berry Head Road, Brixham, Devon, TQ5 9BW"
-  val form = RentReviewForm.form.fillAndValidate(RentReviewForm("True", Some(NGRMonthYear("11", "1")), "False"))
+  val form = RentReviewForm.form.fillAndValidate(RentReviewForm("true", Some(NGRMonthYear("11", "1")), "false"))
   private val hasIncludedRentReviewRadio: NGRRadio = RentReviewForm.createHasIncludeRentReviewRadio(form, inputDateForMonthYear)
   private val canRentGoDownRadio: NGRRadio = RentReviewForm.createCanRentGoDownRadio
   val radio1: Radios = buildRadios(form, hasIncludedRentReviewRadio)

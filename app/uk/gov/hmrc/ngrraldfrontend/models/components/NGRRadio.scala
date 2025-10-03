@@ -28,8 +28,6 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.Radios
 trait RadioEntry
 
 sealed trait YesNoItem extends RadioEntry
-case object Yes extends YesNoItem
-case object No extends YesNoItem
 case object `true` extends YesNoItem
 case object `false` extends YesNoItem
 
@@ -37,11 +35,6 @@ sealed trait TypeOfAgreement extends RadioEntry
 case object LeaseOrTenancy extends TypeOfAgreement
 case object Written extends TypeOfAgreement
 case object Verbal extends TypeOfAgreement
-
-sealed trait Landlord extends RadioEntry
-case object LandlordRelationshipYes extends Landlord
-case object LandlordRelationshipNo extends Landlord
-
 
 sealed trait RentBasedOn extends RadioEntry
 case object OpenMarket extends RentBasedOn
@@ -51,34 +44,6 @@ case object PercentageTurnover extends RentBasedOn
 case object TotalOccupancyCost extends RentBasedOn
 case object Indexation extends RentBasedOn
 case object Other extends RentBasedOn
-
-sealed trait Agreement extends RadioEntry
-case object YesOpenEnded extends Agreement
-case object NoOpenEnded extends Agreement
-case object YesBreakClause extends Agreement
-case object NoBreakClause extends Agreement
-
-sealed trait firstRentPeriod extends RadioEntry
-case object yesPayedRent extends RadioEntry
-case object noRentPayed extends RadioEntry
-
-sealed trait DidYouAgreeRentWithLandlord extends RadioEntry
-case object YesTheLandlord extends DidYouAgreeRentWithLandlord
-case object NoACourtSet    extends DidYouAgreeRentWithLandlord
-
-sealed trait WhatYourRentIncludesRadio extends RadioEntry
-case object livingAccommodationYes extends WhatYourRentIncludesRadio
-case object livingAccommodationNo extends WhatYourRentIncludesRadio
-case object rentPartAddressYes extends WhatYourRentIncludesRadio
-case object rentPartAddressNo extends WhatYourRentIncludesRadio
-case object rentEmptyShellYes extends WhatYourRentIncludesRadio
-case object rentEmptyShellNo extends WhatYourRentIncludesRadio
-case object rentIncBusinessRatesYes extends WhatYourRentIncludesRadio
-case object rentIncBusinessRatesNo extends WhatYourRentIncludesRadio
-case object rentIncWaterChargesYes extends WhatYourRentIncludesRadio
-case object rentIncWaterChargesNo extends WhatYourRentIncludesRadio
-case object rentIncServiceYes extends WhatYourRentIncludesRadio
-case object rentIncServiceNo extends WhatYourRentIncludesRadio
 
 sealed trait RepairsAndInsurance extends RadioEntry
 case object InternalRepairsYou   extends RepairsAndInsurance
@@ -108,19 +73,16 @@ case class NGRRadio(radioGroupName: NGRRadioName,
 
 object NGRRadio {
 
-  val yesButton: NGRRadioButtons = NGRRadioButtons(radioContent = "service.yes", radioValue = Yes)
-  val noButton: NGRRadioButtons = NGRRadioButtons(radioContent = "service.no", radioValue = No)
-
-  def yesButtonWithTrueValue(radioContent: String = "service.yes", conditionalHtml: Option[Html] = None): NGRRadioButtons =
+  def yesButton(radioContent: String = "service.yes", conditionalHtml: Option[Html] = None): NGRRadioButtons =
     NGRRadioButtons(radioContent = radioContent, radioValue = `true`, conditionalHtml = conditionalHtml)
 
-  def noButtonWithFalseValue(radioContent: String = "service.no", conditionalHtml: Option[Html] = None): NGRRadioButtons =
+  def noButton(radioContent: String = "service.no", conditionalHtml: Option[Html] = None): NGRRadioButtons =
     NGRRadioButtons(radioContent = radioContent, radioValue = `false`, conditionalHtml = conditionalHtml)
 
   def simpleNgrRadio(radioName: String, hint: Option[String] = None)(implicit messages: Messages): NGRRadio =
     NGRRadio(
       radioGroupName = NGRRadioName(radioName),
-      NGRRadioButtons = Seq(NGRRadio.yesButtonWithTrueValue(), NGRRadio.noButtonWithFalseValue()),
+      NGRRadioButtons = Seq(NGRRadio.yesButton(), NGRRadio.noButton()),
       hint = hint
     )  
 

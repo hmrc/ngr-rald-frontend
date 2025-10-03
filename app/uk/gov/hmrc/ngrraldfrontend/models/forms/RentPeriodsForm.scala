@@ -37,7 +37,7 @@ import play.api.data.Forms.mapping
 import play.api.i18n.Messages
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio
-import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{ngrRadio, noButtonWithFalseValue, yesButtonWithTrueValue}
+import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{ngrRadio, noButton, yesButton}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 
 final case class RentPeriodsForm(radioValue: String)
@@ -62,8 +62,8 @@ object RentPeriodsForm extends Mappings {
     ngrRadio(
       radioName = rentPeriodsRadio,
       radioButtons = Seq(
-        yesButtonWithTrueValue(),
-        noButtonWithFalseValue()
+        yesButton(),
+        noButton()
       ),
       ngrTitle = "rentPeriods.radio.heading"
     )

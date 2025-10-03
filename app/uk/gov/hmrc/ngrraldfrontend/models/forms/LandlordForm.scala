@@ -26,7 +26,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.hint.Hint
 import uk.gov.hmrc.ngrraldfrontend.models.Landlord
 import uk.gov.hmrc.ngrraldfrontend.models.components.{NGRCharacterCount, NGRRadio}
-import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{ngrRadio, noButtonWithFalseValue, yesButtonWithTrueValue}
+import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{ngrRadio, noButton, yesButton}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatIsYourRentBasedOnForm.firstError
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.NGRCharacterCountComponent
@@ -54,7 +54,7 @@ object LandlordForm extends CommonFormValidators with Mappings{
     ngrRadio(
       radioName = landlordRadio,
       radioButtons = Seq(
-        yesButtonWithTrueValue(
+        yesButton(
           conditionalHtml = Some(ngrCharacterCountComponent(form,
             NGRCharacterCount(
               id = landlordRelationshipYes,
@@ -73,7 +73,7 @@ object LandlordForm extends CommonFormValidators with Mappings{
                 )
               ))))
         ),
-        noButtonWithFalseValue()
+        noButton()
       ),
       ngrTitle = "landlord.p2"
     )

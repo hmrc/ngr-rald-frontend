@@ -28,7 +28,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.hint.Hint
 import uk.gov.hmrc.govukfrontend.views.viewmodels.input.PrefixOrSuffix
 import uk.gov.hmrc.ngrraldfrontend.models.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio
-import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{ngrRadio, noButtonWithFalseValue, yesButtonWithTrueValue}
+import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{ngrRadio, noButton, yesButton}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 
@@ -95,7 +95,7 @@ object ProvideDetailsOfFirstSecondRentPeriodForm extends CommonFormValidators wi
     ngrRadio(
       radioName = firstRentPeriodRadio,
       radioButtons = Seq(
-        yesButtonWithTrueValue(
+        yesButton(
           conditionalHtml = Some(inputText(
             form = form,
             id = RentPeriodAmount,
@@ -109,7 +109,7 @@ object ProvideDetailsOfFirstSecondRentPeriodForm extends CommonFormValidators wi
             prefix = Some(PrefixOrSuffix(content = Text("£")))
           ))
         ),
-        noButtonWithFalseValue(radioContent = "provideDetailsOfFirstSecondRentPeriod.firstPeriod.radio.no")
+        noButton(radioContent = "provideDetailsOfFirstSecondRentPeriod.firstPeriod.radio.no")
       ),
       ngrTitle = "provideDetailsOfFirstSecondRentPeriod.firstPeriod.radio.label",
     )

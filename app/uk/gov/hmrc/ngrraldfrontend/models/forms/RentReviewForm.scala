@@ -21,7 +21,7 @@ import play.api.data.Forms.{mapping, optional}
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationResult}
 import play.api.i18n.Messages
 import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{ngrRadio, noButtonWithFalseValue, yesButtonWithTrueValue}
+import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{ngrRadio, noButton, yesButton}
 import uk.gov.hmrc.ngrraldfrontend.models.{MonthYearMappings, NGRMonthYear, RentReview}
 import uk.gov.hmrc.ngrraldfrontend.models.components.{NGRRadio, NGRRadioButtons}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.LandlordForm.wholePositiveNumberRegexp
@@ -121,7 +121,7 @@ object RentReviewForm extends Mappings with MonthYearMappings {
 
   def createHasIncludeRentReviewRadio(form: Form[RentReviewForm], inputDateForMonthYear: InputDateForMonthYear)(implicit messages: Messages): NGRRadio =
     ngrRadio(radioName = hasIncludeRentReviewRadio,
-      radioButtons = Seq(yesButtonWithTrueValue(conditionalHtml = Some(inputDateForMonthYear(form,
+      radioButtons = Seq(yesButton(conditionalHtml = Some(inputDateForMonthYear(form,
         legendContent = messages("rentReview.howOftenReviewed.label"),
         text1Label = "rentReview.years",
         text2Label = "rentReview.months",
@@ -129,7 +129,7 @@ object RentReviewForm extends Mappings with MonthYearMappings {
         text2Name = "month",
         text2Class = "govuk-input--width-2",
         legendAsPageHeading = false))),
-        noButtonWithFalseValue()
+        noButton()
       ),
       ngrTitle = "rentReview.hasIncludeRentReview.radio.label",
       hint = Some("rentReview.hasIncludeRentReview.radio.hint")
@@ -137,7 +137,7 @@ object RentReviewForm extends Mappings with MonthYearMappings {
 
   def createCanRentGoDownRadio(implicit messages: Messages): NGRRadio =
     ngrRadio(radioName = canRentGoDownRadio,
-      radioButtons = Seq(yesButtonWithTrueValue(), noButtonWithFalseValue()),
+      radioButtons = Seq(yesButton(), noButton()),
       ngrTitle = "rentReview.canRentGoDown.radio.label"
     )
 }

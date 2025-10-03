@@ -70,7 +70,7 @@ class RentPeriodsViewSpec extends ViewBaseSpec {
     secondHowMuchIsRent = "1350")
   val firstTable = rentPeriodsController.firstTable(firstSecondRentPeriods)
   val secondTable = rentPeriodsController.secondTable(firstSecondRentPeriods)
-  private val form: Form[RentPeriodsForm] = RentPeriodsForm.form.fillAndValidate(RentPeriodsForm("No"))
+  private val form: Form[RentPeriodsForm] = RentPeriodsForm.form.fillAndValidate(RentPeriodsForm("false"))
   val radio = buildRadios(form, RentPeriodsForm.rentPeriodsRadio(form))
 
   object Selectors {

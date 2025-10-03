@@ -68,7 +68,7 @@ class WhatYourRentIncludesViewSpec  extends ViewBaseSpec {
 
   val address = "5 Brixham Marina, Berry Head Road, Brixham, Devon, TQ5 9BW"
   val mockInputText: InputText = inject[InputText]
-  val form = WhatYourRentIncludesForm.form.fillAndValidate(WhatYourRentIncludesForm("Yes", "Yes", "Yes", "Yes", "Yes", "Yes", Some("6")))
+  val form = WhatYourRentIncludesForm.form.fillAndValidate(WhatYourRentIncludesForm("true", "true", "true", "true", "true", "true", Some("6")))
 
   private val radio1: Radios = buildRadios(form, WhatYourRentIncludesForm.ngrRadio1(form, inputText))
   private val radio2: Radios = buildRadios(form, WhatYourRentIncludesForm.ngrRadio2)

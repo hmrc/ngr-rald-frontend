@@ -17,19 +17,14 @@
 package uk.gov.hmrc.ngrraldfrontend.models.forms
 
 import play.api.data.Form
-import play.api.data.Forms.{mapping, optional}
-import play.api.data.validation.{Constraint, Invalid, Valid}
+import play.api.data.Forms.mapping
 import play.api.i18n.*
 import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.govukfrontend.views.Aliases.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.Legend
-import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{noButton, yesButton}
-import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 
 final case class ConfirmBreakClauseForm(radioValue: String)
 
-object ConfirmBreakClauseForm extends CommonFormValidators with Mappings{
+object ConfirmBreakClauseForm extends CommonFormValidators with Mappings {
   implicit val format: OFormat[ConfirmBreakClauseForm] = Json.format[ConfirmBreakClauseForm]
 
   private lazy val radioUnselectedError = "confirmBreakClause.empty.error"
