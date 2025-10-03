@@ -117,16 +117,20 @@ object NGRRadio {
   def noButtonWithFalseValue(conditionalHtml: Option[Html] = None): NGRRadioButtons =
     NGRRadioButtons(radioContent = "service.no", radioValue = `false`, conditionalHtml = conditionalHtml)
 
-  def simpleNgrRadio(radioName: String)(implicit messages: Messages): NGRRadio =
-    NGRRadio(NGRRadioName(radioName), NGRRadioButtons = Seq(NGRRadio.yesButtonWithTrueValue(), NGRRadio.noButtonWithFalseValue()))  
+  def simpleNgrRadio(radioName: String, hint: Option[String] = None)(implicit messages: Messages): NGRRadio =
+    NGRRadio(
+      radioGroupName = NGRRadioName(radioName),
+      NGRRadioButtons = Seq(NGRRadio.yesButtonWithTrueValue(), NGRRadio.noButtonWithFalseValue()),
+      hint = hint
+    )  
 
-  def ngrRadio(radioName: String, radioButtons: Seq[NGRRadioButtons], ngrTitleKey: String,
-               ngrTitleClass: String = "govuk-fieldset__legend--m", hintKey: Option[String] = None)(implicit messages: Messages): NGRRadio =
+  def ngrRadio(radioName: String, radioButtons: Seq[NGRRadioButtons], ngrTitle: String,
+               ngrTitleClass: String = "govuk-fieldset__legend--m", hint: Option[String] = None)(implicit messages: Messages): NGRRadio =
     NGRRadio(
       radioGroupName = NGRRadioName(radioName),
       NGRRadioButtons = radioButtons,
-      ngrTitle = Some(Legend(content = Text(messages(ngrTitleKey)), classes = ngrTitleClass, isPageHeading = true)),
-      hint = hintKey
+      ngrTitle = Some(Legend(content = Text(messages(ngrTitle)), classes = ngrTitleClass, isPageHeading = true)),
+      hint = hint
     )  
 
   def buildRadios[A](
