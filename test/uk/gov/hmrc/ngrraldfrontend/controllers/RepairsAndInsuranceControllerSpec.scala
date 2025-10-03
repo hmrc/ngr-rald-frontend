@@ -66,9 +66,9 @@ class RepairsAndInsuranceControllerSpec extends ControllerSpecSupport {
         status(result) mustBe OK
         val content = contentAsString(result)
         val document = Jsoup.parse(content)
-        document.select("input[name=repairsAndInsurance-internalRepairs-radio-value]").attr("value") mustEqual "InternalRepairsYou"
-        document.select("input[name=repairsAndInsurance-externalRepairs-radio-value]").attr("value") mustEqual "ExternalRepairsYou"
-        document.select("input[name=repairsAndInsurance-buildingInsurance-radio-value]").attr("value") mustEqual "BuildingInsuranceYou"
+        document.select("input[name=repairsAndInsurance-internalRepairs-radio-value][value=You]").hasAttr("checked") mustEqual true
+        document.select("input[name=repairsAndInsurance-externalRepairs-radio-value][value=Landlord]").hasAttr("checked") mustEqual true
+        document.select("input[name=repairsAndInsurance-buildingInsurance-radio-value][value=YouAndLandlord]").hasAttr("checked") mustEqual true
       }
       "Return NotFoundException when property is not found in the mongo" in {
         when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(None))
@@ -83,9 +83,9 @@ class RepairsAndInsuranceControllerSpec extends ControllerSpecSupport {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val fakePostRequest = FakeRequest(routes.RepairsAndInsuranceController.submit(NormalMode))
           .withFormUrlEncodedBody(
-            "repairsAndInsurance-internalRepairs-radio-value" -> "InternalRepairsYou",
-            "repairsAndInsurance-externalRepairs-radio-value" -> "ExternalRepairsYou",
-            "repairsAndInsurance-buildingInsurance-radio-value" -> "BuildingInsuranceYou"
+            "repairsAndInsurance-internalRepairs-radio-value" -> "You",
+            "repairsAndInsurance-externalRepairs-radio-value" -> "You",
+            "repairsAndInsurance-buildingInsurance-radio-value" -> "You"
           ).withHeaders(HeaderNames.authorisation -> "Bearer 1")
 
         val result = controllerProperty(renewedAgreementAnswers).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
@@ -96,9 +96,9 @@ class RepairsAndInsuranceControllerSpec extends ControllerSpecSupport {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val fakePostRequest = FakeRequest(routes.RepairsAndInsuranceController.submit(NormalMode))
           .withFormUrlEncodedBody(
-            "repairsAndInsurance-internalRepairs-radio-value" -> "InternalRepairsYou",
-            "repairsAndInsurance-externalRepairs-radio-value" -> "ExternalRepairsYou",
-            "repairsAndInsurance-buildingInsurance-radio-value" -> "BuildingInsuranceYou"
+            "repairsAndInsurance-internalRepairs-radio-value" -> "You",
+            "repairsAndInsurance-externalRepairs-radio-value" -> "You",
+            "repairsAndInsurance-buildingInsurance-radio-value" -> "You"
           ).withHeaders(HeaderNames.authorisation -> "Bearer 1")
 
         val result = controllerProperty(newAgreementAnswers).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
@@ -109,9 +109,9 @@ class RepairsAndInsuranceControllerSpec extends ControllerSpecSupport {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val fakePostRequest = FakeRequest(routes.RepairsAndInsuranceController.submit(NormalMode))
           .withFormUrlEncodedBody(
-            "repairsAndInsurance-internalRepairs-radio-value" -> "InternalRepairsYou",
-            "repairsAndInsurance-externalRepairs-radio-value" -> "ExternalRepairsYou",
-            "repairsAndInsurance-buildingInsurance-radio-value" -> "BuildingInsuranceYou"
+            "repairsAndInsurance-internalRepairs-radio-value" -> "You",
+            "repairsAndInsurance-externalRepairs-radio-value" -> "You",
+            "repairsAndInsurance-buildingInsurance-radio-value" -> "You"
           ).withHeaders(HeaderNames.authorisation -> "Bearer 1")
 
         val result = controllerProperty(rentAgreementAnswers).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
@@ -122,8 +122,8 @@ class RepairsAndInsuranceControllerSpec extends ControllerSpecSupport {
         val fakePostRequest = FakeRequest(routes.RepairsAndInsuranceController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "repairsAndInsurance-internalRepairs-radio-value" -> "",
-            "repairsAndInsurance-externalRepairs-radio-value" -> "ExternalRepairsYou",
-            "repairsAndInsurance-buildingInsurance-radio-value" -> "BuildingInsuranceYou"
+            "repairsAndInsurance-externalRepairs-radio-value" -> "You",
+            "repairsAndInsurance-buildingInsurance-radio-value" -> "You"
           ).withHeaders(HeaderNames.authorisation -> "Bearer 1")
         val result = controllerProperty(None).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
         status(result) mustBe BAD_REQUEST
@@ -133,9 +133,9 @@ class RepairsAndInsuranceControllerSpec extends ControllerSpecSupport {
       "Return BAD_REQUEST for not selecting a external repairs radio, showing the correct view and error" in {
         val fakePostRequest = FakeRequest(routes.RepairsAndInsuranceController.submit(NormalMode))
           .withFormUrlEncodedBody(
-            "repairsAndInsurance-internalRepairs-radio-value" -> "InternalRepairsYou",
+            "repairsAndInsurance-internalRepairs-radio-value" -> "You",
             "repairsAndInsurance-externalRepairs-radio-value" -> "",
-            "repairsAndInsurance-buildingInsurance-radio-value" -> "BuildingInsuranceYou"
+            "repairsAndInsurance-buildingInsurance-radio-value" -> "You"
           ).withHeaders(HeaderNames.authorisation -> "Bearer 1")
         val result = controllerProperty(None).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
         status(result) mustBe BAD_REQUEST
@@ -145,8 +145,8 @@ class RepairsAndInsuranceControllerSpec extends ControllerSpecSupport {
       "Return BAD_REQUEST for not selecting a building insurance radio, showing the correct view and error" in {
         val fakePostRequest = FakeRequest(routes.RepairsAndInsuranceController.submit(NormalMode))
           .withFormUrlEncodedBody(
-            "repairsAndInsurance-internalRepairs-radio-value" -> "InternalRepairsYou",
-            "repairsAndInsurance-externalRepairs-radio-value" -> "ExternalRepairsYou",
+            "repairsAndInsurance-internalRepairs-radio-value" -> "You",
+            "repairsAndInsurance-externalRepairs-radio-value" -> "You",
             "repairsAndInsurance-buildingInsurance-radio-value" -> ""
           ).withHeaders(HeaderNames.authorisation -> "Bearer 1")
         val result = controllerProperty(None).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))

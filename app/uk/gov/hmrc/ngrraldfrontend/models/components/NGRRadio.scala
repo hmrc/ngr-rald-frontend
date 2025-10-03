@@ -46,15 +46,9 @@ case object Indexation extends RentBasedOn
 case object Other extends RentBasedOn
 
 sealed trait RepairsAndInsurance extends RadioEntry
-case object InternalRepairsYou   extends RepairsAndInsurance
-case object InternalRepairsLandlord   extends RepairsAndInsurance
-case object InternalRepairsYouAndLandlord   extends RepairsAndInsurance
-case object ExternalRepairsYou extends RepairsAndInsurance
-case object ExternalRepairsLandlord extends RepairsAndInsurance
-case object ExternalRepairsYouAndLandlord extends RepairsAndInsurance
-case object BuildingInsuranceYou extends RepairsAndInsurance
-case object BuildingInsuranceLandlord extends RepairsAndInsurance
-case object LandlordYouAndLandlord extends RepairsAndInsurance
+case object You extends RepairsAndInsurance
+case object Landlord extends RepairsAndInsurance
+case object YouAndLandlord extends RepairsAndInsurance
 
 case class NGRRadioName(key: String)
 
@@ -111,7 +105,7 @@ object NGRRadio {
           content = Text(Messages(item.radioContent)),
           value = Some(item.radioValue.toString),
           hint = Some(Hint(content = Text(Messages(item.buttonHint.getOrElse(""))))),
-          checked = form.data.get(NGRRadios.radioGroupName.key).exists(value => value.contains(item.radioValue.toString)),
+          checked = form.data.get(NGRRadios.radioGroupName.key).exists(value => value.equals(item.radioValue.toString)),
           conditionalHtml = item.conditionalHtml
         )
       },

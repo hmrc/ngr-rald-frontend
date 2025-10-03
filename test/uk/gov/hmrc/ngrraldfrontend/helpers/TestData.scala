@@ -150,5 +150,5 @@ trait TestData {
  
  val rentBasedOnModel: RentBasedOn = RentBasedOn("Other",Some("The rent was agreed"))
 
- val repairsAndInsuranceModel  = RepairsAndInsurance("internalRepairs", "externalRepairs", "buildingInsurance")
+ val repairsAndInsuranceModel  = RepairsAndInsurance("You", "Landlord", "YouAndLandlord")
 }

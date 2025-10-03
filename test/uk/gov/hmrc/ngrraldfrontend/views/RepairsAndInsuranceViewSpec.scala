@@ -18,17 +18,12 @@ package uk.gov.hmrc.ngrraldfrontend.views
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.api.data.Form
-import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.Legend
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.Radios
 import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
-import uk.gov.hmrc.ngrraldfrontend.models.{AgreementType, NormalMode}
+import uk.gov.hmrc.ngrraldfrontend.models.NormalMode
+import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
-import uk.gov.hmrc.ngrraldfrontend.models.components.{BuildingInsuranceLandlord, BuildingInsuranceYou, ExternalRepairsLandlord, ExternalRepairsYou, ExternalRepairsYouAndLandlord, InternalRepairsLandlord, InternalRepairsYou, InternalRepairsYouAndLandlord, LandlordYouAndLandlord, NGRRadio, NGRRadioButtons, NGRRadioName}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RepairsAndInsuranceForm
-import uk.gov.hmrc.ngrraldfrontend.models.forms.RepairsAndInsuranceForm.{form, landlordButton, youAndLandlordButton, youButton}
 import uk.gov.hmrc.ngrraldfrontend.views.html.RepairsAndInsuranceView
 
 class RepairsAndInsuranceViewSpec extends ViewBaseSpec {
@@ -51,38 +46,18 @@ class RepairsAndInsuranceViewSpec extends ViewBaseSpec {
   }
 
   val address = "5 Brixham Marina, Berry Head Road, Brixham, Devon, TQ5 9BW"
-  val form = RepairsAndInsuranceForm.form.fillAndValidate(
-    RepairsAndInsuranceForm(
-      "InternalRepairsYou",
-      "ExternalRepairsYou",
-      "BuildingInsuranceYou"
-    )
-  )
+  val form = RepairsAndInsuranceForm.form.fillAndValidate(RepairsAndInsuranceForm("You", "You", "You"))
 
-  def ngrRadio(form: Form[RepairsAndInsuranceForm], radioType:String)(implicit messages: Messages): NGRRadio = {
-    val buttons: Seq[NGRRadioButtons] = radioType match {
-      case value if value.contains("internalRepairs") => Seq(youButton(InternalRepairsYou), landlordButton(InternalRepairsLandlord), youAndLandlordButton(InternalRepairsYouAndLandlord))
-      case value if value.contains("externalRepairs") => Seq(youButton(ExternalRepairsYou), landlordButton(ExternalRepairsLandlord), youAndLandlordButton(ExternalRepairsYouAndLandlord))
-      case _ => Seq(youButton(BuildingInsuranceYou), landlordButton(BuildingInsuranceLandlord), youAndLandlordButton(LandlordYouAndLandlord))
-    }
-    NGRRadio(
-      NGRRadioName(s"repairsAndInsurance-$radioType-radio-value"),
-      ngrTitle = Some(Legend(content = Text(messages(s"repairsAndInsurance.$radioType.radio.label")),
-        classes = "govuk-fieldset__legend--l", isPageHeading = true)),
-      NGRRadioButtons = buttons
-    )
-  }
-
-  val internalRepairs: Radios = buildRadios(form, RepairsAndInsuranceForm.ngrRadio(form, "internalRepairs"))
-  val externalRepairs: Radios = buildRadios(form, RepairsAndInsuranceForm.ngrRadio(form, "externalRepairs"))
-  val buildingInsurance: Radios = buildRadios(form, RepairsAndInsuranceForm.ngrRadio(form, "buildingInsurance"))
+  val internalRepairs: Radios = buildRadios(form, RepairsAndInsuranceForm.createRadio("internalRepairs"))
+  val externalRepairs: Radios = buildRadios(form, RepairsAndInsuranceForm.createRadio("externalRepairs"))
+  val buildingInsurance: Radios = buildRadios(form, RepairsAndInsuranceForm.createRadio("buildingInsurance"))
 
   "RepairsAndInsuranceView" must {
-    val repairsAndInsuranceView = view(form,internalRepairs, externalRepairs, buildingInsurance, address, NormalMode)
+    val repairsAndInsuranceView = view(form, internalRepairs, externalRepairs, buildingInsurance, address, NormalMode)
     lazy implicit val document: Document = Jsoup.parse(repairsAndInsuranceView.body)
     val htmlApply = view.apply(form, internalRepairs, externalRepairs, buildingInsurance, address, NormalMode).body
-    val htmlRender = view.render(form,internalRepairs, externalRepairs, buildingInsurance, address, NormalMode, request, messages, mockConfig).body
-    lazy val htmlF = view.f(form,internalRepairs, externalRepairs, buildingInsurance, address, NormalMode)
+    val htmlRender = view.render(form, internalRepairs, externalRepairs, buildingInsurance, address, NormalMode, request, messages, mockConfig).body
+    lazy val htmlF = view.f(form, internalRepairs, externalRepairs, buildingInsurance, address, NormalMode)
 
     "htmlF is not empty" in {
       htmlF.toString() must not be empty

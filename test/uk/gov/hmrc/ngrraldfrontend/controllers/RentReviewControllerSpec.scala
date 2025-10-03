@@ -57,8 +57,8 @@ class RentReviewControllerSpec  extends ControllerSpecSupport {
         status(result) mustBe OK
         val content = contentAsString(result)
         val document = Jsoup.parse(content)
-        document.select("input[type=radio][name=has-include-rent-review-radio][value=True]").hasAttr("checked") mustBe true
-        document.select("input[type=radio][name=can-rent-go-down-radio][value=False]").hasAttr("checked") mustBe true
+        document.select("input[type=radio][name=has-include-rent-review-radio][value=true]").hasAttr("checked") mustBe true
+        document.select("input[type=radio][name=can-rent-go-down-radio][value=false]").hasAttr("checked") mustBe true
         document.select("input[type=text][name=date.month]").attr("value") mustBe "11"
         document.select("input[type=text][name=date.year]").attr("value") mustBe ""
       }

@@ -23,15 +23,15 @@ import play.api.data.FormError
 class RepairsAndInsuranceFormSpec extends AnyFlatSpec with Matchers {
 
   val validData = Map(
-    "repairsAndInsurance-internalRepairs-radio-value" -> "InternalRepairsYou",
-    "repairsAndInsurance-externalRepairs-radio-value" -> "ExternalRepairsYou",
-    "repairsAndInsurance-buildingInsurance-radio-value" -> "BuildingInsuranceYou"
+    "repairsAndInsurance-internalRepairs-radio-value" -> "You",
+    "repairsAndInsurance-externalRepairs-radio-value" -> "You",
+    "repairsAndInsurance-buildingInsurance-radio-value" -> "You"
   )
 
   "RepairsAndInsuranceForm" should "bind valid data successfully" in {
     val boundForm = RepairsAndInsuranceForm.form.bind(validData)
     boundForm.errors shouldBe empty
-    boundForm.value shouldBe Some(RepairsAndInsuranceForm("InternalRepairsYou", "ExternalRepairsYou", "BuildingInsuranceYou"))
+    boundForm.value shouldBe Some(RepairsAndInsuranceForm("You", "You", "You"))
   }
 
   it should "fail when internal repairs radio input is missing" in {
@@ -56,9 +56,9 @@ class RepairsAndInsuranceFormSpec extends AnyFlatSpec with Matchers {
   }
 
   "RentPeriods.unapply" should "extract fields correctly" in {
-    val form = RepairsAndInsuranceForm("InternalRepairsYou", "ExternalRepairsYou", "BuildingInsuranceYou")
+    val form = RepairsAndInsuranceForm("You", "You", "You")
     val result = RepairsAndInsuranceForm.unapply(form)
-    result shouldBe Some("InternalRepairsYou", "ExternalRepairsYou", "BuildingInsuranceYou")
+    result shouldBe Some("You", "You", "You")
   }
 
 }
