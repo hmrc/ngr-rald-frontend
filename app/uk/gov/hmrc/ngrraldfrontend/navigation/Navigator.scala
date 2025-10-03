@@ -34,12 +34,12 @@ class Navigator @Inject()() {
     case WhatTypeOfLeaseRenewalPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.LandlordController.show(NormalMode)
     case LandlordPage => answers =>
       (answers.get(TellUsAboutRentPage), answers.get(TellUsAboutYourRenewedAgreementPage), answers.get(TellUsAboutYourNewAgreementPage)) match {
-      case (Some(_),None, None) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatIsYourRentBasedOnController.show(NormalMode)
-      case (None, Some(_), None) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatTypeOfAgreementController.show(NormalMode)
-      case (None, None, Some(_)) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatTypeOfAgreementController.show(NormalMode)
-      case (Some(_), Some(_), Some(_)) => throw new RuntimeException("User should not have all three options")
-      case (None, None, None) => throw new NotFoundException("Failed to find values")
-    }
+        case (Some(_), None, None) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatIsYourRentBasedOnController.show(NormalMode)
+        case (None, Some(_), None) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatTypeOfAgreementController.show(NormalMode)
+        case (None, None, Some(_)) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatTypeOfAgreementController.show(NormalMode)
+        case (Some(_), Some(_), Some(_)) => throw new RuntimeException("User should not have all three options")
+        case (None, None, None) => throw new NotFoundException("Failed to find values")
+      }
     case WhatTypeOfAgreementPage => answers =>
       answers.get(WhatTypeOfAgreementPage) match {
         case Some(value) => value match {
@@ -74,9 +74,9 @@ class Navigator @Inject()() {
       }
     case HowMuchIsTotalAnnualRentPage => answers =>
       (answers.get(TellUsAboutYourRenewedAgreementPage), answers.get(TellUsAboutYourNewAgreementPage)) match {
-      case (Some(_),None) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouAgreeRentWithLandlordController.show(NormalMode)
-      case (None,Some(_)) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(NormalMode)
-    }
+        case (Some(_), None) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouAgreeRentWithLandlordController.show(NormalMode)
+        case (None, Some(_)) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(NormalMode)
+      }
     case DidYouAgreeRentWithLandlordPage => answers =>
       answers.get(DidYouAgreeRentWithLandlordPage) match {
         case Some(value) =>
@@ -116,8 +116,8 @@ class Navigator @Inject()() {
     case RentInterimPage => answers =>
       answers.get(RentInterimPage) match {
         case Some(value) => value match {
-          case "Yes" => uk.gov.hmrc.ngrraldfrontend.controllers.routes.InterimRentSetByTheCourtController.show(NormalMode)
-          case _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(NormalMode)
+          case true => uk.gov.hmrc.ngrraldfrontend.controllers.routes.InterimRentSetByTheCourtController.show(NormalMode)
+          case _    => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(NormalMode)
         }
         //TODO ADD A TECHNICAL DIFFICULTIES PAGE
         case None => ???
