@@ -97,8 +97,8 @@ class Navigator @Inject()() {
     case RentPeriodsPage => answers =>
       answers.get(RentPeriodsPage) match {
         case Some(value) => value match {
-          case "Yes" => uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfFirstSecondRentPeriodController.show(NormalMode)
-          case _ => answers.get(TellUsAboutYourNewAgreementPage) match {
+          case true => uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfFirstSecondRentPeriodController.show(NormalMode)
+          case _    => answers.get(TellUsAboutYourNewAgreementPage) match {
             case Some(_) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeController.show(NormalMode)
             case None => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouAgreeRentWithLandlordController.show(NormalMode)
           }

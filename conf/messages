@@ -257,8 +257,6 @@ rentPeriods.second.endDate = End date
 rentPeriods.second.rentValue = Rent for this period (excluding VAT)
 rentPeriods.radio.heading = Do you need to add another rent period?
 rentPeriods.error.required = Select yes if you need to add another rent period.
-rentPeriods.yes = Yes
-rentPeriods.no = No
 
 #RentInterim
 rentInterim.title = Did the court also set an interim rent?

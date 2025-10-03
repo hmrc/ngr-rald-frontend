@@ -15,6 +15,7 @@
  */
 
 package uk.gov.hmrc.ngrraldfrontend.models.forms
+
 /*
  * Copyright 2025 HM Revenue & Customs
  *
@@ -35,8 +36,8 @@ import play.api.data.Form
 import play.api.data.Forms.mapping
 import play.api.i18n.Messages
 import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.govukfrontend.views.Aliases.{Legend, Text}
-import uk.gov.hmrc.ngrraldfrontend.models.components.*
+import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio
+import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{ngrRadio, noButtonWithFalseValue, yesButtonWithTrueValue}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 
 final case class RentPeriodsForm(radioValue: String)
@@ -45,7 +46,7 @@ object RentPeriodsForm extends Mappings {
   implicit val format: OFormat[RentPeriodsForm] = Json.format[RentPeriodsForm]
 
   private lazy val radioUnselectedError = "rentPeriods.error.required"
-  private val rentPeriodsRadio    = "rent-periods-radio"
+  private val rentPeriodsRadio = "rent-periods-radio"
 
   def unapply(rentPeriodsForm: RentPeriodsForm): Option[String] = Some(rentPeriodsForm.radioValue)
 
@@ -57,11 +58,14 @@ object RentPeriodsForm extends Mappings {
     )
   }
 
-  private val yes: NGRRadioButtons = NGRRadioButtons(radioContent = "rentPeriods.yes", radioValue = Yes)
-  private val no: NGRRadioButtons = NGRRadioButtons(radioContent = "rentPeriods.no", radioValue = No)
-
-  def ngrRadio(form: Form[RentPeriodsForm])(implicit messages: Messages): NGRRadio =
-    NGRRadio(ngrTitle = Some(Legend(content = Text(messages("rentPeriods.radio.heading")), classes = "govuk-fieldset__legend--m", isPageHeading = true)), radioGroupName =  NGRRadioName("rent-periods-radio"), NGRRadioButtons = Seq(yes, no))
-
+  def rentPeriodsRadio(form: Form[RentPeriodsForm])(implicit messages: Messages): NGRRadio =
+    ngrRadio(
+      radioName = rentPeriodsRadio,
+      radioButtons = Seq(
+        yesButtonWithTrueValue(),
+        noButtonWithFalseValue()
+      ),
+      ngrTitle = "rentPeriods.radio.heading"
+    )
 }
 

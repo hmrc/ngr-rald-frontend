@@ -71,7 +71,7 @@ class RentPeriodsViewSpec extends ViewBaseSpec {
   val firstTable = rentPeriodsController.firstTable(firstSecondRentPeriods)
   val secondTable = rentPeriodsController.secondTable(firstSecondRentPeriods)
   private val form: Form[RentPeriodsForm] = RentPeriodsForm.form.fillAndValidate(RentPeriodsForm("No"))
-  val radio = buildRadios(form, RentPeriodsForm.ngrRadio(form))
+  val radio = buildRadios(form, RentPeriodsForm.rentPeriodsRadio(form))
 
   object Selectors {
     val navTitle = "head > title"
