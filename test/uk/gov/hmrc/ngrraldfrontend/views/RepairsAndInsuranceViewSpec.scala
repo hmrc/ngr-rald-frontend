@@ -36,9 +36,9 @@ class RepairsAndInsuranceViewSpec extends ViewBaseSpec {
 
   object Strings {
     val heading = "Repairs and insurance"
-    val internalRepairslabel = "who pays for internal repairs?"
-    val externalRepairslabel = "who pays for external repairs?"
-    val buildingInsurancelabel = "who pays for building insurance repairs?"
+    val internalRepairslabel = "Who pays for internal repairs?"
+    val externalRepairslabel = "Who pays for external repairs?"
+    val buildingInsurancelabel = "Who pays for building insurance repairs?"
     val continue = "Continue"
   }
 
