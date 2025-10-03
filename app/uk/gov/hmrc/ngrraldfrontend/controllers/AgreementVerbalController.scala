@@ -26,11 +26,11 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.hint.Hint
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-import uk.gov.hmrc.ngrraldfrontend.models.{Mode, AgreementVerbal, NGRDate, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreementVerbalForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreementVerbalForm.form
+import uk.gov.hmrc.ngrraldfrontend.models.{AgreementVerbal, Mode, NGRDate, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.AgreementVerbalPage
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository

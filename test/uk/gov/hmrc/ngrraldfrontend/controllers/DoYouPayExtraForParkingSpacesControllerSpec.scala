@@ -71,7 +71,7 @@ class DoYouPayExtraForParkingSpacesControllerSpec extends ControllerSpecSupport{
 
         val result = controllerProperty(None).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.DoYouPayExtraForParkingSpacesController.show(NormalMode).url)
+        redirectLocation(result) mustBe Some(routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.show(NormalMode).url)
       }
       "Return OK and the correct view and the answer is No" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))

@@ -20,9 +20,9 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-import uk.gov.hmrc.ngrraldfrontend.models.{Mode, RentFreePeriod, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentFreePeriodForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentFreePeriodForm.form
+import uk.gov.hmrc.ngrraldfrontend.models.{Mode, RentFreePeriod, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.RentFreePeriodPage
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository

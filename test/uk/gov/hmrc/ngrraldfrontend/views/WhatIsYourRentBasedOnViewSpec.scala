@@ -32,7 +32,6 @@ import uk.gov.hmrc.ngrraldfrontend.views.html.components.NGRCharacterCountCompon
 
 class WhatIsYourRentBasedOnViewSpec extends ViewBaseSpec {
   lazy val view: WhatIsYourRentBasedOnView = inject[WhatIsYourRentBasedOnView]
-  lazy val ngrCharacterCountComponent = inject[NGRCharacterCountComponent]
   val address = "5 Brixham Marina, Berry Head Road, Brixham, Devon, TQ5 9BW"
 
   val heading = "What is your rent based on?"
@@ -68,7 +67,7 @@ class WhatIsYourRentBasedOnViewSpec extends ViewBaseSpec {
     radioContent = "whatIsYourRentBasedOn.other",
     radioValue = Other,
     buttonHint = Some("whatIsYourRentBasedOn.other.hint"),
-    conditionalHtml = Some(ngrCharacterCountComponent(form,
+    conditionalHtml = Some(mockNGRCharacterCountComponent(form,
       NGRCharacterCount(
         id = "rent-based-on-other-desc",
         name = "rent-based-on-other-desc",

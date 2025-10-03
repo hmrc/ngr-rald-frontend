@@ -24,11 +24,11 @@ import uk.gov.hmrc.govukfrontend.views.html.components.ErrorMessage
 import uk.gov.hmrc.govukfrontend.views.viewmodels.dateinput.DateInput
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-import uk.gov.hmrc.ngrraldfrontend.models.{Mode, Agreement, NGRDate, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreementForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreementForm.form
+import uk.gov.hmrc.ngrraldfrontend.models.{Agreement, Mode, NGRDate, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.AgreementPage
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository

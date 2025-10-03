@@ -16,8 +16,8 @@
 
 package uk.gov.hmrc.ngrraldfrontend.models.forms
 
-import play.api.data.Forms.{mapping, text}
 import play.api.data.Form
+import play.api.data.Forms.{mapping, text}
 import play.api.data.validation.Constraint
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.ngrraldfrontend.models.*

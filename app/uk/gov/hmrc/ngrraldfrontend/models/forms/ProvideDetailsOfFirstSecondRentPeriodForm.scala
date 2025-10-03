@@ -16,18 +16,15 @@
 
 package uk.gov.hmrc.ngrraldfrontend.models.forms
 
-import play.api.data.Forms.{mapping, of, optional, text}
-import play.api.data.format.Formatter
+import play.api.data.Form
+import play.api.data.Forms.{mapping, optional, text}
 import play.api.data.validation.{Constraint, Invalid, Valid}
-import play.api.data.{Form, FormError}
 import play.api.i18n.*
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.ngrraldfrontend.models.*
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 
 import scala.math.BigDecimal.RoundingMode
-import scala.math.BigDecimal.RoundingMode.RoundingMode
-import scala.util.Try
 
 final case class ProvideDetailsOfFirstSecondRentPeriodForm(
                                 firstDateStartInput: NGRDate,
