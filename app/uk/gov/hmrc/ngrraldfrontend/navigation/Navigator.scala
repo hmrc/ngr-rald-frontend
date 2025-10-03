@@ -128,8 +128,8 @@ class Navigator @Inject()() {
     case DoesYourRentIncludeParkingPage => answers =>
       answers.get(DoesYourRentIncludeParkingPage) match {
         case Some(value) => value match {
-          case "Yes" => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowManyParkingSpacesOrGaragesIncludedInRentController.show(NormalMode)
-          case _     => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DoYouPayExtraForParkingSpacesController.show(NormalMode)
+          case true => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowManyParkingSpacesOrGaragesIncludedInRentController.show(NormalMode)
+          case _    => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DoYouPayExtraForParkingSpacesController.show(NormalMode)
         }
         case None => throw new NotFoundException("Failed to find answers")
       }
