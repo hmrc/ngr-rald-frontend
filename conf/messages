@@ -183,21 +183,17 @@ didYouAgreeRentWithLandlord.error.required = Select yes if you agreed the rent w
 
 #ProvideDetailsOfFirstSecondRentPeriod
 provideDetailsOfFirstSecondRentPeriod.title = Provide details of each rent period
+provideDetailsOfFirstSecondRentPeriod.date.hint = For example, 27 6 2026
 provideDetailsOfFirstSecondRentPeriod.firstPeriod.subheading = First rent period
 provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.label = Start date
-provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.hint = For example, 27 6 2026
 provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.label = End date
-provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.hint = For example, 27 6 2026
 provideDetailsOfFirstSecondRentPeriod.firstPeriod.radio.label = Do you pay rent in this period?
 provideDetailsOfFirstSecondRentPeriod.firstPeriod.radio.conditional.hint.bold = How much is the rent for this period (excluding VAT)?
 provideDetailsOfFirstSecondRentPeriod.firstPeriod.radio.conditional.hint = Enter the amount you pay each year (excluding VAT) even if the period is for more or less than a year.
-provideDetailsOfFirstSecondRentPeriod.firstPeriod.radio.yes = Yes
 provideDetailsOfFirstSecondRentPeriod.firstPeriod.radio.no = No, this is a rent-free period
 provideDetailsOfFirstSecondRentPeriod.secondPeriod.subheading.1 = Second rent period
 provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.label = Start date
-provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.hint = For example, 27 6 2026
 provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.label = End date
-provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.hint = For example, 27 6 2026
 provideDetailsOfFirstSecondRentPeriod.secondPeriod.subheading.2 = How much is the rent for this period (excluding VAT)?
 provideDetailsOfFirstSecondRentPeriod.secondPeriod.hint = Enter the amount you pay each year (excluding VAT) even if the period is for more or less than a year
 provideDetailsOfFirstSecondRentPeriod.first.startDate.required.error = Enter the Start date of the first rent period
