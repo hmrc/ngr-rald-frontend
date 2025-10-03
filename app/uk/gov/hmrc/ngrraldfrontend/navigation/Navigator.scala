@@ -32,11 +32,8 @@ class Navigator @Inject()() {
     case TellUsAboutYourRenewedAgreementPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatTypeOfLeaseRenewalController.show(NormalMode)
     case TellUsAboutYourNewAgreementPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.LandlordController.show(NormalMode)
     case WhatTypeOfLeaseRenewalPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.LandlordController.show(NormalMode)
-    case LandlordPage => answers => (
-      answers.get(TellUsAboutRentPage),
-      answers.get(TellUsAboutYourRenewedAgreementPage),
-      answers.get(TellUsAboutYourNewAgreementPage)
-    ) match {
+    case LandlordPage => answers =>
+      (answers.get(TellUsAboutRentPage), answers.get(TellUsAboutYourRenewedAgreementPage), answers.get(TellUsAboutYourNewAgreementPage)) match {
       case (Some(_),None, None) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatIsYourRentBasedOnController.show(NormalMode)
       case (None, Some(_), None) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatTypeOfAgreementController.show(NormalMode)
       case (None, None, Some(_)) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatTypeOfAgreementController.show(NormalMode)
@@ -75,8 +72,8 @@ class Navigator @Inject()() {
         }
         case None => throw new NotFoundException("Failed to find answers")
       }
-    case HowMuchIsTotalAnnualRentPage => answers => (answers.get(TellUsAboutYourRenewedAgreementPage),
-    answers.get(TellUsAboutYourNewAgreementPage)) match {
+    case HowMuchIsTotalAnnualRentPage => answers =>
+      (answers.get(TellUsAboutYourRenewedAgreementPage), answers.get(TellUsAboutYourNewAgreementPage)) match {
       case (Some(_),None) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouAgreeRentWithLandlordController.show(NormalMode)
       case (None,Some(_)) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(NormalMode)
     }
