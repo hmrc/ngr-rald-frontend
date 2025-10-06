@@ -121,14 +121,17 @@ object RentReviewForm extends Mappings with MonthYearMappings {
 
   def createHasIncludeRentReviewRadio(form: Form[RentReviewForm], inputDateForMonthYear: InputDateForMonthYear)(implicit messages: Messages): NGRRadio =
     ngrRadio(radioName = hasIncludeRentReviewRadio,
-      radioButtons = Seq(yesButton(conditionalHtml = Some(inputDateForMonthYear(form,
-        legendContent = messages("rentReview.howOftenReviewed.label"),
-        text1Label = "rentReview.years",
-        text2Label = "rentReview.months",
-        text1Name = "year",
-        text2Name = "month",
-        text2Class = "govuk-input--width-2",
-        legendAsPageHeading = false))),
+      radioButtons = Seq(
+        yesButton(
+          conditionalHtml = Some(inputDateForMonthYear(form,
+            legendContent = messages("rentReview.howOftenReviewed.label"),
+            text1Label = "rentReview.years",
+            text2Label = "rentReview.months",
+            text1Name = "year",
+            text2Name = "month",
+            text2Class = "govuk-input--width-2",
+            legendAsPageHeading = false))
+        ),
         noButton()
       ),
       ngrTitle = "rentReview.hasIncludeRentReview.radio.label",

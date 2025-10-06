@@ -47,9 +47,6 @@ object RepairsAndInsuranceForm extends CommonFormValidators with Mappings {
   val lang: Lang = Lang.defaultLang
   val messages: Messages = MessagesImpl(lang, messagesApi)
 
-//  def youButton(radioType: RadioEntry): NGRRadioButtons = NGRRadioButtons(radioContent = "repairsAndInsurance.radio.you", radioValue =  radioType)
-//  def landlordButton(radioType: RadioEntry): NGRRadioButtons = NGRRadioButtons(radioContent = "repairsAndInsurance.radio.landlord", radioValue = radioType)
-//  def youAndLandlordButton(radioType: RadioEntry): NGRRadioButtons = NGRRadioButtons(radioContent = "repairsAndInsurance.radio.youAndLandlord", radioValue = radioType)
   val buttons: Seq[NGRRadioButtons] = Seq(
     NGRRadioButtons(radioContent = "repairsAndInsurance.radio.you", radioValue = You),
     NGRRadioButtons(radioContent = "repairsAndInsurance.radio.landlord", radioValue = Landlord),
