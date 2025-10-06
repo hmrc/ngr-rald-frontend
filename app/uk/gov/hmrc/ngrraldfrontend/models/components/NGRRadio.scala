@@ -96,15 +96,15 @@ object NGRRadio {
     Radios(
       fieldset = NGRRadios.ngrTitle.map(header => Fieldset(legend = NGRRadios.ngrTitle)),
       hint = NGRRadios.hint.map { hint =>
-        Hint(content = Text(Messages(hint)))
+        Hint(content = Text(messages(hint)))
       },
       idPrefix = Some(NGRRadios.radioGroupName.key),
       name = NGRRadios.radioGroupName.key,
       items = NGRRadios.NGRRadioButtons.map { item =>
         RadioItem(
-          content = Text(Messages(item.radioContent)),
+          content = Text(messages(item.radioContent)),
           value = Some(item.radioValue.toString),
-          hint = Some(Hint(content = Text(Messages(item.buttonHint.getOrElse(""))))),
+          hint = Some(Hint(content = Text(messages(item.buttonHint.getOrElse(""))))),
           checked = form.data.get(NGRRadios.radioGroupName.key).exists(value => value.equals(item.radioValue.toString)),
           conditionalHtml = item.conditionalHtml
         )
