@@ -119,7 +119,7 @@ class RentReviewControllerSpec  extends ControllerSpecSupport {
         status(result) mustBe BAD_REQUEST
         val content = contentAsString(result)
         content must include(pageTitle)
-        content must include("<a href=\"#date.year\">Enter how often your rent reviewed is</a>")
+        content must include("<a href=\"#date.year\">Enter how often your rent is reviewed</a>")
       }
       "Return Form with Errors when months is over 12 and years is not entered" in {
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentReviewController.submit(NormalMode))
@@ -161,7 +161,7 @@ class RentReviewControllerSpec  extends ControllerSpecSupport {
         status(result) mustBe BAD_REQUEST
         val content = contentAsString(result)
         content must include(pageTitle)
-        content must include("<a href=\"#date.year\">The number of years for how often your rent is reviewed must be 1,000 or less</a>")
+        content must include("<a href=\"#date.year\">How often your rent is reviewed must be 1,000 years or less</a>")
       }
       "Return Form with Errors when months and years are not numeric" in {
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentReviewController.submit(NormalMode))
@@ -176,7 +176,7 @@ class RentReviewControllerSpec  extends ControllerSpecSupport {
         val content = contentAsString(result)
         content must include(pageTitle)
         content must include("<a href=\"#date.month\">The number of months for how often your rent is reviewed must be a number, like 6</a>")
-        content must include("<a href=\"#date.year\">The number of years for how often your rent is reviewed must be a number, like 6</a>")
+        content must include("<a href=\"#date.year\">The number of years for how often your rent is reviewed must be a number, like 2</a>")
       }
       "Return Exception if no address is in the mongo" in {
 
