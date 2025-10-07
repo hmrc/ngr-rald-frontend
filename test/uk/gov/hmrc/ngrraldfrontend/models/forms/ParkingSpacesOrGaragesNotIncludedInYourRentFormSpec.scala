@@ -337,6 +337,102 @@ class ParkingSpacesOrGaragesNotIncludedInYourRentFormSpec  extends AnyWordSpec w
       boundForm.hasErrors shouldBe true
       boundForm.errors shouldBe List(FormError("agreementDate", List("parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.required.error")))
     }
+
+    "fail to bind when the input field year is before 1900 in agreementDate" in {
+      val data = Map(
+        "uncoveredSpaces" -> "1",
+        "coveredSpaces" -> "0",
+        "garages" -> "0",
+        "totalCost" -> "1",
+        "agreementDate.day" -> "01",
+        "agreementDate.month" -> "12",
+        "agreementDate.year" -> "1700"
+      )
+      val boundForm = ParkingSpacesOrGaragesNotIncludedInYourRentForm.form.bind(data)
+
+      boundForm.hasErrors shouldBe true
+      boundForm.errors shouldBe List(FormError("agreementDate", List("parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.before.1900.error")))
+    }
+
+    "fail to bind when the input field month is over 12 in agreementDate" in {
+      val data = Map(
+        "uncoveredSpaces" -> "1",
+        "coveredSpaces" -> "0",
+        "garages" -> "0",
+        "totalCost" -> "1",
+        "agreementDate.day" -> "01",
+        "agreementDate.month" -> "13",
+        "agreementDate.year" -> "2020"
+      )
+      val boundForm = ParkingSpacesOrGaragesNotIncludedInYourRentForm.form.bind(data)
+
+      boundForm.hasErrors shouldBe true
+      boundForm.errors shouldBe List(FormError("agreementDate", List("parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.invalid.error")))
+    }
+
+    "fail to bind when the input field day is too high in agreementDate" in {
+      val data = Map(
+        "uncoveredSpaces" -> "1",
+        "coveredSpaces" -> "0",
+        "garages" -> "0",
+        "totalCost" -> "1",
+        "agreementDate.day" -> "35",
+        "agreementDate.month" -> "13",
+        "agreementDate.year" -> "2020"
+      )
+      val boundForm = ParkingSpacesOrGaragesNotIncludedInYourRentForm.form.bind(data)
+
+      boundForm.hasErrors shouldBe true
+      boundForm.errors shouldBe List(FormError("agreementDate", List("parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.invalid.error")))
+    }
+
+    "fail to bind when the input field day and month is missing in agreementDate" in {
+      val data = Map(
+        "uncoveredSpaces" -> "1",
+        "coveredSpaces" -> "0",
+        "garages" -> "0",
+        "totalCost" -> "1",
+        "agreementDate.day" -> "",
+        "agreementDate.month" -> "",
+        "agreementDate.year" -> "2020"
+      )
+      val boundForm = ParkingSpacesOrGaragesNotIncludedInYourRentForm.form.bind(data)
+
+      boundForm.hasErrors shouldBe true
+      boundForm.errors shouldBe List(FormError("agreementDate", List("parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.dayAndMonth.required.error")))
+    }
+
+    "fail to bind when the input field day and year is missing in agreementDate" in {
+      val data = Map(
+        "uncoveredSpaces" -> "1",
+        "coveredSpaces" -> "0",
+        "garages" -> "0",
+        "totalCost" -> "1",
+        "agreementDate.day" -> "",
+        "agreementDate.month" -> "11",
+        "agreementDate.year" -> ""
+      )
+      val boundForm = ParkingSpacesOrGaragesNotIncludedInYourRentForm.form.bind(data)
+
+      boundForm.hasErrors shouldBe true
+      boundForm.errors shouldBe List(FormError("agreementDate", List("parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.dayAndYear.required.error")))
+    }
+
+    "fail to bind when the input field month and year is missing in agreementDate" in {
+      val data = Map(
+        "uncoveredSpaces" -> "1",
+        "coveredSpaces" -> "0",
+        "garages" -> "0",
+        "totalCost" -> "1",
+        "agreementDate.day" -> "2",
+        "agreementDate.month" -> "",
+        "agreementDate.year" -> ""
+      )
+      val boundForm = ParkingSpacesOrGaragesNotIncludedInYourRentForm.form.bind(data)
+
+      boundForm.hasErrors shouldBe true
+      boundForm.errors shouldBe List(FormError("agreementDate", List("parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.monthAndYear.required.error")))
+    }
   }
 
 

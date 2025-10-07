@@ -90,7 +90,7 @@ class ParkingSpacesOrGaragesNotIncludedInYourRentControllerSpec extends Controll
     }
 
     "method submit" must {
-      "Return OK and the correct view" in {
+      "Return SEE_OTHER and the correct view" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val fakePostRequest =  FakeRequest(routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.submit(NormalMode))
           .withFormUrlEncodedBody(
