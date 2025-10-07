@@ -23,6 +23,11 @@
   legendContent: String,
   legendClasses: String = "govuk-fieldset__legend--xl",
   id: String = "date",
+  text1Label: String = "date.month",
+  text2Label: String = "date.year",
+  text1Name: String = "month",
+  text2Name: String = "year",
+  text2Class: String = "govuk-input--width-4",
   hintText: Option[String] = None,
   legendAsPageHeading: Boolean = true)(implicit messages: Messages)
 
@@ -39,27 +44,27 @@
   id = id,
   items = Seq(
     InputItem(
-      id = s"$id.month",
+      id = s"$id.$text1Name",
       classes = s"govuk-input--width-2${if(
-      form(s"$id.month").hasErrors
+      form(s"$id.$text1Name").hasErrors
       || form.errors.exists(_.key.equals("date")))" govuk-input--error" else ""}",
-      name = s"$id.month",
-      label = Some(messages("date.month")),
-      value = form(s"$id.month").value
+      name = s"$id.$text1Name",
+      label = Some(messages(text1Label)),
+      value = form(s"$id.$text1Name").value
     ),
     InputItem(
-      id = s"$id.year",
-      classes = s"govuk-input--width-4${if(
-      form(s"$id.year").hasErrors
+      id = s"$id.$text2Name",
+      classes = s"$text2Class${if(
+      form(s"$id.$text2Name").hasErrors
       || form.errors.exists(_.key.equals("date")))" govuk-input--error" else ""}",
-      name = s"$id.year",
-      label = Some(messages("date.year")),
-      value = form(s"$id.year").value
+      name = s"$id.$text2Name",
+      label = Some(messages(text2Label)),
+      value = form(s"$id.$text2Name").value
     )
   ),
   hint = hintText.map(hint => Hint(content = Text(messages(hint)))),
     errorMessage = form.errors.find(err =>
-    err.key == id || err.key == s"$id.month" || err.key == s"$id.year" || err.key == "date"
+    err.key == id || err.key == s"$id.$text1Name" || err.key == s"$id.$text2Name" || err.key == "date"
     ).map { err =>
         ErrorMessage.errorMessageWithDefaultStringsTranslated(
             content = Text(messages(err.message, err.args: _*))

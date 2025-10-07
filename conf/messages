@@ -112,22 +112,22 @@ agreementVerbal.no = No, it runs for a defined term or has an agreed end date
 agreementVerbal.endDate.title = When does your agreement end?
 agreementVerbal.endDate.hint = For example, 27 6 2036
 agreementVerbal.radio.unselected.error = Select Yes if your agreement is open-ended
-agreementVerbal.startDate.required.error = Enter the date your agreement started
-agreementVerbal.startDate.day.required.error = Date your agreement started must include a day
-agreementVerbal.startDate.month.required.error = Date your agreement started must include a month
-agreementVerbal.startDate.year.required.error = Date your agreement started must include a year
-agreementVerbal.startDate.dayAndMonth.required.error = Date your agreement started must include a day and month
-agreementVerbal.startDate.dayAndYear.required.error = Date your agreement started must include a day and year
-agreementVerbal.startDate.monthAndYear.required.error = Date your agreement started must include a month and year
-agreementVerbal.startDate.invalid.error = Date your agreement started must be a real date
-agreementVerbal.endDate.required.error = Select yes if your agreement is open-ended
-agreementVerbal.endDate.day.required.error = Date your agreement ends must include a day
-agreementVerbal.endDate.month.required.error = Date your agreement ends must include a month
-agreementVerbal.endDate.year.required.error = Date your agreement ends must include a year
-agreementVerbal.endDate.dayAndMonth.required.error = Date your agreement ends must include a day and month
-agreementVerbal.endDate.dayAndYear.required.error = Date your agreement ends must include a day and year
-agreementVerbal.endDate.monthAndYear.required.error = Date your agreement ends must include a month and year
-agreementVerbal.endDate.invalid.error = Date your agreement ends must be a real date
+agreementVerbal.agreementStartDate.required.error = Enter the date your agreement started
+agreementVerbal.agreementStartDate.day.required.error = Date your agreement started must include a day
+agreementVerbal.agreementStartDate.month.required.error = Date your agreement started must include a month
+agreementVerbal.agreementStartDate.year.required.error = Date your agreement started must include a year
+agreementVerbal.agreementStartDate.dayAndMonth.required.error = Date your agreement started must include a day and month
+agreementVerbal.agreementStartDate.dayAndYear.required.error = Date your agreement started must include a day and year
+agreementVerbal.agreementStartDate.monthAndYear.required.error = Date your agreement started must include a month and year
+agreementVerbal.agreementStartDate.invalid.error = Date your agreement started must be a real date
+agreementVerbal.agreementEndDate.required.error = Select yes if your agreement is open-ended
+agreementVerbal.agreementEndDate.day.required.error = Date your agreement ends must include a day
+agreementVerbal.agreementEndDate.month.required.error = Date your agreement ends must include a month
+agreementVerbal.agreementEndDate.year.required.error = Date your agreement ends must include a year
+agreementVerbal.agreementEndDate.dayAndMonth.required.error = Date your agreement ends must include a day and month
+agreementVerbal.agreementEndDate.dayAndYear.required.error = Date your agreement ends must include a day and year
+agreementVerbal.agreementEndDate.monthAndYear.required.error = Date your agreement ends must include a month and year
+agreementVerbal.agreementEndDate.invalid.error = Date your agreement ends must be a real date
 agreementVerbal.endDate.isBefore.startDate.error = Date your agreement ends must be after agreement started
 
 #CheckRentPeriod
@@ -183,21 +183,17 @@ didYouAgreeRentWithLandlord.error.required = Select yes if you agreed the rent w
 
 #ProvideDetailsOfFirstSecondRentPeriod
 provideDetailsOfFirstSecondRentPeriod.title = Provide details of each rent period
+provideDetailsOfFirstSecondRentPeriod.date.hint = For example, 27 6 2026
 provideDetailsOfFirstSecondRentPeriod.firstPeriod.subheading = First rent period
 provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.label = Start date
-provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.hint = For example, 27 6 2026
 provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.label = End date
-provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.hint = For example, 27 6 2026
 provideDetailsOfFirstSecondRentPeriod.firstPeriod.radio.label = Do you pay rent in this period?
 provideDetailsOfFirstSecondRentPeriod.firstPeriod.radio.conditional.hint.bold = How much is the rent for this period (excluding VAT)?
 provideDetailsOfFirstSecondRentPeriod.firstPeriod.radio.conditional.hint = Enter the amount you pay each year (excluding VAT) even if the period is for more or less than a year.
-provideDetailsOfFirstSecondRentPeriod.firstPeriod.radio.yes = Yes
 provideDetailsOfFirstSecondRentPeriod.firstPeriod.radio.no = No, this is a rent-free period
 provideDetailsOfFirstSecondRentPeriod.secondPeriod.subheading.1 = Second rent period
 provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.label = Start date
-provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.hint = For example, 27 6 2026
 provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.label = End date
-provideDetailsOfFirstSecondRentPeriod.secondPeriod.end.date.hint = For example, 27 6 2026
 provideDetailsOfFirstSecondRentPeriod.secondPeriod.subheading.2 = How much is the rent for this period (excluding VAT)?
 provideDetailsOfFirstSecondRentPeriod.secondPeriod.hint = Enter the amount you pay each year (excluding VAT) even if the period is for more or less than a year
 provideDetailsOfFirstSecondRentPeriod.first.startDate.required.error = Enter the Start date of the first rent period
@@ -261,8 +257,6 @@ rentPeriods.second.endDate = End date
 rentPeriods.second.rentValue = Rent for this period (excluding VAT)
 rentPeriods.radio.heading = Do you need to add another rent period?
 rentPeriods.error.required = Select yes if you need to add another rent period.
-rentPeriods.yes = Yes
-rentPeriods.no = No
 
 #RentInterim
 rentInterim.title = Did the court also set an interim rent?
@@ -402,3 +396,21 @@ repairsAndInsurance.buildingInsurance.radio.required.error = Select who pays for
 #DidYouGetMoneyFromLandlord
 didYouGetMoneyFromLandlord.title = Did you get any money from the landlord or previous tenant to take on the lease?
 didYouGetMoneyFromLandlord.empty.error = Select yes if you got any money from the landlord or previous tenant to take on the lease
+
+#Rent review
+rentReview.months = Months
+rentReview.years = Years
+rentReview.title = Rent review
+rentReview.hasIncludeRentReview.radio.label = Does your agreement include a rent review?
+rentReview.hasIncludeRentReview.radio.hint = If you have a rent review, you and your landlord can agree a new rent on the date set out in your agreement. This is different to a stepped rent, where changes to your rent are described in your agreement.
+rentReview.howOftenReviewed.label = How often is your rent reviewed?
+rentReview.canRentGoDown.radio.label = Can the rent go down when it is reviewed?
+rentReview.hasIncludeRentReview.radio.empty.error = Select yes if your agreement includes a rent review
+rentReview.canRentGoDown.radio.empty.error = Select yes if the rent can go down when it is reviewed
+rentReview.date.required.error = Enter how often your rent is reviewed
+rentReview.rentReviewMonthsYears.months.invalid.error = The number of months for how often your rent is reviewed must be a number, like 6
+rentReview.rentReviewMonthsYears.months.maximum.12.error = The number of months for how often your rent is reviewed must be 12 or less
+rentReview.rentReviewMonthsYears.months.maximum.11.error = The number of months for how often your rent is reviewed must be 11 or less
+rentReview.rentReviewMonthsYears.years.invalid.error = The number of years for how often your rent is reviewed must be a number, like 2
+rentReview.rentReviewMonthsYears.years.maximum.1000.error = How often your rent is reviewed must be 1,000 years or less
+

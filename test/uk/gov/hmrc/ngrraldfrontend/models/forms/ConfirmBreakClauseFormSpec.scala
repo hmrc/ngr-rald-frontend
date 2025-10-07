@@ -24,14 +24,14 @@ import play.api.libs.json.Json
 class ConfirmBreakClauseFormSpec extends AnyFlatSpec with Matchers {
 
   val validData = Map(
-    "confirmBreakClause-radio-value" -> "Yes"
+    "confirmBreakClause-radio-value" -> "true"
   )
 
   "ConfirmBreakClauseForm" should "bind valid data successfully" in {
     val boundForm = ConfirmBreakClauseForm.form.bind(validData)
 
     boundForm.errors shouldBe empty
-    boundForm.value shouldBe Some(ConfirmBreakClauseForm("Yes"))
+    boundForm.value shouldBe Some(ConfirmBreakClauseForm("true"))
   }
 
   it should "fail when confirmBreakClause (radio) is missing" in {
@@ -51,31 +51,31 @@ class ConfirmBreakClauseFormSpec extends AnyFlatSpec with Matchers {
 
   it should "fail when no is selected" in {
     val data = Map(
-      "confirmBreakClause-radio-value" -> "No",
+      "confirmBreakClause-radio-value" -> "false",
     )
 
     val boundForm = ConfirmBreakClauseForm.form.bind(data)
 
     boundForm.errors shouldBe empty
-    boundForm.value shouldBe Some(ConfirmBreakClauseForm("No"))
+    boundForm.value shouldBe Some(ConfirmBreakClauseForm("false"))
   }
 
   "DoesYourRentIncludeParkingForm.format" should "serialize to JSON correctly" in {
-    val form = ConfirmBreakClauseForm("Yes")
+    val form = ConfirmBreakClauseForm("true")
     val json = Json.toJson(form)
 
     json shouldBe Json.obj(
-      "radio" -> "Yes",
+      "radioValue" -> "true",
     )
   }
 
   it should "deserialize from JSON correctly" in {
     val json = Json.obj(
-      "radio" -> "No",
+      "radioValue" -> "false",
     )
 
     val result = json.validate[ConfirmBreakClauseForm]
     result.isSuccess shouldBe true
-    result.get shouldBe ConfirmBreakClauseForm("No")
+    result.get shouldBe ConfirmBreakClauseForm("false")
   }
 }

@@ -46,11 +46,11 @@ class RentInterimController @Inject()(rentInterimView: RentInterimView,
     (authenticate andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(RentInterimPage) match {
         case None => form
-        case Some(value) => form.fill(RentInterimForm(value))
+        case Some(value) => form.fill(RentInterimForm(value.toString))
       }
         Future.successful(Ok(rentInterimView(
           form = preparedForm,
-          radios = buildRadios(preparedForm, RentInterimForm.ngrRadio(preparedForm)),
+          radios = buildRadios(preparedForm, RentInterimForm.rentInterimRadio),
           propertyAddress = request.property.addressFull,
           mode = mode
         )))
@@ -63,14 +63,15 @@ class RentInterimController @Inject()(rentInterimView: RentInterimView,
         formWithErrors => {
             Future.successful(BadRequest(rentInterimView(
               form = formWithErrors,
-              radios = buildRadios(formWithErrors, RentInterimForm.ngrRadio(formWithErrors)),
+              radios = buildRadios(formWithErrors, RentInterimForm.rentInterimRadio),
               propertyAddress = request.property.addressFull,
               mode = mode
             )))
         },
         radioValue =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(RentInterimPage, radioValue.radioValue))
+            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
+              .set(RentInterimPage, radioValue.radioValue.toBoolean))
             _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(RentInterimPage, mode, updatedAnswers))
       )

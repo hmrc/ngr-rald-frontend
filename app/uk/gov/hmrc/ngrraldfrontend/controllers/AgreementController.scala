@@ -16,19 +16,15 @@
 
 package uk.gov.hmrc.ngrraldfrontend.controllers
 
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, Messages}
+import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.govukfrontend.views.Aliases.*
-import uk.gov.hmrc.govukfrontend.views.html.components.ErrorMessage
-import uk.gov.hmrc.govukfrontend.views.viewmodels.dateinput.DateInput
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-import uk.gov.hmrc.ngrraldfrontend.models.{Mode, Agreement, NGRDate, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreementForm
-import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreementForm.form
+import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreementForm.{answerToForm, form, formToAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{Agreement, Mode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.AgreementPage
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
@@ -50,114 +46,18 @@ class AgreementController @Inject()(view: AgreementView,
                                     sessionRepository: SessionRepository
                                    )(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
-  def dateInput()(implicit messages: Messages): DateInput = DateInput(
-    id = "agreementStartDate",
-    namePrefix = Some("agreementStartDate"),
-    fieldset = Some(Fieldset(
-      legend = Some(Legend(
-        content = Text(messages("agreement.subheading.1")),
-        classes = "govuk-fieldset__legend--m",
-        isPageHeading = true
-      ))
-    )),
-    hint = Some(Hint(
-      id = Some("agreement.start.date.hint"),
-      content = Text(messages("agreement.radio.conditional.hint.1"))
-    ))
-  )
-
-  def openEndedNoButton(form: Form[AgreementForm])(implicit messages: Messages): NGRRadioButtons = NGRRadioButtons(
-    radioContent = "agreement.radio.2",
-    radioValue = NoOpenEnded,
-    conditionalHtml = Some(dateTextFields(form, DateInput(
-      id = "agreementEndDate",
-      namePrefix = Some(""),
-      fieldset = Some(Fieldset(
-        legend = Some(Legend(
-          content = Text(messages("agreement.radio.conditional.subheading.1")),
-          classes = "govuk-fieldset__legend--s",
-          isPageHeading = true
-        ))
-      )),
-      hint = Some(Hint(
-        content = Text(messages("agreement.radio.conditional.hint.1"))
-      ))
-    )))
-  )
-
-  def openEndedRadio(form: Form[AgreementForm])(implicit messages: Messages): NGRRadio = {
-    val ngrRadioButtons: Seq[NGRRadioButtons] = Seq(
-      NGRRadioButtons(radioContent = "agreement.radio.1", radioValue = YesOpenEnded),
-      openEndedNoButton(form)
-    )
-    NGRRadio(
-      NGRRadioName("agreement-radio-openEnded"),
-      ngrTitle = Some(Legend(content = Text(messages("agreement.subheading.2")), classes = "govuk-fieldset__legend--m", isPageHeading = true)),
-      hint = Some(messages("agreement.hint.2")),
-      NGRRadioButtons = ngrRadioButtons
-    )
-  }
-
-  def breakClauseYesButton(form: Form[AgreementForm])(implicit messages: Messages): NGRRadioButtons = NGRRadioButtons(
-    radioContent = "service.yes",
-    radioValue = YesBreakClause,
-    conditionalHtml = Some(ngrCharacterCountComponent(form,
-      NGRCharacterCount(
-        id = "about-break-clause",
-        name = "about-break-clause",
-        maxLength = Some(250),
-        label = Label(
-          classes = "govuk-label govuk-label--s",
-          content = Text(Messages("agreement.radio.conditional.subheading.2"))
-        ),
-        hint = Some(
-          Hint(
-            id = Some("agreement-breakClause-hint"),
-            classes = "",
-            attributes = Map.empty,
-            content = Text(messages("agreement.radio.conditional.hint.2"))
-          )
-        )
-      )))
-  )
-
-  def breakClauseRadio(form: Form[AgreementForm])(implicit messages: Messages): NGRRadio = {
-    val ngrRadioButtons: Seq[NGRRadioButtons] = Seq(
-      breakClauseYesButton(form),
-      NGRRadioButtons(radioContent = "service.no", radioValue = NoBreakClause)
-    )
-    NGRRadio(
-      NGRRadioName("agreement-breakClause-radio"),
-      ngrTitle = Some(Legend(content = Text(messages("agreement.subheading.3")), classes = "govuk-fieldset__legend--m", isPageHeading = true)),
-      hint = Some(messages("agreement.hint.3")),
-      NGRRadioButtons = ngrRadioButtons
-    )
-  }
-
-
   def show(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(AgreementPage) match {
         case None => form
-        case Some(value) => form.fill(AgreementForm(NGRDate.fromString(value.agreementStart), if (value.isOpenEnded) {
-          "YesOpenEnded"
-        } else {
-          "NoOpenEnded"
-        }, value.openEndedDate match {
-          case Some(value) => Some(NGRDate.fromString(value))
-          case None => None
-        }, if (value.haveBreakClause) {
-          "YesBreakClause"
-        } else {
-          "NoBreakClause"
-        }, value.breakClauseInfo))
+        case Some(value) => answerToForm(value)
       }
       Future.successful(Ok(view(
         selectedPropertyAddress = request.property.addressFull,
         preparedForm,
-        dateInput(),
-        buildRadios(preparedForm, openEndedRadio(preparedForm)),
-        buildRadios(preparedForm, breakClauseRadio(preparedForm)),
+        AgreementForm.dateInput(),
+        buildRadios(preparedForm, AgreementForm.openEndedRadio(preparedForm, dateTextFields)),
+        buildRadios(preparedForm, AgreementForm.breakClauseRadio(preparedForm, ngrCharacterCountComponent)),
         mode = mode
       )))
     }
@@ -182,28 +82,18 @@ class AgreementController @Inject()(view: AgreementView,
             }
             val formWithCorrectedErrors = formWithErrors.copy(errors = correctedFormErrors)
 
-              Future.successful(BadRequest(view(
-                selectedPropertyAddress = request.property.addressFull,
-                formWithCorrectedErrors,
-                dateInput(),
-                buildRadios(formWithErrors, openEndedRadio(formWithCorrectedErrors)),
-                buildRadios(formWithErrors, breakClauseRadio(formWithCorrectedErrors)),
-                mode = mode
-              ))),
+            Future.successful(BadRequest(view(
+              selectedPropertyAddress = request.property.addressFull,
+              formWithCorrectedErrors,
+              AgreementForm.dateInput(),
+              buildRadios(formWithErrors, AgreementForm.openEndedRadio(formWithCorrectedErrors, dateTextFields)),
+              buildRadios(formWithErrors, AgreementForm.breakClauseRadio(formWithCorrectedErrors, ngrCharacterCountComponent)),
+              mode = mode
+            ))),
           agreementForm =>
-            val answers = Agreement(agreementForm.agreementStart.makeString,
-              agreementForm.openEndedRadio match {
-                case answer if(answer == "YesOpenEnded") => true
-                case _ => false
-              },
-              agreementForm.openEndedDate.map(value => value.makeString),
-              agreementForm.breakClauseRadio match {
-                case openEndedRadio if(openEndedRadio == "YesBreakClause") => true
-                case _ => false
-              },
-              agreementForm.breakClauseInfo)
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(AgreementPage, answers))
+              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
+                .set(AgreementPage, formToAnswers(agreementForm)))
               _ <- sessionRepository.set(updatedAnswers)
             } yield Redirect(navigator.nextPage(AgreementPage, mode, updatedAnswers))
         )

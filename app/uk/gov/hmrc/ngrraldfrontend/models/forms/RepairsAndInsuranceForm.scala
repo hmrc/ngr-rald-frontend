@@ -23,6 +23,7 @@ import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.Legend
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
+import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.ngrRadio
 import uk.gov.hmrc.ngrraldfrontend.models.forms.DoesYourRentIncludeParkingForm.radioText
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 
@@ -38,34 +39,29 @@ object RepairsAndInsuranceForm extends CommonFormValidators with Mappings {
   private lazy val internalRepairsRequiredError = "repairsAndInsurance.internalRepairs.radio.required.error"
   private lazy val externalRepairsRequiredError = "repairsAndInsurance.externalRepairs.radio.required.error"
   private lazy val buildingInsuranceRequiredError = "repairsAndInsurance.buildingInsurance.radio.required.error"
-  private val internalRepairsRadio = "repairsAndInsurance-internalRepairs-radio-value"
-  private val externalRepairsRadio = "repairsAndInsurance-externalRepairs-radio-value"
-  private val buildingInsuranceRadio = "repairsAndInsurance-buildingInsurance-radio-value"
+  val internalRepairsRadio = "repairsAndInsurance-internalRepairs-radio-value"
+  val externalRepairsRadio = "repairsAndInsurance-externalRepairs-radio-value"
+  val buildingInsuranceRadio = "repairsAndInsurance-buildingInsurance-radio-value"
 
   val messagesApi: MessagesApi = new DefaultMessagesApi()
   val lang: Lang = Lang.defaultLang
   val messages: Messages = MessagesImpl(lang, messagesApi)
 
-  def youButton(radioType: RadioEntry): NGRRadioButtons = NGRRadioButtons(radioContent = "repairsAndInsurance.radio.you", radioValue =  radioType)
-  def landlordButton(radioType: RadioEntry): NGRRadioButtons = NGRRadioButtons(radioContent = "repairsAndInsurance.radio.landlord", radioValue = radioType)
-  def youAndLandlordButton(radioType: RadioEntry): NGRRadioButtons = NGRRadioButtons(radioContent = "repairsAndInsurance.radio.youAndLandlord", radioValue = radioType)
+  val buttons: Seq[NGRRadioButtons] = Seq(
+    NGRRadioButtons(radioContent = "repairsAndInsurance.radio.you", radioValue = You),
+    NGRRadioButtons(radioContent = "repairsAndInsurance.radio.landlord", radioValue = Landlord),
+    NGRRadioButtons(radioContent = "repairsAndInsurance.radio.youAndLandlord", radioValue = YouAndLandlord)
+  )
   
   def unapply(repairsAndInsuranceForm: RepairsAndInsuranceForm): Option[(String, String, String)] =
     Some(repairsAndInsuranceForm.internalRepairs, repairsAndInsuranceForm.externalRepairs, repairsAndInsuranceForm.buildingInsurance)
 
-  def ngrRadio(form: Form[RepairsAndInsuranceForm], radioType:String)(implicit messages: Messages): NGRRadio = {
-    val buttons: Seq[NGRRadioButtons] = radioType match {
-      case value if value.contains("internalRepairs") => Seq(youButton(InternalRepairsYou), landlordButton(InternalRepairsLandlord), youAndLandlordButton(InternalRepairsYouAndLandlord))
-      case value if value.contains("externalRepairs") => Seq(youButton(ExternalRepairsYou), landlordButton(ExternalRepairsLandlord), youAndLandlordButton(ExternalRepairsYouAndLandlord))
-      case _ => Seq(youButton(BuildingInsuranceYou), landlordButton(BuildingInsuranceLandlord), youAndLandlordButton(LandlordYouAndLandlord))
-    }
-    NGRRadio(
-      NGRRadioName(s"repairsAndInsurance-$radioType-radio-value"),
-      ngrTitle = Some(Legend(content = Text(messages(s"repairsAndInsurance.$radioType.radio.label")),
-        classes = "govuk-fieldset__legend--m", isPageHeading = true)),
-      NGRRadioButtons = buttons
+  def createRadio(radioType: String)(implicit messages: Messages): NGRRadio =
+    ngrRadio(
+      radioName = s"repairsAndInsurance-$radioType-radio-value",
+      radioButtons = buttons,
+      ngrTitle = s"repairsAndInsurance.$radioType.radio.label"
     )
-  }
 
   def form: Form[RepairsAndInsuranceForm] = {
     Form(

@@ -154,3 +154,9 @@ GET        /repairs-and-insurance                                  uk.gov.hmrc.n
 POST       /repairs-and-insurance                                  uk.gov.hmrc.ngrraldfrontend.controllers.RepairsAndInsuranceController.submit(mode: Mode = NormalMode)
 GET        /repairs-and-insurance/change                           uk.gov.hmrc.ngrraldfrontend.controllers.RepairsAndInsuranceController.show(mode: Mode = CheckMode)
 POST       /repairs-and-insurance/change                           uk.gov.hmrc.ngrraldfrontend.controllers.RepairsAndInsuranceController.submit(mode: Mode = CheckMode)
+
+#Rent review
+GET        /rent-review                                  uk.gov.hmrc.ngrraldfrontend.controllers.RentReviewController.show(mode: Mode = NormalMode)
+POST       /rent-review                                  uk.gov.hmrc.ngrraldfrontend.controllers.RentReviewController.submit(mode: Mode = NormalMode)
+GET        /rent-review/change                           uk.gov.hmrc.ngrraldfrontend.controllers.RentReviewController.show(mode: Mode = CheckMode)
+POST       /rent-review/change                           uk.gov.hmrc.ngrraldfrontend.controllers.RentReviewController.submit(mode: Mode = CheckMode)

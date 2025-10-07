@@ -48,12 +48,12 @@ class DidYouAgreeRentWithLandlordController @Inject()(didYouAgreeRentWithLandlor
     (authenticate andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(DidYouAgreeRentWithLandlordPage) match {
         case None => form
-        case Some(value) => form.fill(DidYouAgreeRentWithLandlordForm(value))
+        case Some(value) => form.fill(DidYouAgreeRentWithLandlordForm(value.toString))
       }
         Future.successful(Ok(didYouAgreeRentWithLandlordView(
           selectedPropertyAddress = request.property.addressFull,
           form = preparedForm,
-          ngrRadio = buildRadios(preparedForm, DidYouAgreeRentWithLandlordForm.ngrRadio(preparedForm)),
+          ngrRadio = buildRadios(preparedForm, DidYouAgreeRentWithLandlordForm.agreeRentRadio),
           mode = mode
         )))
     }
@@ -65,14 +65,15 @@ class DidYouAgreeRentWithLandlordController @Inject()(didYouAgreeRentWithLandlor
         formWithErrors => {
             Future.successful(BadRequest(didYouAgreeRentWithLandlordView(
               form = formWithErrors,
-              ngrRadio = buildRadios(formWithErrors, DidYouAgreeRentWithLandlordForm.ngrRadio(formWithErrors)),
+              ngrRadio = buildRadios(formWithErrors, DidYouAgreeRentWithLandlordForm.agreeRentRadio),
               selectedPropertyAddress = request.property.addressFull,
               mode = mode
             )))
         },
         radioValue =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(DidYouAgreeRentWithLandlordPage, radioValue.radioValue))
+            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
+              .set(DidYouAgreeRentWithLandlordPage, radioValue.radioValue.toBoolean))
             _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(DidYouAgreeRentWithLandlordPage, mode, updatedAnswers))
 

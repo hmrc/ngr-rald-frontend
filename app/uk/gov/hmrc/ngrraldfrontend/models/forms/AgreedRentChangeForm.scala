@@ -40,8 +40,4 @@ object AgreedRentChangeForm extends Mappings {
       )(AgreedRentChangeForm.apply)(AgreedRentChangeForm.unapply)
     )
   }
-  
-  def ngrRadio(form: Form[AgreedRentChangeForm])(implicit messages: Messages): NGRRadio =
-    NGRRadio(NGRRadioName("agreed-rent-change-radio"), NGRRadioButtons = Seq(NGRRadio.yesButton, NGRRadio.noButton))
-
 }

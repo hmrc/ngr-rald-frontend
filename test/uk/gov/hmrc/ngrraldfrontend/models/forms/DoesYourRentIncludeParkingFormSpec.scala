@@ -24,14 +24,14 @@ import play.api.libs.json.Json
 class DoesYourRentIncludeParkingFormSpec extends AnyFlatSpec with Matchers {
 
   val validData = Map(
-    "doesYourRentIncludeParking-radio-value" -> "Yes"
+    "doesYourRentIncludeParking-radio-value" -> "true"
   )
 
   "DoesYourRentIncludeParkingForm" should "bind valid data successfully" in {
     val boundForm = DoesYourRentIncludeParkingForm.form.bind(validData)
 
     boundForm.errors shouldBe empty
-    boundForm.value shouldBe Some(DoesYourRentIncludeParkingForm("Yes"))
+    boundForm.value shouldBe Some(DoesYourRentIncludeParkingForm("true"))
   }
 
   it should "fail when Does Your Rent Include Parking (radio) is missing" in {
@@ -41,39 +41,28 @@ class DoesYourRentIncludeParkingFormSpec extends AnyFlatSpec with Matchers {
     boundForm.errors shouldBe List(FormError("doesYourRentIncludeParking-radio-value", List("doesYourRentIncludeParking.empty.error"), List()))
   }
 
-  it should "pass when 'OtherRelationship' is selected and description is provided" in {
-    val data = Map(
-      "doesYourRentIncludeParking-radio-value" -> "Yes",
-    )
-
-    val boundForm = DoesYourRentIncludeParkingForm.form.bind(data)
-
-    boundForm.errors shouldBe empty
-    boundForm.value shouldBe Some(DoesYourRentIncludeParkingForm("Yes"))
-  }
-
   "DoesYourRentIncludeParkingForm.unapply" should "extract fields correctly" in {
-    val form = DoesYourRentIncludeParkingForm("Yes")
+    val form = DoesYourRentIncludeParkingForm("true")
     val result = DoesYourRentIncludeParkingForm.unapply(form)
-    result shouldBe Some("Yes")
+    result shouldBe Some("true")
   }
 
   "DoesYourRentIncludeParkingForm.format" should "serialize to JSON correctly" in {
-    val form = DoesYourRentIncludeParkingForm("Yes")
+    val form = DoesYourRentIncludeParkingForm("true")
     val json = Json.toJson(form)
 
     json shouldBe Json.obj(
-      "radio" -> "Yes",
+      "radio" -> "true",
     )
   }
 
   it should "deserialize from JSON correctly" in {
     val json = Json.obj(
-      "radio" -> "No",
+      "radio" -> "false",
     )
 
     val result = json.validate[DoesYourRentIncludeParkingForm]
     result.isSuccess shouldBe true
-    result.get shouldBe DoesYourRentIncludeParkingForm("No")
+    result.get shouldBe DoesYourRentIncludeParkingForm("false")
   }
 }

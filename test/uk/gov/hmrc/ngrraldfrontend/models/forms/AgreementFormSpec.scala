@@ -29,43 +29,43 @@ class AgreementFormSpec extends AnyWordSpec with Matchers {
       val data = Map("agreementStartDate.day" -> "30",
         "agreementStartDate.month" -> "4",
         "agreementStartDate.year" -> "2025",
-        "agreement-radio-openEnded" -> "YesOpenEnded",
-        "agreement-breakClause-radio" -> "NoBreakClause"
+        "agreement-radio-openEnded" -> "true",
+        "agreement-breakClause-radio" -> "false"
       )
       val boundForm = AgreementForm.form.bind(data)
       boundForm.hasErrors shouldBe false
-      boundForm.value shouldBe Some(AgreementForm(NGRDate("30", "4", "2025"), "YesOpenEnded", None, "NoBreakClause", None))
+      boundForm.value shouldBe Some(AgreementForm(NGRDate("30", "4", "2025"), "true", None, "false", None))
     }
 
     "bind successfully with a valid start date input, open ended as no, with end date and break clause as no" in {
       val data = Map("agreementStartDate.day" -> "30",
         "agreementStartDate.month" -> "4",
         "agreementStartDate.year" -> "2025",
-        "agreement-radio-openEnded" -> "NoOpenEnded",
+        "agreement-radio-openEnded" -> "false",
         "agreementEndDate.day" -> "30",
         "agreementEndDate.month" -> "4",
         "agreementEndDate.year" -> "2025",
-        "agreement-breakClause-radio" -> "NoBreakClause"
+        "agreement-breakClause-radio" -> "false"
       )
       val boundForm = AgreementForm.form.bind(data)
       boundForm.hasErrors shouldBe false
-      boundForm.value shouldBe Some(AgreementForm(NGRDate("30", "4", "2025"), "NoOpenEnded", Some(NGRDate("30", "4", "2025")), "NoBreakClause", None))
+      boundForm.value shouldBe Some(AgreementForm(NGRDate("30", "4", "2025"), "false", Some(NGRDate("30", "4", "2025")), "false", None))
     }
 
     "bind successfully with a valid start date input, open ended as no, with end date and break clause as yes" in {
       val data = Map("agreementStartDate.day" -> "30",
         "agreementStartDate.month" -> "4",
         "agreementStartDate.year" -> "2025",
-        "agreement-radio-openEnded" -> "NoOpenEnded",
+        "agreement-radio-openEnded" -> "false",
         "agreementEndDate.day" -> "30",
         "agreementEndDate.month" -> "4",
         "agreementEndDate.year" -> "2025",
-        "agreement-breakClause-radio" -> "YesBreakClause",
+        "agreement-breakClause-radio" -> "true",
         "about-break-clause" -> "I have a break clause for..."
       )
       val boundForm = AgreementForm.form.bind(data)
       boundForm.hasErrors shouldBe false
-      boundForm.value shouldBe Some(AgreementForm(NGRDate("30", "4", "2025"), "NoOpenEnded", Some(NGRDate("30", "4", "2025")), "YesBreakClause", Some("I have a break clause for...")))
+      boundForm.value shouldBe Some(AgreementForm(NGRDate("30", "4", "2025"), "false", Some(NGRDate("30", "4", "2025")), "true", Some("I have a break clause for...")))
     }
 
     "fail to bind when open ended radio is unselected" in {
@@ -73,7 +73,7 @@ class AgreementFormSpec extends AnyWordSpec with Matchers {
         "agreementStartDate.month" -> "4",
         "agreementStartDate.year" -> "2025",
         "agreement-radio-openEnded" -> "",
-        "agreement-breakClause-radio" -> "NoBreakClause"
+        "agreement-breakClause-radio" -> "false"
       )
       val boundForm = AgreementForm.form.bind(data)
 
@@ -85,7 +85,7 @@ class AgreementFormSpec extends AnyWordSpec with Matchers {
       val data = Map("agreementStartDate.day" -> "30",
         "agreementStartDate.month" -> "4",
         "agreementStartDate.year" -> "2025",
-        "agreement-radio-openEnded" -> "YesOpenEnded",
+        "agreement-radio-openEnded" -> "true",
         "agreement-breakClause-radio" -> ""
       )
       val boundForm = AgreementForm.form.bind(data)
@@ -98,8 +98,8 @@ class AgreementFormSpec extends AnyWordSpec with Matchers {
       val data = Map("agreementStartDate.day" -> "30",
         "agreementStartDate.month" -> "4",
         "agreementStartDate.year" -> "2025",
-        "agreement-radio-openEnded" -> "YesOpenEnded",
-        "agreement-breakClause-radio" -> "YesBreakClause",
+        "agreement-radio-openEnded" -> "true",
+        "agreement-breakClause-radio" -> "true",
         "about-break-clause" -> ""
       )
       val boundForm = AgreementForm.form.bind(data)
@@ -112,8 +112,8 @@ class AgreementFormSpec extends AnyWordSpec with Matchers {
       val data = Map("agreementStartDate.day" -> "30",
         "agreementStartDate.month" -> "4",
         "agreementStartDate.year" -> "2025",
-        "agreement-radio-openEnded" -> "YesOpenEnded",
-        "agreement-breakClause-radio" -> "YesBreakClause",
+        "agreement-radio-openEnded" -> "true",
+        "agreement-breakClause-radio" -> "true",
         "about-break-clause" -> "over 250 characters, over 250 characters, over 250 characters, over 250 characters,over 250 characters, over 250 characters, over 250 characters, over 250 charactersover 250 characters, over 250 characters, over 250 characters, over 250 charactersover 250 characters, over 250 characters, over 250 characters, over 250 charactersover 250 characters, over 250 characters, over 250 characters, over 250 charactersover 250 characters, over 250 characters, over 250 characters, over 250 charactersover 250 characters, over 250 characters, over 250 characters, over 250 charactersover 250 characters, over 250 characters, over 250 characters, over 250 charactersover 250 characters, over 250 characters, over 250 characters, over 250 characters"
       )
       val boundForm = AgreementForm.form.bind(data)
@@ -126,11 +126,11 @@ class AgreementFormSpec extends AnyWordSpec with Matchers {
       val data = Map("agreementStartDate.day" -> "30",
         "agreementStartDate.month" -> "4",
         "agreementStartDate.year" -> "2025",
-        "agreement-radio-openEnded" -> "NoOpenEnded",
+        "agreement-radio-openEnded" -> "false",
         "agreementEndDate.day" -> "",
         "agreementEndDate.month" -> "",
         "agreementEndDate.year" -> "",
-        "agreement-breakClause-radio" -> "NoBreakClause"
+        "agreement-breakClause-radio" -> "false"
       )
       val boundForm = AgreementForm.form.bind(data)
 
@@ -142,11 +142,11 @@ class AgreementFormSpec extends AnyWordSpec with Matchers {
       val data = Map("agreementStartDate.day" -> "30",
         "agreementStartDate.month" -> "4",
         "agreementStartDate.year" -> "2025",
-        "agreement-radio-openEnded" -> "NoOpenEnded",
+        "agreement-radio-openEnded" -> "false",
         "agreementEndDate.day" -> "12",
         "agreementEndDate.month" -> "",
         "agreementEndDate.year" -> "",
-        "agreement-breakClause-radio" -> "NoBreakClause"
+        "agreement-breakClause-radio" -> "false"
       )
       val boundForm = AgreementForm.form.bind(data)
 
@@ -158,11 +158,11 @@ class AgreementFormSpec extends AnyWordSpec with Matchers {
       val data = Map("agreementStartDate.day" -> "30",
         "agreementStartDate.month" -> "4",
         "agreementStartDate.year" -> "2025",
-        "agreement-radio-openEnded" -> "NoOpenEnded",
+        "agreement-radio-openEnded" -> "false",
         "agreementEndDate.day" -> "",
         "agreementEndDate.month" -> "12",
         "agreementEndDate.year" -> "",
-        "agreement-breakClause-radio" -> "NoBreakClause"
+        "agreement-breakClause-radio" -> "false"
       )
       val boundForm = AgreementForm.form.bind(data)
 
@@ -174,11 +174,11 @@ class AgreementFormSpec extends AnyWordSpec with Matchers {
       val data = Map("agreementStartDate.day" -> "30",
         "agreementStartDate.month" -> "4",
         "agreementStartDate.year" -> "2025",
-        "agreement-radio-openEnded" -> "NoOpenEnded",
+        "agreement-radio-openEnded" -> "false",
         "agreementEndDate.day" -> "",
         "agreementEndDate.month" -> "",
         "agreementEndDate.year" -> "2025",
-        "agreement-breakClause-radio" -> "NoBreakClause"
+        "agreement-breakClause-radio" -> "false"
       )
       val boundForm = AgreementForm.form.bind(data)
 
@@ -190,11 +190,11 @@ class AgreementFormSpec extends AnyWordSpec with Matchers {
       val data = Map("agreementStartDate.day" -> "30",
         "agreementStartDate.month" -> "4",
         "agreementStartDate.year" -> "2025",
-        "agreement-radio-openEnded" -> "NoOpenEnded",
+        "agreement-radio-openEnded" -> "false",
         "agreementEndDate.day" -> "",
         "agreementEndDate.month" -> "12",
         "agreementEndDate.year" -> "2025",
-        "agreement-breakClause-radio" -> "NoBreakClause"
+        "agreement-breakClause-radio" -> "false"
       )
       val boundForm = AgreementForm.form.bind(data)
 
@@ -206,11 +206,11 @@ class AgreementFormSpec extends AnyWordSpec with Matchers {
       val data = Map("agreementStartDate.day" -> "30",
         "agreementStartDate.month" -> "4",
         "agreementStartDate.year" -> "2025",
-        "agreement-radio-openEnded" -> "NoOpenEnded",
+        "agreement-radio-openEnded" -> "false",
         "agreementEndDate.day" -> "12",
         "agreementEndDate.month" -> "",
         "agreementEndDate.year" -> "2025",
-        "agreement-breakClause-radio" -> "NoBreakClause"
+        "agreement-breakClause-radio" -> "false"
       )
       val boundForm = AgreementForm.form.bind(data)
 
@@ -222,11 +222,11 @@ class AgreementFormSpec extends AnyWordSpec with Matchers {
       val data = Map("agreementStartDate.day" -> "30",
         "agreementStartDate.month" -> "4",
         "agreementStartDate.year" -> "2025",
-        "agreement-radio-openEnded" -> "NoOpenEnded",
+        "agreement-radio-openEnded" -> "false",
         "agreementEndDate.day" -> "12",
         "agreementEndDate.month" -> "12",
         "agreementEndDate.year" -> "",
-        "agreement-breakClause-radio" -> "NoBreakClause"
+        "agreement-breakClause-radio" -> "false"
       )
       val boundForm = AgreementForm.form.bind(data)
 
@@ -239,11 +239,11 @@ class AgreementFormSpec extends AnyWordSpec with Matchers {
       val data = Map("agreementStartDate.day" -> "",
         "agreementStartDate.month" -> "",
         "agreementStartDate.year" -> "",
-        "agreement-radio-openEnded" -> "NoOpenEnded",
+        "agreement-radio-openEnded" -> "false",
         "agreementEndDate.day" -> "12",
         "agreementEndDate.month" -> "12",
         "agreementEndDate.year" -> "2025",
-        "agreement-breakClause-radio" -> "NoBreakClause"
+        "agreement-breakClause-radio" -> "false"
       )
       val boundForm = AgreementForm.form.bind(data)
 
@@ -255,11 +255,11 @@ class AgreementFormSpec extends AnyWordSpec with Matchers {
       val data = Map("agreementStartDate.day" -> "30",
         "agreementStartDate.month" -> "",
         "agreementStartDate.year" -> "",
-        "agreement-radio-openEnded" -> "NoOpenEnded",
+        "agreement-radio-openEnded" -> "false",
         "agreementEndDate.day" -> "12",
         "agreementEndDate.month" -> "12",
         "agreementEndDate.year" -> "2025",
-        "agreement-breakClause-radio" -> "NoBreakClause"
+        "agreement-breakClause-radio" -> "false"
       )
       val boundForm = AgreementForm.form.bind(data)
 
@@ -271,11 +271,11 @@ class AgreementFormSpec extends AnyWordSpec with Matchers {
       val data = Map("agreementStartDate.day" -> "",
         "agreementStartDate.month" -> "4",
         "agreementStartDate.year" -> "",
-        "agreement-radio-openEnded" -> "NoOpenEnded",
+        "agreement-radio-openEnded" -> "false",
         "agreementEndDate.day" -> "12",
         "agreementEndDate.month" -> "12",
         "agreementEndDate.year" -> "2025",
-        "agreement-breakClause-radio" -> "NoBreakClause"
+        "agreement-breakClause-radio" -> "false"
       )
       val boundForm = AgreementForm.form.bind(data)
 
@@ -287,11 +287,11 @@ class AgreementFormSpec extends AnyWordSpec with Matchers {
       val data = Map("agreementStartDate.day" -> "",
         "agreementStartDate.month" -> "",
         "agreementStartDate.year" -> "2025",
-        "agreement-radio-openEnded" -> "NoOpenEnded",
+        "agreement-radio-openEnded" -> "false",
         "agreementEndDate.day" -> "12",
         "agreementEndDate.month" -> "12",
         "agreementEndDate.year" -> "2025",
-        "agreement-breakClause-radio" -> "NoBreakClause"
+        "agreement-breakClause-radio" -> "false"
       )
       val boundForm = AgreementForm.form.bind(data)
 
@@ -303,11 +303,11 @@ class AgreementFormSpec extends AnyWordSpec with Matchers {
       val data = Map("agreementStartDate.day" -> "",
         "agreementStartDate.month" -> "4",
         "agreementStartDate.year" -> "2025",
-        "agreement-radio-openEnded" -> "NoOpenEnded",
+        "agreement-radio-openEnded" -> "false",
         "agreementEndDate.day" -> "12",
         "agreementEndDate.month" -> "12",
         "agreementEndDate.year" -> "2025",
-        "agreement-breakClause-radio" -> "NoBreakClause"
+        "agreement-breakClause-radio" -> "false"
       )
       val boundForm = AgreementForm.form.bind(data)
 
@@ -319,11 +319,11 @@ class AgreementFormSpec extends AnyWordSpec with Matchers {
       val data = Map("agreementStartDate.day" -> "30",
         "agreementStartDate.month" -> "",
         "agreementStartDate.year" -> "2025",
-        "agreement-radio-openEnded" -> "NoOpenEnded",
+        "agreement-radio-openEnded" -> "false",
         "agreementEndDate.day" -> "12",
         "agreementEndDate.month" -> "12",
         "agreementEndDate.year" -> "2025",
-        "agreement-breakClause-radio" -> "NoBreakClause"
+        "agreement-breakClause-radio" -> "false"
       )
       val boundForm = AgreementForm.form.bind(data)
 
@@ -335,11 +335,11 @@ class AgreementFormSpec extends AnyWordSpec with Matchers {
       val data = Map("agreementStartDate.day" -> "30",
         "agreementStartDate.month" -> "4",
         "agreementStartDate.year" -> "",
-        "agreement-radio-openEnded" -> "NoOpenEnded",
+        "agreement-radio-openEnded" -> "false",
         "agreementEndDate.day" -> "12",
         "agreementEndDate.month" -> "12",
         "agreementEndDate.year" -> "2025",
-        "agreement-breakClause-radio" -> "NoBreakClause"
+        "agreement-breakClause-radio" -> "false"
       )
       val boundForm = AgreementForm.form.bind(data)
 
@@ -348,7 +348,7 @@ class AgreementFormSpec extends AnyWordSpec with Matchers {
     }
 
     "serialize to JSON correctly" in {
-      val form = AgreementForm(NGRDate("30", "4", "2025"), "NoOpenEnded", Some(NGRDate("30", "4", "2025")), "YesBreakClause", Some("I have a break clause for..."))
+      val form = AgreementForm(NGRDate("30", "4", "2025"), "false", Some(NGRDate("30", "4", "2025")), "true", Some("I have a break clause for..."))
       val json = Json.toJson(form)
 
       json shouldBe Json.obj(
@@ -357,13 +357,13 @@ class AgreementFormSpec extends AnyWordSpec with Matchers {
           "month" -> "4",
           "year" -> "2025"
         ),
-        "openEndedRadio" -> "NoOpenEnded",
+        "openEndedRadio" -> "false",
         "openEndedDate" -> Json.obj(
           "day" -> "30",
           "month" -> "4",
           "year" -> "2025"
         ),
-        "breakClauseRadio" -> "YesBreakClause",
+        "breakClauseRadio" -> "true",
         "breakClauseInfo" -> "I have a break clause for..."
       )
     }
@@ -375,20 +375,20 @@ class AgreementFormSpec extends AnyWordSpec with Matchers {
           "month" -> "4",
           "year" -> "2025"
         ),
-        "openEndedRadio" -> "NoOpenEnded",
+        "openEndedRadio" -> "false",
         "openEndedDate" -> Json.obj(
           "day" -> "30",
           "month" -> "4",
           "year" -> "2025"
         ),
-        "breakClauseRadio" -> "YesBreakClause",
+        "breakClauseRadio" -> "true",
         "breakClauseInfo" -> "I have a break clause for..."
       )
 
       val result = json.validate[AgreementForm]
 
       result.isSuccess shouldBe true
-      result.get shouldBe AgreementForm(NGRDate("30", "4", "2025"), "NoOpenEnded", Some(NGRDate("30", "4", "2025")), "YesBreakClause", Some("I have a break clause for..."))
+      result.get shouldBe AgreementForm(NGRDate("30", "4", "2025"), "false", Some(NGRDate("30", "4", "2025")), "true", Some("I have a break clause for..."))
     }
 
     "fail deserialization if value is missing" in {

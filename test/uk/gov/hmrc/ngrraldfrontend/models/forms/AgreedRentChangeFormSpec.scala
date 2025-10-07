@@ -27,18 +27,18 @@ class AgreedRentChangeFormSpec extends AnyWordSpec with Matchers {
 
   "AgreedRentChangeForm" should {
     "bind successfully with a valid value yes" in {
-      val data = Map(fieldName -> "yes")
+      val data = Map(fieldName -> "true")
       val boundForm = AgreedRentChangeForm.form.bind(data)
 
       boundForm.hasErrors shouldBe false
-      boundForm.value shouldBe Some(AgreedRentChangeForm("yes"))
+      boundForm.value shouldBe Some(AgreedRentChangeForm("true"))
     }
     "bind successfully with a valid value no" in {
-      val data = Map(fieldName -> "no")
+      val data = Map(fieldName -> "false")
       val boundForm = AgreedRentChangeForm.form.bind(data)
 
       boundForm.hasErrors shouldBe false
-      boundForm.value shouldBe Some(AgreedRentChangeForm("no"))
+      boundForm.value shouldBe Some(AgreedRentChangeForm("false"))
     }
 
     "return an error when the radio value is missing" in {
@@ -50,8 +50,8 @@ class AgreedRentChangeFormSpec extends AnyWordSpec with Matchers {
     }
 
     "unbind correctly to a data map" in {
-      val form = AgreedRentChangeForm.form.fill(AgreedRentChangeForm("no"))
-      form.data shouldBe Map(fieldName -> "no")
+      val form = AgreedRentChangeForm.form.fill(AgreedRentChangeForm("false"))
+      form.data shouldBe Map(fieldName -> "false")
     }
   }
 }

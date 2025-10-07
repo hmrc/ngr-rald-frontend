@@ -26,11 +26,11 @@ class RentInterimFormSpec extends AnyWordSpec with Matchers {
   "RentInterimForm" should {
 
     "bind successfully with valid data" in {
-      val data = Map(RentInterimForm.agreedRentChangeRadio -> "yes")
+      val data = Map(RentInterimForm.agreedRentChangeRadio -> "true")
       val boundForm: Form[RentInterimForm] = RentInterimForm.form.bind(data)
 
       boundForm.errors shouldBe empty
-      boundForm.value shouldBe Some(RentInterimForm("yes"))
+      boundForm.value shouldBe Some(RentInterimForm("true"))
     }
 
     "fail to bind when radio value is missing" in {
@@ -43,10 +43,10 @@ class RentInterimFormSpec extends AnyWordSpec with Matchers {
 
 
     "unbind correctly to form data" in {
-      val formData = RentInterimForm("no")
+      val formData = RentInterimForm("false")
       val unbound = RentInterimForm.form.fill(formData).data
 
-      unbound shouldBe Map(RentInterimForm.agreedRentChangeRadio -> "no")
+      unbound shouldBe Map(RentInterimForm.agreedRentChangeRadio -> "false")
     }
   }
 }

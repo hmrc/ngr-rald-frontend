@@ -22,14 +22,15 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.FormGroup
 import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.Fieldset
 import uk.gov.hmrc.ngrraldfrontend.helpers.TestSupport
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
+import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{noButton, yesButton}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatTypeOfLeaseRenewalForm
 
 class NGRRadioSpec extends TestSupport {
 
   "buildRadios" must {
     "generate a radio button with page heading" in {
-      val ngrButton1 = NGRRadioButtons("Yes", Yes)
-      val ngrButton2 = NGRRadioButtons("No", No)
+      val ngrButton1 = yesButton()
+      val ngrButton2 = noButton()
       val ngrRadioName = NGRRadioName("radioName")
       val testnNgrTitle = Some(Legend(content = Text(messages("radioName")), classes = "", isPageHeading = true))
       val ngrRadios = NGRRadio(radioGroupName = ngrRadioName, NGRRadioButtons = Seq(ngrButton1,ngrButton2), ngrTitle = testnNgrTitle)
@@ -40,14 +41,14 @@ class NGRRadioSpec extends TestSupport {
           Some(Fieldset(None, Some(Legend(Text("radioName"), "", true)), "", None, Map())),
           None, None, FormGroup(None, Map(), None, None),
           Some("radioName"), "radioName", List(RadioItem(Text("Yes"),
-            None, Some("Yes"), None, Some(Hint(None, "", Map(), Text(""))),
-            None, false, None, false, Map()), RadioItem(Text("No"), None, Some("No"),
+            None, Some("true"), None, Some(Hint(None, "", Map(), Text(""))),
+            None, false, None, false, Map()), RadioItem(Text("No"), None, Some("false"),
             None, Some(Hint(None, "", Map(), Text(""))), None, false, None, false, Map())), "govuk-radios", Map(), None)
     }
 
     "generate a radio button with a warning" in {
-      val ngrButton1 = NGRRadioButtons("Yes", Yes)
-      val ngrButton2 = NGRRadioButtons("No", No)
+      val ngrButton1 = yesButton()
+      val ngrButton2 = noButton()
       val ngrRadioName = NGRRadioName("radioName")
       val testnNgrTitle = Some(Legend(content = Text(messages("radioName")), classes = "", isPageHeading = true))
       val ngrRadios = NGRRadio(radioGroupName = ngrRadioName, NGRRadioButtons = Seq(ngrButton1, ngrButton2), ngrTitle = testnNgrTitle)
@@ -58,10 +59,10 @@ class NGRRadioSpec extends TestSupport {
           None, Map())), None, Some(ErrorMessage(None, "", Map(), Some("Error"),
           Text("error message"))), FormGroup(None, Map(), None, None),
           Some("radioName"), "radioName",
-          List(RadioItem(Text("Yes"), None, Some("Yes"),
+          List(RadioItem(Text("Yes"), None, Some("true"),
             None, Some(Hint(None, "", Map(), Text(""))),
             None, false, None, false, Map()), RadioItem(Text("No"),
-            None, Some("No"), None, Some(Hint(None, "", Map(), Text(""))),
+            None, Some("false"), None, Some(Hint(None, "", Map(), Text(""))),
             None, false, None, false, Map())), "govuk-radios", Map(), None)
     }
   }

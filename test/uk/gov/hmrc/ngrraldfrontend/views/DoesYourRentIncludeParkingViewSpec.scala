@@ -18,13 +18,11 @@ package uk.gov.hmrc.ngrraldfrontend.views
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import uk.gov.hmrc.govukfrontend.views.Aliases.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.Legend
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.Radios
 import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
 import uk.gov.hmrc.ngrraldfrontend.models.NormalMode
-import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{buildRadios, noButton, yesButton}
-import uk.gov.hmrc.ngrraldfrontend.models.components.{NGRRadio, NGRRadioName}
+import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio
+import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.DoesYourRentIncludeParkingForm
 import uk.gov.hmrc.ngrraldfrontend.views.html.DoesYourRentIncludeParkingView
 
@@ -46,8 +44,8 @@ class DoesYourRentIncludeParkingViewSpec extends ViewBaseSpec {
   }
 
   val address = "5 Brixham Marina, Berry Head Road, Brixham, Devon, TQ5 9BW"
-  private val ngrRadio: NGRRadio = NGRRadio(NGRRadioName("doesYourRentIncludeParking-radio-value"),ngrTitle = Some(Legend(content = Text(messages("doesYourRentIncludeParking.title")), classes = "govuk-fieldset__legend--l", isPageHeading = true)) ,NGRRadioButtons = Seq(yesButton, noButton))
-  val form = DoesYourRentIncludeParkingForm.form.fillAndValidate(DoesYourRentIncludeParkingForm("Yes"))
+  private val ngrRadio: NGRRadio = DoesYourRentIncludeParkingForm.includeParkingRadio
+  val form = DoesYourRentIncludeParkingForm.form.fillAndValidate(DoesYourRentIncludeParkingForm("true"))
   val radio: Radios = buildRadios(form, ngrRadio)
 
   "DidYouAgreeRentWithLandlordView" must {
