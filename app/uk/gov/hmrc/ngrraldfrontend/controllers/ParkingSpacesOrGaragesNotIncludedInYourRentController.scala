@@ -71,8 +71,8 @@ class ParkingSpacesOrGaragesNotIncludedInYourRentController @Inject()(view: Park
       ))
     )),
     hint = Some(Hint(
-      id = Some("provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.hint"),
-      content = Text(messages("provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.hint"))
+      id = Some("parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.hint"),
+      content = Text(messages("parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.hint"))
     ))
   )
   
