@@ -35,7 +35,7 @@
 @layout(pageTitle = Some(messages("rentReview.title")), showBackLink = true, fullWidth = false) {
     @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentReviewController.submit(mode), Symbol("autoComplete") -> "off") {
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form, Some("rentReview"), Some(Seq("date"))))))
+            @govukErrorSummary(ErrorSummaryViewModel(form, Some("rentReview"), Some(Seq("date"))))
         }
         <span class="govuk-caption-m">@propertyAddress</span>
         <h1 class="govuk-heading-l">@messages("rentReview.title")</h1>
