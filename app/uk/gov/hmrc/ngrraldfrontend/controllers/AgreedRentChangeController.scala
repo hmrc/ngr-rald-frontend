@@ -24,6 +24,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.{Mode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{buildRadios, simpleNgrRadio}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreedRentChangeForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreedRentChangeForm.form
+import uk.gov.hmrc.ngrraldfrontend.models.{Mode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.AgreedRentChangePage
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository

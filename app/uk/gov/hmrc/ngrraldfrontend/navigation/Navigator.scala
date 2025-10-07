@@ -17,10 +17,9 @@
 package uk.gov.hmrc.ngrraldfrontend.navigation
 
 import play.api.mvc.Call
-import controllers.routes
 import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.ngrraldfrontend.models.{CheckMode, Mode, NormalMode, ProvideDetailsOfFirstSecondRentPeriod, UserAnswers, WhatYourRentIncludes}
-import uk.gov.hmrc.ngrraldfrontend.pages._
+import uk.gov.hmrc.ngrraldfrontend.models.{CheckMode, Mode, NormalMode, ProvideDetailsOfFirstSecondRentPeriod, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.pages.*
 
 import javax.inject.{Inject, Singleton}
 
