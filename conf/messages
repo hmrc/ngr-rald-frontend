@@ -409,3 +409,9 @@ rentReview.rentReviewMonthsYears.months.maximum.12.error = The number of months 
 rentReview.rentReviewMonthsYears.months.maximum.11.error = The number of months for how often your rent is reviewed must be 11 or less
 rentReview.rentReviewMonthsYears.years.invalid.error = The number of years for how often your rent is reviewed must be a number, like 2
 rentReview.rentReviewMonthsYears.years.maximum.1000.error = How often your rent is reviewed must be 1,000 years or less
+
+#How much was the lump sum
+howMuchWasTheLumpSum.title = How much was the lump sum?
+howMuchWasTheLumpSum.empty.error = Enter the lump sum, in pounds
+howMuchWasTheLumpSum.tooLarge.error = Lump sum must be £9,999,999.99 or less
+howMuchWasTheLumpSum.format.error =  Lump sum must be a number, like 50,000
