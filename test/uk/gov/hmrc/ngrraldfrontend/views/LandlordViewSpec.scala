@@ -50,7 +50,7 @@ class LandlordViewSpec extends ViewBaseSpec {
 
     val address = "5 Brixham Marina, Berry Head Road, Brixham, Devon, TQ5 9BW"
     val form = LandlordForm.form.fillAndValidate(LandlordForm(landlordName = "Bob", hasRelationship = "false", None))
-    private val ngrRadio: NGRRadio = LandlordForm.landlordRadio(form, ngrCharacterCountComponent)
+    private val ngrRadio: NGRRadio = LandlordForm.landlordRadio(form, mockNGRCharacterCountComponent)
     val radio: Radios = buildRadios(form, ngrRadio)
 
     "LandlordView" must {
