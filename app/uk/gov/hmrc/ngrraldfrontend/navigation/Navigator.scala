@@ -156,7 +156,7 @@ class Navigator @Inject()() {
     case ConfirmBreakClausePage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.LandlordController.show(NormalMode) //TODO This needs to be amended when the journey is completed
     //TODO Next page not made yet
     case RentReviewPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(NormalMode)
-    case HowMuchWasTheLumpSumPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(NormalMode)
+    case HowMuchWasTheLumpSumPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(NormalMode) //TODO This needs to be amended when the journey is completed
   }
 
   //TODO change to check your answers page
