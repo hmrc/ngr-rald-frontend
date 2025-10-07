@@ -78,16 +78,14 @@ class Navigator @Inject()() {
       }
     case DidYouAgreeRentWithLandlordPage => answers =>
       answers.get(DidYouAgreeRentWithLandlordPage) match {
-        case Some(value) =>
+        case Some(value)  =>
           value match {
-            case true =>
-              answers.get(AgreedRentChangePage) match {
-                case Some(value) => value match {
-                  case true => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(NormalMode)
-                  case _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeController.show(NormalMode)
-                }
-                case None => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(NormalMode)
+            case true => answers.get(ProvideDetailsOfFirstSecondRentPeriodPage) match {
+              case Some(value) => value match {
+                case value => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeController.show(NormalMode)
               }
+              case None => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(NormalMode)
+            }
             case _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentInterimController.show(NormalMode)
           }
         case None => throw new NotFoundException("Failed to find answers")
