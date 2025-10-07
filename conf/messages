@@ -398,3 +398,7 @@ repairsAndInsurance.radio.youAndLandlord = You and the landlord
 repairsAndInsurance.internalRepairs.radio.required.error = Select who pays for internal repairs
 repairsAndInsurance.externalRepairs.radio.required.error = Select who pays for external repairs
 repairsAndInsurance.buildingInsurance.radio.required.error = Select who pays for buildings insurance
+
+#DidYouGetMoneyFromLandlord
+didYouGetMoneyFromLandlord.title = Did you get any money from the landlord or previous tenant to take on the lease?
+didYouGetMoneyFromLandlord.empty.error = Select yes if you got any money from the landlord or previous tenant to take on the lease
