@@ -409,3 +409,16 @@ rentReview.rentReviewMonthsYears.months.maximum.12.error = The number of months 
 rentReview.rentReviewMonthsYears.months.maximum.11.error = The number of months for how often your rent is reviewed must be 11 or less
 rentReview.rentReviewMonthsYears.years.invalid.error = The number of years for how often your rent is reviewed must be a number, like 2
 rentReview.rentReviewMonthsYears.years.maximum.1000.error = How often your rent is reviewed must be 1,000 years or less
+
+#ParkingSpacesOrGaragesNotIncludedInYourRent
+parkingSpacesOrGaragesNotIncludedInYourRent.title = Parking spaces or garages not included in your rent
+parkingSpacesOrGaragesNotIncludedInYourRent.subheading = How many parking spaces or garages do you pay extra for?
+parkingSpacesOrGaragesNotIncludedInYourRent.hint = If spaces are in communal car park and you do not have a set number of spaces. Provide an approximate number of spaces
+parkingSpacesOrGaragesNotIncludedInYourRent.uncoveredSpaces.label = Uncovered spaces
+parkingSpacesOrGaragesNotIncludedInYourRent.coveredSpaces.label = Covered spaces
+parkingSpacesOrGaragesNotIncludedInYourRent.garages.label = Garages
+parkingSpacesOrGaragesNotIncludedInYourRent.totalCost.title = How much extra do you pay each year for parking and garages (excluding VAT)?
+parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.label = When was this payment agreed for parking and garages?
+
+parkingSpacesOrGaragesNotIncludedInYourRent.totalCost.required.error =
+parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.required.error =

@@ -42,6 +42,7 @@ trait ControllerSpecSupport extends TestSupport {
   def fakeDataProperty(property: Option[VMVProperty], answers: Option[UserAnswers]) = new FakeDataRetrievalAction(answers, property)
   val mockNavigator: Navigator = inject[Navigator]
   val mockInputText: InputText = inject[InputText]
+  val mockNGRCharacterCountComponent: NGRCharacterCountComponent = inject[NGRCharacterCountComponent]
   val mockNgrConnector: NGRConnector = mock[NGRConnector]
   implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
   val fakeAuth = new FakeAuthenticatedRequest(mcc.parsers.defaultBodyParser)

@@ -29,7 +29,6 @@ import uk.gov.hmrc.ngrraldfrontend.views.html.components.NGRCharacterCountCompon
 
 class LandlordViewSpec extends ViewBaseSpec {
   lazy val view: LandlordView = inject[LandlordView]
-  lazy val ngrCharacterCountComponent: NGRCharacterCountComponent = inject[NGRCharacterCountComponent]
 
   object Strings {
     val heading = "Landlord"

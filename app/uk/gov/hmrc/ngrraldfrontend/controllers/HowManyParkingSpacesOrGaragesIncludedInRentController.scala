@@ -32,9 +32,10 @@ import uk.gov.hmrc.ngrraldfrontend.views.html.HowManyParkingSpacesOrGaragesInclu
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class HowManyParkingSpacesOrGaragesIncludedInRentController @Inject()(howManyParkingSpacesOrGaragesIncludedInRentView: HowManyParkingSpacesOrGaragesIncludedInRentView,
                                                                       authenticate: AuthRetrievals,
                                                                       inputText: InputText,

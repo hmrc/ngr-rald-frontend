@@ -30,9 +30,10 @@ import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.views.html.RentInterimView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class RentInterimController @Inject()(rentInterimView: RentInterimView, 
                                       authenticate: AuthRetrievals,
                                       getData: DataRetrievalAction,

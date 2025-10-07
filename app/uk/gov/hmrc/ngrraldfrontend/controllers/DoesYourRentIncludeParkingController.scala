@@ -30,9 +30,10 @@ import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.views.html.DoesYourRentIncludeParkingView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class DoesYourRentIncludeParkingController  @Inject()(doesYourRentIncludeParkingView: DoesYourRentIncludeParkingView,
                                                       authenticate: AuthRetrievals,
                                                       getData: DataRetrievalAction,
