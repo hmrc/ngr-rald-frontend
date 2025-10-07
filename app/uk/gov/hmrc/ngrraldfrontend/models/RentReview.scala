@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.ngrraldfrontend.pages
+package uk.gov.hmrc.ngrraldfrontend.models
 
-import play.api.libs.json.JsPath
+import play.api.libs.json.{Json, OFormat}
 
-case object AgreedRentChangePage extends QuestionPage[Boolean] {
+final case class RentReview(hasIncludeRentReview: Boolean, rentReviewMonths: Option[Int], rentReviewYears: Option[Int], canRentGoDown: Boolean)
 
-  override def toString: String = "agreedRentChange"
-
-  override def path: JsPath = JsPath \ toString
+object RentReview {
+  implicit val format: OFormat[RentReview] = Json.format[RentReview]
 }

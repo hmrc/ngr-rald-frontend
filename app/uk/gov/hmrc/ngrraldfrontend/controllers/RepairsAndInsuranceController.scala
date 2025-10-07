@@ -50,9 +50,9 @@ class RepairsAndInsuranceController @Inject()(repairsAndInsuranceView: RepairsAn
       }
         Future.successful(Ok(repairsAndInsuranceView(
           form = preparedForm,
-          internalRepairs = buildRadios(preparedForm, RepairsAndInsuranceForm.ngrRadio(preparedForm, "internalRepairs")),
-          externalRepairs = buildRadios(preparedForm, RepairsAndInsuranceForm.ngrRadio(preparedForm, "externalRepairs")),
-          buildingInsurance = buildRadios(preparedForm, RepairsAndInsuranceForm.ngrRadio(preparedForm, "buildingInsurance")),
+          internalRepairs = buildRadios(preparedForm, RepairsAndInsuranceForm.createRadio("internalRepairs")),
+          externalRepairs = buildRadios(preparedForm, RepairsAndInsuranceForm.createRadio("externalRepairs")),
+          buildingInsurance = buildRadios(preparedForm, RepairsAndInsuranceForm.createRadio("buildingInsurance")),
           propertyAddress = request.property.addressFull,
           mode
         )))
@@ -65,9 +65,9 @@ class RepairsAndInsuranceController @Inject()(repairsAndInsuranceView: RepairsAn
         formWithErrors => {
             Future.successful(BadRequest(repairsAndInsuranceView(
               form = formWithErrors,
-              internalRepairs = buildRadios(formWithErrors, RepairsAndInsuranceForm.ngrRadio(formWithErrors, "internalRepairs")),
-              externalRepairs = buildRadios(formWithErrors, RepairsAndInsuranceForm.ngrRadio(formWithErrors, "externalRepairs")),
-              buildingInsurance = buildRadios(formWithErrors, RepairsAndInsuranceForm.ngrRadio(formWithErrors, "buildingInsurance")),
+              internalRepairs = buildRadios(formWithErrors, RepairsAndInsuranceForm.createRadio("internalRepairs")),
+              externalRepairs = buildRadios(formWithErrors, RepairsAndInsuranceForm.createRadio("externalRepairs")),
+              buildingInsurance = buildRadios(formWithErrors, RepairsAndInsuranceForm.createRadio("buildingInsurance")),
               propertyAddress = request.property.addressFull,
               mode
             )))

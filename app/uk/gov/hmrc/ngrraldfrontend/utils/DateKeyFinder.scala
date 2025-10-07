@@ -58,6 +58,9 @@ trait DateKeyFinder {
       case (key, message) if message.contains(s"$pageName.$fieldName.year.required.error") ||
         message.contains(s"$pageName.$fieldName.before.1900.error") =>
         formError.copy(key = s"$fieldName.year")
+      case ("", message) if message.contains(s"$pageName.$fieldName.required.error") ||
+        message.contains(s"$pageName.$fieldName.invalid.error") =>
+        formError.copy(key = s"$fieldName")
       case _ =>
         formError
 }

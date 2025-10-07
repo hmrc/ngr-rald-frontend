@@ -38,7 +38,7 @@ class WhatTypeOfLeaseRenewalControllerSpec extends ControllerSpecSupport {
   val view: WhatTypeOfLeaseRenewalView = inject[WhatTypeOfLeaseRenewalView]
   val controllerNoProperty: WhatTypeOfLeaseRenewalController = new WhatTypeOfLeaseRenewalController(view, fakeAuth, fakeData(None),mockSessionRepository,mockNavigator, mcc)(mockConfig)
   val controllerProperty: Option[UserAnswers] => WhatTypeOfLeaseRenewalController = answers => new WhatTypeOfLeaseRenewalController(view, fakeAuth, fakeDataProperty(Some(property),answers),mockSessionRepository,mockNavigator, mcc)(mockConfig)
-  val renewedAgreementAnswers: Option[UserAnswers] = UserAnswers("id").set(WhatTypeOfLeaseRenewalPage, Constants.renewedAgreement).toOption
+  val renewedAgreementLeaseAnswers: Option[UserAnswers] = UserAnswers("id").set(WhatTypeOfLeaseRenewalPage, Constants.renewedAgreement).toOption
   val surrenderAndRenewalAnswers: Option[UserAnswers] = UserAnswers("id").set(WhatTypeOfLeaseRenewalPage, Constants.surrenderAndRenewal).toOption
 
   "TypeOfLeaseRenewalController" must {
@@ -50,7 +50,7 @@ class WhatTypeOfLeaseRenewalControllerSpec extends ControllerSpecSupport {
         content must include(pageTitle)
       }
       "Return OK and the correct view with prepopulated data for a Renewed Agreement" in {
-        val result = controllerProperty(renewedAgreementAnswers).show(NormalMode)(authenticatedFakeRequest)
+        val result = controllerProperty(renewedAgreementLeaseAnswers).show(NormalMode)(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
         val document = Jsoup.parse(content)

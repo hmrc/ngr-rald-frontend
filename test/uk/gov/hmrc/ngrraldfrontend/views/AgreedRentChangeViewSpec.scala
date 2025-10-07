@@ -22,13 +22,13 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.Radios
 import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
 import uk.gov.hmrc.ngrraldfrontend.models.NormalMode
-import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{buildRadios, noButton, yesButton}
-import uk.gov.hmrc.ngrraldfrontend.models.components.{LeaseOrTenancy, NGRRadio, NGRRadioButtons, NGRRadioName, NavBarContents, NavBarCurrentPage, NavBarPageContents, NavigationBarContent, Verbal, Written, Yes}
-import uk.gov.hmrc.ngrraldfrontend.models.forms.{AgreedRentChangeForm, WhatTypeOfAgreementForm}
+import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio
+import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{buildRadios, simpleNgrRadio}
+import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreedRentChangeForm
 import uk.gov.hmrc.ngrraldfrontend.views.html.AgreedRentChangeView
 
 class AgreedRentChangeViewSpec extends ViewBaseSpec {
-  lazy val view:  AgreedRentChangeView = inject[ AgreedRentChangeView]
+  lazy val view: AgreedRentChangeView = inject[AgreedRentChangeView]
 
   object Strings {
     val heading = "Have you agreed in advance with the landlord when and by how much rent goes up?"
@@ -47,8 +47,8 @@ class AgreedRentChangeViewSpec extends ViewBaseSpec {
   }
 
   val address = "5 Brixham Marina, Berry Head Road, Brixham, Devon, TQ5 9BW"
-  private val ngrRadio: NGRRadio = NGRRadio(NGRRadioName(AgreedRentChangeForm.agreedRentChangeRadio), Seq(yesButton, noButton))
-  val form = AgreedRentChangeForm.form.fillAndValidate(AgreedRentChangeForm("Yes"))
+  private val ngrRadio: NGRRadio = simpleNgrRadio(AgreedRentChangeForm.agreedRentChangeRadio)
+  val form = AgreedRentChangeForm.form.fillAndValidate(AgreedRentChangeForm("true"))
   val radio: Radios = buildRadios(form, ngrRadio)
 
   "TellUsAboutYourNewAgreementView" must {

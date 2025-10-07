@@ -23,14 +23,14 @@ import play.api.data.FormError
 class RentPeriodsFormSpec extends AnyFlatSpec with Matchers {
 
   val validData = Map(
-    "rent-periods-radio" -> "Yes"
+    "rent-periods-radio" -> "true"
   )
 
   "RentPeriodsForm" should "bind valid data successfully" in {
     val boundForm = RentPeriodsForm.form.bind(validData)
 
     boundForm.errors shouldBe empty
-    boundForm.value shouldBe Some(RentPeriodsForm("Yes"))
+    boundForm.value shouldBe Some(RentPeriodsForm("true"))
   }
 
   it should "fail when radio input is missing" in {
@@ -41,10 +41,8 @@ class RentPeriodsFormSpec extends AnyFlatSpec with Matchers {
   }
 
   "RentPeriods.unapply" should "extract fields correctly" in {
-    val form = RentPeriodsForm("Yes")
+    val form = RentPeriodsForm("true")
     val result = RentPeriodsForm.unapply(form)
-    result shouldBe Some("Yes")
+    result shouldBe Some("true")
   }
-  
-
 }

@@ -38,7 +38,7 @@ class DoesYourRentIncludeParkingControllerSpec extends ControllerSpecSupport {
   val view: DoesYourRentIncludeParkingView = inject[DoesYourRentIncludeParkingView]
   val controllerNoProperty: DoesYourRentIncludeParkingController = new DoesYourRentIncludeParkingController(view, fakeAuth, fakeData(None), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
   val controllerProperty: Option[UserAnswers] => DoesYourRentIncludeParkingController = answers => new DoesYourRentIncludeParkingController(view, fakeAuth, fakeDataProperty(Some(property),answers), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
-  val doesYourRentIncludeParkingAnswers: Option[UserAnswers] =  UserAnswers("id").set(DoesYourRentIncludeParkingPage, "Yes").toOption
+  val doesYourRentIncludeParkingAnswers: Option[UserAnswers] =  UserAnswers("id").set(DoesYourRentIncludeParkingPage, true).toOption
 
 
   "Does Your Rent IncludeParking Controller" must {
@@ -54,8 +54,7 @@ class DoesYourRentIncludeParkingControllerSpec extends ControllerSpecSupport {
         status(result) mustBe OK
         val content = contentAsString(result)
         val document = Jsoup.parse(content)
-        println(document)
-        document.select("input[type=radio][name=doesYourRentIncludeParking-radio-value][value=Yes]").hasAttr("checked") mustBe true
+        document.select("input[type=radio][name=doesYourRentIncludeParking-radio-value][value=true]").hasAttr("checked") mustBe true
       }
       "Return NotFoundException when property is not found in the mongo" in {
         when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(None))
@@ -71,7 +70,7 @@ class DoesYourRentIncludeParkingControllerSpec extends ControllerSpecSupport {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.DoesYourRentIncludeParkingController.submit(NormalMode))
           .withFormUrlEncodedBody(
-            "doesYourRentIncludeParking-radio-value" -> "Yes",
+            "doesYourRentIncludeParking-radio-value" -> "true",
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -84,7 +83,7 @@ class DoesYourRentIncludeParkingControllerSpec extends ControllerSpecSupport {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.DoesYourRentIncludeParkingController.submit(NormalMode))
           .withFormUrlEncodedBody(
-            "doesYourRentIncludeParking-radio-value" -> "No",
+            "doesYourRentIncludeParking-radio-value" -> "false",
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {

@@ -27,7 +27,7 @@ class LandlordFormSpec extends AnyFlatSpec with Matchers {
 
   val validData = Map(
     "landlord-name-value" -> "John Doe",
-    "landlord-radio" -> "LandlordRelationshipNo",
+    "landlord-radio" -> "false",
     "landlord-relationship" -> ""
   )
 
@@ -35,13 +35,13 @@ class LandlordFormSpec extends AnyFlatSpec with Matchers {
     val boundForm = LandlordForm.form.bind(validData)
 
     boundForm.errors shouldBe empty
-    boundForm.value shouldBe Some(LandlordForm("John Doe", "LandlordRelationshipNo", None))
+    boundForm.value shouldBe Some(LandlordForm("John Doe", "false", None))
   }
 
   it should "fail when landlord name is missing" in {
     val data = Map(
       "landlord-name-value" -> "",
-      "landlord-radio" -> "LandlordRelationshipYes",
+      "landlord-radio" -> "true",
       "landlord-relationship" -> ""
     )
     val boundForm = LandlordForm.form.bind(data)
@@ -59,7 +59,7 @@ class LandlordFormSpec extends AnyFlatSpec with Matchers {
   it should "fail when 'Yes' is selected but no description is provided" in {
     val data = Map(
       "landlord-name-value" -> "Jane Doe",
-      "landlord-radio" -> "LandlordRelationshipYes",
+      "landlord-radio" -> "true",
       "landlord-radio-other" -> "   " // whitespace only
     )
 
@@ -71,37 +71,37 @@ class LandlordFormSpec extends AnyFlatSpec with Matchers {
   it should "pass when 'Yes' is selected and description is provided" in {
     val data = Map(
       "landlord-name-value" -> "Jane Doe",
-      "landlord-radio" -> "LandlordRelationshipYes",
+      "landlord-radio" -> "true",
       "landlord-relationship" -> "Friend of the family"
     )
 
     val boundForm = LandlordForm.form.bind(data)
 
     boundForm.errors shouldBe empty
-    boundForm.value shouldBe Some(LandlordForm("Jane Doe", "LandlordRelationshipYes", Some("Friend of the family")))
+    boundForm.value shouldBe Some(LandlordForm("Jane Doe", "true", Some("Friend of the family")))
   }
 
   "LandlordForm.unapply" should "extract fields correctly" in {
-    val form = LandlordForm("John Doe", "LandlordRelationshipYes", Some("Other info"))
+    val form = LandlordForm("John Doe", "true", Some("Other info"))
     val result = LandlordForm.unapply(form)
 
-    result shouldBe Some(("John Doe", "LandlordRelationshipYes", Some("Other info")))
+    result shouldBe Some(("John Doe", "true", Some("Other info")))
   }
 
   it should "handle None for landlordOther correctly" in {
-    val form = LandlordForm("Jane Smith", "LandlordRelationshipNo", None)
+    val form = LandlordForm("Jane Smith", "false", None)
     val result = LandlordForm.unapply(form)
 
-    result shouldBe Some(("Jane Smith", "LandlordRelationshipNo", None))
+    result shouldBe Some(("Jane Smith", "false", None))
   }
 
   "LandlordForm.format" should "serialize to JSON correctly" in {
-    val form = LandlordForm("John Doe", "LandlordRelationshipYes", Some("Other info"))
+    val form = LandlordForm("John Doe", "true", Some("Other info"))
     val json = Json.toJson(form)
 
     json shouldBe Json.obj(
       "landlordName" -> "John Doe",
-      "hasRelationship" -> "LandlordRelationshipYes",
+      "hasRelationship" -> "true",
       "landlordRelationship" -> "Other info"
     )
   }
@@ -109,13 +109,13 @@ class LandlordFormSpec extends AnyFlatSpec with Matchers {
   it should "deserialize from JSON correctly" in {
     val json = Json.obj(
       "landlordName" -> "Jane Smith",
-      "hasRelationship" -> "LandlordRelationshipYes",
+      "hasRelationship" -> "true",
       "landlordRelationship" -> JsNull
     )
 
     val result = json.validate[LandlordForm]
     result.isSuccess shouldBe true
-    result.get shouldBe LandlordForm("Jane Smith", "LandlordRelationshipYes", None)
+    result.get shouldBe LandlordForm("Jane Smith", "true", None)
   }
 
   def validate(form: LandlordForm): Boolean = {
@@ -123,13 +123,13 @@ class LandlordFormSpec extends AnyFlatSpec with Matchers {
   }
 
   it should "pass if hasRelationship is Yes and landlordRelationship is <= 250 characters" in {
-    val form = LandlordForm("Jane Smith","LandlordRelationshipYes", Some("This is a valid description."))
+    val form = LandlordForm("Jane Smith","true", Some("This is a valid description."))
     validate(form) shouldBe true
   }
 
   it should "fail if hasRelationship is Yes and landlordRelationship is > 250 characters" in {
     val longText = "x" * 251
-    val form = LandlordForm("Jane Smith", "LandlordRelationshipYes", Some(longText))
+    val form = LandlordForm("Jane Smith", "true", Some(longText))
     validate(form) shouldBe false
   }
 

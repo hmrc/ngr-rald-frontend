@@ -43,7 +43,7 @@ class AgreedRentChangeControllerSpec extends ControllerSpecSupport {
   val view: AgreedRentChangeView = inject[AgreedRentChangeView]
   val controllerNoProperty = new AgreedRentChangeController(view, fakeAuth, fakeData(None), mockSessionRepository, mockNavigator, mcc)(mockConfig)
   val controllerProperty: Option[UserAnswers] => AgreedRentChangeController = answers => new AgreedRentChangeController(view, fakeAuth, fakeDataProperty(Some(property), answers), mockSessionRepository, mockNavigator, mcc)(mockConfig)
-  val agreedRentChangeAnswers: Option[UserAnswers] = UserAnswers("id").set(AgreedRentChangePage, "Yes").toOption
+  val agreedRentChangeAnswers: Option[UserAnswers] = UserAnswers("id").set(AgreedRentChangePage, true).toOption
 
   "AgreedRentChangeController" must {
     "method show" should {
@@ -58,8 +58,8 @@ class AgreedRentChangeControllerSpec extends ControllerSpecSupport {
         status(result) mustBe OK
         val content = contentAsString(result)
         val document = Jsoup.parse(content)
-        document.select("input[type=radio][name=agreed-rent-change-radio][value=Yes]").hasAttr("checked") mustBe true
-        document.select("input[type=radio][name=agreed-rent-change-radio][value=No]").hasAttr("checked") mustBe false
+        document.select("input[type=radio][name=agreed-rent-change-radio][value=true]").hasAttr("checked") mustBe true
+        document.select("input[type=radio][name=agreed-rent-change-radio][value=false]").hasAttr("checked") mustBe false
       }
       "Return NotFoundException when property is not found in the mongo" in {
         when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(None))
@@ -73,7 +73,7 @@ class AgreedRentChangeControllerSpec extends ControllerSpecSupport {
       "Return SEE and the correct view after submitting Yes" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val fakePostRequest =  FakeRequest(routes.WhatTypeOfLeaseRenewalController.submit(NormalMode))
-          .withFormUrlEncodedBody((AgreedRentChangeForm.agreedRentChangeRadio, "Yes"))
+          .withFormUrlEncodedBody((AgreedRentChangeForm.agreedRentChangeRadio, "true"))
           .withHeaders(HeaderNames.authorisation -> "Bearer 1")
 
         val result = controllerProperty(None).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
@@ -83,7 +83,7 @@ class AgreedRentChangeControllerSpec extends ControllerSpecSupport {
       "Return OK and the correct view after submitting No" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val fakePostRequest = FakeRequest(routes.AgreedRentChangeController.submit(NormalMode))
-          .withFormUrlEncodedBody((AgreedRentChangeForm.agreedRentChangeRadio, "No"))
+          .withFormUrlEncodedBody((AgreedRentChangeForm.agreedRentChangeRadio, "false"))
           .withHeaders(HeaderNames.authorisation -> "Bearer 1")
 
         val result = controllerProperty(None).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))

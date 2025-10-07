@@ -38,8 +38,6 @@ class HowMuchIsTotalAnnualRentControllerSpec extends ControllerSpecSupport {
   val view: HowMuchIsTotalAnnualRentView = inject[HowMuchIsTotalAnnualRentView]
   val controllerNoProperty: HowMuchIsTotalAnnualRentController = new HowMuchIsTotalAnnualRentController(view, fakeAuth, fakeData(None), mockSessionRepository, mockNavigator, mcc)(mockConfig)
   val controllerProperty: HowMuchIsTotalAnnualRentController = new HowMuchIsTotalAnnualRentController(view, fakeAuth, fakeDataProperty(Some(property),None), mockSessionRepository, mockNavigator, mcc)(mockConfig)
-  lazy val renewedAgreementAnswers: Option[UserAnswers] = UserAnswers("id").set(TellUsAboutYourRenewedAgreementPage, RenewedAgreement).toOption
-  lazy val newAgreementAnswers: Option[UserAnswers] = UserAnswers("id").set(TellUsAboutYourNewAgreementPage, NewAgreement).toOption
   lazy val howMuchIsTotalAnnualRentAnswers: Option[UserAnswers] = UserAnswers("id").set(HowMuchIsTotalAnnualRentPage, BigDecimal(1234.67)).toOption
   lazy val filledController: Option[UserAnswers] => HowMuchIsTotalAnnualRentController = answers => HowMuchIsTotalAnnualRentController(
     view, fakeAuth, fakeDataProperty(Some(property), answers), mockSessionRepository, mockNavigator, mcc
