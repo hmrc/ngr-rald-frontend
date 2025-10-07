@@ -23,33 +23,40 @@ import play.api.i18n.*
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.Legend
-import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{noButton, yesButton}
-import uk.gov.hmrc.ngrraldfrontend.models.components.{NGRRadio, NGRRadioButtons, NGRRadioName}
+import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio
+import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{ngrRadio, noButton, yesButton}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 
 final case class DidYouGetMoneyFromLandlordForm(radio: String)
 
-object DidYouGetMoneyFromLandlordForm extends CommonFormValidators with Mappings{
+object DidYouGetMoneyFromLandlordForm extends Mappings{
   implicit val format: OFormat[DidYouGetMoneyFromLandlordForm] = Json.format[DidYouGetMoneyFromLandlordForm]
 
   private lazy val radioUnselectedError = "didYouGetMoneyFromLandlord.empty.error"
-  private val radio = "didYouGetMoneyFromLandlord-radio-value"
+  private val moneyFromLandlordRadio = "didYouGetMoneyFromLandlord-radio-value"
 
   val messagesApi: MessagesApi = new DefaultMessagesApi()
   val lang: Lang = Lang.defaultLang
   val messages: Messages = MessagesImpl(lang, messagesApi)
 
-  def unapply(didYouGetMoneyFromLandlordForm: DidYouGetMoneyFromLandlordForm): Option[(String)] =
-    Some(DidYouGetMoneyFromLandlordForm.radio)
-
-  def ngrRadio(form: Form[DidYouGetMoneyFromLandlordForm])(implicit messages: Messages): NGRRadio =
-    NGRRadio(NGRRadioName(radio), ngrTitle = Some(Legend(content = Text(messages("didYouGetMoneyFromLandlord.title")), classes = "govuk-fieldset__legend--l", isPageHeading = true)), NGRRadioButtons = Seq(yesButton, noButton))
+  def unapply(didYouGetMoneyFromLandlordForm: DidYouGetMoneyFromLandlordForm): Option[String] = Some(didYouGetMoneyFromLandlordForm.radio)
 
   def form: Form[DidYouGetMoneyFromLandlordForm] = {
     Form(
       mapping(
-        radio -> radioText(radioUnselectedError),
+        moneyFromLandlordRadio -> radioText(radioUnselectedError),
       )(DidYouGetMoneyFromLandlordForm.apply)(DidYouGetMoneyFromLandlordForm.unapply)
     )
   }
+
+  def moneyLandlordRadio(implicit messages: Messages): NGRRadio =
+    ngrRadio(
+      radioName = moneyFromLandlordRadio,
+      radioButtons = Seq(
+        yesButton(radioContent = "service.yes"),
+        noButton(radioContent  = "service.no")
+      ),
+      ngrTitle = "didYouGetMoneyFromLandlord.title",
+      ngrTitleClass = "govuk-fieldset__legend--l"
+    )
 }

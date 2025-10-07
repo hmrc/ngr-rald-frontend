@@ -52,7 +52,7 @@ class DidYouGetMoneyFromLandlordController  @Inject()(didYouGetMoneyFromLandlord
         Future.successful(Ok(didYouGetMoneyFromLandlordView(
           selectedPropertyAddress = request.property.addressFull,
           form = preparedForm,
-          ngrRadio = buildRadios(preparedForm, DidYouGetMoneyFromLandlordForm.ngrRadio(preparedForm)),
+          ngrRadio = buildRadios(preparedForm, DidYouGetMoneyFromLandlordForm.moneyLandlordRadio),
           mode = mode
         )))
     }
@@ -64,7 +64,7 @@ class DidYouGetMoneyFromLandlordController  @Inject()(didYouGetMoneyFromLandlord
         formWithErrors => {
             Future.successful(BadRequest(didYouGetMoneyFromLandlordView(
               form = formWithErrors,
-              ngrRadio = buildRadios(formWithErrors, DidYouGetMoneyFromLandlordForm .ngrRadio(formWithErrors)),
+              ngrRadio = buildRadios(formWithErrors, DidYouGetMoneyFromLandlordForm.moneyLandlordRadio),
               selectedPropertyAddress = request.property.addressFull,
               mode = mode
             )))

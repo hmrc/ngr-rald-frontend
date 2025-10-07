@@ -23,8 +23,8 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.Legend
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.Radios
 import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
 import uk.gov.hmrc.ngrraldfrontend.models.NormalMode
-import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{buildRadios, noButton, yesButton}
-import uk.gov.hmrc.ngrraldfrontend.models.components.{NGRRadio, NGRRadioName}
+import uk.gov.hmrc.ngrraldfrontend.models.components.*
+import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.DidYouGetMoneyFromLandlordForm
 import uk.gov.hmrc.ngrraldfrontend.views.html.DidYouGetMoneyFromLandlordView
 
@@ -47,7 +47,7 @@ class DidYouGetMoneyFromLandlordViewSpec extends ViewBaseSpec {
   }
 
   val address = "5 Brixham Marina, Berry Head Road, Brixham, Devon, TQ5 9BW"
-  private val ngrRadio: NGRRadio = NGRRadio(NGRRadioName("didYouGetMoneyFromLandlord-radio-value"),ngrTitle = Some(Legend(content = Text(messages("didYouGetMoneyFromLandlord.title")), classes = "govuk-fieldset__legend--l", isPageHeading = true)) ,NGRRadioButtons = Seq(yesButton, noButton))
+  private val ngrRadio: NGRRadio = DidYouGetMoneyFromLandlordForm.moneyLandlordRadio
   val form = DidYouGetMoneyFromLandlordForm.form.fillAndValidate(DidYouGetMoneyFromLandlordForm("Yes"))
   val radio: Radios = buildRadios(form, ngrRadio)
 
