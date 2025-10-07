@@ -30,10 +30,10 @@
     saveAndContinueButton: saveAndContinueButton
 )
 
-@(form:Form[WhatYourRentIncludesForm], radios1: Radios, radios2: Radios, radios3: Radios, radios4: Radios, radios5: Radios, radios6: Radios, propertyAddress: String, mode: Mode)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+@(form:Form[WhatYourRentIncludesForm], radios1: Radios, radios2: Radios, radios3: Radios, radios4: Option[Radios], radios5: Option[Radios], radios6: Option[Radios], propertyAddress: String, mode: Mode)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
 @layout(pageTitle = Some(messages("whatYourRentIncludes.title")), showBackLink = true, fullWidth = true) {
-    @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatYourRentIncludesController.submit(mode), Symbol("autoComplete") -> "off") {
+    @formHelper(action = if(radios4.nonEmpty){uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatYourRentIncludesController.submit(mode)} else {uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatRentIncludesRatesWaterServiceController.submit(mode)}, Symbol("autoComplete") -> "off") {
     @if(form.errors.nonEmpty) {
         @govukErrorSummary(ErrorSummaryViewModel(form))
     }
@@ -48,9 +48,15 @@
             ))
             @govukRadios(radios2)
             @govukRadios(radios3)
-            @govukRadios(radios4)
-            @govukRadios(radios5)
-            @govukRadios(radios6)
+            @if(radios4.nonEmpty) {
+                @govukRadios(radios4.get)
+            }
+            @if(radios5.nonEmpty) {
+                @govukRadios(radios5.get)
+            }
+            @if(radios6.nonEmpty) {
+                @govukRadios(radios6.get)
+            }
             @saveAndContinueButton(msg = messages("service.continue"), isStartButton = false)
         </div>
     </div>

@@ -120,25 +120,25 @@ object WhatYourRentIncludesForm extends CommonFormValidators with Mappings {
       whatYourRentIncludesForm.bedroomNumbers
     ))
 
-  def answerToForm(whatYourRentIncludes: WhatYourRentIncludes): Form[WhatYourRentIncludesForm] =
-    form.fill(WhatYourRentIncludesForm(
+  def answerToForm(whatYourRentIncludes: WhatYourRentIncludes, isOTCLease: Boolean): Form[WhatYourRentIncludesForm] =
+    form(isOTCLease = false).fill(WhatYourRentIncludesForm(
       livingAccommodationRadio = whatYourRentIncludes.livingAccommodation.toString,
       rentPartAddressRadio = whatYourRentIncludes.rentPartAddress.toString,
       rentEmptyShellRadio = whatYourRentIncludes.rentEmptyShell.toString,
-      rentIncBusinessRatesRadio = whatYourRentIncludes.rentIncBusinessRates.toString,
-      rentIncWaterChargesRadio = whatYourRentIncludes.rentIncWaterCharges.toString,
-      rentIncServiceRadio = whatYourRentIncludes.rentIncService.toString,
+      rentIncBusinessRatesRadio = whatYourRentIncludes.rentIncBusinessRates.map(_.toString).getOrElse(""),
+      rentIncWaterChargesRadio = whatYourRentIncludes.rentIncWaterCharges.map(_.toString).getOrElse(""),
+      rentIncServiceRadio = whatYourRentIncludes.rentIncService.map(_.toString).getOrElse(""),
       bedroomNumbers = whatYourRentIncludes.bedroomNumbers.map(_.toString)
     ))
 
-  def formToAnswers(whatYourRentIncludesForm: WhatYourRentIncludesForm): WhatYourRentIncludes =
+  def formToAnswers(whatYourRentIncludesForm: WhatYourRentIncludesForm, isOTCLease: Boolean): WhatYourRentIncludes =
     WhatYourRentIncludes(
       livingAccommodation = whatYourRentIncludesForm.livingAccommodationRadio.toBoolean,
       rentPartAddress = whatYourRentIncludesForm.rentPartAddressRadio.toBoolean,
       rentEmptyShell = whatYourRentIncludesForm.rentEmptyShellRadio.toBoolean,
-      rentIncBusinessRates = whatYourRentIncludesForm.rentIncBusinessRatesRadio.toBoolean,
-      rentIncWaterCharges = whatYourRentIncludesForm.rentIncWaterChargesRadio.toBoolean,
-      rentIncService = whatYourRentIncludesForm.rentIncServiceRadio.toBoolean,
+      rentIncBusinessRates = if(isOTCLease) None else whatYourRentIncludesForm.rentIncBusinessRatesRadio.toBooleanOption,
+      rentIncWaterCharges = if(isOTCLease) None else whatYourRentIncludesForm.rentIncWaterChargesRadio.toBooleanOption,
+      rentIncService = if(isOTCLease) None else whatYourRentIncludesForm.rentIncServiceRadio.toBooleanOption,
       bedroomNumbers = whatYourRentIncludesForm.bedroomNumbers match {
         case Some(value) if whatYourRentIncludesForm.livingAccommodationRadio == "true" => Some(value.toInt)
         case _ => None
@@ -165,15 +165,15 @@ object WhatYourRentIncludesForm extends CommonFormValidators with Mappings {
         Valid
     )
 
-  def form: Form[WhatYourRentIncludesForm] = {
+  def form(isOTCLease: Boolean): Form[WhatYourRentIncludesForm] = {
     Form(
       mapping(
         livingAccommodationRadio  -> radioText(livingAccommodationRadioError),
         rentPartAddressRadio      -> radioText(rentPartAddressRadioError),
         rentEmptyShellRadio       -> radioText(rentEmptyShellRadioError),
-        rentIncBusinessRatesRadio -> radioText(rentIncBusinessRatesRadioError),
-        rentIncWaterChargesRadio  -> radioText(rentIncWaterChargesRadioError),
-        rentIncServiceRadio       -> radioText(rentIncServiceRadioError),
+        rentIncBusinessRatesRadio -> optionalRadioText(rentIncBusinessRatesRadioError, isOTCLease),
+        rentIncWaterChargesRadio  -> optionalRadioText(rentIncWaterChargesRadioError, isOTCLease),
+        rentIncServiceRadio       -> optionalRadioText(rentIncServiceRadioError, isOTCLease),
         bedroomNumbers            -> optional(text().transform[String](_.strip(), identity))
       )(WhatYourRentIncludesForm.apply)(WhatYourRentIncludesForm.unapply)
         .verifying(isBedroomNumberValid)

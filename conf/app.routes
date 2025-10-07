@@ -112,6 +112,12 @@ POST       /what-rent-includes                                     uk.gov.hmrc.n
 GET        /what-rent-includes/change                              uk.gov.hmrc.ngrraldfrontend.controllers.WhatYourRentIncludesController.show(mode: Mode = CheckMode)
 POST       /what-rent-includes/change                              uk.gov.hmrc.ngrraldfrontend.controllers.WhatYourRentIncludesController.submit(mode: Mode = CheckMode)
 
+#What your rent includes for Total Occupancy Cost lease
+GET        /what-rent-includes-rates-water-service                 uk.gov.hmrc.ngrraldfrontend.controllers.WhatRentIncludesRatesWaterServiceController.show(mode: Mode = NormalMode)
+POST       /what-rent-includes-rates-water-service                 uk.gov.hmrc.ngrraldfrontend.controllers.WhatRentIncludesRatesWaterServiceController.submit(mode: Mode = NormalMode)
+GET        /what-rent-includes-rates-water-service/change          uk.gov.hmrc.ngrraldfrontend.controllers.WhatRentIncludesRatesWaterServiceController.show(mode: Mode = CheckMode)
+POST       /what-rent-includes-rates-water-service/change          uk.gov.hmrc.ngrraldfrontend.controllers.WhatRentIncludesRatesWaterServiceController.submit(mode: Mode = CheckMode)
+
 #Does your rent include parking spaces or garages
 GET        /does-rent-include-parking-spaces-or-garages            uk.gov.hmrc.ngrraldfrontend.controllers.DoesYourRentIncludeParkingController.show(mode: Mode = NormalMode)
 POST       /does-rent-include-parking-spaces-or-garages            uk.gov.hmrc.ngrraldfrontend.controllers.DoesYourRentIncludeParkingController.submit(mode: Mode = NormalMode)

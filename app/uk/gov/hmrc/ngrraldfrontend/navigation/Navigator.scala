@@ -56,6 +56,8 @@ class Navigator @Inject()() {
             case Some(_) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatYourRentIncludesController.show(NormalMode)
             case None => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchIsTotalAnnualRentController.show(NormalMode)
           }
+          case "TotalOccupancyCost" if answers.get(TellUsAboutRentPage).nonEmpty =>
+            uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatRentIncludesRatesWaterServiceController.show(NormalMode)
           case _ => answers.get(TellUsAboutRentPage) match {
             case Some(value) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatYourRentIncludesController.show(NormalMode)
             case None => uk.gov.hmrc.ngrraldfrontend.controllers.routes.AgreedRentChangeController.show(NormalMode)
@@ -119,9 +121,19 @@ class Navigator @Inject()() {
         //TODO ADD A TECHNICAL DIFFICULTIES PAGE
         case None => ???
       }
-    case RentDatesAgreePage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatYourRentIncludesController.show(NormalMode)
+    case RentDatesAgreePage => answers =>
+      answers.get(WhatIsYourRentBasedOnPage) match
+        case Some(value) if value.rentBased == "TotalOccupancyCost" =>
+          uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatRentIncludesRatesWaterServiceController.show(NormalMode)
+        case _ =>
+          uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatYourRentIncludesController.show(NormalMode)
     case WhatYourRentIncludesPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DoesYourRentIncludeParkingController.show(NormalMode)
-    case RentDatesAgreeStartPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatYourRentIncludesController.show(NormalMode)
+    case RentDatesAgreeStartPage => answers =>
+      answers.get(WhatIsYourRentBasedOnPage) match
+        case Some(value) if value.rentBased == "TotalOccupancyCost" =>
+          uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatRentIncludesRatesWaterServiceController.show(NormalMode)
+        case _ =>
+          uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatYourRentIncludesController.show(NormalMode)
     case DoesYourRentIncludeParkingPage => answers =>
       answers.get(DoesYourRentIncludeParkingPage) match {
         case Some(value) => value match {

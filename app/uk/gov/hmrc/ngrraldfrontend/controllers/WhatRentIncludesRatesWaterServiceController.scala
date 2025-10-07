@@ -25,7 +25,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatYourRentIncludesForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatYourRentIncludesForm.{answerToForm, form, formToAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.{Mode, UserAnswers, WhatYourRentIncludes}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
-import uk.gov.hmrc.ngrraldfrontend.pages.WhatYourRentIncludesPage
+import uk.gov.hmrc.ngrraldfrontend.pages.{WhatIsYourRentBasedOnPage, WhatYourRentIncludesPage}
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.views.html.WhatYourRentIncludesView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
@@ -35,38 +35,38 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class WhatYourRentIncludesController @Inject()(whatYourRentIncludesView: WhatYourRentIncludesView,
-                                               authenticate: AuthRetrievals,
-                                               inputText: InputText, 
-                                               getData: DataRetrievalAction,
-                                               sessionRepository: SessionRepository,
-                                               navigator: Navigator, 
-                                               mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
+class WhatRentIncludesRatesWaterServiceController @Inject()(whatYourRentIncludesView: WhatYourRentIncludesView,
+                                                            authenticate: AuthRetrievals,
+                                                            inputText: InputText,
+                                                            getData: DataRetrievalAction,
+                                                            sessionRepository: SessionRepository,
+                                                            navigator: Navigator,
+                                                            mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport {
 
   def show(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(WhatYourRentIncludesPage) match {
-      case Some(value) => answerToForm(value, isOTCLease = false)
-      case None => form(isOTCLease = false)
-    }
-        Future.successful(Ok(whatYourRentIncludesView(
-          form = preparedForm,
-          radios1 = buildRadios(preparedForm, WhatYourRentIncludesForm.ngrRadio1(preparedForm, inputText)),
-          radios2 = buildRadios(preparedForm, WhatYourRentIncludesForm.ngrRadio2),
-          radios3 = buildRadios(preparedForm, WhatYourRentIncludesForm.ngrRadio3),
-          radios4 = Some(buildRadios(preparedForm, WhatYourRentIncludesForm.ngrRadio4)),
-          radios5 = Some(buildRadios(preparedForm, WhatYourRentIncludesForm.ngrRadio5)),
-          radios6 = Some(buildRadios(preparedForm, WhatYourRentIncludesForm.ngrRadio6)),
-          propertyAddress = request.property.addressFull,
-          mode = mode
-        )))
+        case Some(value) => answerToForm(value, isOTCLease = true)
+        case None => form(isOTCLease = true)
+      }
+      Future.successful(Ok(whatYourRentIncludesView(
+        form = preparedForm,
+        radios1 = buildRadios(preparedForm, WhatYourRentIncludesForm.ngrRadio1(preparedForm, inputText)),
+        radios2 = buildRadios(preparedForm, WhatYourRentIncludesForm.ngrRadio2),
+        radios3 = buildRadios(preparedForm, WhatYourRentIncludesForm.ngrRadio3),
+        radios4 = None,
+        radios5 = None,
+        radios6 = None,
+        propertyAddress = request.property.addressFull,
+        mode = mode
+      )))
     }
   }
 
   def submit(mode: Mode): Action[AnyContent] =
     (authenticate andThen getData).async { implicit request =>
-      form(isOTCLease = false).bindFromRequest().fold(
+      form(isOTCLease = true).bindFromRequest().fold(
         formWithErrors => {
           val correctedFormErrors = formWithErrors.errors.map { formError =>
             (formError.key, formError.messages) match
@@ -80,9 +80,9 @@ class WhatYourRentIncludesController @Inject()(whatYourRentIncludesView: WhatYou
               radios1 = buildRadios(formWithErrors, WhatYourRentIncludesForm.ngrRadio1(formWithCorrectedErrors, inputText)),
               radios2 = buildRadios(formWithErrors, WhatYourRentIncludesForm.ngrRadio2),
               radios3 = buildRadios(formWithErrors, WhatYourRentIncludesForm.ngrRadio3),
-              radios4 = Some(buildRadios(formWithErrors, WhatYourRentIncludesForm.ngrRadio4)),
-              radios5 = Some(buildRadios(formWithErrors, WhatYourRentIncludesForm.ngrRadio5)),
-              radios6 = Some(buildRadios(formWithErrors, WhatYourRentIncludesForm.ngrRadio6)),
+              radios4 = None,
+              radios5 = None,
+              radios6 = None,
               propertyAddress = request.property.addressFull,
               mode = mode
             )))
