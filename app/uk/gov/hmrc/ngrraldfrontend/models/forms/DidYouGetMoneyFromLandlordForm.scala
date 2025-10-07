@@ -23,8 +23,8 @@ import play.api.i18n.*
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.Legend
-import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{noButton, yesButton}
+import uk.gov.hmrc.ngrraldfrontend.models.components.{NGRRadio, NGRRadioButtons, NGRRadioName}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 
 final case class DidYouGetMoneyFromLandlordForm(radio: String)
