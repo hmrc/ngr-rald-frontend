@@ -68,14 +68,14 @@ class WhatYourRentIncludesViewSpec  extends ViewBaseSpec {
 
   val address = "5 Brixham Marina, Berry Head Road, Brixham, Devon, TQ5 9BW"
   val mockInputText: InputText = inject[InputText]
-  val form = WhatYourRentIncludesForm.form.fillAndValidate(WhatYourRentIncludesForm("true", "true", "true", "true", "true", "true", Some("6")))
+  val form = WhatYourRentIncludesForm.form(isOTCLease = false).fillAndValidate(WhatYourRentIncludesForm("true", "true", "true", "true", "true", "true", Some("6")))
 
   private val radio1: Radios = buildRadios(form, WhatYourRentIncludesForm.ngrRadio1(form, inputText))
   private val radio2: Radios = buildRadios(form, WhatYourRentIncludesForm.ngrRadio2)
   private val radio3: Radios = buildRadios(form, WhatYourRentIncludesForm.ngrRadio3)
-  private val radio4: Radios = buildRadios(form, WhatYourRentIncludesForm.ngrRadio4)
-  private val radio5: Radios = buildRadios(form, WhatYourRentIncludesForm.ngrRadio5)
-  private val radio6: Radios = buildRadios(form, WhatYourRentIncludesForm.ngrRadio6)
+  private val radio4: Option[Radios] = Some(buildRadios(form, WhatYourRentIncludesForm.ngrRadio4))
+  private val radio5: Option[Radios] = Some(buildRadios(form, WhatYourRentIncludesForm.ngrRadio5))
+  private val radio6: Option[Radios] = Some(buildRadios(form, WhatYourRentIncludesForm.ngrRadio6))
 
   "WhatYourRentIncludesView" must {
     val whatYourRentIncludesView = view(form, radio1, radio2, radio3, radio4, radio5, radio6, address, NormalMode)

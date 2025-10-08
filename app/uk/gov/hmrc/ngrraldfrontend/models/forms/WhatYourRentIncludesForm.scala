@@ -153,6 +153,7 @@ object WhatYourRentIncludesForm extends CommonFormValidators with Mappings {
         case None if hasLivingAccommodation => Left(Seq(FormError(key, "whatYourRentIncludes.bedroom.number.required.error", args)))
         case Some(s) if hasLivingAccommodation => isBedroomNumberValid(s.trim, key, args)
         case Some(s) => Right(Some(s))
+        case None    => Right(None)
       }
 
     override def unbind(key: String, value: Option[String]): Map[String, String] =

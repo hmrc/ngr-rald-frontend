@@ -39,7 +39,6 @@ trait Formatters {
   private[mappings] def optionalStringFormatter(args: Seq[String] = Seq.empty): Formatter[String] = new Formatter[String] {
 
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
-      println(Console.YELLOW_B + data + Console.RESET)
       data.get(key) match {
         case None => Right("")
         case Some(s) => Right(s.trim)

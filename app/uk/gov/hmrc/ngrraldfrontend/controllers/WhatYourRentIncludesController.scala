@@ -68,16 +68,9 @@ class WhatYourRentIncludesController @Inject()(whatYourRentIncludesView: WhatYou
     (authenticate andThen getData).async { implicit request =>
       form(isOTCLease = false).bindFromRequest().fold(
         formWithErrors => {
-          val correctedFormErrors = formWithErrors.errors.map { formError =>
-            (formError.key, formError.messages) match
-              case ("", messages) =>
-                formError.copy(key = "bedroomNumbers")
-              case _ => formError
-          }
-          val formWithCorrectedErrors = formWithErrors.copy(errors = correctedFormErrors)
             Future.successful(BadRequest(whatYourRentIncludesView(
-              form = formWithCorrectedErrors,
-              radios1 = buildRadios(formWithErrors, WhatYourRentIncludesForm.ngrRadio1(formWithCorrectedErrors, inputText)),
+              form = formWithErrors,
+              radios1 = buildRadios(formWithErrors, WhatYourRentIncludesForm.ngrRadio1(formWithErrors, inputText)),
               radios2 = buildRadios(formWithErrors, WhatYourRentIncludesForm.ngrRadio2),
               radios3 = buildRadios(formWithErrors, WhatYourRentIncludesForm.ngrRadio3),
               radios4 = Some(buildRadios(formWithErrors, WhatYourRentIncludesForm.ngrRadio4)),
