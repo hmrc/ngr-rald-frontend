@@ -90,7 +90,7 @@ class WhatRentIncludesRatesWaterServiceController @Inject()(whatYourRentIncludes
         whatYourRentIncludesForm =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
-              .set(WhatYourRentIncludesPage, formToAnswers(whatYourRentIncludesForm, isOTCLease = false)))
+              .set(WhatYourRentIncludesPage, formToAnswers(whatYourRentIncludesForm, isOTCLease = true)))
             _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(WhatYourRentIncludesPage, mode, updatedAnswers))
       )
