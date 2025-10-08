@@ -118,7 +118,6 @@ POST       /does-rent-include-parking-spaces-or-garages            uk.gov.hmrc.n
 GET        /does-rent-include-parking-spaces-or-garages/change     uk.gov.hmrc.ngrraldfrontend.controllers.DoesYourRentIncludeParkingController.show(mode: Mode = CheckMode)
 POST       /does-rent-include-parking-spaces-or-garages/change     uk.gov.hmrc.ngrraldfrontend.controllers.DoesYourRentIncludeParkingController.submit(mode: Mode = CheckMode)
 
-
 #How many parking spaces or garages included in rent
 GET        /how-many-parking-spaces-or-garages-included-in-rent           uk.gov.hmrc.ngrraldfrontend.controllers.HowManyParkingSpacesOrGaragesIncludedInRentController.show(mode: Mode = NormalMode)
 POST       /how-many-parking-spaces-or-garages-included-in-rent           uk.gov.hmrc.ngrraldfrontend.controllers.HowManyParkingSpacesOrGaragesIncludedInRentController.submit(mode: Mode = NormalMode)
@@ -154,3 +153,9 @@ GET        /rent-review                                  uk.gov.hmrc.ngrraldfron
 POST       /rent-review                                  uk.gov.hmrc.ngrraldfrontend.controllers.RentReviewController.submit(mode: Mode = NormalMode)
 GET        /rent-review/change                           uk.gov.hmrc.ngrraldfrontend.controllers.RentReviewController.show(mode: Mode = CheckMode)
 POST       /rent-review/change                           uk.gov.hmrc.ngrraldfrontend.controllers.RentReviewController.submit(mode: Mode = CheckMode)
+
+#Rent review
+GET        /repairs-and-fitting-out                      uk.gov.hmrc.ngrraldfrontend.controllers.RepairsAndFittingOutController.show(mode: Mode = NormalMode)
+POST       /repairs-and-fitting-out                      uk.gov.hmrc.ngrraldfrontend.controllers.RepairsAndFittingOutController.submit(mode: Mode = NormalMode)
+GET        /repairs-and-fitting-out/change               uk.gov.hmrc.ngrraldfrontend.controllers.RepairsAndFittingOutController.show(mode: Mode = CheckMode)
+POST       /repairs-and-fitting-out/change               uk.gov.hmrc.ngrraldfrontend.controllers.RepairsAndFittingOutController.submit(mode: Mode = CheckMode)

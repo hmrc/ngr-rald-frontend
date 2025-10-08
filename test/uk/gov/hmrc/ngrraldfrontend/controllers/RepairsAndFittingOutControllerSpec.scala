@@ -28,20 +28,20 @@ import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, NormalMode, UserAnswers}
-import uk.gov.hmrc.ngrraldfrontend.pages.{ConfirmBreakClausePage, DoesYourRentIncludeParkingPage}
-import uk.gov.hmrc.ngrraldfrontend.views.html.ConfirmBreakClauseView
+import uk.gov.hmrc.ngrraldfrontend.pages.{RepairsAndFittingOutPage, DoesYourRentIncludeParkingPage}
+import uk.gov.hmrc.ngrraldfrontend.views.html.RepairsAndFittingOutView
 
 import scala.concurrent.Future
 
-class ConfirmBreakClauseControllerSpec extends ControllerSpecSupport {
-  val pageTitle = "Did your agreement allow you to trigger a break clause?"
-  val view: ConfirmBreakClauseView = inject[ConfirmBreakClauseView]
-  val controllerNoProperty: ConfirmBreakClauseController = new ConfirmBreakClauseController(view, fakeAuth, fakeData(None), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
-  val controllerProperty: Option[UserAnswers] => ConfirmBreakClauseController = answers => new ConfirmBreakClauseController(view, fakeAuth, fakeDataProperty(Some(property),answers), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
-  val confirmBreakClauseAnswers: Option[UserAnswers] =  UserAnswers("id").set(ConfirmBreakClausePage, true).toOption
+class RepairsAndFittingOutControllerSpec extends ControllerSpecSupport {
+  val pageTitle = "Repairs and fitting out"
+  val view: RepairsAndFittingOutView = inject[RepairsAndFittingOutView]
+  val controllerNoProperty: RepairsAndFittingOutController = new RepairsAndFittingOutController(view, fakeAuth, fakeData(None), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
+  val controllerProperty: Option[UserAnswers] => RepairsAndFittingOutController = answers => new RepairsAndFittingOutController(view, fakeAuth, fakeDataProperty(Some(property),answers), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
+  val confirmBreakClauseAnswers: Option[UserAnswers] =  UserAnswers("id").set(RepairsAndFittingOutPage, true).toOption
 
 
-  "Confirm Break Clause Controller" must {
+  "RepairsAndFittingOutController" must {
     "method show" must {
       "Return OK and the correct view" in {
         val result = controllerProperty(None).show(NormalMode)(authenticatedFakeRequest)
@@ -54,8 +54,8 @@ class ConfirmBreakClauseControllerSpec extends ControllerSpecSupport {
         status(result) mustBe OK
         val content = contentAsString(result)
         val document = Jsoup.parse(content)
-        document.select("input[type=radio][name=confirmBreakClause-radio-value][value=true]").hasAttr("checked") mustBe true
-        document.select("input[type=radio][name=confirmBreakClause-radio-value][value=false]").hasAttr("checked") mustBe false
+        document.select("input[type=radio][name=repairsAndFittingOut-radio-value][value=true]").hasAttr("checked") mustBe true
+        document.select("input[type=radio][name=repairsAndFittingOut-radio-value][value=false]").hasAttr("checked") mustBe false
       }
       "Return NotFoundException when property is not found in the mongo" in {
         when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(None))
@@ -71,7 +71,7 @@ class ConfirmBreakClauseControllerSpec extends ControllerSpecSupport {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.ConfirmBreakClauseController.submit(NormalMode))
           .withFormUrlEncodedBody(
-            "confirmBreakClause-radio-value" -> "true",
+            "repairsAndFittingOut-radio-value" -> "true",
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -84,7 +84,7 @@ class ConfirmBreakClauseControllerSpec extends ControllerSpecSupport {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.ConfirmBreakClauseController.submit(NormalMode))
           .withFormUrlEncodedBody(
-            "confirmBreakClause-radio-value" -> "false",
+            "repairsAndFittingOut-radio-value" -> "false",
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -96,7 +96,7 @@ class ConfirmBreakClauseControllerSpec extends ControllerSpecSupport {
       "Return Form with Errors when no radio selection is input" in {
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.ConfirmBreakClauseController.submit(NormalMode))
           .withFormUrlEncodedBody(
-            "confirmBreakClause-radio-value" -> "",
+            "repairsAndFittingOut-radio-value" -> "",
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -105,7 +105,7 @@ class ConfirmBreakClauseControllerSpec extends ControllerSpecSupport {
         status(result) mustBe BAD_REQUEST
         val content = contentAsString(result)
         content must include(pageTitle)
-        content must include("Select yes if you have a break clause is a term in your agreement that allows you to end the agreement early.")
+        content must include("Select yes if you have done any repairs of fitting out in the property")
       }
       
       "Return Exception if no address is in the mongo" in {
