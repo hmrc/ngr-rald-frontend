@@ -160,7 +160,7 @@ object WhatYourRentIncludesForm extends CommonFormValidators with Mappings {
       Map(key -> value.getOrElse(""))
   }
 
-  private def isBedroomNumberValid(bedroomNumber: String, key: String, args: Seq[String] = Seq.empty) =
+  private def isBedroomNumberValid(bedroomNumber: String, key: String, args: Seq[String] = Seq.empty): Either[Seq[FormError], Option[String]] =
     if (bedroomNumber.isEmpty)
       Left(Seq(FormError(key, "whatYourRentIncludes.bedroom.number.required.error", args)))
     else if (!bedroomNumber.matches(wholePositiveNumberRegexp.pattern()))
