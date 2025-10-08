@@ -69,7 +69,7 @@ trait CommonFormValidators {
 
   protected def maximumValue[A](maximum: A, errorKey: String)(implicit ev: Ordering[A]): Constraint[A] =
     Constraint { input =>
-      import ev._
+      import ev.*
 
       if (input <= maximum) {
         Valid
@@ -80,7 +80,7 @@ trait CommonFormValidators {
 
   protected def minimumValue[A](minimum: A, errorKey: String)(implicit ev: Ordering[A]): Constraint[A] =
     Constraint { input =>
-      import ev._
+      import ev.*
 
       if (input >= minimum) {
         Valid
