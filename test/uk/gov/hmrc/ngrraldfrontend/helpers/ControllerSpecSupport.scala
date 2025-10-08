@@ -30,7 +30,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.requests.OptionalDataRequest
 import uk.gov.hmrc.ngrraldfrontend.models.vmvProperty.VMVProperty
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.{TellUsAboutRentPage, TellUsAboutYourNewAgreementPage, TellUsAboutYourRenewedAgreementPage}
-import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
+import uk.gov.hmrc.ngrraldfrontend.views.html.components.{InputText, NGRCharacterCountComponent}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -42,6 +42,7 @@ trait ControllerSpecSupport extends TestSupport {
   def fakeDataProperty(property: Option[VMVProperty], answers: Option[UserAnswers]) = new FakeDataRetrievalAction(answers, property)
   val mockNavigator: Navigator = inject[Navigator]
   val mockInputText: InputText = inject[InputText]
+  val mockNGRCharacterCountComponent: NGRCharacterCountComponent = inject[NGRCharacterCountComponent]
   val mockNgrConnector: NGRConnector = mock[NGRConnector]
   implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
   val fakeAuth = new FakeAuthenticatedRequest(mcc.parsers.defaultBodyParser)

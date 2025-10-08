@@ -20,8 +20,6 @@ import play.api.data.Form
 import play.api.data.Forms.mapping
 import play.api.i18n.*
 import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.govukfrontend.views.Aliases.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.Legend
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.ngrRadio
 import uk.gov.hmrc.ngrraldfrontend.models.forms.DoesYourRentIncludeParkingForm.radioText

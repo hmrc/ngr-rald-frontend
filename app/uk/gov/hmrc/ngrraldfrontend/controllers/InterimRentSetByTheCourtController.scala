@@ -23,9 +23,9 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Hint, PrefixOrSuffix, Text}
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-import uk.gov.hmrc.ngrraldfrontend.models.{InterimRentSetByTheCourt, Mode, NGRMonthYear, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.InterimRentSetByTheCourtForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.InterimRentSetByTheCourtForm.form
+import uk.gov.hmrc.ngrraldfrontend.models.{InterimRentSetByTheCourt, Mode, NGRMonthYear, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.InterimSetByTheCourtPage
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
@@ -34,9 +34,10 @@ import uk.gov.hmrc.ngrraldfrontend.views.html.InterimRentSetByTheCourtView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class InterimRentSetByTheCourtController @Inject()(interimRentSetByTheCourtView: InterimRentSetByTheCourtView,
                                                    authenticate: AuthRetrievals,
                                                    inputText: InputText,
