@@ -28,9 +28,9 @@ class WhatYourRentIncludesSpec extends PlaySpec {
         livingAccommodation = true,
         rentPartAddress = false,
         rentEmptyShell = true,
-        rentIncBusinessRates = false,
-        rentIncWaterCharges = true,
-        rentIncService = false,
+        rentIncBusinessRates = Some(false),
+        rentIncWaterCharges = Some(true),
+        rentIncService = Some(false),
         bedroomNumbers = Some(6)
       )
 
@@ -69,9 +69,9 @@ class WhatYourRentIncludesSpec extends PlaySpec {
         livingAccommodation = false,
         rentPartAddress = true,
         rentEmptyShell = false,
-        rentIncBusinessRates = true,
-        rentIncWaterCharges = false,
-        rentIncService = true,
+        rentIncBusinessRates = Some(true),
+        rentIncWaterCharges = Some(false),
+        rentIncService = Some(true),
         bedroomNumbers = None
       )
 

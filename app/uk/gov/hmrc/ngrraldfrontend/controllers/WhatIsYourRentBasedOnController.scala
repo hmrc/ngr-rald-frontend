@@ -107,7 +107,14 @@ class WhatIsYourRentBasedOnController @Inject()(view: WhatIsYourRentBasedOnView,
                   buildRadios(formWithErrors, ngrRadio(formWithCorrectedErrors)), request.property.addressFull, mode))),
           rentBasedOnForm =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(WhatIsYourRentBasedOnPage, RentBasedOn(rentBasedOnForm.radioValue,rentBasedOnForm.rentBasedOnOther)))
+              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
+                .set(WhatIsYourRentBasedOnPage, 
+                  RentBasedOn(rentBasedOnForm.radioValue, 
+                    if (rentBasedOnForm.radioValue == "Other")
+                      rentBasedOnForm.rentBasedOnOther
+                    else
+                      None
+                  )))
               _ <- sessionRepository.set(updatedAnswers)
             } yield Redirect(navigator.nextPage(WhatIsYourRentBasedOnPage, mode, updatedAnswers))
         )

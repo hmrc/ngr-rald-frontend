@@ -65,20 +65,10 @@ class LandlordController @Inject()(view: LandlordView,
         .bindFromRequest()
         .fold(
           formWithErrors =>
-            val correctedFormErrors = formWithErrors.errors.map { formError =>
-              (formError.key, formError.messages) match
-                case ("", messages) if messages.contains("landlord.radio.emptyText.error") =>
-                  formError.copy(key = "landlord-relationship")
-                case ("", messages) if messages.contains("landlord.radio.tooLong.error") =>
-                  formError.copy(key = "landlord-relationship")
-                case _ =>
-                  formError
-            }
-            val formWithCorrectedErrors = formWithErrors.copy(errors = correctedFormErrors)
             Future.successful(BadRequest(view(
               selectedPropertyAddress = request.property.addressFull,
-              formWithCorrectedErrors,
-              buildRadios(formWithErrors, LandlordForm.landlordRadio(formWithCorrectedErrors, ngrCharacterCountComponent)),
+              formWithErrors,
+              buildRadios(formWithErrors, LandlordForm.landlordRadio(formWithErrors, ngrCharacterCountComponent)),
               mode
             ))),
           landlordForm =>
