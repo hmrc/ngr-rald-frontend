@@ -37,7 +37,6 @@ import scala.concurrent.Future
 class WhatRentIncludesRatesWaterServiceControllerSpec  extends ControllerSpecSupport {
   val pageTitle = "What your rent includes"
   val view: WhatYourRentIncludesView = inject[WhatYourRentIncludesView]
-  val mockNGRCharacterCountComponent: NGRCharacterCountComponent = inject[NGRCharacterCountComponent]
   val controllerNoProperty: WhatRentIncludesRatesWaterServiceController = new WhatRentIncludesRatesWaterServiceController(
     view,
     fakeAuth,
