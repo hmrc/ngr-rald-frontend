@@ -37,7 +37,6 @@ import scala.concurrent.Future
 class LandlordControllerSpec extends ControllerSpecSupport {
   val pageTitle = "Landlord"
   val view: LandlordView = inject[LandlordView]
-  val mockNGRCharacterCountComponent: NGRCharacterCountComponent = inject[NGRCharacterCountComponent]
   val controllerNoProperty: LandlordController = new LandlordController(view, fakeAuth, mockNGRCharacterCountComponent, mcc, fakeData(None), mockSessionRepository, mockNavigator)(mockConfig, ec)
   val controllerProperty: LandlordController = new LandlordController(view, fakeAuth, mockNGRCharacterCountComponent, mcc, fakeDataProperty(Some(property),None), mockSessionRepository, mockNavigator)(mockConfig, ec)
   lazy val filledController: Option[UserAnswers] => LandlordController = answers => LandlordController(view, fakeAuth, mockNGRCharacterCountComponent, mcc, fakeDataProperty(Some(property), answers), mockSessionRepository, mockNavigator)

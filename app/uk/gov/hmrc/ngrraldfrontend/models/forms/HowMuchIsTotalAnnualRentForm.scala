@@ -18,11 +18,9 @@ package uk.gov.hmrc.ngrraldfrontend.models.forms
 
 import play.api.data.*
 import play.api.data.Forms.*
-import play.api.data.format.Formatter
 import play.api.libs.json.{Json, OFormat}
 
 import scala.math.BigDecimal.RoundingMode
-import scala.util.Try
 
 
 final case class HowMuchIsTotalAnnualRentForm(annualRent: BigDecimal)

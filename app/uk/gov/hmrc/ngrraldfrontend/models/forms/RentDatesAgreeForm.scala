@@ -20,7 +20,6 @@ import play.api.data.Form
 import play.api.data.Forms.mapping
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.ngrraldfrontend.models.*
-import uk.gov.hmrc.ngrraldfrontend.models.forms.CommonFormValidators
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 
 case class RentDatesAgreeForm(dateInput: NGRDate)
