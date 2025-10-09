@@ -26,7 +26,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatTypeOfAgreementForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatTypeOfAgreementForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.{Mode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
-import uk.gov.hmrc.ngrraldfrontend.pages.WhatTypeOfAgreementPage
+import uk.gov.hmrc.ngrraldfrontend.pages.{WhatIsYourRentBasedOnPage, WhatTypeOfAgreementPage}
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.views.html.WhatTypeOfAgreementView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -77,8 +77,10 @@ class WhatTypeOfAgreementController @Inject()(view: WhatTypeOfAgreementView,
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
                 .set(WhatTypeOfAgreementPage, whatTypeOfAgreementForm.radioValue))
-              _ <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(WhatTypeOfAgreementPage,mode,updatedAnswers))
+              //Remove Rent Based on answer
+              newAnswers <- Future(updatedAnswers.remove(WhatIsYourRentBasedOnPage))
+              _ <- sessionRepository.set(newAnswers.get)
+            } yield Redirect(navigator.nextPage(WhatTypeOfAgreementPage,mode,newAnswers.get))
         )
     }
   }
