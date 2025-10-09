@@ -33,6 +33,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 @Singleton
 class WhatTypeOfAgreementController @Inject()(view: WhatTypeOfAgreementView,
@@ -77,8 +78,10 @@ class WhatTypeOfAgreementController @Inject()(view: WhatTypeOfAgreementView,
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
                 .set(WhatTypeOfAgreementPage, whatTypeOfAgreementForm.radioValue))
-              //Remove Rent Based on answer
-              newAnswers <- Future(updatedAnswers.remove(WhatIsYourRentBasedOnPage))
+              //Remove Rent Based on answer if agreement type is verbal
+              newAnswers <- whatTypeOfAgreementForm.radioValue match
+                case "Verbal" => Future(updatedAnswers.remove(WhatIsYourRentBasedOnPage))
+                case _ => Future(Try(updatedAnswers))
               _ <- sessionRepository.set(newAnswers.get)
             } yield Redirect(navigator.nextPage(WhatTypeOfAgreementPage,mode,newAnswers.get))
         )
