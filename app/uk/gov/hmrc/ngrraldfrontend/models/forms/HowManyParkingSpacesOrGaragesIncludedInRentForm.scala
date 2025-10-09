@@ -40,7 +40,6 @@ object HowManyParkingSpacesOrGaragesIncludedInRentForm extends CommonFormValidat
   private lazy val uncoveredSpacesTooHighError  = "howManyParkingSpacesOrGaragesIncludedInRent.uncoveredSpaces.tooHigh.error"
   private lazy val coveredSpacesTooHighError  = "howManyParkingSpacesOrGaragesIncludedInRent.coveredSpaces.tooHigh.error"
   private lazy val garagesTooHighError  = "howManyParkingSpacesOrGaragesIncludedInRent.garages.tooHigh.error"
-  private lazy val allFieldsRequiredError  = "howManyParkingSpacesOrGaragesIncludedInRent.allFields.error.required"
   private val maxValue = 9999
 
   def unapply(howManyParkingSpacesOrGaragesIncludedInRentForm: HowManyParkingSpacesOrGaragesIncludedInRentForm): Option[(Int, Int, Int)] =

@@ -22,9 +22,9 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-import uk.gov.hmrc.ngrraldfrontend.models.{HowManyParkingSpacesOrGarages, Mode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.HowManyParkingSpacesOrGaragesIncludedInRentForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.HowManyParkingSpacesOrGaragesIncludedInRentForm.form
+import uk.gov.hmrc.ngrraldfrontend.models.{HowManyParkingSpacesOrGarages, Mode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.HowManyParkingSpacesOrGaragesIncludedInRentPage
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
@@ -32,9 +32,10 @@ import uk.gov.hmrc.ngrraldfrontend.views.html.HowManyParkingSpacesOrGaragesInclu
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class HowManyParkingSpacesOrGaragesIncludedInRentController @Inject()(howManyParkingSpacesOrGaragesIncludedInRentView: HowManyParkingSpacesOrGaragesIncludedInRentView,
                                                                       authenticate: AuthRetrievals,
                                                                       inputText: InputText,

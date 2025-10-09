@@ -149,6 +149,12 @@ POST       /do-you-pay-extra-for-parking-spaces-or-garages-not-included-in-rent 
 GET        /do-you-pay-extra-for-parking-spaces-or-garages-not-included-in-rent/change   uk.gov.hmrc.ngrraldfrontend.controllers.DoYouPayExtraForParkingSpacesController.show(mode: Mode = CheckMode)
 POST       /do-you-pay-extra-for-parking-spaces-or-garages-not-included-in-rent/change   uk.gov.hmrc.ngrraldfrontend.controllers.DoYouPayExtraForParkingSpacesController.submit(mode: Mode = CheckMode)
 
+#Parking spaces or garages not included in your rent?
+GET        /parking-spaces-or-garages-not-included-in-your-rent                                  uk.gov.hmrc.ngrraldfrontend.controllers.ParkingSpacesOrGaragesNotIncludedInYourRentController.show(mode: Mode = NormalMode)
+POST       /parking-spaces-or-garages-not-included-in-your-rent                                  uk.gov.hmrc.ngrraldfrontend.controllers.ParkingSpacesOrGaragesNotIncludedInYourRentController.submit(mode: Mode = NormalMode)
+GET        /parking-spaces-or-garages-not-included-in-your-rent/change                           uk.gov.hmrc.ngrraldfrontend.controllers.ParkingSpacesOrGaragesNotIncludedInYourRentController.show(mode: Mode = CheckMode)
+POST       /parking-spaces-or-garages-not-included-in-your-rent/change                           uk.gov.hmrc.ngrraldfrontend.controllers.ParkingSpacesOrGaragesNotIncludedInYourRentController.submit(mode: Mode = CheckMode)
+
 #Repairs And Insurance
 GET        /repairs-and-insurance                                  uk.gov.hmrc.ngrraldfrontend.controllers.RepairsAndInsuranceController.show(mode: Mode = NormalMode)
 POST       /repairs-and-insurance                                  uk.gov.hmrc.ngrraldfrontend.controllers.RepairsAndInsuranceController.submit(mode: Mode = NormalMode)
