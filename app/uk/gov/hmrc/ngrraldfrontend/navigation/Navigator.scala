@@ -154,6 +154,7 @@ class Navigator @Inject()() {
     //TODO Next page not made yet
     case RentReviewPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(NormalMode)
     case ParkingSpacesOrGaragesNotIncludedInYourRentPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RepairsAndInsuranceController.show(NormalMode)
+    case DidYouPayAnyMoneyToLandlordPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.LandlordController.show(NormalMode) //TODO This needs to be amended when the journey is completed
     case RepairsAndInsurancePage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.ConfirmBreakClauseController.show(NormalMode) //TODO Needs journey mapping
   }
 

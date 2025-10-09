@@ -160,3 +160,9 @@ GET        /rent-review                                  uk.gov.hmrc.ngrraldfron
 POST       /rent-review                                  uk.gov.hmrc.ngrraldfrontend.controllers.RentReviewController.submit(mode: Mode = NormalMode)
 GET        /rent-review/change                           uk.gov.hmrc.ngrraldfrontend.controllers.RentReviewController.show(mode: Mode = CheckMode)
 POST       /rent-review/change                           uk.gov.hmrc.ngrraldfrontend.controllers.RentReviewController.submit(mode: Mode = CheckMode)
+
+#Did you pay any money to landlord
+GET        /did-you-pay-any-money-to-landlord            uk.gov.hmrc.ngrraldfrontend.controllers.DidYouPayAnyMoneyToLandlordController.show(mode: Mode = NormalMode)
+POST       /did-you-pay-any-money-to-landlord            uk.gov.hmrc.ngrraldfrontend.controllers.DidYouPayAnyMoneyToLandlordController.submit(mode: Mode = NormalMode)
+GET        /did-you-pay-any-money-to-landlord/change     uk.gov.hmrc.ngrraldfrontend.controllers.DidYouPayAnyMoneyToLandlordController.show(mode: Mode = CheckMode)
+POST       /did-you-pay-any-money-to-landlord/change     uk.gov.hmrc.ngrraldfrontend.controllers.DidYouPayAnyMoneyToLandlordController.submit(mode: Mode = CheckMode)
