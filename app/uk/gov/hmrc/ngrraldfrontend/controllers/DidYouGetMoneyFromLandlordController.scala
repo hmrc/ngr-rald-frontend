@@ -46,7 +46,7 @@ class DidYouGetMoneyFromLandlordController  @Inject()(didYouGetMoneyFromLandlord
     (authenticate andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(DidYouGetMoneyFromLandlordPage) match {
         case None => form
-        case Some(value) => form.fill(DidYouGetMoneyFromLandlordForm(if(value) {"Yes"} else {"No"}))
+        case Some(value) => form.fill(DidYouGetMoneyFromLandlordForm(value.toString))
 
       }
         Future.successful(Ok(didYouGetMoneyFromLandlordView(
@@ -71,10 +71,7 @@ class DidYouGetMoneyFromLandlordController  @Inject()(didYouGetMoneyFromLandlord
         },
         radioValue =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(DidYouGetMoneyFromLandlordPage, radioValue.radio match {
-              case "Yes" => true
-              case _ => false
-            }))
+            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(DidYouGetMoneyFromLandlordPage, radioValue.radio.toBoolean))
             _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(DidYouGetMoneyFromLandlordPage, mode, updatedAnswers))
 

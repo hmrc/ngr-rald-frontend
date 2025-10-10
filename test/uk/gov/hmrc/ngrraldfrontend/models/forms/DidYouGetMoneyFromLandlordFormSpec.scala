@@ -24,14 +24,14 @@ import play.api.libs.json.Json
 class DidYouGetMoneyFromLandlordFormSpec extends AnyFlatSpec with Matchers {
 
   val validData = Map(
-    "didYouGetMoneyFromLandlord-radio-value" -> "Yes"
+    "didYouGetMoneyFromLandlord-radio-value" -> "true"
   )
 
   "didYouGetMoneyFromLandlordForm" should "bind valid data successfully" in {
     val boundForm = DidYouGetMoneyFromLandlordForm.form.bind(validData)
 
     boundForm.errors shouldBe empty
-    boundForm.value shouldBe Some(DidYouGetMoneyFromLandlordForm("Yes"))
+    boundForm.value shouldBe Some(DidYouGetMoneyFromLandlordForm("true"))
   }
 
   it should "fail when didYouGetMoneyFromLandlord (radio) is missing" in {
@@ -51,13 +51,13 @@ class DidYouGetMoneyFromLandlordFormSpec extends AnyFlatSpec with Matchers {
 
   it should "fail when no is selected" in {
     val data = Map(
-      "didYouGetMoneyFromLandlord-radio-value" -> "No",
+      "didYouGetMoneyFromLandlord-radio-value" -> "false",
     )
 
     val boundForm = DidYouGetMoneyFromLandlordForm.form.bind(data)
 
     boundForm.errors shouldBe empty
-    boundForm.value shouldBe Some(DidYouGetMoneyFromLandlordForm("No"))
+    boundForm.value shouldBe Some(DidYouGetMoneyFromLandlordForm("false"))
   }
 
   "DoesYourRentIncludeParkingForm.format" should "serialize to JSON correctly" in {

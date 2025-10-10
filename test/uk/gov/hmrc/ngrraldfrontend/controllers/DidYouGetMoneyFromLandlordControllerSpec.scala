@@ -38,16 +38,24 @@ class DidYouGetMoneyFromLandlordControllerSpec extends ControllerSpecSupport {
   val view: DidYouGetMoneyFromLandlordView = inject[DidYouGetMoneyFromLandlordView]
   val controllerNoProperty: DidYouGetMoneyFromLandlordController = new DidYouGetMoneyFromLandlordController(view, fakeAuth, fakeData(None), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
   val controllerProperty: Option[UserAnswers] => DidYouGetMoneyFromLandlordController = answers => new DidYouGetMoneyFromLandlordController(view, fakeAuth, fakeDataProperty(Some(property),answers), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
-  val confirmBreakClauseAnswers: Option[UserAnswers] =  UserAnswers("id").set(DidYouGetMoneyFromLandlordPage, true).toOption
+  val didYouGetMoneyFromLandlordAnswers: Option[UserAnswers] =  UserAnswers("id").set(DidYouGetMoneyFromLandlordPage, true).toOption
 
 
-  "Confirm Break Clause Controller" must {
+  "DidYouGetMoneyFromLandlord Controller" must {
     "method show" must {
       "Return OK and the correct view" in {
         val result = controllerProperty(None).show(NormalMode)(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
         content must include(pageTitle)
+      }
+      "return OK and the correct view with prepopulated data" in {
+        val result = controllerProperty(didYouGetMoneyFromLandlordAnswers).show(NormalMode)(authenticatedFakeRequest)
+        status(result) mustBe OK
+        val content = contentAsString(result)
+        val document = Jsoup.parse(content)
+        document.select("input[type=radio][name=didYouGetMoneyFromLandlord-radio-value][value=true]").hasAttr("checked") mustBe true
+        document.select("input[type=radio][name=didYouGetMoneyFromLandlord-radio-value][value=false]").hasAttr("checked") mustBe false
       }
       "Return NotFoundException when property is not found in the mongo" in {
         when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(None))
@@ -63,7 +71,7 @@ class DidYouGetMoneyFromLandlordControllerSpec extends ControllerSpecSupport {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.DidYouGetMoneyFromLandlordController.submit(NormalMode))
           .withFormUrlEncodedBody(
-            "didYouGetMoneyFromLandlord-radio-value" -> "Yes",
+            "didYouGetMoneyFromLandlord-radio-value" -> "true",
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -76,7 +84,7 @@ class DidYouGetMoneyFromLandlordControllerSpec extends ControllerSpecSupport {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.DidYouGetMoneyFromLandlordController.submit(NormalMode))
           .withFormUrlEncodedBody(
-            "didYouGetMoneyFromLandlord-radio-value" -> "No",
+            "didYouGetMoneyFromLandlord-radio-value" -> "false",
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {

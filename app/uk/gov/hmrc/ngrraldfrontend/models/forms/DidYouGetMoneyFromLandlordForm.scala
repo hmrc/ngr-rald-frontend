@@ -53,8 +53,8 @@ object DidYouGetMoneyFromLandlordForm extends Mappings{
     ngrRadio(
       radioName = moneyFromLandlordRadio,
       radioButtons = Seq(
-        yesButton(radioContent = "service.yes"),
-        noButton(radioContent  = "service.no")
+        yesButton(),
+        noButton()
       ),
       ngrTitle = "didYouGetMoneyFromLandlord.title",
       ngrTitleClass = "govuk-fieldset__legend--l"
