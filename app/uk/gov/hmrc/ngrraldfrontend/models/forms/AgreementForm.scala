@@ -148,9 +148,7 @@ object AgreementForm extends CommonFormValidators with Mappings with DateMapping
         NGRDate.fromString(agreement.agreementStart),
         agreement.isOpenEnded.toString,
         agreement.openEndedDate match {
-          case Some(value) =>
-            println(Console.YELLOW_B + value + Console.RESET)
-            Some(NGRDate.fromString(value))
+          case Some(value) => Some(NGRDate.fromString(value))
           case None => None
         },
         agreement.haveBreakClause.toString,
@@ -171,7 +169,7 @@ object AgreementForm extends CommonFormValidators with Mappings with DateMapping
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[NGRDate]] =
       val isNotOpenEnded = data.get(openEndedRadio).exists(_ == "false")
       (data.get(s"$key.day"), data.get(s"$key.month"), data.get(s"$key.year")) match {
-        case (None, None, None) if isNotOpenEnded => Left(Seq(FormError(key, isBreakClauseEmptyError, args)))
+        case (None, None, None) if isNotOpenEnded => Left(Seq(FormError(key, "agreement.agreementEndDate.required.error", args)))
         case (Some(day), Some(month), Some(year)) if isNotOpenEnded => isEndDateValid(day, month, year, key, args)
         case (Some(day), Some(month), Some(year)) => Right(Some(NGRDate(day, month, year)))
         case (None, None, None) => Right(None)

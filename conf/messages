@@ -128,7 +128,7 @@ agreementVerbal.agreementEndDate.dayAndMonth.required.error = Date your agreemen
 agreementVerbal.agreementEndDate.dayAndYear.required.error = Date your agreement ends must include a day and year
 agreementVerbal.agreementEndDate.monthAndYear.required.error = Date your agreement ends must include a month and year
 agreementVerbal.agreementEndDate.invalid.error = Date your agreement ends must be a real date
-agreementVerbal.endDate.isBefore.startDate.error = Date your agreement ends must be after agreement started
+agreementVerbal.agreementEndDate.before.1900.error = Date your agreement ends must be 1900 or after
 
 #CheckRentPeriod
 checkRentPeriod.title = Do you have a rent-free period at the start of your agreement?

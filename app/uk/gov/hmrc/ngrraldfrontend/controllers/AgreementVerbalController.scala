@@ -77,10 +77,8 @@ class AgreementVerbalController @Inject()(view: AgreementVerbalView,
               (formError.key, formError.messages) match
                 case (key, messages) if messages.head.contains("agreementVerbal.agreementStartDate") =>
                   setCorrectKey(formError, "agreementVerbal", "agreementStartDate")
-                case ("", messages) if messages.head.contains("agreementVerbal.agreementEndDate") =>
+                case (key, messages) if messages.head.contains("agreementVerbal.agreementEndDate") =>
                   setCorrectKey(formError, "agreementVerbal", "agreementEndDate")
-                case ("", messages) if messages.contains("agreementVerbal.endDate.isBefore.startDate.error") =>
-                  formError.copy(key = "agreementEndDate")
                 case _ =>
                   formError
             }
