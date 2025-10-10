@@ -414,6 +414,12 @@ rentReview.rentReviewMonthsYears.months.maximum.11.error = The number of months 
 rentReview.rentReviewMonthsYears.years.invalid.error = The number of years for how often your rent is reviewed must be a number, like 2
 rentReview.rentReviewMonthsYears.years.maximum.1000.error = How often your rent is reviewed must be 1,000 years or less
 
+#How much was the lump sum
+howMuchWasTheLumpSum.title = How much was the lump sum?
+howMuchWasTheLumpSum.empty.error = Enter the lump sum, in pounds
+howMuchWasTheLumpSum.tooLarge.error = Lump sum must be £9,999,999.99 or less
+howMuchWasTheLumpSum.format.error =  Lump sum must be a number, like 50,000
+
 #ParkingSpacesOrGaragesNotIncludedInYourRent
 parkingSpacesOrGaragesNotIncludedInYourRent.title = Parking spaces or garages not included in your rent
 parkingSpacesOrGaragesNotIncludedInYourRent.subheading = How many parking spaces or garages do you pay extra for?
@@ -443,3 +449,4 @@ parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.monthAndYear.required.
 parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.year.required.error = Date this payment was agreed for parking and garages must include a year
 parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.invalid.error = Date this payment was agreed for parking and garages must be a real date
 parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.before.1900.error = Year payment was agreed for parking and garages must be 1900 or after
+
