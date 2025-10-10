@@ -40,7 +40,7 @@ object LandlordForm extends CommonFormValidators with Mappings{
   private lazy val landlordNameEmptyError = "landlord.name.empty.error"
   private lazy val landlordNameTooLongError = "landlord.name.empty.tooLong.error"
   private lazy val radioUnselectedError = "landlord.radio.empty.error"
-  private lazy val landlordRelationshipEmptyError = "landlord.relationship.empty.error"
+  private lazy val landlordRelationshipEmptyError = "landlord.relationship.emptyText.error"
   private lazy val landlordRelationshipTooLongError = "landlord.radio.tooLong.error"
 
   private val landlord = "landlord-name-value"
