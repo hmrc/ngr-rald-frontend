@@ -96,6 +96,9 @@ class HowMuchWasTheLumpSumControllerSpec extends ControllerSpecSupport {
 
         val result = controllerProperty.submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
         status(result) mustBe BAD_REQUEST
+        val content = contentAsString(result)
+        content must include(pageTitle)
+        content must include("Enter the lump sum, in pounds")
       }
       "Return Exception if no address is in the mongo" in {
         val fakePostRequest = FakeRequest(routes.WhatTypeOfLeaseRenewalController.submit(NormalMode))

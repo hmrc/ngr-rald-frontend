@@ -156,7 +156,7 @@ GET        /rent-review/change                           uk.gov.hmrc.ngrraldfron
 POST       /rent-review/change                           uk.gov.hmrc.ngrraldfrontend.controllers.RentReviewController.submit(mode: Mode = CheckMode)
 
 #Rent review
-GET        /how-much-was-the-lump-sum                                 uk.gov.hmrc.ngrraldfrontend.controllers.HowMuchWasTheLumpSumController.show(mode: Mode = NormalMode)
-POST       /how-much-was-the-lump-sum                                  uk.gov.hmrc.ngrraldfrontend.controllers.HowMuchWasTheLumpSumController.submit(mode: Mode = NormalMode)
-GET        /how-much-was-the-lump-sum/change                           uk.gov.hmrc.ngrraldfrontend.controllers.HowMuchWasTheLumpSumController.show(mode: Mode = CheckMode)
-POST       /how-much-was-the-lump-sum/change                           uk.gov.hmrc.ngrraldfrontend.controllers.HowMuchWasTheLumpSumController.submit(mode: Mode = CheckMode)
+GET        /how-much-was-the-lump-sum                    uk.gov.hmrc.ngrraldfrontend.controllers.HowMuchWasTheLumpSumController.show(mode: Mode = NormalMode)
+POST       /how-much-was-the-lump-sum                    uk.gov.hmrc.ngrraldfrontend.controllers.HowMuchWasTheLumpSumController.submit(mode: Mode = NormalMode)
+GET        /how-much-was-the-lump-sum/change             uk.gov.hmrc.ngrraldfrontend.controllers.HowMuchWasTheLumpSumController.show(mode: Mode = CheckMode)
+POST       /how-much-was-the-lump-sum/change             uk.gov.hmrc.ngrraldfrontend.controllers.HowMuchWasTheLumpSumController.submit(mode: Mode = CheckMode)
