@@ -28,6 +28,12 @@ POST       /landlord                                    uk.gov.hmrc.ngrraldfront
 GET        /landlord/change                             uk.gov.hmrc.ngrraldfrontend.controllers.LandlordController.show(mode: Mode = CheckMode)
 POST       /landlord/change                             uk.gov.hmrc.ngrraldfrontend.controllers.LandlordController.submit(mode: Mode = CheckMode)
 
+#Did you get money from landlord
+GET        /did-you-get-money-from-landlord             uk.gov.hmrc.ngrraldfrontend.controllers.DidYouGetMoneyFromLandlordController.show(mode: Mode = NormalMode)
+POST       /did-you-get-money-from-landlord             uk.gov.hmrc.ngrraldfrontend.controllers.DidYouGetMoneyFromLandlordController.submit(mode: Mode = NormalMode)
+GET        /did-you-get-money-from-landlord/change      uk.gov.hmrc.ngrraldfrontend.controllers.DidYouGetMoneyFromLandlordController.show(mode: Mode = CheckMode)
+POST       /did-you-get-money-from-landlord/change      uk.gov.hmrc.ngrraldfrontend.controllers.DidYouGetMoneyFromLandlordController.submit(mode: Mode = CheckMode)
+
 #What is your rent based on
 GET        /what-is-your-rent-based-on                  uk.gov.hmrc.ngrraldfrontend.controllers.WhatIsYourRentBasedOnController.show(mode: Mode = NormalMode)
 POST       /what-is-your-rent-based-on                  uk.gov.hmrc.ngrraldfrontend.controllers.WhatIsYourRentBasedOnController.submit(mode: Mode = NormalMode)

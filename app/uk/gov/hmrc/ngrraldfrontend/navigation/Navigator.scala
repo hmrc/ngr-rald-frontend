@@ -149,6 +149,9 @@ class Navigator @Inject()() {
         case None    => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(NormalMode)
       }
     case RentFreePeriodPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeStartController.show(NormalMode)
+    case ConfirmBreakClausePage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.LandlordController.show(NormalMode) //TODO This needs to be amended when the journey is completed
+    case DidYouGetMoneyFromLandlordPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.LandlordController.show(NormalMode) //TODO This needs to be amended when the journey is completed
+
     case DoYouPayExtraForParkingSpacesPage => answers =>
       answers.get(DoYouPayExtraForParkingSpacesPage) match {
         case Some(value) => value match {
