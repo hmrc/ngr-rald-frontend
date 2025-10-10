@@ -33,6 +33,7 @@ import uk.gov.hmrc.ngrraldfrontend.actions.{FakeAuthenticatedRequest, FakeDataRe
 import uk.gov.hmrc.ngrraldfrontend.mocks.MockAppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.UserAnswers
 import uk.gov.hmrc.ngrraldfrontend.models.registration.Email
+import uk.gov.hmrc.ngrraldfrontend.views.html.components.NGRCharacterCountComponent
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 
@@ -42,7 +43,8 @@ trait ViewBaseSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting with
   lazy val messagesApi: MessagesApi             = inject[MessagesApi]
   implicit val hc: HeaderCarrier = HeaderCarrier()
   implicit val requestHeader: RequestHeader = mock[RequestHeader]
-  
+  val mockNGRCharacterCountComponent: NGRCharacterCountComponent = inject[NGRCharacterCountComponent]
+
 
   def element(cssSelector: String)(implicit document: Document): Element = {
     val elements = document.select(cssSelector)

@@ -37,7 +37,6 @@ import scala.concurrent.Future
 class WhatYourRentIncludesControllerSpec  extends ControllerSpecSupport {
   val pageTitle = "What your rent includes"
   val view:  WhatYourRentIncludesView = inject[ WhatYourRentIncludesView]
-  val mockNGRCharacterCountComponent: NGRCharacterCountComponent = inject[NGRCharacterCountComponent]
   val controllerNoProperty :WhatYourRentIncludesController = new WhatYourRentIncludesController(
     view,
     fakeAuth,
@@ -76,6 +75,7 @@ class WhatYourRentIncludesControllerSpec  extends ControllerSpecSupport {
         document.select("input[type=radio][name=rentIncBusinessRatesRadio][value=true]").hasAttr("checked") mustBe true
         document.select("input[type=radio][name=rentIncWaterChargesRadio][value=true]").hasAttr("checked") mustBe true
         document.select("input[type=radio][name=rentIncServiceRadio][value=true]").hasAttr("checked") mustBe true
+        document.select("input[type=text][name=bedroomNumbers]").attr("value") mustBe "5"
       }
       "Return OK and the correct view with prepopulated answers all No" in {
         val result = controllerProperty(whatYourRentIncludesAnswersAllNo).show(NormalMode)(authenticatedFakeRequest)

@@ -144,11 +144,11 @@ trait TestData {
 
  val rentDatesAgreeStartModel: RentDatesAgreeStart = RentDatesAgreeStart("2025-01-01", "2025-02-02")
 
- val whatYourRentIncludesModelAllYes: WhatYourRentIncludes = WhatYourRentIncludes(true,true,true,true,true,true,Some(5))
+ val whatYourRentIncludesModelAllYes: WhatYourRentIncludes = WhatYourRentIncludes(true, true, true, Some(true), Some(true), Some(true), Some(5))
 
- val whatYourRentIncludesModelAllNo: WhatYourRentIncludes = WhatYourRentIncludes(false,false,false,false,false,false,None)
+ val whatYourRentIncludesModelAllNo: WhatYourRentIncludes = WhatYourRentIncludes(false, false, false, Some(false), Some(false), Some(false), None)
  
- val rentBasedOnModel: RentBasedOn = RentBasedOn("Other",Some("The rent was agreed"))
+ val rentBasedOnModel: RentBasedOn = RentBasedOn("Other", Some("The rent was agreed"))
 
  val repairsAndInsuranceModel  = RepairsAndInsurance("You", "Landlord", "YouAndLandlord")
 }

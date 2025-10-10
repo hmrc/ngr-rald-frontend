@@ -22,10 +22,10 @@ import play.api.data.validation.{Constraint, Invalid, Valid, ValidationResult}
 import play.api.i18n.Messages
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{ngrRadio, noButton, yesButton}
-import uk.gov.hmrc.ngrraldfrontend.models.{MonthYearMappings, NGRMonthYear, RentReview}
 import uk.gov.hmrc.ngrraldfrontend.models.components.{NGRRadio, NGRRadioButtons}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.LandlordForm.wholePositiveNumberRegexp
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
+import uk.gov.hmrc.ngrraldfrontend.models.{MonthYearMappings, NGRMonthYear, RentReview}
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputDateForMonthYear
 
 case class RentReviewForm(hasIncludeRentReview: String, monthsYears: Option[NGRMonthYear], canRentGoDown: String)

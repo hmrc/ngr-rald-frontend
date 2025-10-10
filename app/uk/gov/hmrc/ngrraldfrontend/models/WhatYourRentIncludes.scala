@@ -22,9 +22,9 @@ case class WhatYourRentIncludes(
                                  livingAccommodation: Boolean,
                                  rentPartAddress: Boolean,
                                  rentEmptyShell: Boolean,
-                                 rentIncBusinessRates: Boolean,
-                                 rentIncWaterCharges: Boolean,
-                                 rentIncService: Boolean,
+                                 rentIncBusinessRates: Option[Boolean],
+                                 rentIncWaterCharges: Option[Boolean],
+                                 rentIncService: Option[Boolean],
                                  bedroomNumbers: Option[Int]
                                )
 

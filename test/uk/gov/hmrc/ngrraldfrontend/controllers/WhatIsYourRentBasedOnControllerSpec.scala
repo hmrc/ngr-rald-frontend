@@ -38,7 +38,6 @@ import scala.concurrent.Future
 class WhatIsYourRentBasedOnControllerSpec extends ControllerSpecSupport {
   val pageTitle = "What is your rent based on?"
   val view: WhatIsYourRentBasedOnView = inject[WhatIsYourRentBasedOnView]
-  val mockNGRCharacterCountComponent: NGRCharacterCountComponent = inject[NGRCharacterCountComponent]
   val controllerProperty: Option[UserAnswers] => WhatIsYourRentBasedOnController = answers => new WhatIsYourRentBasedOnController(view, fakeAuth, mockNGRCharacterCountComponent, mcc, fakeDataProperty(Some(property),answers), mockNavigator, mockSessionRepository)(mockConfig, ec)
   val controllerNoProperty: WhatIsYourRentBasedOnController = new WhatIsYourRentBasedOnController(view, fakeAuth, mockNGRCharacterCountComponent, mcc, fakeData(None), mockNavigator, mockSessionRepository)(mockConfig, ec)
   val whatIsYourRentBasedOnAnswers: Option[UserAnswers] = UserAnswers("id").set(WhatIsYourRentBasedOnPage, rentBasedOnModel).toOption
