@@ -36,6 +36,15 @@ class HowMuchWasTheLumpSumFormSpec extends AnyWordSpec with Matchers {
       boundForm.value shouldBe Some(HowMuchWasTheLumpSumForm(BigDecimal("123456.78")))
     }
 
+    "bind valid input when rounding up" in {
+      val data = Map("how–much–was–the–lump–sum-value" -> "123456.78561")
+      val boundForm = HowMuchWasTheLumpSumForm.form.bind(data)
+
+      boundForm.hasErrors shouldBe false
+      boundForm.value shouldBe Some(HowMuchWasTheLumpSumForm(BigDecimal("123456.79")))
+    }
+
+
     "bind amount with commas" in {
       val data = Map(
         "how–much–was–the–lump–sum-value" -> "9,999,999.99",

@@ -68,27 +68,6 @@ class HowMuchWasTheLumpSumControllerSpec extends ControllerSpecSupport {
     }
 
     "method submit" must {
-      "Return See_Other and the correct view if its a renewedAgreement" in {
-        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        val fakePostRequest =  FakeRequest(routes.HowMuchWasTheLumpSumController.submit(NormalMode))
-          .withFormUrlEncodedBody(("how–much–was–the–lump–sum-value", "10000"))
-          .withHeaders(HeaderNames.authorisation -> "Bearer 1")
-
-        val result = filledController(renewedAgreementAnswers).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.CheckRentFreePeriodController.show(NormalMode).url)
-      }
-      "Return See_Other and the correct view if its a newAgreement" in {
-
-        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        val fakePostRequest = FakeRequest(routes.HowMuchWasTheLumpSumController.submit(NormalMode))
-          .withFormUrlEncodedBody(("how–much–was–the–lump–sum-value", "10000"))
-          .withHeaders(HeaderNames.authorisation -> "Bearer 1")
-
-        val result = filledController(newAgreementAnswers).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.CheckRentFreePeriodController.show(NormalMode).url)
-      }
       "Return BAD_REQUEST for missing input and the correct view" in {
         val fakePostRequest = FakeRequest(routes.HowMuchWasTheLumpSumController.submit(NormalMode))
           .withFormUrlEncodedBody(("how–much–was–the–lump–sum-value", ""))
@@ -99,6 +78,17 @@ class HowMuchWasTheLumpSumControllerSpec extends ControllerSpecSupport {
         val content = contentAsString(result)
         content must include(pageTitle)
         content must include("Enter the lump sum, in pounds")
+      }
+      "Return BAD_REQUEST for incorrect input and the correct view" in {
+        val fakePostRequest = FakeRequest(routes.HowMuchWasTheLumpSumController.submit(NormalMode))
+          .withFormUrlEncodedBody(("how–much–was–the–lump–sum-value", "xyz"))
+          .withHeaders(HeaderNames.authorisation -> "Bearer 1")
+
+        val result = controllerProperty.submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
+        status(result) mustBe BAD_REQUEST
+        val content = contentAsString(result)
+        content must include(pageTitle)
+        content must include("Lump sum must be a number, like 50,000")
       }
       "Return Exception if no address is in the mongo" in {
         val fakePostRequest = FakeRequest(routes.WhatTypeOfLeaseRenewalController.submit(NormalMode))

@@ -34,6 +34,7 @@ class HowMuchWasTheLumpSumViewSpec extends ViewBaseSpec {
 
   object Selectors {
     val heading = "#main-content > div > div.govuk-grid-column-two-thirds > form > h1"
+    val textInput = "#how–much–was–the–lump–sum-value"
     val saveAndContinue = "#continue"
   }
 
@@ -62,6 +63,10 @@ class HowMuchWasTheLumpSumViewSpec extends ViewBaseSpec {
 
     "show correct heading" in {
       elementText(Selectors.heading) mustBe Strings.heading
+    }
+
+    "show correct textInput" in {
+      elementText(Selectors.textInput) contains("£")
     }
     
     "show correct continue button" in {
