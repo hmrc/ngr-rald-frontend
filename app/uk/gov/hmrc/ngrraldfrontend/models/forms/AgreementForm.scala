@@ -16,8 +16,9 @@
 
 package uk.gov.hmrc.ngrraldfrontend.models.forms
 
-import play.api.data.Form
-import play.api.data.Forms.{mapping, optional}
+import play.api.data.{Form, FormError}
+import play.api.data.Forms.{mapping, optional, of}
+import play.api.data.format.Formatter
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.i18n.*
 import play.api.libs.json.{Json, OFormat}
@@ -58,16 +59,6 @@ object AgreementForm extends CommonFormValidators with Mappings with DateMapping
   val messagesApi: MessagesApi = new DefaultMessagesApi()
   val lang: Lang = Lang.defaultLang
   val messages: Messages = MessagesImpl(lang, messagesApi)
-
-  private def errorKeys(whichDate: String): Map[DateErrorKeys, String] = Map(
-    Required -> s"agreement.$whichDate.required.error",
-    DayAndMonth -> s"agreement.$whichDate.day.month.required.error",
-    DayAndYear -> s"agreement.$whichDate.day.year.required.error",
-    MonthAndYear -> s"agreement.$whichDate.month.year.required.error",
-    Day -> s"agreement.$whichDate.day.required.error",
-    Month -> s"agreement.$whichDate.month.required.error",
-    Year -> s"agreement.$whichDate.year.required.error"
-  )
 
   def dateInput()(implicit messages: Messages): DateInput = DateInput(
     id = agreemenrStartDate,
@@ -157,7 +148,9 @@ object AgreementForm extends CommonFormValidators with Mappings with DateMapping
         NGRDate.fromString(agreement.agreementStart),
         agreement.isOpenEnded.toString,
         agreement.openEndedDate match {
-          case Some(value) => Some(NGRDate.fromString(value))
+          case Some(value) =>
+            println(Console.YELLOW_B + value + Console.RESET)
+            Some(NGRDate.fromString(value))
           case None => None
         },
         agreement.haveBreakClause.toString,
@@ -174,44 +167,53 @@ object AgreementForm extends CommonFormValidators with Mappings with DateMapping
       if (agreementForm.breakClauseRadio.toBoolean) agreementForm.breakClauseInfo else None
     )
 
-  private def isEndDateEmpty[A](errorKeys: Map[DateErrorKeys, String]): Constraint[A] = {
-    Constraint((input: A) =>
-      val agreementForm = input.asInstanceOf[AgreementForm]
-      val date = agreementForm.openEndedDate.getOrElse(NGRDate("", "", ""))
-      if (agreementForm.openEndedRadio.equals("false"))
-        dateEmptyValidation(date, errorKeys)
-      else
-        Valid
-    )
+  private def endDateFormatter(args: Seq[String] = Seq.empty): Formatter[Option[NGRDate]] = new Formatter[Option[NGRDate]] {
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[NGRDate]] =
+      val isNotOpenEnded = data.get(openEndedRadio).exists(_ == "false")
+      (data.get(s"$key.day"), data.get(s"$key.month"), data.get(s"$key.year")) match {
+        case (None, None, None) if isNotOpenEnded => Left(Seq(FormError(key, isBreakClauseEmptyError, args)))
+        case (Some(day), Some(month), Some(year)) if isNotOpenEnded => isEndDateValid(day, month, year, key, args)
+        case (Some(day), Some(month), Some(year)) => Right(Some(NGRDate(day, month, year)))
+        case (None, None, None) => Right(None)
+      }
+
+    override def unbind(key: String, value: Option[NGRDate]): Map[String, String] =
+      unbindNGRDate(key, value)
   }
 
-  private def isEndDateValid[A](errorKey: String): Constraint[A] =
-    Constraint((input: A) =>
-      val agreementForm = input.asInstanceOf[AgreementForm]
-      val date = agreementForm.openEndedDate.getOrElse(NGRDate("", "", ""))
-      if (agreementForm.openEndedRadio.equals("false"))
-        dateValidation(date, errorKey)
-      else
-        Valid
-    )
+  private def isEndDateValid(day: String, month: String, year: String, key: String, args: Seq[String]): Either[Seq[FormError], Option[NGRDate]] =
+    val endDate: NGRDate = NGRDate(day, month, year)
+    val errorKey: String = getDateErrorKey(endDate, errorKeys("agreement", "agreementEndDate"))
+    if (errorKey.nonEmpty)
+      Left(Seq(FormError(key, errorKey, args)))
+    else if (isDateInvalid(endDate))
+      Left(Seq(FormError(key, "agreement.agreementEndDate.invalid.error", args)))
+    else if (isDateBefore1900(endDate))
+      Left(Seq(FormError(key, "agreement.agreementEndDate.before.1900.error", args)))
+    else
+      Right(Some(endDate))
 
-  private def isBreakClauseTextEmpty[A]: Constraint[A] =
-    Constraint((input: A) =>
-      val agreementForm = input.asInstanceOf[AgreementForm]
-      if (agreementForm.breakClauseRadio.equals("true") && agreementForm.breakClauseInfo.getOrElse("").isBlank)
-        Invalid(isBreakClauseEmptyError)
-      else
-        Valid
-    )
+  private def aboutBreakClauseFormatter(args: Seq[String] = Seq.empty): Formatter[Option[String]] = new Formatter[Option[String]] {
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] =
+      val hasBreakClause = data.get(breakClauseRadio).exists(_ == "true")
+      data.get(key) match {
+        case None if hasBreakClause => Left(Seq(FormError(key, isBreakClauseEmptyError, args)))
+        case Some(s) if hasBreakClause => isBreakClauseInfoValid(s.trim, key, args)
+        case Some(s) => Right(Some(s))
+        case None => Right(None)
+      }
 
-  private def otherTextMaxLength[A]: Constraint[A] =
-    Constraint((input: A) =>
-      val agreementForm = input.asInstanceOf[AgreementForm]
-      if (agreementForm.breakClauseRadio.equals("true") && agreementForm.breakClauseInfo.getOrElse("").length > 250)
-        Invalid(isBreakClauseTooLongError)
-      else
-        Valid
-    )
+    override def unbind(key: String, value: Option[String]): Map[String, String] =
+      Map(key -> value.getOrElse(""))
+  }
+
+  private def isBreakClauseInfoValid(breakClauseInfo: String, key: String, args: Seq[String]): Either[Seq[FormError], Option[String]] =
+    if (breakClauseInfo.isEmpty)
+      Left(Seq(FormError(key, isBreakClauseEmptyError, args)))
+    else if (breakClauseInfo.length > 250)
+      Left(Seq(FormError(key, isBreakClauseTooLongError, args)))
+    else
+      Right(Some(breakClauseInfo))
 
   def form: Form[AgreementForm] = {
     Form(
@@ -219,32 +221,16 @@ object AgreementForm extends CommonFormValidators with Mappings with DateMapping
         agreemenrStartDate -> dateMapping
           .verifying(
             firstError(
-              isDateEmpty(errorKeys("startDate")),
-              isDateValid("agreement.startDate.format.error")
+              isDateEmpty(errorKeys("agreement", "agreementStartDate")),
+              isDateValid("agreement.agreementStartDate.invalid.error"),
+              isDateAfter1900("agreement.agreementStartDate.before.1900.error")
             )
           ),
         openEndedRadio -> radioText(radioOpenEndedUnselectedError),
-        endDate -> optional(
-          dateMapping
-        ),
+        endDate -> of(endDateFormatter()),
         breakClauseRadio -> radioText(radioBreakClauseUnselectedError),
-        aboutBreakClause -> optional(
-          play.api.data.Forms.text
-            .transform[String](_.strip(), identity)
-        )
+        aboutBreakClause -> of(aboutBreakClauseFormatter())
       )(AgreementForm.apply)(AgreementForm.unapply)
-        .verifying(
-          firstError(
-            isBreakClauseTextEmpty,
-            otherTextMaxLength
-          )
-        )
-        .verifying(
-          firstError(
-            isEndDateEmpty(errorKeys("endDate")),
-            isEndDateValid("agreement.endDate.format.error")
-          )
-        )
     )
   }
 }
