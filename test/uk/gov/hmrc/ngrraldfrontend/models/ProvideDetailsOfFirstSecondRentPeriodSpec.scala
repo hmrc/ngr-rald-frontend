@@ -27,15 +27,15 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends AnyFlatSpec with Matcher
       firstDateStart = "2025-01-01",
       firstDateEnd = "2025-01-31",
       firstRentPeriodRadio = true,
-      firstRentPeriodAmount = Some("1000"),
+      firstRentPeriodAmount = Some(BigDecimal(1000)),
       secondDateStart = "2025-02-01",
       secondDateEnd = "2025-02-28",
-      secondHowMuchIsRent = "1200"
+      secondHowMuchIsRent = BigDecimal(1200)
     )
 
     val json = Json.toJson(rentDetails)
     (json \ "firstDateStart").as[String] shouldBe "2025-01-01"
-    (json \ "firstRentPeriodAmount").asOpt[String] shouldBe Some("1000")
+    (json \ "firstRentPeriodAmount").asOpt[BigDecimal] shouldBe Some(BigDecimal(1000))
   }
 
   it should "deserialize from JSON correctly" in {
@@ -54,7 +54,7 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends AnyFlatSpec with Matcher
 
     val result = json.as[ProvideDetailsOfFirstSecondRentPeriod]
     result.firstDateStart shouldBe "2025-01-01"
-    result.firstRentPeriodAmount shouldBe Some("1000")
+    result.firstRentPeriodAmount shouldBe Some(BigDecimal(1000))
   }
 
   it should "handle missing optional field gracefully" in {

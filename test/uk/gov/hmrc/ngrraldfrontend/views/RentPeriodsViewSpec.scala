@@ -64,10 +64,11 @@ class RentPeriodsViewSpec extends ViewBaseSpec {
     firstDateStart = "2025-02-01",
     firstDateEnd = "2025-03-01",
     firstRentPeriodRadio = true,
-    firstRentPeriodAmount = Some("2300.4567"),
+    firstRentPeriodAmount = Some(BigDecimal(2300.4567)),
     secondDateStart = "2025-04-01",
     secondDateEnd = "2025-08-01",
-    secondHowMuchIsRent = "1350")
+    secondHowMuchIsRent = BigDecimal(1350)
+  )
   val firstTable = rentPeriodsController.firstTable(firstSecondRentPeriods)
   val secondTable = rentPeriodsController.secondTable(firstSecondRentPeriods)
   private val form: Form[RentPeriodsForm] = RentPeriodsForm.form.fillAndValidate(RentPeriodsForm("false"))

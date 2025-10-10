@@ -82,8 +82,6 @@ class ProvideDetailsOfFirstSecondRentPeriodController @Inject()(view: ProvideDet
                   setCorrectKey(formError, "provideDetailsOfFirstSecondRentPeriod", "second.startDate")
                 case (key, messages) if messages.head.contains("provideDetailsOfFirstSecondRentPeriod.second.endDate") =>
                   setCorrectKey(formError, "provideDetailsOfFirstSecondRentPeriod", "second.endDate")
-                case ("", messages) =>
-                  formError.copy(key = "RentPeriodAmount")
                 case _ =>
                   formError
             }
