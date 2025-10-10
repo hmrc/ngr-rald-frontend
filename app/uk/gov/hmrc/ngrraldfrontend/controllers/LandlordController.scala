@@ -16,10 +16,8 @@
 
 package uk.gov.hmrc.ngrraldfrontend.controllers
 
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, Messages}
+import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.govukfrontend.views.Aliases.*
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
@@ -67,20 +65,10 @@ class LandlordController @Inject()(view: LandlordView,
         .bindFromRequest()
         .fold(
           formWithErrors =>
-            val correctedFormErrors = formWithErrors.errors.map { formError =>
-              (formError.key, formError.messages) match
-                case ("", messages) if messages.contains("landlord.radio.emptyText.error") =>
-                  formError.copy(key = "landlord-relationship")
-                case ("", messages) if messages.contains("landlord.radio.tooLong.error") =>
-                  formError.copy(key = "landlord-relationship")
-                case _ =>
-                  formError
-            }
-            val formWithCorrectedErrors = formWithErrors.copy(errors = correctedFormErrors)
             Future.successful(BadRequest(view(
               selectedPropertyAddress = request.property.addressFull,
-              formWithCorrectedErrors,
-              buildRadios(formWithErrors, LandlordForm.landlordRadio(formWithCorrectedErrors, ngrCharacterCountComponent)),
+              formWithErrors,
+              buildRadios(formWithErrors, LandlordForm.landlordRadio(formWithErrors, ngrCharacterCountComponent)),
               mode
             ))),
           landlordForm =>

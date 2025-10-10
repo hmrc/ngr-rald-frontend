@@ -22,11 +22,11 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Label, Text}
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-import uk.gov.hmrc.ngrraldfrontend.models.{Mode, RentBasedOn, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatIsYourRentBasedOnForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatIsYourRentBasedOnForm.form
+import uk.gov.hmrc.ngrraldfrontend.models.{Mode, RentBasedOn, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.WhatIsYourRentBasedOnPage
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
@@ -107,7 +107,14 @@ class WhatIsYourRentBasedOnController @Inject()(view: WhatIsYourRentBasedOnView,
                   buildRadios(formWithErrors, ngrRadio(formWithCorrectedErrors)), request.property.addressFull, mode))),
           rentBasedOnForm =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(WhatIsYourRentBasedOnPage, RentBasedOn(rentBasedOnForm.radioValue,rentBasedOnForm.rentBasedOnOther)))
+              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
+                .set(WhatIsYourRentBasedOnPage, 
+                  RentBasedOn(rentBasedOnForm.radioValue, 
+                    if (rentBasedOnForm.radioValue == "Other")
+                      rentBasedOnForm.rentBasedOnOther
+                    else
+                      None
+                  )))
               _ <- sessionRepository.set(updatedAnswers)
             } yield Redirect(navigator.nextPage(WhatIsYourRentBasedOnPage, mode, updatedAnswers))
         )

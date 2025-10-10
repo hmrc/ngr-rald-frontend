@@ -17,12 +17,12 @@
 package uk.gov.hmrc.ngrraldfrontend.pages
 
 import play.api.libs.json.JsPath
-import uk.gov.hmrc.ngrraldfrontend.models.HowManyParkingSpacesOrGarages
+import uk.gov.hmrc.ngrraldfrontend.models.ParkingSpacesOrGaragesNotIncludedInYourRent
 
-case object HowManyParkingSpacesOrGaragesIncludedInRentPage extends QuestionPage[HowManyParkingSpacesOrGarages] {
-
-  override def toString: String = "howManyParkingSpacesOrGaragesIncludedInRent"
+case object ParkingSpacesOrGaragesNotIncludedInYourRentPage extends QuestionPage[ParkingSpacesOrGaragesNotIncludedInYourRent] {
 
   override def path: JsPath = JsPath \ toString
-  
+
+  override def toString: String = "parkingSpacesOrGaragesNotIncludedInYourRent"
+
 }

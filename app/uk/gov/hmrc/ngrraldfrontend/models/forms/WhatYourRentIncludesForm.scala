@@ -16,9 +16,10 @@
 
 package uk.gov.hmrc.ngrraldfrontend.models.forms
 
-import play.api.data.Forms.{mapping, optional, text}
+import play.api.data.Forms.{mapping, of, optional, text}
+import play.api.data.format.Formatter
 import play.api.data.validation.{Constraint, Invalid, Valid}
-import play.api.data.{Form, Forms}
+import play.api.data.{Form, FormError, Forms}
 import play.api.i18n.Messages
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.ngrraldfrontend.models.WhatYourRentIncludes
@@ -120,63 +121,68 @@ object WhatYourRentIncludesForm extends CommonFormValidators with Mappings {
       whatYourRentIncludesForm.bedroomNumbers
     ))
 
-  def answerToForm(whatYourRentIncludes: WhatYourRentIncludes): Form[WhatYourRentIncludesForm] =
-    form.fill(WhatYourRentIncludesForm(
+  def answerToForm(whatYourRentIncludes: WhatYourRentIncludes, isOTCLease: Boolean): Form[WhatYourRentIncludesForm] =
+    form(isOTCLease = false).fill(WhatYourRentIncludesForm(
       livingAccommodationRadio = whatYourRentIncludes.livingAccommodation.toString,
       rentPartAddressRadio = whatYourRentIncludes.rentPartAddress.toString,
       rentEmptyShellRadio = whatYourRentIncludes.rentEmptyShell.toString,
-      rentIncBusinessRatesRadio = whatYourRentIncludes.rentIncBusinessRates.toString,
-      rentIncWaterChargesRadio = whatYourRentIncludes.rentIncWaterCharges.toString,
-      rentIncServiceRadio = whatYourRentIncludes.rentIncService.toString,
+      rentIncBusinessRatesRadio = whatYourRentIncludes.rentIncBusinessRates.map(_.toString).getOrElse(""),
+      rentIncWaterChargesRadio = whatYourRentIncludes.rentIncWaterCharges.map(_.toString).getOrElse(""),
+      rentIncServiceRadio = whatYourRentIncludes.rentIncService.map(_.toString).getOrElse(""),
       bedroomNumbers = whatYourRentIncludes.bedroomNumbers.map(_.toString)
     ))
 
-  def formToAnswers(whatYourRentIncludesForm: WhatYourRentIncludesForm): WhatYourRentIncludes =
+  def formToAnswers(whatYourRentIncludesForm: WhatYourRentIncludesForm, isOTCLease: Boolean): WhatYourRentIncludes =
     WhatYourRentIncludes(
       livingAccommodation = whatYourRentIncludesForm.livingAccommodationRadio.toBoolean,
       rentPartAddress = whatYourRentIncludesForm.rentPartAddressRadio.toBoolean,
       rentEmptyShell = whatYourRentIncludesForm.rentEmptyShellRadio.toBoolean,
-      rentIncBusinessRates = whatYourRentIncludesForm.rentIncBusinessRatesRadio.toBoolean,
-      rentIncWaterCharges = whatYourRentIncludesForm.rentIncWaterChargesRadio.toBoolean,
-      rentIncService = whatYourRentIncludesForm.rentIncServiceRadio.toBoolean,
+      rentIncBusinessRates = if(isOTCLease) None else whatYourRentIncludesForm.rentIncBusinessRatesRadio.toBooleanOption,
+      rentIncWaterCharges = if(isOTCLease) None else whatYourRentIncludesForm.rentIncWaterChargesRadio.toBooleanOption,
+      rentIncService = if(isOTCLease) None else whatYourRentIncludesForm.rentIncServiceRadio.toBooleanOption,
       bedroomNumbers = whatYourRentIncludesForm.bedroomNumbers match {
         case Some(value) if whatYourRentIncludesForm.livingAccommodationRadio == "true" => Some(value.toInt)
         case _ => None
       }
     )
 
-  private def isBedroomNumberValid[A]: Constraint[A] =
-    Constraint((input: A) =>
-      val whatYourRentIncludesForm = input.asInstanceOf[WhatYourRentIncludesForm]
-      val bedroomNumber: Option[String] = whatYourRentIncludesForm.bedroomNumbers
-      if (whatYourRentIncludesForm.livingAccommodationRadio.equals("true")) {
-        if (bedroomNumber.isEmpty)
-          Invalid("whatYourRentIncludes.bedroom.number.required.error")
-        else if (!bedroomNumber.get.matches(wholePositiveNumberRegexp.pattern()))
-          Invalid("whatYourRentIncludes.bedroom.number.invalid.error")
-        else if (bedroomNumber.get.toDoubleOption.getOrElse(0d) > 99)
-          Invalid("whatYourRentIncludes.bedroom.number.maximum.error")
-        else if (bedroomNumber.get.toLong < 1)
-          Invalid("whatYourRentIncludes.bedroom.number.minimum.error")
-        else
-          Valid
+  private def bedroomFormatter(args: Seq[String] = Seq.empty): Formatter[Option[String]] = new Formatter[Option[String]] {
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] =
+      val hasLivingAccommodation = data.get(livingAccommodationRadio).exists(_ == "true")
+      data.get(key) match {
+        case None if hasLivingAccommodation => Left(Seq(FormError(key, "whatYourRentIncludes.bedroom.number.required.error", args)))
+        case Some(s) if hasLivingAccommodation => isBedroomNumberValid(s.trim, key, args)
+        case Some(s) => Right(Some(s))
+        case None    => Right(None)
       }
-      else
-        Valid
-    )
 
-  def form: Form[WhatYourRentIncludesForm] = {
+    override def unbind(key: String, value: Option[String]): Map[String, String] =
+      Map(key -> value.getOrElse(""))
+  }
+
+  private def isBedroomNumberValid(bedroomNumber: String, key: String, args: Seq[String] = Seq.empty): Either[Seq[FormError], Option[String]] =
+    if (bedroomNumber.isEmpty)
+      Left(Seq(FormError(key, "whatYourRentIncludes.bedroom.number.required.error", args)))
+    else if (!bedroomNumber.matches(wholePositiveNumberRegexp.pattern()))
+      Left(Seq(FormError(key, "whatYourRentIncludes.bedroom.number.invalid.error", args)))
+    else if (bedroomNumber.toDoubleOption.getOrElse(0d) > 99)
+      Left(Seq(FormError(key, "whatYourRentIncludes.bedroom.number.maximum.error", args)))
+    else if (bedroomNumber.toLong < 1)
+      Left(Seq(FormError(key, "whatYourRentIncludes.bedroom.number.minimum.error", args)))
+    else
+      Right(Some(bedroomNumber))
+
+  def form(isOTCLease: Boolean): Form[WhatYourRentIncludesForm] = {
     Form(
       mapping(
         livingAccommodationRadio  -> radioText(livingAccommodationRadioError),
         rentPartAddressRadio      -> radioText(rentPartAddressRadioError),
         rentEmptyShellRadio       -> radioText(rentEmptyShellRadioError),
-        rentIncBusinessRatesRadio -> radioText(rentIncBusinessRatesRadioError),
-        rentIncWaterChargesRadio  -> radioText(rentIncWaterChargesRadioError),
-        rentIncServiceRadio       -> radioText(rentIncServiceRadioError),
-        bedroomNumbers            -> optional(text().transform[String](_.strip(), identity))
+        rentIncBusinessRatesRadio -> optionalRadioText(rentIncBusinessRatesRadioError, isOTCLease),
+        rentIncWaterChargesRadio  -> optionalRadioText(rentIncWaterChargesRadioError, isOTCLease),
+        rentIncServiceRadio       -> optionalRadioText(rentIncServiceRadioError, isOTCLease),
+        bedroomNumbers            -> of(bedroomFormatter())
       )(WhatYourRentIncludesForm.apply)(WhatYourRentIncludesForm.unapply)
-        .verifying(isBedroomNumberValid)
     )
   }
 }

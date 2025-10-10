@@ -27,8 +27,8 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.dateinput.DateInput
 import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.{Fieldset, Legend}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.hint.Hint
 import uk.gov.hmrc.ngrraldfrontend.models.*
-import uk.gov.hmrc.ngrraldfrontend.models.components.{NGRCharacterCount, NGRRadio}
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{ngrRadio, noButton, yesButton}
+import uk.gov.hmrc.ngrraldfrontend.models.components.{NGRCharacterCount, NGRRadio}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.{DateTextFields, NGRCharacterCountComponent}
 

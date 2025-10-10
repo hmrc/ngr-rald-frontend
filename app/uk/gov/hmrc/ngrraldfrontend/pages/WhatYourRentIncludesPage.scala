@@ -16,8 +16,8 @@
 
 package uk.gov.hmrc.ngrraldfrontend.pages
 
-import uk.gov.hmrc.ngrraldfrontend.models.WhatYourRentIncludes
 import play.api.libs.json.JsPath
+import uk.gov.hmrc.ngrraldfrontend.models.WhatYourRentIncludes
 
 case object WhatYourRentIncludesPage extends QuestionPage[WhatYourRentIncludes] {
 

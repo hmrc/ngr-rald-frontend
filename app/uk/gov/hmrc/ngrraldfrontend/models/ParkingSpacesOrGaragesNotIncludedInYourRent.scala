@@ -18,16 +18,14 @@ package uk.gov.hmrc.ngrraldfrontend.models
 
 import play.api.libs.json.{Json, OFormat}
 
-case class WhatYourRentIncludes(
-                                 livingAccommodation: Boolean,
-                                 rentPartAddress: Boolean,
-                                 rentEmptyShell: Boolean,
-                                 rentIncBusinessRates: Option[Boolean],
-                                 rentIncWaterCharges: Option[Boolean],
-                                 rentIncService: Option[Boolean],
-                                 bedroomNumbers: Option[Int]
-                               )
+case class ParkingSpacesOrGaragesNotIncludedInYourRent(
+                                                        uncoveredSpaces: Int,
+                                                        coveredSpaces: Int,
+                                                        garages: Int,
+                                                        totalCost: BigDecimal,
+                                                        agreementDate: NGRDate
+                                                      )
 
-object WhatYourRentIncludes {
-  implicit val format: OFormat[WhatYourRentIncludes] = Json.format[WhatYourRentIncludes]
+object ParkingSpacesOrGaragesNotIncludedInYourRent {
+  implicit val format: OFormat[ParkingSpacesOrGaragesNotIncludedInYourRent] = Json.format[ParkingSpacesOrGaragesNotIncludedInYourRent]
 }
