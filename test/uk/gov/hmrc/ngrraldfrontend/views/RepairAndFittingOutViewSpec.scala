@@ -23,36 +23,38 @@ import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
 import uk.gov.hmrc.ngrraldfrontend.models.NormalMode
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{buildRadios, simpleNgrRadio}
-import uk.gov.hmrc.ngrraldfrontend.models.forms.DidYouPayAnyMoneyToLandlordForm
-import uk.gov.hmrc.ngrraldfrontend.views.html.DidYouPayAnyMoneyToLandlordView
+import uk.gov.hmrc.ngrraldfrontend.models.forms.RepairsAndFittingOutForm
+import uk.gov.hmrc.ngrraldfrontend.views.html.RepairsAndFittingOutView
 
-class DidYouPayAnyMoneyToLandlordViewSpec extends ViewBaseSpec {
-  lazy val view: DidYouPayAnyMoneyToLandlordView = inject[DidYouPayAnyMoneyToLandlordView]
+class RepairAndFittingOutViewSpec extends ViewBaseSpec {
+  lazy val view: RepairsAndFittingOutView = inject[RepairsAndFittingOutView]
 
   object Strings {
-    val heading = "Did you pay any money in advance to the landlord?"
-    val body = "This is in addition to rent, cost of buying the business, goodwill, trade fixtures or refundable deposits."
+    val title = "Repairs and fitting out"
+    val body = "Repairs are when you fix things like poor electrical wiring, leaking windows or a broken toilet. Fitting out is when you install things like air conditioning, a kitchen or carpeting."
+    val heading = "Have you done any repairs or fitting out in the property?"
     val radio1 = "Yes"
     val radio2 = "No"
     val continue = "Continue"
   }
 
   object Selectors {
-    val heading = "#main-content > div > div.govuk-grid-column-two-thirds > form > h1"
+    val title = "#main-content > div > div.govuk-grid-column-two-thirds > form > h1"
     val body = "#main-content > div > div.govuk-grid-column-two-thirds > form > p"
-    val radio1 = "#main-content > div > div.govuk-grid-column-two-thirds > form > div > div > div:nth-child(1) > label"
-    val radio2 = "#main-content > div > div.govuk-grid-column-two-thirds > form > div > div > div:nth-child(2) > label"
+    val heading = "#main-content > div > div.govuk-grid-column-two-thirds > form > div > fieldset > legend > h1"
+    val radio1 = "#main-content > div > div.govuk-grid-column-two-thirds > form > div > fieldset > div > div:nth-child(1) > label"
+    val radio2 = "#main-content > div > div.govuk-grid-column-two-thirds > form > div > fieldset > div > div:nth-child(2) > label"
     val continue = "#continue"
   }
 
   val address = "5 Brixham Marina, Berry Head Road, Brixham, Devon, TQ5 9BW"
-  private val ngrRadio: NGRRadio = simpleNgrRadio(DidYouPayAnyMoneyToLandlordForm.radio)
-  val form = DidYouPayAnyMoneyToLandlordForm.form.fillAndValidate(DidYouPayAnyMoneyToLandlordForm("true"))
+  private val ngrRadio: NGRRadio = RepairsAndFittingOutForm.repairsAndFittingOutRadio
+  val form = RepairsAndFittingOutForm.form.fillAndValidate(RepairsAndFittingOutForm("true"))
   val radio: Radios = buildRadios(form, ngrRadio)
 
-  "DidYouPayAnyMoneyToLandlordView" must {
-    val didYouPayAnyMoneyToLandlordView = view(address, form, radio, NormalMode)
-    lazy implicit val document: Document = Jsoup.parse(didYouPayAnyMoneyToLandlordView.body)
+  "ConfirmBreakClauseView" must {
+    val repairsAndFittingOutView = view(address, form, radio, NormalMode)
+    lazy implicit val document: Document = Jsoup.parse(repairsAndFittingOutView.body)
     val htmlApply = view.apply(address, form, radio, NormalMode).body
     val htmlRender = view.render(address, form, radio, NormalMode, request, messages, mockConfig).body
     lazy val htmlF = view.f(address, form, radio, NormalMode)
@@ -69,11 +71,15 @@ class DidYouPayAnyMoneyToLandlordViewSpec extends ViewBaseSpec {
       htmlRender must not be empty
     }
 
+    "show correct title" in {
+      elementText(Selectors.title) mustBe Strings.title
+    }
+
     "show correct heading" in {
       elementText(Selectors.heading) mustBe Strings.heading
     }
 
-    "show correct hint" in {
+    "show correct body" in {
       elementText(Selectors.body) mustBe Strings.body
     }
 

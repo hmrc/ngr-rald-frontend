@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.ngrraldfrontend.models.forms.mappings
+package uk.gov.hmrc.ngrraldfrontend.pages
 
-import play.api.data.FieldMapping
-import play.api.data.Forms.of
+import play.api.libs.json.JsPath
 
-trait Mappings extends Formatters {
-  protected def radioText(errorKey: String = "error.required", args: Seq[String] = Seq.empty): FieldMapping[String] =
-    of(stringFormatter(errorKey, args))
+case object RepairsAndFittingOutPage extends QuestionPage[Boolean] {
 
-  protected def optionalRadioText(errorKey: String = "error.required", isOptional: Boolean, args: Seq[String] = Seq.empty): FieldMapping[String] =
-    if (!isOptional)
-      of(stringFormatter(errorKey, args))
-    else
-      of(optionalStringFormatter(args))
+  override def toString: String = "repairsAndFittingOutPage"
+
+  override def path: JsPath = JsPath \ toString
+
 }

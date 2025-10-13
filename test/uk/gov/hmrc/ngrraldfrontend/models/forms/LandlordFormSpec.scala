@@ -27,8 +27,7 @@ class LandlordFormSpec extends AnyFlatSpec with Matchers {
 
   val validData = Map(
     "landlord-name-value" -> "John Doe",
-    "landlord-radio" -> "false",
-    "landlord-relationship" -> ""
+    "landlord-radio" -> "false"
   )
 
   "LandlordForm" should "bind valid data successfully" in {
@@ -38,7 +37,7 @@ class LandlordFormSpec extends AnyFlatSpec with Matchers {
     boundForm.value shouldBe Some(LandlordForm("John Doe", "false", None))
   }
 
-  it should "fail when landlord name is missing" in {
+  it should "fail when landlord name and relationship are missing" in {
     val data = Map(
       "landlord-name-value" -> "",
       "landlord-radio" -> "true",
@@ -46,7 +45,8 @@ class LandlordFormSpec extends AnyFlatSpec with Matchers {
     )
     val boundForm = LandlordForm.form.bind(data)
 
-    boundForm.errors shouldBe List(FormError("landlord-name-value", List("landlord.name.empty.error"), ArraySeq("landlord-name-value")))
+    boundForm.errors shouldBe List(FormError("landlord-name-value", List("landlord.name.empty.error"), ArraySeq("landlord-name-value")),
+      FormError("landlord-relationship", List("landlord.relationship.emptyText.error")))
   }
 
   it should "fail when landlord type (radio) is missing" in {
@@ -65,7 +65,7 @@ class LandlordFormSpec extends AnyFlatSpec with Matchers {
 
     val boundForm = LandlordForm.form.bind(data)
 
-    boundForm.errors shouldBe List(FormError("", List("landlord.radio.emptyText.error"), List()))
+    boundForm.errors shouldBe List(FormError("landlord-relationship", List("landlord.relationship.emptyText.error"), List()))
   }
 
   it should "pass when 'Yes' is selected and description is provided" in {

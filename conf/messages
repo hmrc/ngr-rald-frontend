@@ -60,7 +60,7 @@ landlord.p2 = Do you have a relationship with the landlord other than as a tenan
 landlord.name.empty.error = Enter the landlord''s full name
 landlord.name.empty.tooLong.error = Landlord''s full name must be 50 characters or less
 landlord.radio.empty.error = Select yes if you have any relationship with landlord
-landlord.radio.emptyText.error = Tell us what your relationship with the landlord is
+landlord.relationship.emptyText.error = Tell us what your relationship with the landlord is
 landlord.radio.tooLong.error = Maximum character allowed is 250
 landlord.radio.yes = Can you tell us what your relationship with the landlord is?
 landlord.radio.yes.hint = For example, the landlord is a family member, business partner, shared director or company pension fund
@@ -393,6 +393,10 @@ repairsAndInsurance.internalRepairs.radio.required.error = Select who pays for i
 repairsAndInsurance.externalRepairs.radio.required.error = Select who pays for external repairs
 repairsAndInsurance.buildingInsurance.radio.required.error = Select who pays for buildings insurance
 
+#DidYouGetMoneyFromLandlord
+didYouGetMoneyFromLandlord.title = Did you get any money from the landlord or previous tenant to take on the lease?
+didYouGetMoneyFromLandlord.empty.error = Select yes if you got any money from the landlord or previous tenant to take on the lease
+
 #Rent review
 rentReview.months = Months
 rentReview.years = Years
@@ -409,6 +413,18 @@ rentReview.rentReviewMonthsYears.months.maximum.12.error = The number of months 
 rentReview.rentReviewMonthsYears.months.maximum.11.error = The number of months for how often your rent is reviewed must be 11 or less
 rentReview.rentReviewMonthsYears.years.invalid.error = The number of years for how often your rent is reviewed must be a number, like 2
 rentReview.rentReviewMonthsYears.years.maximum.1000.error = How often your rent is reviewed must be 1,000 years or less
+
+#Repairs and fitting out
+repairsAndFittingOut.title = Repairs and fitting out
+repairsAndFittingOut.header = Have you done any repairs or fitting out in the property?
+repairsAndFittingOut.p1 = Repairs are when you fix things like poor electrical wiring, leaking windows or a broken toilet. Fitting out is when you install things like air conditioning, a kitchen or carpeting.
+repairsAndFittingOut.empty.error = Select yes if you have done any repairs of fitting out in the property
+
+#How much was the lump sum
+howMuchWasTheLumpSum.title = How much was the lump sum?
+howMuchWasTheLumpSum.empty.error = Enter the lump sum, in pounds
+howMuchWasTheLumpSum.tooLarge.error = Lump sum must be £9,999,999.99 or less
+howMuchWasTheLumpSum.format.error =  Lump sum must be a number, like 50,000
 
 #ParkingSpacesOrGaragesNotIncludedInYourRent
 parkingSpacesOrGaragesNotIncludedInYourRent.title = Parking spaces or garages not included in your rent

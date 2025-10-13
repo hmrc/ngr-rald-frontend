@@ -28,7 +28,6 @@ import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatIsYourRentBasedOnForm
 import uk.gov.hmrc.ngrraldfrontend.views.html.WhatIsYourRentBasedOnView
-import uk.gov.hmrc.ngrraldfrontend.views.html.components.NGRCharacterCountComponent
 
 class WhatIsYourRentBasedOnViewSpec extends ViewBaseSpec {
   lazy val view: WhatIsYourRentBasedOnView = inject[WhatIsYourRentBasedOnView]

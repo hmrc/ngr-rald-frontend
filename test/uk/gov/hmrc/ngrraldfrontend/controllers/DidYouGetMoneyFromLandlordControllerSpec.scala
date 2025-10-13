@@ -28,20 +28,20 @@ import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, NormalMode, UserAnswers}
-import uk.gov.hmrc.ngrraldfrontend.pages.{ConfirmBreakClausePage, DoesYourRentIncludeParkingPage}
-import uk.gov.hmrc.ngrraldfrontend.views.html.ConfirmBreakClauseView
+import uk.gov.hmrc.ngrraldfrontend.pages.{DidYouGetMoneyFromLandlordPage, DoesYourRentIncludeParkingPage}
+import uk.gov.hmrc.ngrraldfrontend.views.html.DidYouGetMoneyFromLandlordView
 
 import scala.concurrent.Future
 
-class ConfirmBreakClauseControllerSpec extends ControllerSpecSupport {
-  val pageTitle = "Did your agreement allow you to trigger a break clause?"
-  val view: ConfirmBreakClauseView = inject[ConfirmBreakClauseView]
-  val controllerNoProperty: ConfirmBreakClauseController = new ConfirmBreakClauseController(view, fakeAuth, fakeData(None), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
-  val controllerProperty: Option[UserAnswers] => ConfirmBreakClauseController = answers => new ConfirmBreakClauseController(view, fakeAuth, fakeDataProperty(Some(property),answers), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
-  val confirmBreakClauseAnswers: Option[UserAnswers] =  UserAnswers("id").set(ConfirmBreakClausePage, true).toOption
+class DidYouGetMoneyFromLandlordControllerSpec extends ControllerSpecSupport {
+  val pageTitle = "Did you get any money from the landlord or previous tenant to take on the lease?"
+  val view: DidYouGetMoneyFromLandlordView = inject[DidYouGetMoneyFromLandlordView]
+  val controllerNoProperty: DidYouGetMoneyFromLandlordController = new DidYouGetMoneyFromLandlordController(view, fakeAuth, fakeData(None), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
+  val controllerProperty: Option[UserAnswers] => DidYouGetMoneyFromLandlordController = answers => new DidYouGetMoneyFromLandlordController(view, fakeAuth, fakeDataProperty(Some(property),answers), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
+  val didYouGetMoneyFromLandlordAnswers: Option[UserAnswers] =  UserAnswers("id").set(DidYouGetMoneyFromLandlordPage, true).toOption
 
 
-  "Confirm Break Clause Controller" must {
+  "DidYouGetMoneyFromLandlord Controller" must {
     "method show" must {
       "Return OK and the correct view" in {
         val result = controllerProperty(None).show(NormalMode)(authenticatedFakeRequest)
@@ -50,12 +50,12 @@ class ConfirmBreakClauseControllerSpec extends ControllerSpecSupport {
         content must include(pageTitle)
       }
       "return OK and the correct view with prepopulated data" in {
-        val result = controllerProperty(confirmBreakClauseAnswers).show(NormalMode)(authenticatedFakeRequest)
+        val result = controllerProperty(didYouGetMoneyFromLandlordAnswers).show(NormalMode)(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
         val document = Jsoup.parse(content)
-        document.select("input[type=radio][name=confirmBreakClause-radio-value][value=true]").hasAttr("checked") mustBe true
-        document.select("input[type=radio][name=confirmBreakClause-radio-value][value=false]").hasAttr("checked") mustBe false
+        document.select("input[type=radio][name=didYouGetMoneyFromLandlord-radio-value][value=true]").hasAttr("checked") mustBe true
+        document.select("input[type=radio][name=didYouGetMoneyFromLandlord-radio-value][value=false]").hasAttr("checked") mustBe false
       }
       "Return NotFoundException when property is not found in the mongo" in {
         when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(None))
@@ -69,9 +69,9 @@ class ConfirmBreakClauseControllerSpec extends ControllerSpecSupport {
     "method submit" must {
       "Return See_Other and the correct view after submitting yes" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.ConfirmBreakClauseController.submit(NormalMode))
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.DidYouGetMoneyFromLandlordController.submit(NormalMode))
           .withFormUrlEncodedBody(
-            "confirmBreakClause-radio-value" -> "true",
+            "didYouGetMoneyFromLandlord-radio-value" -> "true",
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -82,9 +82,9 @@ class ConfirmBreakClauseControllerSpec extends ControllerSpecSupport {
       }
       "Return See_Other and the correct view after submitting no" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.ConfirmBreakClauseController.submit(NormalMode))
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.DidYouGetMoneyFromLandlordController.submit(NormalMode))
           .withFormUrlEncodedBody(
-            "confirmBreakClause-radio-value" -> "false",
+            "didYouGetMoneyFromLandlord-radio-value" -> "false",
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -94,9 +94,9 @@ class ConfirmBreakClauseControllerSpec extends ControllerSpecSupport {
         redirectLocation(result) mustBe Some(routes.LandlordController.show(NormalMode).url)
       }
       "Return Form with Errors when no radio selection is input" in {
-        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.ConfirmBreakClauseController.submit(NormalMode))
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.DidYouGetMoneyFromLandlordController.submit(NormalMode))
           .withFormUrlEncodedBody(
-            "confirmBreakClause-radio-value" -> "",
+            "didYouGetMoneyFromLandlord-radio-value" -> "",
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
@@ -105,7 +105,7 @@ class ConfirmBreakClauseControllerSpec extends ControllerSpecSupport {
         status(result) mustBe BAD_REQUEST
         val content = contentAsString(result)
         content must include(pageTitle)
-        content must include("Select yes if you have a break clause is a term in your agreement that allows you to end the agreement early.")
+        content must include("Select yes if you got any money from the landlord or previous tenant to take on the lease")
       }
       
       "Return Exception if no address is in the mongo" in {

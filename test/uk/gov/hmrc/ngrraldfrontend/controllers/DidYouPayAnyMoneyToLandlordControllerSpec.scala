@@ -38,16 +38,24 @@ class DidYouPayAnyMoneyToLandlordControllerSpec extends ControllerSpecSupport {
   val view: DidYouPayAnyMoneyToLandlordView = inject[DidYouPayAnyMoneyToLandlordView]
   val controllerNoProperty: DidYouPayAnyMoneyToLandlordController = new DidYouPayAnyMoneyToLandlordController(view, fakeAuth, fakeData(None), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
   val controllerProperty: Option[UserAnswers] => DidYouPayAnyMoneyToLandlordController = answers => new DidYouPayAnyMoneyToLandlordController(view, fakeAuth, fakeDataProperty(Some(property),answers), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
-  val confirmBreakClauseAnswers: Option[UserAnswers] =  UserAnswers("id").set(DidYouPayAnyMoneyToLandlordPage, true).toOption
+  val didYouPayAnyMoneyToLandlordAnswers: Option[UserAnswers] =  UserAnswers("id").set(DidYouPayAnyMoneyToLandlordPage, true).toOption
 
 
-  "Confirm Break Clause Controller" must {
+  "didYouPayAnyMoneyToLandlordAnswers Controller" must {
     "method show" must {
       "Return OK and the correct view" in {
         val result = controllerProperty(None).show(NormalMode)(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
         content must include(pageTitle)
+      }
+      "return OK and the correct view with prepopulated data" in {
+        val result = controllerProperty(didYouPayAnyMoneyToLandlordAnswers).show(NormalMode)(authenticatedFakeRequest)
+        status(result) mustBe OK
+        val content = contentAsString(result)
+        val document = Jsoup.parse(content)
+        document.select("input[type=radio][name=didYouPayAnyMoneyToLandlord-radio-value][value=true]").hasAttr("checked") mustBe true
+        document.select("input[type=radio][name=didYouPayAnyMoneyToLandlord-radio-value][value=false]").hasAttr("checked") mustBe false
       }
       "Return NotFoundException when property is not found in the mongo" in {
         when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(None))

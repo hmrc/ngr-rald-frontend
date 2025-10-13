@@ -22,7 +22,7 @@
 @import uk.gov.hmrc.ngrraldfrontend.viewmodels.govuk.all._
 @import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 @import uk.gov.hmrc.ngrraldfrontend.models.components.NavigationBarContent
-@import uk.gov.hmrc.ngrraldfrontend.models.forms.DidYouPayAnyMoneyToLandlordForm
+@import uk.gov.hmrc.ngrraldfrontend.models.forms.DidYouGetMoneyFromLandlordForm
 
 @this(
     layout: Layout,
@@ -32,16 +32,14 @@
     saveAndContinueButton: saveAndContinueButton
 )
 
-@(selectedPropertyAddress: String, form: Form[DidYouPayAnyMoneyToLandlordForm], ngrRadio: Radios, mode: Mode)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+@(selectedPropertyAddress: String, form: Form[DidYouGetMoneyFromLandlordForm], ngrRadio: Radios, mode: Mode)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
-@layout(pageTitle = Some(messages("didYouPayAnyMoneyToLandlord.title")), showBackLink = true, fullWidth = false) {
-    @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouPayAnyMoneyToLandlordController.submit(mode), Symbol("autoComplete") -> "off") {
+@layout(pageTitle = Some(messages("didYouGetMoneyFromLandlord.title")), showBackLink = true, fullWidth = false) {
+    @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouGetMoneyFromLandlordController.submit(mode), Symbol("autoComplete") -> "off") {
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
         <span class="govuk-caption-m">@selectedPropertyAddress</span>
-        <h1 class="govuk-heading-l">@messages("didYouPayAnyMoneyToLandlord.title")</h1>
-        <p class="govuk-body">@messages("didYouPayAnyMoneyToLandlord.p1")</p>
         @govukRadios(ngrRadio)
         @saveAndContinueButton(msg = messages("service.continue"), isStartButton = false)
     }

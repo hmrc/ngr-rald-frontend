@@ -25,7 +25,6 @@ import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.LandlordForm
 import uk.gov.hmrc.ngrraldfrontend.views.html.LandlordView
-import uk.gov.hmrc.ngrraldfrontend.views.html.components.NGRCharacterCountComponent
 
 class LandlordViewSpec extends ViewBaseSpec {
   lazy val view: LandlordView = inject[LandlordView]
