@@ -17,10 +17,9 @@
 package uk.gov.hmrc.ngrraldfrontend.navigation
 
 import play.api.mvc.Call
-import controllers.routes
 import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.ngrraldfrontend.models.{CheckMode, Mode, NormalMode, ProvideDetailsOfFirstSecondRentPeriod, UserAnswers, WhatYourRentIncludes}
-import uk.gov.hmrc.ngrraldfrontend.pages._
+import uk.gov.hmrc.ngrraldfrontend.models.{CheckMode, Mode, NormalMode, ProvideDetailsOfFirstSecondRentPeriod, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.pages.*
 
 import javax.inject.{Inject, Singleton}
 
@@ -79,16 +78,14 @@ class Navigator @Inject()() {
       }
     case DidYouAgreeRentWithLandlordPage => answers =>
       answers.get(DidYouAgreeRentWithLandlordPage) match {
-        case Some(value) =>
+        case Some(value)  =>
           value match {
-            case true =>
-              answers.get(AgreedRentChangePage) match {
-                case Some(value) => value match {
-                  case true => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(NormalMode)
-                  case _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeController.show(NormalMode)
-                }
-                case None => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(NormalMode)
+            case true => answers.get(ProvideDetailsOfFirstSecondRentPeriodPage) match {
+              case Some(value) => value match {
+                case value => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeController.show(NormalMode)
               }
+              case None => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(NormalMode)
+            }
             case _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentInterimController.show(NormalMode)
           }
         case None => throw new NotFoundException("Failed to find answers")
@@ -143,8 +140,8 @@ class Navigator @Inject()() {
     case DoYouPayExtraForParkingSpacesPage => answers =>
       answers.get(DoYouPayExtraForParkingSpacesPage) match {
         case Some(value) => value match {
-          case true => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DoYouPayExtraForParkingSpacesController.show(NormalMode)
-          case _    => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RepairsAndInsuranceController.show(NormalMode)
+          case true => uk.gov.hmrc.ngrraldfrontend.controllers.routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.show(NormalMode)
+          case _     => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RepairsAndInsuranceController.show(NormalMode)
         }
         case None => throw new NotFoundException("Failed to find answers")
       }
@@ -157,6 +154,8 @@ class Navigator @Inject()() {
     //TODO Next page not made yet
     case RentReviewPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(NormalMode)
     case RepairsAndFittingOutPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.LandlordController.show(NormalMode) //TODO This needs to be amended when the journey is completed
+    case ParkingSpacesOrGaragesNotIncludedInYourRentPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RepairsAndInsuranceController.show(NormalMode)
+    case RepairsAndInsurancePage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.ConfirmBreakClauseController.show(NormalMode) //TODO Needs journey mapping
   }
 
   //TODO change to check your answers page
