@@ -64,25 +64,10 @@ class RentReviewController @Inject()(rentReviewView: RentReviewView,
     (authenticate andThen getData).async { implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
-          val correctedFormErrors = formWithErrors.errors.map { formError =>
-            (formError.key, formError.messages) match
-              case (key, messages) if messages.contains("rentReview.date.required.error") =>
-                formError.copy(key = "date")
-              case (key, messages) if messages.contains("rentReview.rentReviewMonthsYears.months.invalid.error") ||
-                messages.contains("rentReview.rentReviewMonthsYears.months.maximum.12.error") ||
-                messages.contains("rentReview.rentReviewMonthsYears.months.maximum.11.error")  =>
-                formError.copy(key = "date.month")
-              case (key, messages) if messages.contains("rentReview.rentReviewMonthsYears.years.invalid.error") ||
-                messages.contains("rentReview.rentReviewMonthsYears.years.maximum.1000.error")=>
-                formError.copy(key = "date.year")
-              case _ =>
-                formError
-          }
-          val formWithCorrectedErrors = formWithErrors.copy(errors = correctedFormErrors)
           Future.successful(BadRequest(rentReviewView(
-            form = formWithCorrectedErrors,
-            hasIncludedRentReviewRadios = buildRadios(formWithCorrectedErrors, RentReviewForm.createHasIncludeRentReviewRadio(formWithCorrectedErrors, inputDateForMonthYear)),
-            canRentGoDownRadios = buildRadios(formWithCorrectedErrors, RentReviewForm.createCanRentGoDownRadio),
+            form = formWithErrors,
+            hasIncludedRentReviewRadios = buildRadios(formWithErrors, RentReviewForm.createHasIncludeRentReviewRadio(formWithErrors, inputDateForMonthYear)),
+            canRentGoDownRadios = buildRadios(formWithErrors, RentReviewForm.createCanRentGoDownRadio),
             propertyAddress = request.property.addressFull,
             mode = mode
           )))

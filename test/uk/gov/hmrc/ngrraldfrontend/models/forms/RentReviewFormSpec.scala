@@ -124,7 +124,7 @@ class RentReviewFormSpec extends AnyWordSpec with Matchers {
       val boundForm = RentReviewForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("", "rentReview.date.required.error"))
+      boundForm.errors should contain(FormError("date", "rentReview.date.required.error"))
     }
     "Return errors when months and years are not numeric" in {
       val data = Map(RentReviewForm.hasIncludeRentReviewRadio -> "true",
@@ -134,8 +134,8 @@ class RentReviewFormSpec extends AnyWordSpec with Matchers {
       val boundForm = RentReviewForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("", "rentReview.rentReviewMonthsYears.months.invalid.error"))
-      boundForm.errors should contain(FormError("", "rentReview.rentReviewMonthsYears.years.invalid.error"))
+      boundForm.errors should contain(FormError("date.month", "rentReview.rentReviewMonthsYears.months.invalid.error"))
+      boundForm.errors should contain(FormError("date.year", "rentReview.rentReviewMonthsYears.years.invalid.error"))
     }
     "Return errors when months is over 12 and years is empty" in {
       val data = Map(RentReviewForm.hasIncludeRentReviewRadio -> "true",
@@ -145,7 +145,7 @@ class RentReviewFormSpec extends AnyWordSpec with Matchers {
       val boundForm = RentReviewForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("", "rentReview.rentReviewMonthsYears.months.maximum.12.error"))
+      boundForm.errors should contain(FormError("date.month", "rentReview.rentReviewMonthsYears.months.maximum.12.error"))
     }
     "Return errors when months is over 12 and years is zero" in {
       val data = Map(RentReviewForm.hasIncludeRentReviewRadio -> "true",
@@ -155,7 +155,7 @@ class RentReviewFormSpec extends AnyWordSpec with Matchers {
       val boundForm = RentReviewForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("", "rentReview.rentReviewMonthsYears.months.maximum.12.error"))
+      boundForm.errors should contain(FormError("date.month", "rentReview.rentReviewMonthsYears.months.maximum.12.error"))
     }
     "Return errors when months is over 11 and years is greater than zero" in {
       val data = Map(RentReviewForm.hasIncludeRentReviewRadio -> "true",
@@ -165,7 +165,7 @@ class RentReviewFormSpec extends AnyWordSpec with Matchers {
       val boundForm = RentReviewForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("", "rentReview.rentReviewMonthsYears.months.maximum.11.error"))
+      boundForm.errors should contain(FormError("date.month", "rentReview.rentReviewMonthsYears.months.maximum.11.error"))
     }
     "Return errors when years is greater than 1000" in {
       val data = Map(RentReviewForm.hasIncludeRentReviewRadio -> "true",
@@ -175,7 +175,7 @@ class RentReviewFormSpec extends AnyWordSpec with Matchers {
       val boundForm = RentReviewForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("", "rentReview.rentReviewMonthsYears.years.maximum.1000.error"))
+      boundForm.errors should contain(FormError("date.year", "rentReview.rentReviewMonthsYears.years.maximum.1000.error"))
     }
     "unbind correctly to a data map" in {
       val form = RentReviewForm.form.fill(RentReviewForm("true", Some(NGRMonthYear("11", "1")), "false"))

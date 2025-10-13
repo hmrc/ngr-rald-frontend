@@ -16,8 +16,9 @@
 
 package uk.gov.hmrc.ngrraldfrontend.models.forms
 
-import play.api.data.Form
-import play.api.data.Forms.{mapping, optional}
+import play.api.data.{Form, FormError}
+import play.api.data.Forms.{mapping, optional, of}
+import play.api.data.format.Formatter
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationResult}
 import play.api.i18n.Messages
 import play.api.libs.json.{Json, OFormat}
@@ -25,7 +26,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{ngrRadio, noButto
 import uk.gov.hmrc.ngrraldfrontend.models.components.{NGRRadio, NGRRadioButtons}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.LandlordForm.wholePositiveNumberRegexp
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
-import uk.gov.hmrc.ngrraldfrontend.models.{MonthYearMappings, NGRMonthYear, RentReview}
+import uk.gov.hmrc.ngrraldfrontend.models.{MonthYearMappings, NGRDate, NGRMonthYear, RentReview}
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputDateForMonthYear
 
 case class RentReviewForm(hasIncludeRentReview: String, monthsYears: Option[NGRMonthYear], canRentGoDown: String)
@@ -60,62 +61,68 @@ object RentReviewForm extends Mappings with MonthYearMappings {
       rentReviewYears = if (hasIncluded) rentReviewForm.monthsYears.flatMap(_.year.toIntOption) else None,
       canRentGoDown = rentReviewForm.canRentGoDown.toBoolean
     )
-  
-  private def isMonthsValid[A]: Constraint[A] =
-    Constraint((input: A) =>
-      val rentReviewForm = input.asInstanceOf[RentReviewForm]
-      if (rentReviewForm.hasIncludeRentReview.toBoolean)
-        if (rentReviewForm.monthsYears.isEmpty)
-          Invalid("rentReview.date.required.error")
-        else
-          val ngrMonthYear: NGRMonthYear = rentReviewForm.monthsYears.get
-          (ngrMonthYear.month, ngrMonthYear.year) match
-            case ("" | "0", years)  => Valid
-            case (months, "" | "0") => isMonthsValidWhenNoYearsIsEmpty(months)
-            case (months, years)    => isMonthsValidWithYears(months)
-      else
-        Valid
-    )
 
-  private def isMonthsValidWhenNoYearsIsEmpty(months: String): ValidationResult =
-    if (!months.matches(wholePositiveNumberRegexp.pattern()))
-      Invalid("rentReview.rentReviewMonthsYears.months.invalid.error")
-    else if (months.toDouble > 12d)
-      Invalid("rentReview.rentReviewMonthsYears.months.maximum.12.error")
+  private def monthYearFormatter(args: Seq[String] = Seq.empty): Formatter[Option[NGRMonthYear]] = new Formatter[Option[NGRMonthYear]] {
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[NGRMonthYear]] =
+      val hasRentReview = data.get(hasIncludeRentReviewRadio).exists(_ == "true")
+      (data.get(s"$key.month"), data.get(s"$key.year")) match {
+        case (None, None) if hasRentReview => Left(Seq(FormError(key, "rentReview.date.required.error", args)))
+        case (Some(month), Some(year)) if hasRentReview => isMonthYearValid(month.trim, year.trim, key, args)
+        case (Some(month), Some(year)) => Right(Some(NGRMonthYear(month, year)))
+        case (None, None) => Right(None)
+      }
+
+    override def unbind(key: String, value: Option[NGRMonthYear]): Map[String, String] =
+      Map(
+        s"$key.month" -> value.map(_.month).getOrElse(""),
+        s"$key.year"  -> value.map(_.year).getOrElse("")
+      )
+  }
+
+  private def isMonthYearValid(month: String, year: String, key: String, args: Seq[String]): Either[Seq[FormError], Option[NGRMonthYear]] =
+    (month, year) match
+      case ("" | "0", "" | "0") => Left(Seq(FormError(key, "rentReview.date.required.error", args)))
+      case ("" | "0", year) => isYearsValid(month, year, key, args)
+      case (month, "" | "0") => isMonthsValidWhenNoYears(month, year, key, args)
+      case (month, year) =>
+        val monthEither = isMonthsValidWithYears(month, year, key, args)
+        val yearEither = isYearsValid(month, year, key, args)
+        (monthEither.isLeft, yearEither.isLeft) match
+          case (true, true) => monthEither.left.map(formErrorSeq => formErrorSeq ++ yearEither.left.getOrElse(Seq.empty))
+          case (false, true) => yearEither
+          case (_, _) => monthEither
+
+  private def isMonthsValidWhenNoYears(month: String, year: String, key: String, args: Seq[String]): Either[Seq[FormError], Option[NGRMonthYear]] =
+    if (!month.matches(wholePositiveNumberRegexp.pattern()))
+      Left(Seq(FormError(s"$key.month", "rentReview.rentReviewMonthsYears.months.invalid.error", args)))
+    else if (month.toDouble > 12d)
+      Left(Seq(FormError(s"$key.month", "rentReview.rentReviewMonthsYears.months.maximum.12.error", args)))
     else
-      Valid
+      Right(Some(NGRMonthYear(month, year)))
 
-  private def isMonthsValidWithYears(months: String): ValidationResult =
-    if (!months.matches(wholePositiveNumberRegexp.pattern()))
-      Invalid("rentReview.rentReviewMonthsYears.months.invalid.error")
-    else if (months.toDouble > 11d)
-      Invalid("rentReview.rentReviewMonthsYears.months.maximum.11.error")
+  private def isMonthsValidWithYears(month: String, year: String, key: String, args: Seq[String]): Either[Seq[FormError], Some[NGRMonthYear]] =
+    if (!month.matches(wholePositiveNumberRegexp.pattern()))
+      Left(Seq(FormError(s"$key.month", "rentReview.rentReviewMonthsYears.months.invalid.error", args)))
+    else if (month.toDouble > 11d)
+      Left(Seq(FormError(s"$key.month", "rentReview.rentReviewMonthsYears.months.maximum.11.error", args)))
     else
-      Valid
+      Right(Some(NGRMonthYear(month, year)))
 
-  private def isYearsValid[A]: Constraint[A] =
-    Constraint((input: A) =>
-      val rentReviewForm = input.asInstanceOf[RentReviewForm]
-      if (rentReviewForm.hasIncludeRentReview.toBoolean && rentReviewForm.monthsYears.nonEmpty && rentReviewForm.monthsYears.get.year.nonEmpty)
-        val years = rentReviewForm.monthsYears.get.year
-        if (!years.matches(wholePositiveNumberRegexp.pattern()))
-          Invalid("rentReview.rentReviewMonthsYears.years.invalid.error")
-        else if (years.toDouble > 1000)
-          Invalid("rentReview.rentReviewMonthsYears.years.maximum.1000.error")
-        else
-          Valid
-      else
-        Valid
-    )
+  private def isYearsValid(month: String, year: String, key: String, args: Seq[String]): Either[Seq[FormError], Option[NGRMonthYear]] =
+    if (!year.matches(wholePositiveNumberRegexp.pattern()))
+      Left(Seq(FormError(s"$key.year", "rentReview.rentReviewMonthsYears.years.invalid.error", args)))
+    else if (year.toDouble > 1000)
+      Left(Seq(FormError(s"$key.year", "rentReview.rentReviewMonthsYears.years.maximum.1000.error", args)))
+    else
+      Right(Some(NGRMonthYear(month, year)))
 
   def form: Form[RentReviewForm] = {
     Form(
       mapping(
         hasIncludeRentReviewRadio -> radioText("rentReview.hasIncludeRentReview.radio.empty.error"),
-        "date" -> optional(monthYearMapping),
+        "date" -> of(monthYearFormatter()),
         canRentGoDownRadio -> radioText("rentReview.canRentGoDown.radio.empty.error")
       )(RentReviewForm.apply)(RentReviewForm.unapply)
-        .verifying(isMonthsValid, isYearsValid)
     )
   }
 
