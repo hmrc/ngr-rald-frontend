@@ -28,6 +28,12 @@ POST       /landlord                                    uk.gov.hmrc.ngrraldfront
 GET        /landlord/change                             uk.gov.hmrc.ngrraldfrontend.controllers.LandlordController.show(mode: Mode = CheckMode)
 POST       /landlord/change                             uk.gov.hmrc.ngrraldfrontend.controllers.LandlordController.submit(mode: Mode = CheckMode)
 
+#Did you get money from landlord
+GET        /did-you-get-money-from-landlord             uk.gov.hmrc.ngrraldfrontend.controllers.DidYouGetMoneyFromLandlordController.show(mode: Mode = NormalMode)
+POST       /did-you-get-money-from-landlord             uk.gov.hmrc.ngrraldfrontend.controllers.DidYouGetMoneyFromLandlordController.submit(mode: Mode = NormalMode)
+GET        /did-you-get-money-from-landlord/change      uk.gov.hmrc.ngrraldfrontend.controllers.DidYouGetMoneyFromLandlordController.show(mode: Mode = CheckMode)
+POST       /did-you-get-money-from-landlord/change      uk.gov.hmrc.ngrraldfrontend.controllers.DidYouGetMoneyFromLandlordController.submit(mode: Mode = CheckMode)
+
 #What is your rent based on
 GET        /what-is-your-rent-based-on                  uk.gov.hmrc.ngrraldfrontend.controllers.WhatIsYourRentBasedOnController.show(mode: Mode = NormalMode)
 POST       /what-is-your-rent-based-on                  uk.gov.hmrc.ngrraldfrontend.controllers.WhatIsYourRentBasedOnController.submit(mode: Mode = NormalMode)
@@ -112,6 +118,12 @@ POST       /what-rent-includes                                     uk.gov.hmrc.n
 GET        /what-rent-includes/change                              uk.gov.hmrc.ngrraldfrontend.controllers.WhatYourRentIncludesController.show(mode: Mode = CheckMode)
 POST       /what-rent-includes/change                              uk.gov.hmrc.ngrraldfrontend.controllers.WhatYourRentIncludesController.submit(mode: Mode = CheckMode)
 
+#What your rent includes for Total Occupancy Cost lease
+GET        /what-rent-includes-rates-water-service                 uk.gov.hmrc.ngrraldfrontend.controllers.WhatRentIncludesRatesWaterServiceController.show(mode: Mode = NormalMode)
+POST       /what-rent-includes-rates-water-service                 uk.gov.hmrc.ngrraldfrontend.controllers.WhatRentIncludesRatesWaterServiceController.submit(mode: Mode = NormalMode)
+GET        /what-rent-includes-rates-water-service/change          uk.gov.hmrc.ngrraldfrontend.controllers.WhatRentIncludesRatesWaterServiceController.show(mode: Mode = CheckMode)
+POST       /what-rent-includes-rates-water-service/change          uk.gov.hmrc.ngrraldfrontend.controllers.WhatRentIncludesRatesWaterServiceController.submit(mode: Mode = CheckMode)
+
 #Does your rent include parking spaces or garages
 GET        /does-rent-include-parking-spaces-or-garages            uk.gov.hmrc.ngrraldfrontend.controllers.DoesYourRentIncludeParkingController.show(mode: Mode = NormalMode)
 POST       /does-rent-include-parking-spaces-or-garages            uk.gov.hmrc.ngrraldfrontend.controllers.DoesYourRentIncludeParkingController.submit(mode: Mode = NormalMode)
@@ -165,3 +177,8 @@ GET        /repairs-and-fitting-out                      uk.gov.hmrc.ngrraldfron
 POST       /repairs-and-fitting-out                      uk.gov.hmrc.ngrraldfrontend.controllers.RepairsAndFittingOutController.submit(mode: Mode = NormalMode)
 GET        /repairs-and-fitting-out/change               uk.gov.hmrc.ngrraldfrontend.controllers.RepairsAndFittingOutController.show(mode: Mode = CheckMode)
 POST       /repairs-and-fitting-out/change               uk.gov.hmrc.ngrraldfrontend.controllers.RepairsAndFittingOutController.submit(mode: Mode = CheckMode)
+
+GET        /how-much-was-the-lump-sum                    uk.gov.hmrc.ngrraldfrontend.controllers.HowMuchWasTheLumpSumController.show(mode: Mode = NormalMode)
+POST       /how-much-was-the-lump-sum                    uk.gov.hmrc.ngrraldfrontend.controllers.HowMuchWasTheLumpSumController.submit(mode: Mode = NormalMode)
+GET        /how-much-was-the-lump-sum/change             uk.gov.hmrc.ngrraldfrontend.controllers.HowMuchWasTheLumpSumController.show(mode: Mode = CheckMode)
+POST       /how-much-was-the-lump-sum/change             uk.gov.hmrc.ngrraldfrontend.controllers.HowMuchWasTheLumpSumController.submit(mode: Mode = CheckMode)
