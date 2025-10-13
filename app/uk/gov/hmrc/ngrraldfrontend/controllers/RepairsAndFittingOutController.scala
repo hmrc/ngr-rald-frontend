@@ -51,7 +51,7 @@ class RepairsAndFittingOutController  @Inject()(repairsAndFittingView: RepairsAn
         Future.successful(Ok(repairsAndFittingView(
           selectedPropertyAddress = request.property.addressFull,
           form = preparedForm,
-          ngrRadio = buildRadios(preparedForm, simpleNgrRadio(RepairsAndFittingOutForm.radio)),
+          ngrRadio = buildRadios(preparedForm, RepairsAndFittingOutForm.repairsAndFittingOutRadio),
           mode = mode
         )))
     }
@@ -63,7 +63,7 @@ class RepairsAndFittingOutController  @Inject()(repairsAndFittingView: RepairsAn
         formWithErrors => {
             Future.successful(BadRequest(repairsAndFittingView(
               form = formWithErrors,
-              ngrRadio = buildRadios(formWithErrors, simpleNgrRadio(RepairsAndFittingOutForm.radio)),
+              ngrRadio = buildRadios(formWithErrors, RepairsAndFittingOutForm.repairsAndFittingOutRadio),
               selectedPropertyAddress = request.property.addressFull,
               mode = mode
             )))

@@ -412,5 +412,6 @@ rentReview.rentReviewMonthsYears.years.maximum.1000.error = How often your rent 
 
 #Repairs and fitting out
 repairsAndFittingOut.title = Repairs and fitting out
+repairsAndFittingOut.header = Have you done any repairs or fitting out in the property?
 repairsAndFittingOut.p1 = Repairs are when you fix things like poor electrical wiring, leaking windows or a broken toilet. Fitting out is when you install things like air conditioning, a kitchen or carpeting.
 repairsAndFittingOut.empty.error = Select yes if you have done any repairs of fitting out in the property

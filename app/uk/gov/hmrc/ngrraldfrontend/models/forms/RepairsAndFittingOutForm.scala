@@ -21,6 +21,8 @@ import play.api.data.Forms.mapping
 import play.api.i18n.*
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
+import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio
+import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{ngrRadio, noButton, yesButton}
 
 final case class RepairsAndFittingOutForm(radioValue: String)
 
@@ -37,6 +39,16 @@ object RepairsAndFittingOutForm extends CommonFormValidators with Mappings {
   def unapply(repairsAndFittingOutForm: RepairsAndFittingOutForm): Option[(String)] =
     Some(repairsAndFittingOutForm.radioValue)
 
+  def repairsAndFittingOutRadio(implicit messages: Messages): NGRRadio =
+    ngrRadio(
+      radioName = radio,
+      radioButtons = Seq(
+        yesButton(),
+        noButton()
+      ),
+      ngrTitle = "repairsAndFittingOut.header"
+    )
+
   def form: Form[RepairsAndFittingOutForm] = {
     Form(
       mapping(
@@ -44,4 +56,6 @@ object RepairsAndFittingOutForm extends CommonFormValidators with Mappings {
       )(RepairsAndFittingOutForm.apply)(RepairsAndFittingOutForm.unapply)
     )
   }
+
+
 }

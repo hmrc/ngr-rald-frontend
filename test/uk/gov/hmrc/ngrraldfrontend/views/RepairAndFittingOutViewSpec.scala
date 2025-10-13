@@ -30,23 +30,25 @@ class RepairAndFittingOutViewSpec extends ViewBaseSpec {
   lazy val view: RepairsAndFittingOutView = inject[RepairsAndFittingOutView]
 
   object Strings {
-    val heading = "Repairs and fitting out"
-    val hint = "Repairs are when you fix things like poor electrical wiring, leaking windows or a broken toilet. Fitting out is when you install things like air conditioning, a kitchen or carpeting."
+    val title = "Repairs and fitting out"
+    val body = "Repairs are when you fix things like poor electrical wiring, leaking windows or a broken toilet. Fitting out is when you install things like air conditioning, a kitchen or carpeting."
+    val heading = "Have you done any repairs or fitting out in the property?"
     val radio1 = "Yes"
     val radio2 = "No"
     val continue = "Continue"
   }
 
   object Selectors {
-    val heading = "#main-content > div > div.govuk-grid-column-two-thirds > form > h1"
-    val hint = "#main-content > div > div.govuk-grid-column-two-thirds > form > p"
-    val radio1 = "#main-content > div > div.govuk-grid-column-two-thirds > form > div > div > div:nth-child(1) > label"
-    val radio2 = "#main-content > div > div.govuk-grid-column-two-thirds > form > div > div > div:nth-child(2) > label"
+    val title = "#main-content > div > div.govuk-grid-column-two-thirds > form > h1"
+    val body = "#main-content > div > div.govuk-grid-column-two-thirds > form > p"
+    val heading = "#main-content > div > div.govuk-grid-column-two-thirds > form > div > fieldset > legend > h1"
+    val radio1 = "#main-content > div > div.govuk-grid-column-two-thirds > form > div > fieldset > div > div:nth-child(1) > label"
+    val radio2 = "#main-content > div > div.govuk-grid-column-two-thirds > form > div > fieldset > div > div:nth-child(2) > label"
     val continue = "#continue"
   }
 
   val address = "5 Brixham Marina, Berry Head Road, Brixham, Devon, TQ5 9BW"
-  private val ngrRadio: NGRRadio = simpleNgrRadio(RepairsAndFittingOutForm.radio)
+  private val ngrRadio: NGRRadio = RepairsAndFittingOutForm.repairsAndFittingOutRadio
   val form = RepairsAndFittingOutForm.form.fillAndValidate(RepairsAndFittingOutForm("true"))
   val radio: Radios = buildRadios(form, ngrRadio)
 
@@ -69,12 +71,16 @@ class RepairAndFittingOutViewSpec extends ViewBaseSpec {
       htmlRender must not be empty
     }
 
+    "show correct title" in {
+      elementText(Selectors.title) mustBe Strings.title
+    }
+
     "show correct heading" in {
       elementText(Selectors.heading) mustBe Strings.heading
     }
 
-    "show correct hint" in {
-      elementText(Selectors.hint) mustBe Strings.hint
+    "show correct body" in {
+      elementText(Selectors.body) mustBe Strings.body
     }
 
 
