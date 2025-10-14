@@ -181,8 +181,8 @@ class Navigator @Inject()() {
         case (None, None) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.ConfirmBreakClauseController.show(NormalMode)
         case (_, _)       => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentReviewController.show(NormalMode)
       }
-
-    case RentReviewPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(NormalMode)
+    
+    case RentReviewPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RepairsAndFittingOutController.show(NormalMode)
     case RepairsAndFittingOutPage => answers =>
       answers.get(RepairsAndFittingOutPage) match {
         case Some(value) => value match {
@@ -193,6 +193,9 @@ class Navigator @Inject()() {
       }
 
     case HowMuchWasTheLumpSumPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.LandlordController.show(NormalMode) //TODO This needs to be amended when the journey is completed - Page that dictates navigation is not yet completed
+    case ConfirmBreakClausePage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.LandlordController.show(NormalMode) //TODO This needs to be amended when the journey is completed
+    //TODO Next page not made yet
+    case HowMuchWasTheLumpSumPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(NormalMode) //TODO This needs to be amended when the journey is completed
     case ParkingSpacesOrGaragesNotIncludedInYourRentPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RepairsAndInsuranceController.show(NormalMode)
     case DidYouPayAnyMoneyToLandlordPage => answers =>
       answers.get(DidYouPayAnyMoneyToLandlordPage) match {
