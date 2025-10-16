@@ -71,7 +71,7 @@ object ParkingSpacesOrGaragesNotIncludedInYourRentForm extends CommonFormValidat
           case (Some("0"), Some("0"), Some("0"))  => Left(Seq(FormError(key, fieldRequired, args)))
           case (Some(uncoveredSpaces), Some(coveredSpaces), Some(garages)) => data.get(key) match {
             case Some(value) if value.toDoubleOption.getOrElse(0d) > maxValue.toDouble => Left(Seq(FormError(key, s"parkingSpacesOrGaragesNotIncludedInYourRent.${key}.tooHigh.error", args)))
-            case Some(value) if value.nonEmpty && !value.matches(wholePositiveNumberRegexp.pattern()) => Left(Seq(FormError(key, s"parkingSpacesOrGaragesNotIncludedInYourRent.${key}.wholeNum.error", args)))
+            case Some(value) if value.nonEmpty && !value.replaceAll("[£|,|\\s]", "").matches(wholePositiveNumberRegexp.pattern()) => Left(Seq(FormError(key, s"parkingSpacesOrGaragesNotIncludedInYourRent.${key}.wholeNum.error", args)))
             case valueOption if(
               uncoveredSpaces.toIntOption.getOrElse(0) + coveredSpaces.toIntOption.getOrElse(0) + garages.toIntOption.getOrElse(0) > 0
               ) => Right(valueOption.flatMap(_.toIntOption).getOrElse(0))
