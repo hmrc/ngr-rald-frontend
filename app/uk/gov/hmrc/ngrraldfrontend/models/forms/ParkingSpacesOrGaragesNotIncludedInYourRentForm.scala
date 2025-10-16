@@ -16,13 +16,13 @@
 
 package uk.gov.hmrc.ngrraldfrontend.models.forms
 
-import play.api.data.{Form, FormError, Forms}
-import play.api.data.Forms.{mapping, optional, text, of}
+import play.api.data.Forms.{mapping, of, text}
 import play.api.data.format.Formatter
-import play.api.data.validation.{Constraint, Invalid, Valid}
+import play.api.data.validation.Constraint
+import play.api.data.{Form, FormError, Forms}
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.ngrraldfrontend.models.*
-import uk.gov.hmrc.ngrraldfrontend.models.forms.HowManyParkingSpacesOrGaragesIncludedInRentForm.{isLargerThanInt, wholePositiveNumberRegexp}
+import uk.gov.hmrc.ngrraldfrontend.models.forms.HowManyParkingSpacesOrGaragesIncludedInRentForm.wholePositiveNumberRegexp
 import uk.gov.hmrc.ngrraldfrontend.models.forms.ProvideDetailsOfFirstSecondRentPeriodForm.{amountRegex, dateMapping, firstError, isDateAfter1900, isDateEmpty, isDateValid, isNotEmpty, maximumValue, regexp}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 
@@ -53,20 +53,9 @@ object ParkingSpacesOrGaragesNotIncludedInYourRentForm extends CommonFormValidat
       parkingSpacesOrGaragesNotIncludedInYourRentForm.agreementDate,
     )
 
-  private def isParkingSpacesEmpty[A]:
-  Constraint[A] =
-    Constraint((input: A) => {
-      val formData = input.asInstanceOf[ParkingSpacesOrGaragesNotIncludedInYourRentForm]
-      (formData.uncoveredSpaces, formData.coveredSpaces, formData.garages) match {
-        case (uncoveredSpaces, coveredSpaces, garages) if uncoveredSpaces + coveredSpaces + garages <= 0 => Invalid(fieldRequired)
-        case (_, _, _) => Valid
-      }
-    })
-
   private def parkingFormatter(args: Seq[String] = Seq.empty): Formatter[Int] = new Formatter[Int] {
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Int] =
         (data.get("uncoveredSpaces"), data.get("coveredSpaces"), data.get("garages")) match {
-          case (None, None, None) => Left(Seq(FormError(key, fieldRequired, args)))
           case (Some(""), Some(""), Some(""))  => Left(Seq(FormError(key, fieldRequired, args)))
           case (Some("0"), Some("0"), Some("0"))  => Left(Seq(FormError(key, fieldRequired, args)))
           case (Some(uncoveredSpaces), Some(coveredSpaces), Some(garages)) => data.get(key) match {
