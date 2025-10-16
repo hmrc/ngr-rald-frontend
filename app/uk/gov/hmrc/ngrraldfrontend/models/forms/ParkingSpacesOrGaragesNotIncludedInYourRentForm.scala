@@ -16,8 +16,9 @@
 
 package uk.gov.hmrc.ngrraldfrontend.models.forms
 
-import play.api.data.Form
-import play.api.data.Forms.{mapping, optional, text}
+import play.api.data.{Form, FormError, Forms}
+import play.api.data.Forms.{mapping, optional, text, of}
+import play.api.data.format.Formatter
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.ngrraldfrontend.models.*
@@ -40,14 +41,7 @@ object ParkingSpacesOrGaragesNotIncludedInYourRentForm extends CommonFormValidat
 
 
   private lazy val fieldRequired = "parkingSpacesOrGaragesNotIncludedInYourRent.error.required"
-  private lazy val uncoveredSpacesWholeNumError = "parkingSpacesOrGaragesNotIncludedInYourRent.uncoveredSpaces.wholeNum.error"
-  private lazy val coveredSpacesWholeNumError = "parkingSpacesOrGaragesNotIncludedInYourRent.coveredSpaces.wholeNum.error"
-  private lazy val garagesWholeNumError = "parkingSpacesOrGaragesNotIncludedInYourRent.garages.wholeNum.error"
-  private lazy val uncoveredSpacesTooHighError = "parkingSpacesOrGaragesNotIncludedInYourRent.uncoveredSpaces.tooHigh.error"
-  private lazy val coveredSpacesTooHighError = "parkingSpacesOrGaragesNotIncludedInYourRent.coveredSpaces.tooHigh.error"
-  private lazy val garagesTooHighError = "parkingSpacesOrGaragesNotIncludedInYourRent.garages.tooHigh.error"
   private val maxValue = 9999
-
   private val maxTotalCostAmount: BigDecimal = BigDecimal("9999999.99")
 
   def unapply(parkingSpacesOrGaragesNotIncludedInYourRentForm: ParkingSpacesOrGaragesNotIncludedInYourRentForm): Option[(Int, Int, Int, BigDecimal, NGRDate)] =
@@ -69,39 +63,29 @@ object ParkingSpacesOrGaragesNotIncludedInYourRentForm extends CommonFormValidat
       }
     })
 
+  private def parkingFormatter(args: Seq[String] = Seq.empty): Formatter[Int] = new Formatter[Int] {
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Int] =
+        (data.get("uncoveredSpaces"), data.get("coveredSpaces"), data.get("garages")) match {
+          case (None, None, None) => Left(Seq(FormError(key, fieldRequired, args)))
+          case (Some(""), Some(""), Some(""))  => Left(Seq(FormError(key, fieldRequired, args)))
+          case (Some("0"), Some("0"), Some("0"))  => Left(Seq(FormError(key, fieldRequired, args)))
+          case (Some(uncoveredSpaces), Some(coveredSpaces), Some(garages)) => data.get(key) match {
+            case Some(value) if value.toDoubleOption.getOrElse(0d) > maxValue.toDouble => Left(Seq(FormError(key, s"parkingSpacesOrGaragesNotIncludedInYourRent.${key}.tooHigh.error", args)))
+            case Some(value) if value.nonEmpty && !value.matches(wholePositiveNumberRegexp.pattern()) => Left(Seq(FormError(key, s"parkingSpacesOrGaragesNotIncludedInYourRent.${key}.wholeNum.error", args)))
+            case valueOption if(
+              uncoveredSpaces.toIntOption.getOrElse(0) + coveredSpaces.toIntOption.getOrElse(0) + garages.toIntOption.getOrElse(0) > 0
+              ) => Right(valueOption.flatMap(_.toIntOption).getOrElse(0))
+          }
+        }
+      override def unbind(key: String, value: Int): Map[String, String] = Map(key -> value.toString)
+    }
+
   def form: Form[ParkingSpacesOrGaragesNotIncludedInYourRentForm] = {
       Form(
         mapping(
-          "uncoveredSpaces" -> optional(
-            text()
-              .transform[String](_.strip().replaceAll(",", ""), identity)
-              .verifying(
-                firstError(
-                  regexp(wholePositiveNumberRegexp.pattern(), uncoveredSpacesWholeNumError),
-                  isLargerThanInt(maxValue, uncoveredSpacesTooHighError)
-                )
-              )
-          ).transform[Int](_.map(_.toInt).getOrElse(0), value => Some(value.toString)),
-          "coveredSpaces" -> optional(
-            text()
-              .transform[String](_.strip().replaceAll(",", ""), identity)
-              .verifying(
-                firstError(
-                  regexp(wholePositiveNumberRegexp.pattern(), coveredSpacesWholeNumError),
-                  isLargerThanInt(maxValue, coveredSpacesTooHighError)
-                )
-              )
-          ).transform[Int](_.map(_.toInt).getOrElse(0), value => Some(value.toString)),
-          "garages" -> optional(
-            text()
-              .transform[String](_.strip().replaceAll(",", ""), identity)
-              .verifying(
-                firstError(
-                  regexp(wholePositiveNumberRegexp.pattern(), garagesWholeNumError),
-                  isLargerThanInt(maxValue, garagesTooHighError)
-                )
-              )
-          ).transform[Int](_.map(_.toInt).getOrElse(0), value => Some(value.toString)),
+          "uncoveredSpaces" -> of(parkingFormatter()),
+          "coveredSpaces" -> of(parkingFormatter()),
+          "garages" -> of(parkingFormatter()),
           "totalCost" -> text()
             .transform[String](_.strip().replaceAll("[£|,|\\s]", ""), identity)
             .verifying(
@@ -122,11 +106,7 @@ object ParkingSpacesOrGaragesNotIncludedInYourRentForm extends CommonFormValidat
               isDateAfter1900("parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.before.1900.error")
             )
           ),
-        )(ParkingSpacesOrGaragesNotIncludedInYourRentForm.apply)(ParkingSpacesOrGaragesNotIncludedInYourRentForm.unapply)      .verifying(
-          firstError(
-            isParkingSpacesEmpty
-          )
-        )
+        )(ParkingSpacesOrGaragesNotIncludedInYourRentForm.apply)(ParkingSpacesOrGaragesNotIncludedInYourRentForm.unapply)
       )
   }
 }
