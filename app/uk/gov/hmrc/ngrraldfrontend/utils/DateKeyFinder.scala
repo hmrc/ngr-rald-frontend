@@ -50,7 +50,6 @@ trait DateKeyFinder {
   private def isMonthOutOfTheRange(month: String): Boolean = month.toInt < 1 || month.toInt > 12
 
   def setCorrectKey(formError: FormError, pageName: String, fieldName: String): FormError =
-    println(Console.MAGENTA + formError.messages.head + Console.RESET)
     (formError.key, formError.messages.head) match
       case (key, message) if message.contains(s"$pageName.$fieldName.day.required.error") =>
         formError.copy(key = s"$fieldName.day")
