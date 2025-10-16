@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.ngrraldfrontend.controllers
 
-import play.api.data.Form
+import play.api.data.{Form, FormError}
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.HtmlFormat
@@ -98,16 +98,14 @@ class ParkingSpacesOrGaragesNotIncludedInYourRentController @Inject()(view: Park
     (authenticate andThen getData).async { implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
-          val formWithCorrectedErrors = formWithErrors.errors.headOption match {
-            case Some(value) if value.key.isEmpty &&
-              value.messages.contains("parkingSpacesOrGaragesNotIncludedInYourRent.error.required") =>
-              val uncoveredSpaces = value.copy(key = "uncoveredSpaces")
-              val coveredSpaces = value.copy(key = "coveredSpaces")
-              val garages = value.copy(key = "garages")
-              formWithErrors.copy(errors = Seq(uncoveredSpaces, coveredSpaces, garages))
+          val correctedFormErrors: Seq[FormError] = formWithErrors.errors.map { formError =>
+          (formError.key, formError.messages) match
+            case (key, messages) if messages.head.contains("parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate") =>
+              setCorrectKey(formError, "parkingSpacesOrGaragesNotIncludedInYourRent", "agreementDate")
             case _ =>
-              formWithErrors
+              formError
           }
+          val formWithCorrectedErrors = formWithErrors.copy(errors = correctedFormErrors)
           Future.successful(BadRequest(view(
             form = formWithCorrectedErrors,
             propertyAddress = request.property.addressFull,
