@@ -435,7 +435,7 @@ parkingSpacesOrGaragesNotIncludedInYourRent.coveredSpaces.label = Covered spaces
 parkingSpacesOrGaragesNotIncludedInYourRent.garages.label = Garages
 parkingSpacesOrGaragesNotIncludedInYourRent.totalCost.title = How much extra do you pay each year for parking and garages (excluding VAT)?
 parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.label = When was this payment agreed for parking and garages?
-parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.hint = For example, 27 6 2026
+
 parkingSpacesOrGaragesNotIncludedInYourRent.uncoveredSpaces.wholeNum.error = Number of extra uncovered parking spaces included in your rent must be a number, like 9
 parkingSpacesOrGaragesNotIncludedInYourRent.uncoveredSpaces.tooHigh.error = Number of extra uncovered parking spaces included in your rent must be 9,999 or less
 parkingSpacesOrGaragesNotIncludedInYourRent.coveredSpaces.wholeNum.error = Number of extra covered parking spaces included in your rent must be a number, like 9
@@ -455,4 +455,3 @@ parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.monthAndYear.required.
 parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.year.required.error = Date this payment was agreed for parking and garages must include a year
 parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.invalid.error = Date this payment was agreed for parking and garages must be a real date
 parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.before.1900.error = Year payment was agreed for parking and garages must be 1900 or after
-
