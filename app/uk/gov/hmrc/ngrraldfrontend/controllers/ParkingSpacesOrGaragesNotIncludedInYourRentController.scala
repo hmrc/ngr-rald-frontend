@@ -20,12 +20,12 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.Aliases.*
+import uk.gov.hmrc.govukfrontend.views.Aliases.{DateInput, Fieldset, Hint, Legend, Text}
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
+import uk.gov.hmrc.ngrraldfrontend.models.{Mode, ParkingSpacesOrGaragesNotIncludedInYourRent, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.ParkingSpacesOrGaragesNotIncludedInYourRentForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.ParkingSpacesOrGaragesNotIncludedInYourRentForm.*
-import uk.gov.hmrc.ngrraldfrontend.models.{Mode, ParkingSpacesOrGaragesNotIncludedInYourRent, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.ParkingSpacesOrGaragesNotIncludedInYourRentPage
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
@@ -71,8 +71,8 @@ class ParkingSpacesOrGaragesNotIncludedInYourRentController @Inject()(view: Park
       ))
     )),
     hint = Some(Hint(
-      id = Some("parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.hint"),
-      content = Text(messages("parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.hint"))
+      id = Some("provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.hint"),
+      content = Text(messages("provideDetailsOfFirstSecondRentPeriod.secondPeriod.start.date.hint"))
     ))
   )
   
@@ -105,7 +105,8 @@ class ParkingSpacesOrGaragesNotIncludedInYourRentController @Inject()(view: Park
               val coveredSpaces = value.copy(key = "coveredSpaces")
               val garages = value.copy(key = "garages")
               formWithErrors.copy(errors = Seq(uncoveredSpaces, coveredSpaces, garages))
-            case _ =>
+            case Some(value) =>
+              println(Console.MAGENTA + s"$value" +  Console.RESET)
               formWithErrors
           }
           Future.successful(BadRequest(view(
