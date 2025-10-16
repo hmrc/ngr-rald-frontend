@@ -447,6 +447,7 @@ parkingSpacesOrGaragesNotIncludedInYourRent.totalCost.required.error = Enter how
 parkingSpacesOrGaragesNotIncludedInYourRent.totalCost.minimum.error = Extra you pay each year for parking and garages (excluding VAT) must be £1 or more
 parkingSpacesOrGaragesNotIncludedInYourRent.totalCost.max.error = Extra you pay each year for parking and garages (excluding VAT) must be £9,999,999.99 or less
 parkingSpacesOrGaragesNotIncludedInYourRent.totalCost.invalid.error = Extra you pay each year for parking and garages (excluding VAT) must be a number, like 5,000
+parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.required.error = Enter the date this payment was agreed for parking and garages
 parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.day.required.error = Date this payment was agreed for parking and garages must include a day
 parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.dayAndMonth.required.error = Date this payment was agreed for parking and garages must include a day and month
 parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.dayAndYear.required.error = Date this payment was agreed for parking and garages must include a day and year
