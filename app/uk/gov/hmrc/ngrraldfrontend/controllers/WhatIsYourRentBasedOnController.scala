@@ -93,18 +93,18 @@ class WhatIsYourRentBasedOnController @Inject()(view: WhatIsYourRentBasedOnView,
         .bindFromRequest()
         .fold(
           formWithErrors =>
-            val correctedFormErrors = formWithErrors.errors.map { formError =>
-              (formError.key, formError.messages) match
-                case ("", messages) if messages.contains("whatIsYourRentBasedOn.otherText.error.required") =>
-                  formError.copy(key = "rent-based-on-other-desc")
-                case ("", messages) if messages.contains("whatIsYourRentBasedOn.otherText.error.maxLength") =>
-                  formError.copy(key = "rent-based-on-other-desc")
-                case _ =>
-                  formError
-            }
-            val formWithCorrectedErrors = formWithErrors.copy(errors = correctedFormErrors)
-                Future.successful(BadRequest(view(formWithCorrectedErrors,
-                  buildRadios(formWithErrors, ngrRadio(formWithCorrectedErrors)), request.property.addressFull, mode))),
+//            val correctedFormErrors = formWithErrors.errors.map { formError =>
+//              (formError.key, formError.messages) match
+//                case ("", messages) if messages.contains("whatIsYourRentBasedOn.otherText.error.required") =>
+//                  formError.copy(key = "rent-based-on-other-desc")
+//                case ("", messages) if messages.contains("whatIsYourRentBasedOn.otherText.error.maxLength") =>
+//                  formError.copy(key = "rent-based-on-other-desc")
+//                case _ =>
+//                  formError
+//            }
+//            val formWithCorrectedErrors = formWithErrors.copy(errors = correctedFormErrors)
+                Future.successful(BadRequest(view(formWithErrors,
+                  buildRadios(formWithErrors, ngrRadio(formWithErrors)), request.property.addressFull, mode))),
           rentBasedOnForm =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
