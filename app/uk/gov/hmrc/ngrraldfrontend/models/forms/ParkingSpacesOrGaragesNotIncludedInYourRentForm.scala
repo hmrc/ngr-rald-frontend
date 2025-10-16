@@ -20,10 +20,10 @@ import play.api.data.Form
 import play.api.data.Forms.{mapping, optional, text}
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.ngrraldfrontend.models.*
 import uk.gov.hmrc.ngrraldfrontend.models.forms.HowManyParkingSpacesOrGaragesIncludedInRentForm.{isLargerThanInt, wholePositiveNumberRegexp}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.ProvideDetailsOfFirstSecondRentPeriodForm.{amountRegex, dateMapping, firstError, isDateAfter1900, isDateEmpty, isDateValid, isNotEmpty, maximumValue, regexp}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
+import uk.gov.hmrc.ngrraldfrontend.models.*
 
 import scala.math.BigDecimal.RoundingMode
 
