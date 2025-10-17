@@ -16,8 +16,9 @@
 
 package uk.gov.hmrc.ngrraldfrontend.models.forms
 
-import play.api.data.Form
-import play.api.data.Forms.{mapping, optional}
+import play.api.data.{Form, FormError}
+import play.api.data.Forms.{mapping, optional, of}
+import play.api.data.format.Formatter
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.i18n.Messages
 import play.api.libs.json.{Json, OFormat}
@@ -57,36 +58,31 @@ object AgreementVerbalForm extends CommonFormValidators with DateMappings with M
       hint = Some("agreementVerbal.radio.hint")
     )
 
-  private def isEndDateEmpty[A](errorKeys: Map[DateErrorKeys, String]): Constraint[A] =
-    Constraint((input: A) =>
-      val agreementVerbalForm = input.asInstanceOf[AgreementVerbalForm]
-      val date = agreementVerbalForm.agreementEndDate.getOrElse(NGRDate("", "", ""))
-      if (agreementVerbalForm.radioValue.equals("false"))
-        dateEmptyValidation(date, errorKeys)
-      else
-        Valid
-    )
+  private def endDateFormatter(args: Seq[String] = Seq.empty): Formatter[Option[NGRDate]] = new Formatter[Option[NGRDate]] {
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[NGRDate]] =
+      val isNotOpenEnded = data.get(agreementVerbalRadio).exists(_ == "false")
+      (data.get(s"$key.day"), data.get(s"$key.month"), data.get(s"$key.year")) match {
+        case (None, None, None) if isNotOpenEnded => Left(Seq(FormError(key, "agreementVerbal.agreementEndDate.required.error", args)))
+        case (Some(day), Some(month), Some(year)) if isNotOpenEnded => isEndDateValid(day, month, year, key, args)
+        case (Some(day), Some(month), Some(year)) => Right(Some(NGRDate(day, month, year)))
+        case (None, None, None) => Right(None)
+      }
 
-  private def isEndDateValid[A](errorKey: String): Constraint[A] =
-    Constraint((input: A) =>
-      val agreementVerbalForm = input.asInstanceOf[AgreementVerbalForm]
-      val date = agreementVerbalForm.agreementEndDate.getOrElse(NGRDate("", "", ""))
-      if (agreementVerbalForm.radioValue.equals("false"))
-        dateValidation(date, errorKey)
-      else
-        Valid
-    )
+    override def unbind(key: String, value: Option[NGRDate]): Map[String, String] =
+      unbindNGRDate(key, value)
+  }
 
-  private def isEndDateAfterStartDate[A](errorKey: String): Constraint[A] =
-    Constraint((input: A) =>
-      val agreementVerbalForm = input.asInstanceOf[AgreementVerbalForm]
-      val startDate = agreementVerbalForm.agreementStartDate.ngrDate
-      val endDate = agreementVerbalForm.agreementEndDate.getOrElse(NGRDate("", "", ""))
-      if (agreementVerbalForm.radioValue.equals("false") && (Try(endDate.ngrDate).isFailure || endDate.ngrDate.isBefore(startDate)))
-        Invalid(errorKey)
-      else
-        Valid
-    )
+  private def isEndDateValid(day: String, month: String, year: String, key: String, args: Seq[String]): Either[Seq[FormError], Option[NGRDate]] =
+    val endDate: NGRDate = NGRDate(day, month, year)
+    val errorKey: String = getDateErrorKey(endDate, errorKeys("agreementVerbal", "agreementEndDate"))
+    if (errorKey.nonEmpty)
+      Left(Seq(FormError(key, errorKey, args)))
+    else if (isDateInvalid(endDate))
+      Left(Seq(FormError(key, "agreementVerbal.agreementEndDate.invalid.error", args)))
+    else if (isDateBefore1900(endDate))
+      Left(Seq(FormError(key, "agreementVerbal.agreementEndDate.before.1900.error", args)))
+    else
+      Right(Some(endDate))
 
   def unapply(agreementVerbalForm: AgreementVerbalForm): Option[(String, NGRDate, Option[NGRDate])] =
     Some(agreementVerbalForm.radioValue, agreementVerbalForm.agreementStartDate, agreementVerbalForm.agreementEndDate)
@@ -118,17 +114,8 @@ object AgreementVerbalForm extends CommonFormValidators with DateMappings with M
               isDateValid("agreementVerbal.agreementStartDate.invalid.error")
             )
           ),
-        "agreementEndDate" -> optional(
-          dateMapping
-        )
+        "agreementEndDate" -> of(endDateFormatter())
       )(AgreementVerbalForm.apply)(AgreementVerbalForm.unapply)
-        .verifying(
-          firstError(
-            isEndDateEmpty(errorKeys("agreementVerbal", "agreementEndDate")),
-            isEndDateValid("agreementVerbal.agreementEndDate.invalid.error"),
-            isEndDateAfterStartDate("agreementVerbal.endDate.isBefore.startDate.error")
-          )
-        )
     )
   }
 

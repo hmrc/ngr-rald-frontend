@@ -49,7 +49,7 @@ class WhatIsYourRentBasedOnFormSpec extends AnyWordSpec with Matchers {
       val boundForm = WhatIsYourRentBasedOnForm.form.bind(data)
 
       boundForm.hasErrors shouldBe false
-      boundForm.value shouldBe Some(WhatIsYourRentBasedOnForm("TotalOccupancyCost", None))
+      boundForm.value shouldBe Some(WhatIsYourRentBasedOnForm("TotalOccupancyCost", Some("")))
     }
 
     "bind successfully with a valid input value 'PercentageTurnover' and Other description is blank" in {
@@ -76,7 +76,7 @@ class WhatIsYourRentBasedOnFormSpec extends AnyWordSpec with Matchers {
       val boundForm = WhatIsYourRentBasedOnForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("", List("whatIsYourRentBasedOn.otherText.error.required")))
+      boundForm.errors should contain(FormError("rent-based-on-other-desc", List("whatIsYourRentBasedOn.otherText.error.required")))
     }
 
     "fail to bind when input value 'Other' and Other description is over 250 characters" in {
@@ -85,7 +85,7 @@ class WhatIsYourRentBasedOnFormSpec extends AnyWordSpec with Matchers {
       val boundForm = WhatIsYourRentBasedOnForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("", List("whatIsYourRentBasedOn.otherText.error.maxLength")))
+      boundForm.errors should contain(FormError("rent-based-on-other-desc", List("whatIsYourRentBasedOn.otherText.error.maxLength")))
     }
 
     "fail to bind when input is missing" in {

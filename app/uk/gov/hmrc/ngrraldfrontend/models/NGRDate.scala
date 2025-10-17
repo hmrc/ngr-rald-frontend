@@ -36,8 +36,7 @@ final case class NGRDate(day: String, month: String, year: String) {
 
 object NGRDate {
   implicit val format: OFormat[NGRDate] = Json.format[NGRDate]
-
-
+  
   def formatDate(dateString: String): String = {
     val date = LocalDate.parse(dateString)
     val outputFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.UK)
@@ -48,9 +47,7 @@ object NGRDate {
     val date = LocalDate.parse(dateString)
     NGRDate(date.getDayOfMonth.toString, date.getMonthValue.toString, date.getYear.toString)
   }
-
-
-
+  
   def unapply(ngrDate: NGRDate): Option[(String, String, String)] =
     Some(ngrDate.day, ngrDate.month, ngrDate.year)
 }
@@ -90,3 +87,10 @@ def errorKeys(pageName: String, whichDate: String): Map[DateErrorKeys, String] =
   Month        -> s"$pageName.$whichDate.month.required.error",
   Year         -> s"$pageName.$whichDate.year.required.error"
 )
+
+def unbindNGRDate(key: String, ngrDate: Option[NGRDate]): Map[String, String] =
+  Map(
+    s"$key.day"   -> ngrDate.map(_.day).getOrElse(""),
+    s"$key.month" -> ngrDate.map(_.month).getOrElse(""),
+    s"$key.year"  -> ngrDate.map(_.year).getOrElse("")
+  )

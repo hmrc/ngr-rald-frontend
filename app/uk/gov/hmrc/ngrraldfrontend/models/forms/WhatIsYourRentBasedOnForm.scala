@@ -16,8 +16,9 @@
 
 package uk.gov.hmrc.ngrraldfrontend.models.forms
 
-import play.api.data.Form
-import play.api.data.Forms.{mapping, optional}
+import play.api.data.{Form, FormError}
+import play.api.data.Forms.{mapping, of, optional}
+import play.api.data.format.Formatter
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.i18n.*
 import play.api.libs.json.{Json, OFormat}
@@ -42,39 +43,35 @@ object WhatIsYourRentBasedOnForm extends CommonFormValidators with Mappings {
   def unapply(whatIsYourRentBasedOnForm: WhatIsYourRentBasedOnForm): Option[(String, Option[String])] =
     Some((whatIsYourRentBasedOnForm.radioValue, whatIsYourRentBasedOnForm.rentBasedOnOther))
 
-  private def isOtherTextEmpty[A]: Constraint[A] =
-    Constraint((input: A) =>
-      val rentBasedOnForm = input.asInstanceOf[WhatIsYourRentBasedOnForm]
-      if (rentBasedOnForm.radioValue.equals("Other") && rentBasedOnForm.rentBasedOnOther.getOrElse("").isBlank)
-        Invalid("whatIsYourRentBasedOn.otherText.error.required")
-      else
-        Valid
-    )
+  private def otherDescriptionFormatter(args: Seq[String] = Seq.empty): Formatter[Option[String]] = new Formatter[Option[String]] {
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] =
+      val isOtherSelected = data.get(rentBasedOnRadio).exists(_ == "Other")
+      data.get(key) match {
+        case None if isOtherSelected => Left(Seq(FormError(key, "whatIsYourRentBasedOn.otherText.error.required", args)))
+        case Some(s) if isOtherSelected => isOtherDescriptionValid(s.trim, key, args)
+        case Some(s) => Right(Some(s.trim))
+        case None => Right(None)
+      }
 
-  private def otherTextMaxLength[A]: Constraint[A] =
-    Constraint((input: A) =>
-      val rentBasedOnForm = input.asInstanceOf[WhatIsYourRentBasedOnForm]
-      if (rentBasedOnForm.radioValue.equals("Other") && rentBasedOnForm.rentBasedOnOther.getOrElse("").length > 250)
-        Invalid("whatIsYourRentBasedOn.otherText.error.maxLength")
-      else
-        Valid
-    )
+    override def unbind(key: String, value: Option[String]): Map[String, String] =
+      Map(key -> value.getOrElse(""))
+  }
+
+  private def isOtherDescriptionValid(otherStr: String, key: String, args: Seq[String]): Either[Seq[FormError], Option[String]] =
+    if (otherStr.isEmpty)
+      Left(Seq(FormError(key, "whatIsYourRentBasedOn.otherText.error.required", args)))
+    else if (otherStr.length > 250)
+      Left(Seq(FormError(key, "whatIsYourRentBasedOn.otherText.error.maxLength", args)))
+    else
+      Right(Some(otherStr))
+
 
   def form: Form[WhatIsYourRentBasedOnForm] = {
     Form(
       mapping(
         rentBasedOnRadio -> radioText(radioUnselectedError),
-        rentBasedOnOther -> optional(
-          play.api.data.Forms.text
-            .transform[String](_.strip(), identity)
-        )
+        rentBasedOnOther -> of(otherDescriptionFormatter())
       )(WhatIsYourRentBasedOnForm.apply)(WhatIsYourRentBasedOnForm.unapply)
-        .verifying(
-          firstError(
-            isOtherTextEmpty,
-            otherTextMaxLength
-          )
-        )
     )
   }
 }

@@ -165,7 +165,7 @@ class AgreementControllerSpec extends ControllerSpecSupport {
         status(result) mustBe BAD_REQUEST
         val content = contentAsString(result)
         content must include(pageTitle)
-        content must include("<a href=\"#agreementStartDate\">Date your agreement started must include a day</a>")
+        content must include("<a href=\"#agreementStartDate.day\">Date your agreement started must include a day</a>")
       }
       "Return Form with Errors when no month is input for the start date" in {
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementController.submit(NormalMode))
@@ -183,7 +183,7 @@ class AgreementControllerSpec extends ControllerSpecSupport {
         status(result) mustBe BAD_REQUEST
         val content = contentAsString(result)
         content must include(pageTitle)
-        content must include("<a href=\"#agreementStartDate\">Date your agreement started must include a month</a>")
+        content must include("<a href=\"#agreementStartDate.month\">Date your agreement started must include a month</a>")
       }
       "Return Form with Errors when no year is input for the start date" in {
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementController.submit(NormalMode))
@@ -201,7 +201,7 @@ class AgreementControllerSpec extends ControllerSpecSupport {
         status(result) mustBe BAD_REQUEST
         val content = contentAsString(result)
         content must include(pageTitle)
-        content must include("<a href=\"#agreementStartDate\">Date your agreement started must include a year</a>")
+        content must include("<a href=\"#agreementStartDate.year\">Date your agreement started must include a year</a>")
       }
       "Return Form with Errors when no day and month is input for the start date" in {
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementController.submit(NormalMode))
@@ -219,7 +219,7 @@ class AgreementControllerSpec extends ControllerSpecSupport {
         status(result) mustBe BAD_REQUEST
         val content = contentAsString(result)
         content must include(pageTitle)
-        content must include("<a href=\"#agreementStartDate\">Date your agreement started must include a day and month</a>")
+        content must include("<a href=\"#agreementStartDate.day\">Date your agreement started must include a day and month</a>")
       }
       "Return Form with Errors when no month and year is input for the start date" in {
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementController.submit(NormalMode))
@@ -237,7 +237,7 @@ class AgreementControllerSpec extends ControllerSpecSupport {
         status(result) mustBe BAD_REQUEST
         val content = contentAsString(result)
         content must include(pageTitle)
-        content must include("<a href=\"#agreementStartDate\">Date your agreement started must include a month and year</a>")
+        content must include("<a href=\"#agreementStartDate.month\">Date your agreement started must include a month and year</a>")
       }
       "Return Form with Errors when no day and year is input for the start date" in {
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementController.submit(NormalMode))
@@ -255,7 +255,7 @@ class AgreementControllerSpec extends ControllerSpecSupport {
         status(result) mustBe BAD_REQUEST
         val content = contentAsString(result)
         content must include(pageTitle)
-        content must include("<a href=\"#agreementStartDate\">Date your agreement started must include a day and year</a>")
+        content must include("<a href=\"#agreementStartDate.day\">Date your agreement started must include a day and year</a>")
       }
       "Return Form with Errors when no date is input for the start date" in {
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementController.submit(NormalMode))
@@ -273,7 +273,7 @@ class AgreementControllerSpec extends ControllerSpecSupport {
         status(result) mustBe BAD_REQUEST
         val content = contentAsString(result)
         content must include(pageTitle)
-        content must include("<a href=\"#agreementStartDate\">Enter the date your agreement started</a>")
+        content must include("<a href=\"#agreementStartDate.day\">Enter the date your agreement started</a>")
       }
       "Return Form with Errors when date is not numbers for the start date" in {
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementController.submit(NormalMode))
@@ -291,7 +291,7 @@ class AgreementControllerSpec extends ControllerSpecSupport {
         status(result) mustBe BAD_REQUEST
         val content = contentAsString(result)
         content must include(pageTitle)
-        content must include("<a href=\"#agreementStartDate\">Date your agreement started must be a real date</a>")
+        content must include("<a href=\"#agreementStartDate.day\">Date your agreement started must be a real date</a>")
       }
       "Return Form with Errors when no open ended radio is selected" in {
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementController.submit(NormalMode))
@@ -331,7 +331,7 @@ class AgreementControllerSpec extends ControllerSpecSupport {
         status(result) mustBe BAD_REQUEST
         val content = contentAsString(result)
         content must include(pageTitle)
-        content must include("<a href=\"#agreementEndDate\">Enter the date your agreement ends</a>")
+        content must include("<a href=\"#agreementEndDate.day\">Enter the date your agreement ends</a>")
       }
       "Return Form with Errors when open ended radio is selected and incorrect date format is input" in {
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementController.submit(NormalMode))
@@ -353,7 +353,7 @@ class AgreementControllerSpec extends ControllerSpecSupport {
         status(result) mustBe BAD_REQUEST
         val content = contentAsString(result)
         content must include(pageTitle)
-        content must include("<a href=\"#agreementEndDate\">Date your agreement ends must be a real date</a>")
+        content must include("<a href=\"#agreementEndDate.day\">Date your agreement ends must be a real date</a>")
       }
       "Return Form with Errors when open ended radio is selected and no day is input" in {
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementController.submit(NormalMode))
@@ -375,7 +375,7 @@ class AgreementControllerSpec extends ControllerSpecSupport {
         status(result) mustBe BAD_REQUEST
         val content = contentAsString(result)
         content must include(pageTitle)
-        content must include("<a href=\"#agreementEndDate\">Date your agreement ends must include a day</a>")
+        content must include("<a href=\"#agreementEndDate.day\">Date your agreement ends must include a day</a>")
       }
       "Return Form with Errors when open ended radio is selected and no month is input" in {
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementController.submit(NormalMode))
@@ -397,7 +397,7 @@ class AgreementControllerSpec extends ControllerSpecSupport {
         status(result) mustBe BAD_REQUEST
         val content = contentAsString(result)
         content must include(pageTitle)
-        content must include("<a href=\"#agreementEndDate\">Date your agreement ends must include a month</a>")
+        content must include("<a href=\"#agreementEndDate.month\">Date your agreement ends must include a month</a>")
       }
       "Return Form with Errors when open ended radio is selected and no year is input" in {
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementController.submit(NormalMode))
@@ -419,7 +419,7 @@ class AgreementControllerSpec extends ControllerSpecSupport {
         status(result) mustBe BAD_REQUEST
         val content = contentAsString(result)
         content must include(pageTitle)
-        content must include("<a href=\"#agreementEndDate\">Date your agreement ends must include a year</a>")
+        content must include("<a href=\"#agreementEndDate.year\">Date your agreement ends must include a year</a>")
       }
       "Return Form with Errors when open ended radio is selected and no month and year is input" in {
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementController.submit(NormalMode))
@@ -441,7 +441,7 @@ class AgreementControllerSpec extends ControllerSpecSupport {
         status(result) mustBe BAD_REQUEST
         val content = contentAsString(result)
         content must include(pageTitle)
-        content must include("<a href=\"#agreementEndDate\">Date your agreement ends must include a month and year</a>")
+        content must include("<a href=\"#agreementEndDate.month\">Date your agreement ends must include a month and year</a>")
       }
       "Return Form with Errors when open ended radio is selected and no day and year is input" in {
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementController.submit(NormalMode))
@@ -463,7 +463,7 @@ class AgreementControllerSpec extends ControllerSpecSupport {
         status(result) mustBe BAD_REQUEST
         val content = contentAsString(result)
         content must include(pageTitle)
-        content must include("<a href=\"#agreementEndDate\">Date your agreement ends must include a day and year</a>")
+        content must include("<a href=\"#agreementEndDate.day\">Date your agreement ends must include a day and year</a>")
       }
       "Return Form with Errors when open ended radio is selected and no day and month is input" in {
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementController.submit(NormalMode))
@@ -485,7 +485,7 @@ class AgreementControllerSpec extends ControllerSpecSupport {
         status(result) mustBe BAD_REQUEST
         val content = contentAsString(result)
         content must include(pageTitle)
-        content must include("<a href=\"#agreementEndDate\">Date your agreement ends must include a day and month</a>")
+        content must include("<a href=\"#agreementEndDate.day\">Date your agreement ends must include a day and month</a>")
       }
       "Return Form with Errors when break clause radio is not selected" in {
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.AgreementController.submit(NormalMode))
