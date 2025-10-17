@@ -158,6 +158,7 @@ class Navigator @Inject()() {
         }
         case None => throw new NotFoundException("Failed to find answers -  ConfirmBreakClausePage")
       }
+    case DidYouGetMoneyFromLandlordPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.LandlordController.show(NormalMode) //TODO This needs to be amended when the journey is completed
     case DidYouGetIncentiveForNotTriggeringBreakClausePage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouGetIncentiveForNotTriggeringBreakClauseController.show(NormalMode) //TODO match and link to correct pages
 
     case DidYouGetMoneyFromLandlordPage => answers =>

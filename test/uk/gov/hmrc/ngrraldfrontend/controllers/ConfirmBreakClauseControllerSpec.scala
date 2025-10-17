@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.ngrraldfrontend.controllers
 
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
