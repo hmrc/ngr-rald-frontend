@@ -33,7 +33,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class DidYouGetIncentiveForNotTriggeringBreakClauseController @Inject()(
-                                                                         didYouGetIncentiveForNotTriggeringBreakClauseView: DidYouGetIncentiveForNotTriggeringBreakClauseView,
+                                                                         view: DidYouGetIncentiveForNotTriggeringBreakClauseView,
                                                                          authenticate: AuthRetrievals,
                                                                          getData: DataRetrievalAction,
                                                                          formProvider: DidYouGetIncentiveForNotTriggeringBreakClauseForm,
@@ -50,7 +50,7 @@ class DidYouGetIncentiveForNotTriggeringBreakClauseController @Inject()(
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(didYouGetIncentiveForNotTriggeringBreakClauseView(
+        Future.successful(Ok(view(
           selectedPropertyAddress = request.property.addressFull,
           form = preparedForm,
           mode = mode
@@ -62,7 +62,7 @@ class DidYouGetIncentiveForNotTriggeringBreakClauseController @Inject()(
     (authenticate andThen getData).async { implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
-          Future.successful(BadRequest(didYouGetIncentiveForNotTriggeringBreakClauseView(
+          Future.successful(BadRequest(view(
             form = formWithErrors,
             selectedPropertyAddress = request.property.addressFull,
             mode = mode

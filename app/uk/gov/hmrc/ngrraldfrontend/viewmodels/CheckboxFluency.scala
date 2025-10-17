@@ -29,9 +29,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.label.Label
 object checkbox extends CheckboxFluency
 
 trait CheckboxFluency {
-
   object CheckboxesViewModel extends ErrorMessageAwareness with FieldsetFluency {
-
     def apply(
                form: Form[?],
                name: String,
@@ -44,7 +42,6 @@ trait CheckboxFluency {
         items = items,
         fieldset = FieldsetViewModel(legend)
       )
-
     def apply(
                form: Form[?],
                name: String,
@@ -61,12 +58,10 @@ trait CheckboxFluency {
         }
       )
   }
-
   implicit class FluentCheckboxes(checkboxes: Checkboxes) {
-      def withHint(hint: Hint): Checkboxes =
-        checkboxes copy (hint = Some(hint))
+    def withHint(hint: Hint): Checkboxes =
+      checkboxes copy (hint = Some(hint))
   }
-
   object CheckboxItemViewModel {
 
     def apply(
@@ -99,23 +94,5 @@ trait CheckboxFluency {
         value = value,
         divider = Some(divider)
       )
-  }
-
-  implicit class FluentCheckboxItem(item: CheckboxItem) {
-
-    def withLabel(label: Label): CheckboxItem =
-      item.copy(label = Some(label))
-
-    def withHint(hint: Hint): CheckboxItem =
-      item.copy(hint = Some(hint))
-
-    def withConditionalHtml(html: Html): CheckboxItem =
-      item.copy(conditionalHtml = Some(html))
-
-    def disabled(): CheckboxItem =
-      item.copy(disabled = true)
-
-    def withAttribute(attribute: (String, String)): CheckboxItem =
-      item.copy(attributes = item.attributes + attribute)
   }
 }

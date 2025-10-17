@@ -27,10 +27,10 @@ sealed trait Incentive
 
 object Incentive extends Enumerable.Implicits {
 
-  private case object YesLumpSum extends  WithName("yesLumpSum") with  Incentive
-  private case object YesRentFreePeriod extends WithName("yesRentFreePeriod") with Incentive
-  private case object No extends WithName("no") with Incentive
-  private case object Divider extends Incentive
+  case object YesLumpSum extends  WithName("yesLumpSum") with  Incentive
+  case object YesRentFreePeriod extends WithName("yesRentFreePeriod") with Incentive
+  case object No extends WithName("no") with Incentive
+  case object Divider extends Incentive
 
   val values: Seq[Incentive] = Seq(
     YesLumpSum,
