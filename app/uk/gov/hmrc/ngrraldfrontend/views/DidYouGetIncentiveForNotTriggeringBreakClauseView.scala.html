@@ -1,0 +1,60 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
+@import uk.gov.hmrc.ngrraldfrontend.viewmodels.govuk.all._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.ngrraldfrontend.views.html.components._
+@import uk.gov.hmrc.ngrraldfrontend.models.forms.DidYouGetIncentiveForNotTriggeringBreakClauseForm
+@import uk.gov.hmrc.ngrraldfrontend.viewmodels.checkbox._
+@import uk.gov.hmrc.ngrraldfrontend.viewmodels.hint._
+@import uk.gov.hmrc.ngrraldfrontend.models._
+
+@this(
+  layout: Layout,
+  govukCheckboxes : GovukCheckboxes,
+  govukErrorSummary: GovukErrorSummary,
+  saveAndContinueButton: saveAndContinueButton,
+  formHelper: FormWithCSRF
+)
+
+@(selectedPropertyAddress: String, form: Form[DidYouGetIncentiveForNotTriggeringBreakClause], mode: Mode)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+
+@layout(pageTitle = Some(messages("didYouGetIncentiveForNotTriggeringBreakClause.title")), showBackLink = true, fullWidth = false) {
+  @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouGetIncentiveForNotTriggeringBreakClauseController.submit(mode), Symbol("autoComplete") -> "off") {
+    <span class="govuk-caption-m">@selectedPropertyAddress</span>
+    @if(form.errors.nonEmpty) {
+        @govukErrorSummary(ErrorSummaryViewModel(form))
+    }
+
+    @govukCheckboxes(
+        CheckboxesViewModel(
+            form   = form,
+            name   = "incentive",
+            legend = Legend(
+                        content = Text(messages("didYouGetIncentiveForNotTriggeringBreakClause.title")),
+                        classes = "govuk-fieldset__legend--l",
+                        isPageHeading = true
+                    ),
+            items  = Incentive.checkboxItems
+        )
+        .withHint(
+            HintViewModel(Text(messages("didYouGetIncentiveForNotTriggeringBreakClause.hint")))
+        )
+    )
+    @saveAndContinueButton(msg = messages("service.continue"), isStartButton = false)
+  }
+}

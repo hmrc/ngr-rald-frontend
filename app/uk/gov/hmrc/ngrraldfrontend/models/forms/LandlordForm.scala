@@ -34,7 +34,7 @@ import uk.gov.hmrc.ngrraldfrontend.views.html.components.NGRCharacterCountCompon
 
 final case class LandlordForm(landlordName: String, hasRelationship: String, landlordRelationship: Option[String])
 
-object LandlordForm extends CommonFormValidators with Mappings{
+object LandlordForm extends Mappings{
   implicit val format: OFormat[LandlordForm] = Json.format[LandlordForm]
 
   private lazy val landlordNameEmptyError = "landlord.name.empty.error"

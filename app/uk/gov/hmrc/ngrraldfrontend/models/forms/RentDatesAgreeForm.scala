@@ -24,7 +24,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 
 case class RentDatesAgreeForm(dateInput: NGRDate)
 
-object RentDatesAgreeForm extends CommonFormValidators with Mappings with DateMappings{
+object RentDatesAgreeForm extends Mappings with DateMappings{
   implicit val format: OFormat[RentDatesAgreeForm] = Json.format[RentDatesAgreeForm]
 
   private lazy val dateInput = "date"
