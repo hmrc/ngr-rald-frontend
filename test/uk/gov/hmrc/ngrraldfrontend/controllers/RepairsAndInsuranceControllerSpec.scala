@@ -90,7 +90,7 @@ class RepairsAndInsuranceControllerSpec extends ControllerSpecSupport {
 
         val result = controllerProperty(renewedAgreementAnswers).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.RentReviewController.show(NormalMode).url)
+        redirectLocation(result) mustBe Some(routes.ConfirmBreakClauseController.show(NormalMode).url)
       }
       "Return SEE_OTHER and the correct view when it's new agreement journey" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
@@ -103,7 +103,7 @@ class RepairsAndInsuranceControllerSpec extends ControllerSpecSupport {
 
         val result = controllerProperty(newAgreementAnswers).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.RentReviewController.show(NormalMode).url)
+        redirectLocation(result) mustBe Some(routes.ConfirmBreakClauseController.show(NormalMode).url)
       }
       "Return SEE_OTHER and the correct view when it's rent review journey" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))

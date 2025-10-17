@@ -458,3 +458,9 @@ parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.year.required.error = 
 parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.invalid.error = Date this payment was agreed for parking and garages must be a real date
 parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.before.1900.error = Year payment was agreed for parking and garages must be 1900 or after
 parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.required.error = Enter the date this payment was agreed for parking and garages
+
+#Did you pay any money to landlord
+didYouPayAnyMoneyToLandlord.title = Did you pay any money in advance to the landlord?
+didYouPayAnyMoneyToLandlord.p1 = This is in addition to rent, cost of buying the business, goodwill, trade fixtures or refundable deposits.
+didYouPayAnyMoneyToLandlord.empty.error = Select yes if you paid any money in advance to the landlord
+
