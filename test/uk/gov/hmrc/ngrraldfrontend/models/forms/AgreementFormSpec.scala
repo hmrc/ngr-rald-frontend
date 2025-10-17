@@ -105,7 +105,7 @@ class AgreementFormSpec extends AnyWordSpec with Matchers {
       val boundForm = AgreementForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("", List("agreement.radio.conditional.breakClause.required.error")))
+      boundForm.errors should contain(FormError("about-break-clause", List("agreement.radio.conditional.breakClause.required.error")))
     }
 
     "fail to bind when reason is given for break clause but is too long after selecting yes to having a break clause" in {
@@ -119,7 +119,7 @@ class AgreementFormSpec extends AnyWordSpec with Matchers {
       val boundForm = AgreementForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("", List("agreement.radio.conditional.breakClause.tooLong.error")))
+      boundForm.errors should contain(FormError("about-break-clause", List("agreement.radio.conditional.breakClause.tooLong.error")))
     }
 
     "fail to bind when no date is given after selecting No to open ended" in {
@@ -135,7 +135,7 @@ class AgreementFormSpec extends AnyWordSpec with Matchers {
       val boundForm = AgreementForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("", List("agreement.endDate.required.error")))
+      boundForm.errors should contain(FormError("agreementEndDate", List("agreement.agreementEndDate.required.error")))
     }
 
     "fail to bind when no year and month is given after selecting No to open ended" in {
@@ -151,7 +151,7 @@ class AgreementFormSpec extends AnyWordSpec with Matchers {
       val boundForm = AgreementForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("", List("agreement.endDate.month.year.required.error")))
+      boundForm.errors should contain(FormError("agreementEndDate", List("agreement.agreementEndDate.monthAndYear.required.error")))
     }
 
     "fail to bind when no day and year is given after selecting No to open ended" in {
@@ -167,7 +167,7 @@ class AgreementFormSpec extends AnyWordSpec with Matchers {
       val boundForm = AgreementForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("", List("agreement.endDate.day.year.required.error")))
+      boundForm.errors should contain(FormError("agreementEndDate", List("agreement.agreementEndDate.dayAndYear.required.error")))
     }
 
     "fail to bind when no day and month is given after selecting No to open ended" in {
@@ -183,7 +183,7 @@ class AgreementFormSpec extends AnyWordSpec with Matchers {
       val boundForm = AgreementForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("", List("agreement.endDate.day.month.required.error")))
+      boundForm.errors should contain(FormError("agreementEndDate", List("agreement.agreementEndDate.dayAndMonth.required.error")))
     }
 
     "fail to bind when no day is given after selecting No to open ended" in {
@@ -199,7 +199,7 @@ class AgreementFormSpec extends AnyWordSpec with Matchers {
       val boundForm = AgreementForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("", List("agreement.endDate.day.required.error")))
+      boundForm.errors should contain(FormError("agreementEndDate", List("agreement.agreementEndDate.day.required.error")))
     }
 
     "fail to bind when no month is given after selecting No to open ended" in {
@@ -215,7 +215,7 @@ class AgreementFormSpec extends AnyWordSpec with Matchers {
       val boundForm = AgreementForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("", List("agreement.endDate.month.required.error")))
+      boundForm.errors should contain(FormError("agreementEndDate", List("agreement.agreementEndDate.month.required.error")))
     }
 
     "fail to bind when no year is given after selecting No to open ended" in {
@@ -231,7 +231,7 @@ class AgreementFormSpec extends AnyWordSpec with Matchers {
       val boundForm = AgreementForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("", List("agreement.endDate.year.required.error")))
+      boundForm.errors should contain(FormError("agreementEndDate", List("agreement.agreementEndDate.year.required.error")))
     }
 
 
@@ -248,7 +248,7 @@ class AgreementFormSpec extends AnyWordSpec with Matchers {
       val boundForm = AgreementForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("agreementStartDate", List("agreement.startDate.required.error")))
+      boundForm.errors should contain(FormError("agreementStartDate", List("agreement.agreementStartDate.required.error")))
     }
 
     "fail to bind when no year and month is given for start date" in {
@@ -264,7 +264,7 @@ class AgreementFormSpec extends AnyWordSpec with Matchers {
       val boundForm = AgreementForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("agreementStartDate", List("agreement.startDate.month.year.required.error")))
+      boundForm.errors should contain(FormError("agreementStartDate", List("agreement.agreementStartDate.monthAndYear.required.error")))
     }
 
     "fail to bind when no day and year is given for start date" in {
@@ -280,7 +280,7 @@ class AgreementFormSpec extends AnyWordSpec with Matchers {
       val boundForm = AgreementForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("agreementStartDate", List("agreement.startDate.day.year.required.error")))
+      boundForm.errors should contain(FormError("agreementStartDate", List("agreement.agreementStartDate.dayAndYear.required.error")))
     }
 
     "fail to bind when no day and month is given for start date" in {
@@ -296,7 +296,7 @@ class AgreementFormSpec extends AnyWordSpec with Matchers {
       val boundForm = AgreementForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("agreementStartDate", List("agreement.startDate.day.month.required.error")))
+      boundForm.errors should contain(FormError("agreementStartDate", List("agreement.agreementStartDate.dayAndMonth.required.error")))
     }
 
     "fail to bind when no day is given for start date" in {
@@ -312,7 +312,7 @@ class AgreementFormSpec extends AnyWordSpec with Matchers {
       val boundForm = AgreementForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("agreementStartDate", List("agreement.startDate.day.required.error")))
+      boundForm.errors should contain(FormError("agreementStartDate", List("agreement.agreementStartDate.day.required.error")))
     }
 
     "fail to bind when no month is given for start date" in {
@@ -328,7 +328,7 @@ class AgreementFormSpec extends AnyWordSpec with Matchers {
       val boundForm = AgreementForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("agreementStartDate", List("agreement.startDate.month.required.error")))
+      boundForm.errors should contain(FormError("agreementStartDate", List("agreement.agreementStartDate.month.required.error")))
     }
 
     "fail to bind when no year is given for start date" in {
@@ -344,7 +344,7 @@ class AgreementFormSpec extends AnyWordSpec with Matchers {
       val boundForm = AgreementForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("agreementStartDate", List("agreement.startDate.year.required.error")))
+      boundForm.errors should contain(FormError("agreementStartDate", List("agreement.agreementStartDate.year.required.error")))
     }
 
     "serialize to JSON correctly" in {

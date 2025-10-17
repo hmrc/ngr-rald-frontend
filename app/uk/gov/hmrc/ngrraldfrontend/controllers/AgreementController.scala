@@ -28,6 +28,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.{Agreement, Mode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.AgreementPage
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
+import uk.gov.hmrc.ngrraldfrontend.utils.DateKeyFinder
 import uk.gov.hmrc.ngrraldfrontend.views.html.AgreementView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.{DateTextFields, NGRCharacterCountComponent}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -44,7 +45,7 @@ class AgreementController @Inject()(view: AgreementView,
                                     getData: DataRetrievalAction,
                                     navigator: Navigator,
                                     sessionRepository: SessionRepository
-                                   )(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
+                                   )(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport with DateKeyFinder {
 
   def show(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
@@ -71,12 +72,10 @@ class AgreementController @Inject()(view: AgreementView,
           formWithErrors =>
             val correctedFormErrors = formWithErrors.errors.map { formError =>
               (formError.key, formError.messages) match
-                case ("", messages) if messages.contains("agreement.radio.conditional.breakClause.required.error") =>
-                  formError.copy(key = "about-break-clause")
-                case ("", messages) if messages.contains("agreement.radio.conditional.breakClause.tooLong.error") =>
-                  formError.copy(key = "about-break-clause")
-                case ("", messages) =>
-                  formError.copy(key = "agreementEndDate")
+                case (key, messages) if messages.head.contains("agreement.agreementStartDate") =>
+                  setCorrectKey(formError, "agreement", "agreementStartDate")
+                case (key, messages) if messages.head.contains("agreement.agreementEndDate") =>
+                  setCorrectKey(formError, "agreement", "agreementEndDate")
                 case _ =>
                   formError
             }

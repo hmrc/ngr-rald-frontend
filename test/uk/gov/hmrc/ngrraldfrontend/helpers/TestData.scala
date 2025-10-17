@@ -61,10 +61,10 @@ trait TestData {
   firstDateStart = "2025-01-01",
   firstDateEnd = "2025-01-31",
   firstRentPeriodRadio = true,
-  firstRentPeriodAmount = Some("1000"),
+  firstRentPeriodAmount = Some(BigDecimal(1000)),
   secondDateStart = "2025-02-01",
   secondDateEnd = "2025-02-28",
-  secondHowMuchIsRent = "1000"
+  secondHowMuchIsRent = BigDecimal(1000)
  )
 
  val firstSecondRentPeriodNoRentPayed: ProvideDetailsOfFirstSecondRentPeriod = ProvideDetailsOfFirstSecondRentPeriod(
@@ -74,7 +74,7 @@ trait TestData {
   firstRentPeriodAmount = None,
   secondDateStart = "2025-02-01",
   secondDateEnd = "2025-02-28",
-  secondHowMuchIsRent = "1000"
+  secondHowMuchIsRent = BigDecimal(1000)
  )
 
  val testRegistrationModel: RatepayerRegistration = RatepayerRegistration(

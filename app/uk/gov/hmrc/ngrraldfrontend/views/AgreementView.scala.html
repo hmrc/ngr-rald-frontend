@@ -37,7 +37,7 @@ saveAndContinueButton: saveAndContinueButton
     @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.AgreementController.submit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form))
+            @govukErrorSummary(ErrorSummaryViewModel(form, Some("agreement"), Some(Seq("agreementStartDate", "agreementEndDate"))))
         }
 
         <span class="govuk-caption-m">@selectedPropertyAddress</span>

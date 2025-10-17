@@ -190,7 +190,7 @@ class AgreementVerbalFormSpec extends AnyWordSpec with Matchers {
       val boundForm = AgreementVerbalForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("", List("agreementVerbal.agreementEndDate.day.required.error")))
+      boundForm.errors should contain(FormError("agreementEndDate", List("agreementVerbal.agreementEndDate.day.required.error")))
     }
 
     "fail to bind when agreement end date is missing month" in {
@@ -205,7 +205,7 @@ class AgreementVerbalFormSpec extends AnyWordSpec with Matchers {
       val boundForm = AgreementVerbalForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("", List("agreementVerbal.agreementEndDate.month.required.error")))
+      boundForm.errors should contain(FormError("agreementEndDate", List("agreementVerbal.agreementEndDate.month.required.error")))
     }
 
     "fail to bind when agreement end date is missing year" in {
@@ -220,7 +220,7 @@ class AgreementVerbalFormSpec extends AnyWordSpec with Matchers {
       val boundForm = AgreementVerbalForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("", List("agreementVerbal.agreementEndDate.year.required.error")))
+      boundForm.errors should contain(FormError("agreementEndDate", List("agreementVerbal.agreementEndDate.year.required.error")))
     }
 
     "fail to bind when agreement end date is missing day and year" in {
@@ -235,7 +235,7 @@ class AgreementVerbalFormSpec extends AnyWordSpec with Matchers {
       val boundForm = AgreementVerbalForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("", List("agreementVerbal.agreementEndDate.dayAndYear.required.error")))
+      boundForm.errors should contain(FormError("agreementEndDate", List("agreementVerbal.agreementEndDate.dayAndYear.required.error")))
     }
 
     "fail to bind when agreement end date is missing month and year" in {
@@ -249,7 +249,7 @@ class AgreementVerbalFormSpec extends AnyWordSpec with Matchers {
       val boundForm = AgreementVerbalForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("", List("agreementVerbal.agreementEndDate.monthAndYear.required.error")))
+      boundForm.errors should contain(FormError("agreementEndDate", List("agreementVerbal.agreementEndDate.monthAndYear.required.error")))
     }
 
     "fail to bind when agreement end date is missing day and month" in {
@@ -263,7 +263,7 @@ class AgreementVerbalFormSpec extends AnyWordSpec with Matchers {
       val boundForm = AgreementVerbalForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("", List("agreementVerbal.agreementEndDate.dayAndMonth.required.error")))
+      boundForm.errors should contain(FormError("agreementEndDate", List("agreementVerbal.agreementEndDate.dayAndMonth.required.error")))
     }
 
     "fail to bind when agreement end date has characters" in {
@@ -278,7 +278,7 @@ class AgreementVerbalFormSpec extends AnyWordSpec with Matchers {
       val boundForm = AgreementVerbalForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("", List("agreementVerbal.agreementEndDate.invalid.error")))
+      boundForm.errors should contain(FormError("agreementEndDate", List("agreementVerbal.agreementEndDate.invalid.error")))
     }
 
     "fail to bind when agreement end dates is not a valid date" in {
@@ -293,7 +293,7 @@ class AgreementVerbalFormSpec extends AnyWordSpec with Matchers {
       val boundForm = AgreementVerbalForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("", List("agreementVerbal.agreementEndDate.invalid.error")))
+      boundForm.errors should contain(FormError("agreementEndDate", List("agreementVerbal.agreementEndDate.invalid.error")))
     }
 
     "fail to bind when input is missing" in {

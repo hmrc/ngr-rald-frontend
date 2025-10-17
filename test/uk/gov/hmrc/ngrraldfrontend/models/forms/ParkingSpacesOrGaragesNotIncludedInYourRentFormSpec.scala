@@ -95,7 +95,10 @@ class ParkingSpacesOrGaragesNotIncludedInYourRentFormSpec  extends AnyWordSpec w
       )
       val boundForm = ParkingSpacesOrGaragesNotIncludedInYourRentForm.form.bind(data)
       boundForm.hasErrors shouldBe true
-      boundForm.errors shouldBe List(FormError("", "parkingSpacesOrGaragesNotIncludedInYourRent.error.required"))
+      boundForm.errors shouldBe
+        List(FormError("uncoveredSpaces", List("parkingSpacesOrGaragesNotIncludedInYourRent.error.required"), List()),
+             FormError("coveredSpaces", List("parkingSpacesOrGaragesNotIncludedInYourRent.error.required"), List()),
+             FormError("garages", List("parkingSpacesOrGaragesNotIncludedInYourRent.error.required"), List()))
     }
 
     "bind field with commas within parking input" in {
@@ -125,7 +128,7 @@ class ParkingSpacesOrGaragesNotIncludedInYourRentFormSpec  extends AnyWordSpec w
 
       val boundForm = ParkingSpacesOrGaragesNotIncludedInYourRentForm.form.bind(data)
       boundForm.hasErrors shouldBe true
-      boundForm.errors shouldBe List(FormError("uncoveredSpaces", List("parkingSpacesOrGaragesNotIncludedInYourRent.uncoveredSpaces.wholeNum.error"), ArraySeq("""^\d+$""")))
+      boundForm.errors shouldBe List(FormError("uncoveredSpaces", List("parkingSpacesOrGaragesNotIncludedInYourRent.uncoveredSpaces.wholeNum.error"), List()))
     }
 
     "fail to bind non-numeric input in parking field" in {
@@ -140,7 +143,7 @@ class ParkingSpacesOrGaragesNotIncludedInYourRentFormSpec  extends AnyWordSpec w
       )
       val boundForm = ParkingSpacesOrGaragesNotIncludedInYourRentForm.form.bind(data)
 
-      boundForm.errors shouldBe List(FormError("uncoveredSpaces", List("parkingSpacesOrGaragesNotIncludedInYourRent.uncoveredSpaces.wholeNum.error"), ArraySeq("""^\d+$""")))
+      boundForm.errors shouldBe List(FormError("uncoveredSpaces", List("parkingSpacesOrGaragesNotIncludedInYourRent.uncoveredSpaces.wholeNum.error"), List()))
     }
 
     "fail to bind input greater than 9,999 in parking field" in {
@@ -156,7 +159,7 @@ class ParkingSpacesOrGaragesNotIncludedInYourRentFormSpec  extends AnyWordSpec w
       val boundForm = ParkingSpacesOrGaragesNotIncludedInYourRentForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors shouldBe List(FormError("uncoveredSpaces", List("parkingSpacesOrGaragesNotIncludedInYourRent.uncoveredSpaces.tooHigh.error"), ArraySeq(9999)))
+      boundForm.errors shouldBe List(FormError("uncoveredSpaces", List("parkingSpacesOrGaragesNotIncludedInYourRent.uncoveredSpaces.tooHigh.error"), List()))
     }
 
     "fail to bind input is a very large number in parking field" in {
@@ -172,7 +175,7 @@ class ParkingSpacesOrGaragesNotIncludedInYourRentFormSpec  extends AnyWordSpec w
       val boundForm = ParkingSpacesOrGaragesNotIncludedInYourRentForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors shouldBe List(FormError("uncoveredSpaces", List("parkingSpacesOrGaragesNotIncludedInYourRent.uncoveredSpaces.tooHigh.error"), ArraySeq(9999)))
+      boundForm.errors shouldBe List(FormError("uncoveredSpaces", List("parkingSpacesOrGaragesNotIncludedInYourRent.uncoveredSpaces.tooHigh.error"), List()))
     }
 
 
@@ -189,7 +192,9 @@ class ParkingSpacesOrGaragesNotIncludedInYourRentFormSpec  extends AnyWordSpec w
       val boundForm = ParkingSpacesOrGaragesNotIncludedInYourRentForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors shouldBe List(FormError("", "parkingSpacesOrGaragesNotIncludedInYourRent.error.required"))
+      boundForm.errors shouldBe List(FormError("uncoveredSpaces", List("parkingSpacesOrGaragesNotIncludedInYourRent.error.required"), List()),
+        FormError("coveredSpaces", List("parkingSpacesOrGaragesNotIncludedInYourRent.error.required"), List()),
+        FormError("garages", List("parkingSpacesOrGaragesNotIncludedInYourRent.error.required"), List()))
     }
 
     "bind edge case of exactly 9,999 in parking field" in {

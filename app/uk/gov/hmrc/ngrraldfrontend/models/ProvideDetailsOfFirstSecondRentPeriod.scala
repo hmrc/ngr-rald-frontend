@@ -22,10 +22,10 @@ case class ProvideDetailsOfFirstSecondRentPeriod(
                                                   firstDateStart: String,
                                                   firstDateEnd: String,
                                                   firstRentPeriodRadio: Boolean,
-                                                  firstRentPeriodAmount: Option[String],
+                                                  firstRentPeriodAmount: Option[BigDecimal],
                                                   secondDateStart: String,
                                                   secondDateEnd: String,
-                                                  secondHowMuchIsRent: String
+                                                  secondHowMuchIsRent: BigDecimal
                                                 )
 
 object ProvideDetailsOfFirstSecondRentPeriod {

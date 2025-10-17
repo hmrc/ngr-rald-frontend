@@ -128,7 +128,7 @@ agreementVerbal.agreementEndDate.dayAndMonth.required.error = Date your agreemen
 agreementVerbal.agreementEndDate.dayAndYear.required.error = Date your agreement ends must include a day and year
 agreementVerbal.agreementEndDate.monthAndYear.required.error = Date your agreement ends must include a month and year
 agreementVerbal.agreementEndDate.invalid.error = Date your agreement ends must be a real date
-agreementVerbal.endDate.isBefore.startDate.error = Date your agreement ends must be after agreement started
+agreementVerbal.agreementEndDate.before.1900.error = Date your agreement ends must be 1900 or after
 
 #CheckRentPeriod
 checkRentPeriod.title = Do you have a rent-free period at the start of your agreement?
@@ -154,22 +154,24 @@ agreement.subheading.3 = Does your agreement have a break clause?
 agreement.hint.3 = A break clause is a term in your agreement which allows you or your landlord to end the agreement early
 agreement.radio.conditional.subheading.2 = Can you tell us about the break clause or clauses?
 agreement.radio.conditional.hint.2 = For example, what the date of the break clause is and who can trigger it
-agreement.startDate.required.error = Enter the date your agreement started
-agreement.startDate.day.month.required.error = Date your agreement started must include a day and month
-agreement.startDate.day.year.required.error = Date your agreement started must include a day and year
-agreement.startDate.month.year.required.error = Date your agreement started must include a month and year
-agreement.startDate.day.required.error = Date your agreement started must include a day
-agreement.startDate.month.required.error = Date your agreement started must include a month
-agreement.startDate.year.required.error = Date your agreement started must include a year
-agreement.startDate.format.error = Date your agreement started must be a real date
-agreement.endDate.required.error = Enter the date your agreement ends
-agreement.endDate.day.month.required.error = Date your agreement ends must include a day and month
-agreement.endDate.day.year.required.error = Date your agreement ends must include a day and year
-agreement.endDate.month.year.required.error = Date your agreement ends must include a month and year
-agreement.endDate.day.required.error = Date your agreement ends must include a day
-agreement.endDate.month.required.error = Date your agreement ends must include a month
-agreement.endDate.year.required.error = Date your agreement ends must include a year
-agreement.endDate.format.error = Date your agreement ends must be a real date
+agreement.agreementStartDate.required.error = Enter the date your agreement started
+agreement.agreementStartDate.dayAndMonth.required.error = Date your agreement started must include a day and month
+agreement.agreementStartDate.dayAndYear.required.error = Date your agreement started must include a day and year
+agreement.agreementStartDate.monthAndYear.required.error = Date your agreement started must include a month and year
+agreement.agreementStartDate.day.required.error = Date your agreement started must include a day
+agreement.agreementStartDate.month.required.error = Date your agreement started must include a month
+agreement.agreementStartDate.year.required.error = Date your agreement started must include a year
+agreement.agreementStartDate.invalid.error = Date your agreement started must be a real date
+agreement.agreementStartDate.before.1900.error = Date your agreement started must be 1900 or after
+agreement.agreementEndDate.required.error = Enter the date your agreement ends
+agreement.agreementEndDate.dayAndMonth.required.error = Date your agreement ends must include a day and month
+agreement.agreementEndDate.dayAndYear.required.error = Date your agreement ends must include a day and year
+agreement.agreementEndDate.monthAndYear.required.error = Date your agreement ends must include a month and year
+agreement.agreementEndDate.day.required.error = Date your agreement ends must include a day
+agreement.agreementEndDate.month.required.error = Date your agreement ends must include a month
+agreement.agreementEndDate.year.required.error = Date your agreement ends must include a year
+agreement.agreementEndDate.invalid.error = Date your agreement ends must be a real date
+agreement.agreementEndDate.before.1900.error = Date your agreement ends must be 1900 or after
 agreement.radio.openEnded.required.error = Select yes if your agreement is open-ended
 agreement.radio.breakClause.required.error = Select yes if your agreement has a break clause
 agreement.radio.conditional.breakClause.required.error = Tell us about your break clause or clauses
@@ -455,8 +457,10 @@ parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.monthAndYear.required.
 parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.year.required.error = Date this payment was agreed for parking and garages must include a year
 parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.invalid.error = Date this payment was agreed for parking and garages must be a real date
 parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.before.1900.error = Year payment was agreed for parking and garages must be 1900 or after
+parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.required.error = Enter the date this payment was agreed for parking and garages
 
 #Did you pay any money to landlord
 didYouPayAnyMoneyToLandlord.title = Did you pay any money in advance to the landlord?
 didYouPayAnyMoneyToLandlord.p1 = This is in addition to rent, cost of buying the business, goodwill, trade fixtures or refundable deposits.
 didYouPayAnyMoneyToLandlord.empty.error = Select yes if you paid any money in advance to the landlord
+
