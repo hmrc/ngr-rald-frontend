@@ -17,8 +17,8 @@
 package uk.gov.hmrc.ngrraldfrontend.models
 import play.api.libs.json.{Json, OFormat}
 
-final case class DidYouGetIncentiveForNotTriggeringBreakClause(radio: String)
+final case class DidYouGetIncentiveForNotTriggeringBreakClause(checkBox: Set[Incentive])
 
 object DidYouGetIncentiveForNotTriggeringBreakClause {
-  implicit val format: OFormat[DidYouGetIncentiveForNotTriggeringBreakClause] = Json.format[DidYouGetIncentiveForNotTriggeringBreakClause]
+  implicit val format: OFormat[DidYouGetIncentiveForNotTriggeringBreakClause] = Json.format
 }

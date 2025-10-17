@@ -7,6 +7,7 @@ service.continue = Continue
 service.saveAndContinue = Save and continue
 service.yes = Yes
 service.no = No
+service.or = or
 
 #NavigationBar
 nav.home=Account home
@@ -468,6 +469,6 @@ didYouPayAnyMoneyToLandlord.empty.error = Select yes if you paid any money in ad
 didYouGetIncentiveForNotTriggeringBreakClause.title = Did you get incentive for not triggering the break clause?
 didYouGetIncentiveForNotTriggeringBreakClause.hint = Select all that apply
 didYouGetIncentiveForNotTriggeringBreakClause.checkbox = Yes, I got a lump sum
-didYouGetIncentiveForNotTriggeringBreakClause.checkbox2 = Yes, I got a rent-free period
-didYouGetIncentiveForNotTriggeringBreakClause.checkbox3 = No, I did not get an incentive
+didYouGetIncentiveForNotTriggeringBreakClause.checkbox1 = Yes, I got a rent-free period
+didYouGetIncentiveForNotTriggeringBreakClause.checkbox2 = No, I did not get an incentive
 didYouGetIncentiveForNotTriggeringBreakClause.required.error = Select which incentives you got for not triggering the break clause, or select ‘No, I did not get an incentive'

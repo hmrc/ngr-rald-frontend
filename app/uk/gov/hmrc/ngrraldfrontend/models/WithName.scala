@@ -14,16 +14,8 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.ngrraldfrontend.pages
+package uk.gov.hmrc.ngrraldfrontend.models
 
-import play.api.libs.json.JsPath
-import uk.gov.hmrc.ngrraldfrontend.models.DidYouGetIncentiveForNotTriggeringBreakClause
-
-case object DidYouGetIncentiveForNotTriggeringBreakClausePage extends QuestionPage[DidYouGetIncentiveForNotTriggeringBreakClause]{
-
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "didYouGetIncentiveForNotTriggeringBreakClause"
-
+class WithName(string: String) {
+  override val toString: String = string
 }
-

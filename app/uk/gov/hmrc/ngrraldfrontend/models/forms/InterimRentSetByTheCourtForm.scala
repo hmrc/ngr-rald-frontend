@@ -20,13 +20,14 @@ import play.api.data.*
 import play.api.data.Forms.*
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.ngrraldfrontend.models.*
+import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 
 import scala.math.BigDecimal.RoundingMode
 
 
 final case class InterimRentSetByTheCourtForm(amount: BigDecimal, date: NGRMonthYear)
 
-object InterimRentSetByTheCourtForm extends CommonFormValidators with MonthYearMappings {
+object InterimRentSetByTheCourtForm extends Mappings with MonthYearMappings {
   implicit val format: OFormat[InterimRentSetByTheCourtForm] = Json.format[InterimRentSetByTheCourtForm]
 
   private lazy val howMuchEmptyError  = "interimRentSetByTheCourt.interimAmount.required.error"

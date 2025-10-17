@@ -14,16 +14,22 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.ngrraldfrontend.pages
+package uk.gov.hmrc.ngrraldfrontend.viewmodels
 
-import play.api.libs.json.JsPath
-import uk.gov.hmrc.ngrraldfrontend.models.DidYouGetIncentiveForNotTriggeringBreakClause
+import play.api.data.Field
+import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage
 
-case object DidYouGetIncentiveForNotTriggeringBreakClausePage extends QuestionPage[DidYouGetIncentiveForNotTriggeringBreakClause]{
+trait ErrorMessageAwareness {
 
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "didYouGetIncentiveForNotTriggeringBreakClause"
-
+  def errorMessage(field: Field)(implicit messages: Messages): Option[ErrorMessage] =
+    field.error
+      .map {
+        err =>
+          ErrorMessage(
+            content = Text(messages(err.message, err.args*)),
+            visuallyHiddenText = Some(messages("error.prefix"))
+          )
+      }
 }
-

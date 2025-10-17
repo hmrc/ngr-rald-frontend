@@ -19,6 +19,9 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.ngrraldfrontend.views.html.components._
 @import uk.gov.hmrc.ngrraldfrontend.models.forms.DidYouGetIncentiveForNotTriggeringBreakClauseForm
+@import uk.gov.hmrc.ngrraldfrontend.viewmodels.checkbox._
+@import uk.gov.hmrc.ngrraldfrontend.viewmodels.hint._
+@import uk.gov.hmrc.ngrraldfrontend.models._
 
 @this(
   layout: Layout,
@@ -28,41 +31,30 @@
   formHelper: FormWithCSRF
 )
 
-@(selectedPropertyAddress: String, form: Form[DidYouGetIncentiveForNotTriggeringBreakClauseForm], mode: Mode)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+@(selectedPropertyAddress: String, form: Form[DidYouGetIncentiveForNotTriggeringBreakClause], mode: Mode)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
 @layout(pageTitle = Some(messages("didYouGetIncentiveForNotTriggeringBreakClause.title")), showBackLink = true, fullWidth = false) {
   @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouGetIncentiveForNotTriggeringBreakClauseController.submit(mode), Symbol("autoComplete") -> "off") {
-    @govukCheckboxes(Checkboxes(
-      fieldset = Some(Fieldset(
-        legend = Some(Legend(
-          content = Text(messages("didYouGetIncentiveForNotTriggeringBreakClause.title")),
-          classes = "govuk-fieldset__legend--l",
-          isPageHeading = true
-        ))
-      )),
-      hint = Some(Hint(
-        content = Text(messages("didYouGetIncentiveForNotTriggeringBreakClause.hint"))
-      )),
-      name = "countries",
-      items = Seq(
-        CheckboxItem(
-          content = Text(messages("didYouGetIncentiveForNotTriggeringBreakClause.checkbox")),
-          value = "france"
-        ),
-        CheckboxItem(
-          content = Text(messages("didYouGetIncentiveForNotTriggeringBreakClause.checkbox2")),
-          value = "spain"
-        ),
-        CheckboxItem(
-          divider = Some("or")
-        ),
-        CheckboxItem(
-          content = Text(messages("didYouGetIncentiveForNotTriggeringBreakClause.checkbox3")),
-          value = "none",
-          behaviour = Some(ExclusiveCheckbox)
+    <span class="govuk-caption-m">@selectedPropertyAddress</span>
+    @if(form.errors.nonEmpty) {
+        @govukErrorSummary(ErrorSummaryViewModel(form))
+    }
+
+    @govukCheckboxes(
+        CheckboxesViewModel(
+            form   = form,
+            name   = "incentive",
+            legend = Legend(
+                        content = Text(messages("didYouGetIncentiveForNotTriggeringBreakClause.title")),
+                        classes = "govuk-fieldset__legend--l",
+                        isPageHeading = true
+                    ),
+            items  = Incentive.checkboxItems
         )
-      )
-    ))
+        .withHint(
+            HintViewModel(Text(messages("didYouGetIncentiveForNotTriggeringBreakClause.hint")))
+        )
+    )
     @saveAndContinueButton(msg = messages("service.continue"), isStartButton = false)
   }
 }

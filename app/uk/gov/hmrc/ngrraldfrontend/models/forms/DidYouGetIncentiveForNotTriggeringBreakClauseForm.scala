@@ -15,25 +15,19 @@
  */
 
 package uk.gov.hmrc.ngrraldfrontend.models.forms
+
 import play.api.data.Form
-import play.api.data.Forms.{mapping, optional}
-import play.api.libs.json.{Json, OFormat}
-
+import play.api.data.Forms.{mapping, set}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
+import uk.gov.hmrc.ngrraldfrontend.models.{DidYouGetIncentiveForNotTriggeringBreakClause, Incentive}
 
-case class DidYouGetIncentiveForNotTriggeringBreakClauseForm(radio: String)
+import javax.inject.Inject
 
-object DidYouGetIncentiveForNotTriggeringBreakClauseForm extends CommonFormValidators with Mappings{
-  implicit val format: OFormat[DidYouGetIncentiveForNotTriggeringBreakClauseForm] = Json.format[DidYouGetIncentiveForNotTriggeringBreakClauseForm]
-
-  def unapply(didYouGetIncentiveForNotTriggeringBreakClauseForm: DidYouGetIncentiveForNotTriggeringBreakClauseForm): Option[(String)] =
-    Some(didYouGetIncentiveForNotTriggeringBreakClauseForm.radio)
-    
-  def form: Form[DidYouGetIncentiveForNotTriggeringBreakClauseForm] = {
+class DidYouGetIncentiveForNotTriggeringBreakClauseForm @Inject() extends Mappings {
+  def apply(): Form[DidYouGetIncentiveForNotTriggeringBreakClause] =
     Form(
       mapping(
-        "radio" -> radioText("didYouGetIncentiveForNotTriggeringBreakClause.required.error"),
-      )(DidYouGetIncentiveForNotTriggeringBreakClauseForm.apply)(DidYouGetIncentiveForNotTriggeringBreakClauseForm.unapply)
+        "incentive" -> set(enumerable[Incentive]("didYouGetIncentiveForNotTriggeringBreakClause.required.error")).verifying(nonEmptySet("didYouGetIncentiveForNotTriggeringBreakClause.required.error"))
+      )(DidYouGetIncentiveForNotTriggeringBreakClause.apply)((x: DidYouGetIncentiveForNotTriggeringBreakClause) => Some(x.checkBox))
     )
-  }
 }

@@ -16,36 +16,39 @@
 
 package uk.gov.hmrc.ngrraldfrontend.controllers
 
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
-import uk.gov.hmrc.ngrraldfrontend.models.{Mode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.DidYouGetIncentiveForNotTriggeringBreakClauseForm
-import uk.gov.hmrc.ngrraldfrontend.models.forms.DidYouGetIncentiveForNotTriggeringBreakClauseForm.form
+import uk.gov.hmrc.ngrraldfrontend.models.{DidYouGetIncentiveForNotTriggeringBreakClause, Mode, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.DidYouGetIncentiveForNotTriggeringBreakClausePage
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.views.html.DidYouGetIncentiveForNotTriggeringBreakClauseView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
 import scala.concurrent.{ExecutionContext, Future}
 
 class DidYouGetIncentiveForNotTriggeringBreakClauseController @Inject()(
                                                                          didYouGetIncentiveForNotTriggeringBreakClauseView: DidYouGetIncentiveForNotTriggeringBreakClauseView,
                                                                          authenticate: AuthRetrievals,
                                                                          getData: DataRetrievalAction,
+                                                                         formProvider: DidYouGetIncentiveForNotTriggeringBreakClauseForm,
                                                                          sessionRepository: SessionRepository,
                                                                          navigator: Navigator,
                                                                          mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport {
+
+  val form: Form[DidYouGetIncentiveForNotTriggeringBreakClause] = formProvider()
+
     def show(mode: Mode): Action[AnyContent] = {
       (authenticate andThen getData).async { implicit request =>
         val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(DidYouGetIncentiveForNotTriggeringBreakClausePage) match {
           case None => form
-          case Some(value) => form.fill(DidYouGetIncentiveForNotTriggeringBreakClauseForm(value))
+          case Some(value) => form.fill(value)
         }
         Future.successful(Ok(didYouGetIncentiveForNotTriggeringBreakClauseView(
           selectedPropertyAddress = request.property.addressFull,
@@ -67,10 +70,9 @@ class DidYouGetIncentiveForNotTriggeringBreakClauseController @Inject()(
         },
         radioValue =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(DidYouGetIncentiveForNotTriggeringBreakClausePage, radioValue.radio))
+            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(DidYouGetIncentiveForNotTriggeringBreakClausePage, radioValue))
             _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(DidYouGetIncentiveForNotTriggeringBreakClausePage, mode, updatedAnswers))
-
       )
     }
   }
