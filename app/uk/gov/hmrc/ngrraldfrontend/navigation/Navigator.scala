@@ -150,15 +150,15 @@ class Navigator @Inject()() {
       }
 
     case RentFreePeriodPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeStartController.show(NormalMode)
-
     case ConfirmBreakClausePage => answers =>
       answers.get(ConfirmBreakClausePage) match {
         case Some(value) => value match {
-          case true => uk.gov.hmrc.ngrraldfrontend.controllers.routes.LandlordController.show(NormalMode) //TODO Needs to go to did–you–get–incentive–for–not–triggering–break–clause when this is made
-          case _    => uk.gov.hmrc.ngrraldfrontend.controllers.routes.LandlordController.show(NormalMode) //TODO Needs to go to has-anything-else-affected-the-rent when this is made
+          case true =>   uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouGetIncentiveForNotTriggeringBreakClauseController.show(NormalMode)
+          case _ =>       uk.gov.hmrc.ngrraldfrontend.controllers.routes.LandlordController.show(NormalMode) //TODO This needs to be amended when the journey is completed
         }
         case None => throw new NotFoundException("Failed to find answers -  ConfirmBreakClausePage")
       }
+    case DidYouGetIncentiveForNotTriggeringBreakClausePage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouGetIncentiveForNotTriggeringBreakClauseController.show(NormalMode) //TODO match and link to correct pages
 
     case DidYouGetMoneyFromLandlordPage => answers =>
       answers.get(DidYouGetMoneyFromLandlordPage) match {
