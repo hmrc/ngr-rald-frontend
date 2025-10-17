@@ -158,7 +158,16 @@ class Navigator @Inject()() {
         }
         case None => throw new NotFoundException("Failed to find answers -  ConfirmBreakClausePage")
       }
-    case DidYouGetMoneyFromLandlordPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.LandlordController.show(NormalMode) //TODO This needs to be amended when the journey is completed
+
+    case DidYouGetMoneyFromLandlordPage => answers =>
+      answers.get(DidYouGetMoneyFromLandlordPage) match {
+        case Some(value) => value match {
+          case true => uk.gov.hmrc.ngrraldfrontend.controllers.routes.LandlordController.show(NormalMode) //TODO Needs to go to money-from-landlord-or-previous-tenant-to-take-on-lease when this is made
+          case _    => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouPayAnyMoneyToLandlordController.show(NormalMode)
+        }
+        case None => throw new NotFoundException("Failed to find answers -  DidYouGetMoneyFromLandlordPage")
+      }
+
     case DidYouGetIncentiveForNotTriggeringBreakClausePage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouGetIncentiveForNotTriggeringBreakClauseController.show(NormalMode) //TODO match and link to correct pages
 
     case DidYouGetMoneyFromLandlordPage => answers =>
