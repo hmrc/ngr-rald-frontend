@@ -55,14 +55,10 @@ object ParkingSpacesOrGaragesNotIncludedInYourRentForm extends CommonFormValidat
 
   private def parkingFormatter(args: Seq[String] = Seq.empty): Formatter[Int] = new Formatter[Int] {
   override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Int] = {
-    (data.get("uncoveredSpaces"), data.get("coveredSpaces"), data.get("garages")) match {
-      case (Some(""), Some(""), Some("")) =>
+    (data.get("uncoveredSpaces").getOrElse("0"), data.get("coveredSpaces").getOrElse("0"), data.get("garages").getOrElse("0")) match {
+      case (uncoveredSpaces,coveredSpaces,garages) if((uncoveredSpaces.isEmpty || uncoveredSpaces == "0") && (coveredSpaces.isEmpty || coveredSpaces == "0")  && (garages.isEmpty || garages == "0")) =>
         Left(Seq(FormError(key, fieldRequired, args)))
-
-      case (Some("0"), Some("0"), Some("0")) =>
-        Left(Seq(FormError(key, fieldRequired, args)))
-
-      case (Some(uncoveredSpaces), Some(coveredSpaces), Some(garages)) =>
+      case (uncoveredSpaces, coveredSpaces, garages) =>
         data.get(key) match {
           case Some(value) if value.toDoubleOption.getOrElse(0d) > maxValue.toDouble =>
             Left(Seq(FormError(key, s"parkingSpacesOrGaragesNotIncludedInYourRent.${key}.tooHigh.error", args)))
