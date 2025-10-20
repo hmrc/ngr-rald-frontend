@@ -123,6 +123,85 @@ class ParkingSpacesOrGaragesNotIncludedInYourRentControllerSpec extends Controll
         val content = contentAsString(result)
         content must include("Total number of uncovered spaces, covered spaces and garages you pay extra for must be more than 0")
       }
+      "Return BAD_REQUEST for inputting hello in uncoveredSpaces field and show the correct view" in {
+        val fakePostRequest = FakeRequest(routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.submit(NormalMode))
+          .withFormUrlEncodedBody(
+            "uncoveredSpaces" -> "hello",
+            "coveredSpaces" -> "0",
+            "garages" -> "0",
+            "totalCost" -> "2000",
+            "agreementDate.day" -> "01",
+            "agreementDate.month" -> "10",
+            "agreementDate.year" -> "2025"
+          ).withHeaders(HeaderNames.authorisation -> "Bearer 1")
+        val result = controllerProperty(None).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
+        status(result) mustBe BAD_REQUEST
+        val content = contentAsString(result)
+        content must include("Number of extra uncovered parking spaces included in your rent must be a number, like 9")
+      }
+      "Return BAD_REQUEST for inputting -9 in uncoveredSpaces field and show the correct view" in {
+        val fakePostRequest = FakeRequest(routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.submit(NormalMode))
+          .withFormUrlEncodedBody(
+            "uncoveredSpaces" -> "-9",
+            "coveredSpaces" -> "0",
+            "garages" -> "0",
+            "totalCost" -> "2000",
+            "agreementDate.day" -> "01",
+            "agreementDate.month" -> "10",
+            "agreementDate.year" -> "2025"
+          ).withHeaders(HeaderNames.authorisation -> "Bearer 1")
+        val result = controllerProperty(None).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
+        status(result) mustBe BAD_REQUEST
+        val content = contentAsString(result)
+        content must include("Number of extra uncovered parking spaces included in your rent must be a number, like 9")
+      }
+      "Return BAD_REQUEST for inputting 9.0 in uncoveredSpaces field and show the correct view" in {
+        val fakePostRequest = FakeRequest(routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.submit(NormalMode))
+          .withFormUrlEncodedBody(
+            "uncoveredSpaces" -> "9.0",
+            "coveredSpaces" -> "0",
+            "garages" -> "0",
+            "totalCost" -> "2000",
+            "agreementDate.day" -> "01",
+            "agreementDate.month" -> "10",
+            "agreementDate.year" -> "2025"
+          ).withHeaders(HeaderNames.authorisation -> "Bearer 1")
+        val result = controllerProperty(None).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
+        status(result) mustBe BAD_REQUEST
+        val content = contentAsString(result)
+        content must include("Number of extra uncovered parking spaces included in your rent must be a number, like 9")
+      }
+      "Return BAD_REQUEST for inputting 90000000 in uncoveredSpaces field and show the correct view" in {
+        val fakePostRequest = FakeRequest(routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.submit(NormalMode))
+          .withFormUrlEncodedBody(
+            "uncoveredSpaces" -> "90000000",
+            "coveredSpaces" -> "0",
+            "garages" -> "0",
+            "totalCost" -> "2000",
+            "agreementDate.day" -> "01",
+            "agreementDate.month" -> "10",
+            "agreementDate.year" -> "2025"
+          ).withHeaders(HeaderNames.authorisation -> "Bearer 1")
+        val result = controllerProperty(None).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
+        status(result) mustBe BAD_REQUEST
+        val content = contentAsString(result)
+        content must include("Number of extra uncovered parking spaces included in your rent must be 9,999 or less")
+      }
+      "Return SEE_OTHER for inputting 9,000 in uncoveredSpaces field and show the correct view" in {
+        val fakePostRequest = FakeRequest(routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.submit(NormalMode))
+          .withFormUrlEncodedBody(
+            "uncoveredSpaces" -> "9,000",
+            "coveredSpaces" -> "0",
+            "garages" -> "0",
+            "totalCost" -> "2000",
+            "agreementDate.day" -> "01",
+            "agreementDate.month" -> "10",
+            "agreementDate.year" -> "2025"
+          ).withHeaders(HeaderNames.authorisation -> "Bearer 1")
+        val result = controllerProperty(None).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.RepairsAndInsuranceController.show(NormalMode).url)
+      }
       "Return BAD_REQUEST for not inputting a total cost and show the correct view" in {
         val fakePostRequest = FakeRequest(routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.submit(NormalMode))
           .withFormUrlEncodedBody(

@@ -54,22 +54,31 @@ object ParkingSpacesOrGaragesNotIncludedInYourRentForm extends CommonFormValidat
     )
 
   private def parkingFormatter(args: Seq[String] = Seq.empty): Formatter[Int] = new Formatter[Int] {
-    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Int] =
-        (data.get("uncoveredSpaces"), data.get("coveredSpaces"), data.get("garages")) match {
-          case (Some(""), Some(""), Some(""))  => Left(Seq(FormError(key, fieldRequired, args)))
-          case (Some("0"), Some("0"), Some("0"))  => Left(Seq(FormError(key, fieldRequired, args)))
-          case (Some(uncoveredSpaces), Some(coveredSpaces), Some(garages)) => data.get(key) match {
-            case Some(value) if value.toDoubleOption.getOrElse(0d) > maxValue.toDouble => Left(Seq(FormError(key, s"parkingSpacesOrGaragesNotIncludedInYourRent.${key}.tooHigh.error", args)))
-            case Some(value) if value.nonEmpty && !value.replaceAll("[£|,|\\s]", "").matches(wholePositiveNumberRegexp.pattern()) => Left(Seq(FormError(key, s"parkingSpacesOrGaragesNotIncludedInYourRent.${key}.wholeNum.error", args)))
-            case valueOption if(
-              uncoveredSpaces.strip().replaceAll(",", "").toIntOption.getOrElse(0) +
-                coveredSpaces.strip().replaceAll(",", "").toIntOption.getOrElse(0) +
-                garages.strip().replaceAll(",", "").toIntOption.getOrElse(0) > 0
-              ) => Right(valueOption.flatMap(value => value.strip().replaceAll(",", "").toIntOption).getOrElse(0))
-          }
+  override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Int] = {
+    (data.get("uncoveredSpaces"), data.get("coveredSpaces"), data.get("garages")) match {
+      case (Some(""), Some(""), Some("")) =>
+        Left(Seq(FormError(key, fieldRequired, args)))
+
+      case (Some("0"), Some("0"), Some("0")) =>
+        Left(Seq(FormError(key, fieldRequired, args)))
+
+      case (Some(uncoveredSpaces), Some(coveredSpaces), Some(garages)) =>
+        data.get(key) match {
+          case Some(value) if value.toDoubleOption.getOrElse(0d) > maxValue.toDouble =>
+            Left(Seq(FormError(key, s"parkingSpacesOrGaragesNotIncludedInYourRent.${key}.tooHigh.error", args)))
+
+          case Some(value) if value.nonEmpty && !value.replaceAll(",", "").matches(wholePositiveNumberRegexp.pattern()) =>
+            Left(Seq(FormError(key, s"parkingSpacesOrGaragesNotIncludedInYourRent.${key}.wholeNum.error", args)))
+
+          case value =>  Right(value.flatMap(value => value.trim.replaceAll(",", "").toIntOption).getOrElse(0))
         }
-      override def unbind(key: String, value: Int): Map[String, String] = Map(key -> value.toString)
+      case _ =>
+        Left(Seq(FormError(key, fieldRequired, args)))
     }
+  }
+
+  override def unbind(key: String, value: Int): Map[String, String] = Map(key -> value.toString)
+}
 
   def form: Form[ParkingSpacesOrGaragesNotIncludedInYourRentForm] = {
       Form(
