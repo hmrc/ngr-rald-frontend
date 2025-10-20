@@ -35,7 +35,7 @@ import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 final case class ProvideDetailsOfFirstRentPeriodForm(
                                                       firstDateStartInput: NGRDate,
                                                       firstDateEndInput: NGRDate,
-                                                      firstRentPeriodRadio: String,
+                                                      firstRentPeriodRadio: Boolean,
                                                       firstRentPeriodAmount: Option[BigDecimal]
                                                     )
 
@@ -47,7 +47,6 @@ object ProvideDetailsOfFirstRentPeriodForm extends CommonFormValidators with Map
   private val firstDateEndInput = "first.endDate"
   private val firstRentPeriodRadio = "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio"
   private val RentPeriodAmount = "RentPeriodAmount"
-  private lazy val annualRentEmptyError = "provideDetailsOfFirstSecondRentPeriod.secondPeriod.amount.required.error"
   private lazy val firstPeriodAmountEmptyError = "provideDetailsOfFirstSecondRentPeriod.firstPeriod.amount.required.error"
 
   private val maxAmount: BigDecimal = BigDecimal("9999999.99")
@@ -72,10 +71,10 @@ object ProvideDetailsOfFirstRentPeriodForm extends CommonFormValidators with Map
   )
 
   def firstDateStartInput(implicit messages: Messages): DateInput =
-    dateInput(firstDateStartInput, "provideDetailsOfFirstSecondRentPeriod.firstPeriod.start.date.label")
+    dateInput(firstDateStartInput, "provideDetailsOfFirstRentPeriod.first.startDate.label")
 
   def firstDateEndInput(implicit messages: Messages): DateInput =
-    dateInput(firstDateEndInput, "provideDetailsOfFirstSecondRentPeriod.firstPeriod.end.date.label")
+    dateInput(firstDateEndInput, "provideDetailsOfFirstRentPeriod.first.endDate.label")
 
   def firstRentPeriodRadio(form: Form[ProvideDetailsOfFirstRentPeriodForm], inputText: InputText)(implicit messages: Messages): NGRRadio =
     ngrRadio(
@@ -100,8 +99,7 @@ object ProvideDetailsOfFirstRentPeriodForm extends CommonFormValidators with Map
       ngrTitle = "provideDetailsOfFirstSecondRentPeriod.firstPeriod.radio.label",
     )
 
-  def unapply(provideDetailsOfFirstRentPeriodForm: ProvideDetailsOfFirstRentPeriodForm): Option[(
-    NGRDate, NGRDate, String, Option[BigDecimal])] =
+  def unapply(provideDetailsOfFirstRentPeriodForm: ProvideDetailsOfFirstRentPeriodForm): Option[(NGRDate, NGRDate, Boolean, Option[BigDecimal])] =
     Some(
       provideDetailsOfFirstRentPeriodForm.firstDateStartInput,
       provideDetailsOfFirstRentPeriodForm.firstDateEndInput,
@@ -112,42 +110,42 @@ object ProvideDetailsOfFirstRentPeriodForm extends CommonFormValidators with Map
   def answerToForm(value: ProvideDetailsOfFirstRentPeriod): Form[ProvideDetailsOfFirstRentPeriodForm] =
     form.fill(
       ProvideDetailsOfFirstRentPeriodForm(
-        NGRDate.fromString(value.firstDateStart),
-        NGRDate.fromString(value.firstDateEnd),
-        value.firstRentPeriodRadio.toString,
-        value.firstRentPeriodAmount
+        NGRDate.fromLocalDate(value.startDate),
+        NGRDate.fromLocalDate(value.endDate),
+        value.isRentPayablePeriod,
+        value.rentPeriodAmount
       )
     )
 
   def formToAnswers(provideDetailsOfFirstRentPeriodForm: ProvideDetailsOfFirstRentPeriodForm): ProvideDetailsOfFirstRentPeriod =
     ProvideDetailsOfFirstRentPeriod(
-      provideDetailsOfFirstRentPeriodForm.firstDateStartInput.makeString,
-      provideDetailsOfFirstRentPeriodForm.firstDateEndInput.makeString,
-      provideDetailsOfFirstRentPeriodForm.firstRentPeriodRadio.toBoolean,
-      if (provideDetailsOfFirstRentPeriodForm.firstRentPeriodRadio.toBoolean)        provideDetailsOfFirstRentPeriodForm.firstRentPeriodAmount
-      else        None
+      provideDetailsOfFirstRentPeriodForm.firstDateStartInput.toLocalDate,
+      provideDetailsOfFirstRentPeriodForm.firstDateEndInput.toLocalDate,
+      provideDetailsOfFirstRentPeriodForm.firstRentPeriodRadio,
+      if provideDetailsOfFirstRentPeriodForm.firstRentPeriodRadio then provideDetailsOfFirstRentPeriodForm.firstRentPeriodAmount
+      else None
     )
 
-  private def rentPeriodAmountFormatter(args: Seq[String] = Seq.empty): Formatter[Option[BigDecimal]] = new Formatter[Option[BigDecimal]] {
-    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[BigDecimal]] =
-      val isPayingRent = data.get(firstRentPeriodRadio).contains("true")
-      data.get(key) match {
-        case None if isPayingRent => Left(Seq(FormError(key, firstPeriodAmountEmptyError, args)))
-        case Some(s) if isPayingRent => isRentPeriodAmountValid(s.trim.replaceAll("[£|,\\s]", ""), key, args)
-        case Some(s) => Right(Some(BigDecimal(s)))
-        case None => Right(None)
-      }
+  private def rentPeriodAmountFormatter(args: Seq[String] = Seq.empty): Formatter[Option[BigDecimal]] =
+    new Formatter[Option[BigDecimal]] {
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[BigDecimal]] =
+        val isPayingRent = data.get(firstRentPeriodRadio).contains("true")
+        data.get(key) match {
+          case None if isPayingRent => Left(Seq(FormError(key, firstPeriodAmountEmptyError, args)))
+          case Some(s) if isPayingRent => isRentPeriodAmountValid(s.trim.replaceAll("[£|,\\s]", ""), key, args)
+          case _ => Right(None)
+        }
 
-    override def unbind(key: String, value: Option[BigDecimal]): Map[String, String] =
-      Map(key -> value.map(_.toString()).getOrElse(""))
-  }
+      override def unbind(key: String, value: Option[BigDecimal]): Map[String, String] =
+        Map(key -> value.map(_.toString).getOrElse(""))
+    }
 
   private def isRentPeriodAmountValid(rentAmount: String, key: String, args: Seq[String]): Either[Seq[FormError], Option[BigDecimal]] =
-    if (rentAmount.isEmpty)
+    if rentAmount.isEmpty then
       Left(Seq(FormError(key, firstPeriodAmountEmptyError, args)))
-    else if (!rentAmount.matches(amountRegex.pattern()))
+    else if !rentAmount.matches(amountRegex.pattern()) then
       Left(Seq(FormError(key, "provideDetailsOfFirstSecondRentPeriod.firstPeriod.amount.invalid.error", args)))
-    else if (BigDecimal(rentAmount) > maxAmount)
+    else if BigDecimal(rentAmount) > maxAmount then
       Left(Seq(FormError(key, "provideDetailsOfFirstSecondRentPeriod.firstPeriod.amount.max.error", args)))
     else
       Right(Some(BigDecimal(rentAmount)))
@@ -158,20 +156,20 @@ object ProvideDetailsOfFirstRentPeriodForm extends CommonFormValidators with Map
         firstDateStartInput -> dateMapping
           .verifying(
             firstError(
-              isDateEmpty(errorKeys("provideDetailsOfFirstSecondRentPeriod", "first.startDate")),
-              isDateValid("provideDetailsOfFirstSecondRentPeriod.first.startDate.invalid.error"),
-              isDateAfter1900("provideDetailsOfFirstSecondRentPeriod.first.startDate.before.1900.error")
+              isDateEmpty(errorKeys("provideDetailsOfFirstRentPeriod", "first.startDate")),
+              isDateValid("provideDetailsOfFirstRentPeriod.first.startDate.invalid.error"),
+              isDateAfter1900("provideDetailsOfFirstRentPeriod.first.startDate.before.1900.error")
             )
           ),
         firstDateEndInput -> dateMapping
           .verifying(
             firstError(
-              isDateEmpty(errorKeys("provideDetailsOfFirstSecondRentPeriod", "first.endDate")),
-              isDateValid("provideDetailsOfFirstSecondRentPeriod.first.endDate.invalid.error"),
-              isDateAfter1900("provideDetailsOfFirstSecondRentPeriod.first.endDate.before.1900.error")
+              isDateEmpty(errorKeys("provideDetailsOfFirstRentPeriod", "first.endDate")),
+              isDateValid("provideDetailsOfFirstRentPeriod.first.endDate.invalid.error"),
+              isDateAfter1900("provideDetailsOfFirstRentPeriod.first.endDate.before.1900.error")
             )
           ),
-        firstRentPeriodRadio -> radioText(radioFirstPeriodRequiredError),
+        firstRentPeriodRadio -> radioBoolean(radioFirstPeriodRequiredError),
         RentPeriodAmount -> of(using rentPeriodAmountFormatter())
       )(ProvideDetailsOfFirstRentPeriodForm.apply)(ProvideDetailsOfFirstRentPeriodForm.unapply)
     )

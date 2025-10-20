@@ -18,11 +18,13 @@ package uk.gov.hmrc.ngrraldfrontend.models
 
 import play.api.libs.json.{Json, OFormat}
 
+import java.time.LocalDate
+
 case class ProvideDetailsOfFirstRentPeriod(
-                                            firstDateStart: String,
-                                            firstDateEnd: String,
-                                            firstRentPeriodRadio: Boolean,
-                                            firstRentPeriodAmount: Option[BigDecimal]
+                                            startDate: LocalDate,
+                                            endDate: LocalDate,
+                                            isRentPayablePeriod: Boolean,
+                                            rentPeriodAmount: Option[BigDecimal]
                                           )
 
 object ProvideDetailsOfFirstRentPeriod:

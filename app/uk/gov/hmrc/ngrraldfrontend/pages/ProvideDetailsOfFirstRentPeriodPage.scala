@@ -23,4 +23,4 @@ case object ProvideDetailsOfFirstRentPeriodPage extends QuestionPage[ProvideDeta
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "provideDetailsOfFirstRentPeriod"
+  override def toString: String = "firstRentPeriod"

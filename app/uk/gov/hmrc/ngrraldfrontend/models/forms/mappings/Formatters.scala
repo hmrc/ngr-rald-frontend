@@ -19,9 +19,7 @@ package uk.gov.hmrc.ngrraldfrontend.models.forms.mappings
 import play.api.data.FormError
 import play.api.data.format.Formatter
 
-import scala.util.control.Exception.nonFatalCatch
-
-trait Formatters {
+trait Formatters:
 
   private[mappings] def stringFormatter(errorKey: String, args: Seq[String] = Seq.empty): Formatter[String] = new Formatter[String] {
 
@@ -47,5 +45,18 @@ trait Formatters {
     override def unbind(key: String, value: String): Map[String, String] =
       Map(key -> value)
   }
-  
-}
+
+  private[mappings] def booleanFormatter(errorKey: String, args: Seq[String] = Seq.empty): Formatter[Boolean] = new Formatter[Boolean] {
+
+    override val format: Option[(String, Seq[Any])] = Some(("format.boolean", Nil))
+
+    def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Boolean] =
+      Right(data.getOrElse(key, "false")).flatMap {
+        case "true" => Right(true)
+        case "false" => Right(false)
+        case _ => Left(Seq(FormError(key, errorKey, args)))
+      }
+
+    def unbind(key: String, value: Boolean): Map[String, String] =
+      Map(key -> value.toString)
+  }

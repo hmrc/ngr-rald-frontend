@@ -19,13 +19,16 @@ package uk.gov.hmrc.ngrraldfrontend.models.forms.mappings
 import play.api.data.FieldMapping
 import play.api.data.Forms.of
 
-trait Mappings extends Formatters {
+trait Mappings extends Formatters:
+
   protected def radioText(errorKey: String = "error.required", args: Seq[String] = Seq.empty): FieldMapping[String] =
     of(stringFormatter(errorKey, args))
+
+  protected def radioBoolean(errorKey: String = "error.required", args: Seq[String] = Seq.empty): FieldMapping[Boolean] =
+    of(booleanFormatter(errorKey, args))
 
   protected def optionalRadioText(errorKey: String = "error.required", isOptional: Boolean, args: Seq[String] = Seq.empty): FieldMapping[String] =
     if (!isOptional)
       of(stringFormatter(errorKey, args))
     else
       of(optionalStringFormatter(args))
-}

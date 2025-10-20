@@ -183,6 +183,31 @@ didYouAgreeRentWithLandlord.yes = Yes
 didYouAgreeRentWithLandlord.no = No, a court set the rent
 didYouAgreeRentWithLandlord.error.required = Select yes if you agreed the rent with your landlord or their agent
 
+#ProvideDetailsOfFirstRentPeriod
+provideDetailsOfFirstRentPeriod.title = First rent period
+
+provideDetailsOfFirstRentPeriod.first.startDate.label = When does the first rent period start?
+provideDetailsOfFirstRentPeriod.first.startDate.required.error = Enter the Start date of the first rent period
+provideDetailsOfFirstRentPeriod.first.startDate.day.required.error = Start date of the first rent period must include a day
+provideDetailsOfFirstRentPeriod.first.startDate.month.required.error = Start date of the first rent period must include a month
+provideDetailsOfFirstRentPeriod.first.startDate.year.required.error = Start date of the first rent period must include a year
+provideDetailsOfFirstRentPeriod.first.startDate.dayAndMonth.required.error = Start date of the first rent period must include a day and month
+provideDetailsOfFirstRentPeriod.first.startDate.dayAndYear.required.error = Start date of the first rent period must include a day and year
+provideDetailsOfFirstRentPeriod.first.startDate.monthAndYear.required.error = Start date of the first rent period must include a month and year
+provideDetailsOfFirstRentPeriod.first.startDate.invalid.error = Start date of the first rent period must be a real date
+provideDetailsOfFirstRentPeriod.first.startDate.before.1900.error = Start date of the first rent period must be 1900 or after
+
+provideDetailsOfFirstRentPeriod.first.endDate.label = When does the first rent period end?
+provideDetailsOfFirstRentPeriod.first.endDate.required.error = Enter the end date of the first rent period
+provideDetailsOfFirstRentPeriod.first.endDate.day.required.error = End date of the first rent period must include a day
+provideDetailsOfFirstRentPeriod.first.endDate.month.required.error = End date of the first rent period must include a month
+provideDetailsOfFirstRentPeriod.first.endDate.year.required.error = End date of the first rent period must include a year
+provideDetailsOfFirstRentPeriod.first.endDate.dayAndMonth.required.error = End date of the first rent period must include a day and month
+provideDetailsOfFirstRentPeriod.first.endDate.dayAndYear.required.error = End date of the first rent period must include a day and year
+provideDetailsOfFirstRentPeriod.first.endDate.monthAndYear.required.error = End date of the first rent period must include a month and year
+provideDetailsOfFirstRentPeriod.first.endDate.invalid.error = End date of the first rent period must be a real date
+provideDetailsOfFirstRentPeriod.first.endDate.before.1900.error = End date of the first rent period must be 1900 or after
+
 #ProvideDetailsOfFirstSecondRentPeriod
 provideDetailsOfFirstSecondRentPeriod.title = Provide details of each rent period
 provideDetailsOfFirstSecondRentPeriod.date.hint = For example, 27 6 2026

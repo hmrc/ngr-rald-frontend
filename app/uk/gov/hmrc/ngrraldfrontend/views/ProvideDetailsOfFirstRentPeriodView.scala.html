@@ -40,7 +40,7 @@
         mode: Mode
 )(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
-@layout(pageTitle = Some(messages("provideDetailsOfFirstSecondRentPeriod.title")), showBackLink = true, fullWidth = false) {
+@layout(pageTitle = Some(messages("provideDetailsOfFirstRentPeriod.title")), showBackLink = true, fullWidth = false) {
 
     @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfFirstRentPeriodController.submit(mode), Symbol("autoComplete") -> "off") {
 
@@ -50,7 +50,7 @@
         }
 
         <span class="govuk-caption-m">@selectedPropertyAddress</span>
-        <h1 class="govuk-heading-l">@messages("provideDetailsOfFirstSecondRentPeriod.firstPeriod.subheading")</h1>
+        <h1 class="govuk-heading-l">@messages("provideDetailsOfFirstRentPeriod.title")</h1>
         @dateInputField(form, firstDateStartInput)
         @dateInputField(form, firstDateEndInput)
         @govukRadios(openEndedRadio)

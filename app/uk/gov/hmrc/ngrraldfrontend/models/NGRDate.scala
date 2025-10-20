@@ -32,22 +32,25 @@ final case class NGRDate(day: String, month: String, year: String) {
     val dayStr = f"${day.toInt}%02d"
     s"$year-$monthStr-$dayStr"
   }
+
+  def toLocalDate: LocalDate = LocalDate.of(year.toInt, month.toInt, day.toInt)
 }
 
 object NGRDate {
   implicit val format: OFormat[NGRDate] = Json.format[NGRDate]
-  
+
   def formatDate(dateString: String): String = {
     val date = LocalDate.parse(dateString)
     val outputFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.UK)
     date.format(outputFormatter)
   }
 
-  def fromString(dateString: String): NGRDate = {
-    val date = LocalDate.parse(dateString)
+  def fromLocalDate(date: LocalDate): NGRDate =
     NGRDate(date.getDayOfMonth.toString, date.getMonthValue.toString, date.getYear.toString)
-  }
-  
+
+  def fromString(dateString: String): NGRDate =
+    fromLocalDate(LocalDate.parse(dateString))
+
   def unapply(ngrDate: NGRDate): Option[(String, String, String)] =
     Some(ngrDate.day, ngrDate.month, ngrDate.year)
 }

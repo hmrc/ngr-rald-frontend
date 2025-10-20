@@ -70,10 +70,10 @@ class ProvideDetailsOfFirstRentPeriodController @Inject()(view: ProvideDetailsOf
           formWithErrors =>
             val correctedFormErrors = formWithErrors.errors.map { formError =>
               (formError.key, formError.messages) match
-                case (key, messages) if messages.head.contains("provideDetailsOfFirstSecondRentPeriod.first.startDate") =>
-                  setCorrectKey(formError, "provideDetailsOfFirstSecondRentPeriod", "first.startDate")
-                case (key, messages) if messages.head.contains("provideDetailsOfFirstSecondRentPeriod.first.endDate") =>
-                  setCorrectKey(formError, "provideDetailsOfFirstSecondRentPeriod", "first.endDate")
+                case (key, messages) if messages.head.contains("provideDetailsOfFirstRentPeriod.first.startDate") =>
+                  setCorrectKey(formError, "provideDetailsOfFirstRentPeriod", "first.startDate")
+                case (key, messages) if messages.head.contains("provideDetailsOfFirstRentPeriod.first.endDate") =>
+                  setCorrectKey(formError, "provideDetailsOfFirstRentPeriod", "first.endDate")
                 case _ =>
                   formError
             }
