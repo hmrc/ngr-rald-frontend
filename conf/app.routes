@@ -184,7 +184,14 @@ POST       /repairs-and-fitting-out                      uk.gov.hmrc.ngrraldfron
 GET        /repairs-and-fitting-out/change               uk.gov.hmrc.ngrraldfrontend.controllers.RepairsAndFittingOutController.show(mode: Mode = CheckMode)
 POST       /repairs-and-fitting-out/change               uk.gov.hmrc.ngrraldfrontend.controllers.RepairsAndFittingOutController.submit(mode: Mode = CheckMode)
 
+#How much was the lump sum
 GET        /how-much-was-the-lump-sum                    uk.gov.hmrc.ngrraldfrontend.controllers.HowMuchWasTheLumpSumController.show(mode: Mode = NormalMode)
 POST       /how-much-was-the-lump-sum                    uk.gov.hmrc.ngrraldfrontend.controllers.HowMuchWasTheLumpSumController.submit(mode: Mode = NormalMode)
 GET        /how-much-was-the-lump-sum/change             uk.gov.hmrc.ngrraldfrontend.controllers.HowMuchWasTheLumpSumController.show(mode: Mode = CheckMode)
 POST       /how-much-was-the-lump-sum/change             uk.gov.hmrc.ngrraldfrontend.controllers.HowMuchWasTheLumpSumController.submit(mode: Mode = CheckMode)
+
+#Money you paid in advance to landlord
+GET        /money-you-paid-in-advance-to-landlord            uk.gov.hmrc.ngrraldfrontend.controllers.MoneyYouPaidInAdvanceToLandlordController.show(mode: Mode = NormalMode)
+POST       /money-you-paid-in-advance-to-landlord            uk.gov.hmrc.ngrraldfrontend.controllers.MoneyYouPaidInAdvanceToLandlordController.submit(mode: Mode = NormalMode)
+GET        /money-you-paid-in-advance-to-landlord/change     uk.gov.hmrc.ngrraldfrontend.controllers.MoneyYouPaidInAdvanceToLandlordController.show(mode: Mode = CheckMode)
+POST       /money-you-paid-in-advance-to-landlord/change     uk.gov.hmrc.ngrraldfrontend.controllers.MoneyYouPaidInAdvanceToLandlordController.submit(mode: Mode = CheckMode)
