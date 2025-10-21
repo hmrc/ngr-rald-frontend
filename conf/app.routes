@@ -195,3 +195,10 @@ GET        /money-you-paid-in-advance-to-landlord            uk.gov.hmrc.ngrrald
 POST       /money-you-paid-in-advance-to-landlord            uk.gov.hmrc.ngrraldfrontend.controllers.MoneyYouPaidInAdvanceToLandlordController.submit(mode: Mode = NormalMode)
 GET        /money-you-paid-in-advance-to-landlord/change     uk.gov.hmrc.ngrraldfrontend.controllers.MoneyYouPaidInAdvanceToLandlordController.show(mode: Mode = CheckMode)
 POST       /money-you-paid-in-advance-to-landlord/change     uk.gov.hmrc.ngrraldfrontend.controllers.MoneyYouPaidInAdvanceToLandlordController.submit(mode: Mode = CheckMode)
+
+#Did you get incentive for not triggering break clause
+GET        /did-you-get-incentive-for-not-triggering-break-clause               uk.gov.hmrc.ngrraldfrontend.controllers.DidYouGetIncentiveForNotTriggeringBreakClauseController.show(mode: Mode = NormalMode)
+POST       /did-you-get-incentive-for-not-triggering-break-clause               uk.gov.hmrc.ngrraldfrontend.controllers.DidYouGetIncentiveForNotTriggeringBreakClauseController.submit(mode: Mode = NormalMode)
+GET        /did-you-get-incentive-for-not-triggering-break-clause/change        uk.gov.hmrc.ngrraldfrontend.controllers.DidYouGetIncentiveForNotTriggeringBreakClauseController.show(mode: Mode = CheckMode)
+POST       /did-you-get-incentive-for-not-triggering-break-clause/change        uk.gov.hmrc.ngrraldfrontend.controllers.DidYouGetIncentiveForNotTriggeringBreakClauseController.submit(mode: Mode = CheckMode)
+

@@ -7,6 +7,7 @@ service.continue = Continue
 service.saveAndContinue = Save and continue
 service.yes = Yes
 service.no = No
+service.or = or
 
 #NavigationBar
 nav.home=Account home
@@ -483,3 +484,12 @@ moneyYouPaidInAdvanceToLandlord.date.dayAndYear.required.error = Date you paid t
 moneyYouPaidInAdvanceToLandlord.date.monthAndYear.required.error = Date you paid the money must include a month and year
 moneyYouPaidInAdvanceToLandlord.date.dayAndMonth.required.error = Date you paid the money must include a day and month
 moneyYouPaidInAdvanceToLandlord.date.before.1900.error = Year you paid the money must be 1900 or after
+
+#did-you-get-incentive-for-not-triggering-break-clause
+didYouGetIncentiveForNotTriggeringBreakClause.title = Did you get incentive for not triggering the break clause?
+didYouGetIncentiveForNotTriggeringBreakClause.hint = Select all that apply
+didYouGetIncentiveForNotTriggeringBreakClause.checkbox = Yes, I got a lump sum
+didYouGetIncentiveForNotTriggeringBreakClause.checkbox1 = Yes, I got a rent-free period
+didYouGetIncentiveForNotTriggeringBreakClause.checkbox2 = No, I did not get an incentive
+didYouGetIncentiveForNotTriggeringBreakClause.required.error = Select which incentives you got for not triggering the break clause, or select ‘No, I did not get an incentive'
+

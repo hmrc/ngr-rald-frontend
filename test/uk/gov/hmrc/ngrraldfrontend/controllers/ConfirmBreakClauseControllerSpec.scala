@@ -25,10 +25,9 @@ import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redir
 import uk.gov.hmrc.auth.core.Nino
 import uk.gov.hmrc.http.{HeaderNames, NotFoundException}
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
-import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, NormalMode, UserAnswers}
-import uk.gov.hmrc.ngrraldfrontend.pages.{ConfirmBreakClausePage, DoesYourRentIncludeParkingPage}
+import uk.gov.hmrc.ngrraldfrontend.pages.ConfirmBreakClausePage
 import uk.gov.hmrc.ngrraldfrontend.views.html.ConfirmBreakClauseView
 
 import scala.concurrent.Future
@@ -78,7 +77,7 @@ class ConfirmBreakClauseControllerSpec extends ControllerSpecSupport {
           result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/landlord") //TODO this is currently going to the wrong page as the journey hasn't yet been completed
         })
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.LandlordController.show(NormalMode).url)
+        redirectLocation(result) mustBe Some(routes.DidYouGetIncentiveForNotTriggeringBreakClauseController.show(NormalMode).url)
       }
       "Return See_Other and the correct view after submitting no" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
