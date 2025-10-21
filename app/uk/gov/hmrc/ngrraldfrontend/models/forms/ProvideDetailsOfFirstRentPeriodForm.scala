@@ -132,7 +132,7 @@ object ProvideDetailsOfFirstRentPeriodForm extends CommonFormValidators with Map
         val isPayingRent = data.get(firstRentPeriodRadio).contains("true")
         data.get(key) match {
           case None if isPayingRent => Left(Seq(FormError(key, firstPeriodAmountEmptyError, args)))
-          case Some(s) if isPayingRent => isRentPeriodAmountValid(s.trim.replaceAll("[£|,\\s]", ""), key, args)
+          case Some(s) if isPayingRent => isRentPeriodAmountValid(s.trim.replaceAll("[£,\\s]", ""), key, args)
           case _ => Right(None)
         }
 
