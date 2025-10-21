@@ -206,3 +206,8 @@ GET        /money-you-paid-in-advance-to-landlord            uk.gov.hmrc.ngrrald
 POST       /money-you-paid-in-advance-to-landlord            uk.gov.hmrc.ngrraldfrontend.controllers.MoneyYouPaidInAdvanceToLandlordController.submit(mode: Mode = NormalMode)
 GET        /money-you-paid-in-advance-to-landlord/change     uk.gov.hmrc.ngrraldfrontend.controllers.MoneyYouPaidInAdvanceToLandlordController.show(mode: Mode = CheckMode)
 POST       /money-you-paid-in-advance-to-landlord/change     uk.gov.hmrc.ngrraldfrontend.controllers.MoneyYouPaidInAdvanceToLandlordController.submit(mode: Mode = CheckMode)
+#About repairs and fitting out
+GET        /about-repairs-and-fitting-out                uk.gov.hmrc.ngrraldfrontend.controllers.AboutRepairsAndFittingOutController.show(mode: Mode = NormalMode)
+POST       /about-repairs-and-fitting-out                uk.gov.hmrc.ngrraldfrontend.controllers.AboutRepairsAndFittingOutController.submit(mode: Mode = NormalMode)
+GET        /about-repairs-and-fitting-out/change         uk.gov.hmrc.ngrraldfrontend.controllers.AboutRepairsAndFittingOutController.show(mode: Mode = CheckMode)
+POST       /about-repairs-and-fitting-out/change         uk.gov.hmrc.ngrraldfrontend.controllers.AboutRepairsAndFittingOutController.submit(mode: Mode = CheckMode)
