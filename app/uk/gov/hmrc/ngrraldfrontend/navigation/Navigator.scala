@@ -196,11 +196,7 @@ class Navigator @Inject()() {
         case None => throw new NotFoundException("Failed to find answers")
       }
 
-    case RentReviewPage => answers =>
-      answers.get(TellUsAboutYourRenewedAgreementPage) match {
-        case None => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RepairsAndFittingOutController.show(NormalMode)
-        case _       => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouGetMoneyFromLandlordController.show(NormalMode)
-      }
+    case RentReviewPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouGetMoneyFromLandlordController.show(NormalMode)
 
     case RepairsAndFittingOutPage => answers =>
       answers.get(RepairsAndFittingOutPage) match {
