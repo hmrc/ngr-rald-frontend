@@ -58,6 +58,18 @@ class RentReviewDetailsFormSpec extends AnyWordSpec with Matchers {
       boundForm.hasErrors shouldBe false
       boundForm.value shouldBe Some(RentReviewDetailsForm(BigDecimal("3000"), "OnlyGoUp", NGRDate("30", "10", "2020"), "true", None))
     }
+    "bind successfully annual rent has more than 2 decimals" in {
+      val data = Map(RentReviewDetailsForm.annualAmount -> "3000.37689",
+        RentReviewDetailsForm.whatHappensAtRentReviewRadio -> "OnlyGoUp",
+        "startDate.day" -> "30",
+        "startDate.month" -> "10",
+        "startDate.year" -> "2020",
+        RentReviewDetailsForm.hasAgreedNewRentRadio -> "true")
+      val boundForm = RentReviewDetailsForm.form.bind(data)
+
+      boundForm.hasErrors shouldBe false
+      boundForm.value shouldBe Some(RentReviewDetailsForm(BigDecimal("3000.38"), "OnlyGoUp", NGRDate("30", "10", "2020"), "true", None))
+    }
     "bind successfully with who agreed new rent" in {
       val data = Map(RentReviewDetailsForm.annualAmount -> "3000",
         RentReviewDetailsForm.whatHappensAtRentReviewRadio -> "OnlyGoUp",
