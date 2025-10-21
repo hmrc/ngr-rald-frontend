@@ -59,7 +59,7 @@ trait DateKeyFinder {
         message.contains(s"$pageName.$fieldName.before.1900.error") =>
         formError.copy(key = s"$fieldName.year")
       case ("", message) if message.contains(s"$pageName.$fieldName.required.error") ||
-        message.contains(s"$pageName.$fieldName.invalid.error") =>
+        message.contains(s"$pageName.$fieldName.invalid.error") || message.contains(s"$pageName.$fieldName.before.startDate.error") =>
         formError.copy(key = s"$fieldName")
       case _ =>
         formError

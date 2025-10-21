@@ -51,7 +51,7 @@ trait Formatters:
     override val format: Option[(String, Seq[Any])] = Some(("format.boolean", Nil))
 
     def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Boolean] =
-      Right(data.getOrElse(key, "false")).flatMap {
+      Right(data.getOrElse(key, "")).flatMap {
         case "true" => Right(true)
         case "false" => Right(false)
         case _ => Left(Seq(FormError(key, errorKey, args)))

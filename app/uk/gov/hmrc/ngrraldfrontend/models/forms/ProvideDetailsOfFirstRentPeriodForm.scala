@@ -42,12 +42,12 @@ final case class ProvideDetailsOfFirstRentPeriodForm(
 object ProvideDetailsOfFirstRentPeriodForm extends CommonFormValidators with Mappings with DateMappings:
   implicit val format: OFormat[ProvideDetailsOfFirstRentPeriodForm] = Json.format[ProvideDetailsOfFirstRentPeriodForm]
 
-  private lazy val radioFirstPeriodRequiredError = "provideDetailsOfFirstSecondRentPeriod.firstPeriod.radio.error.required"
+  private lazy val radioFirstPeriodRequiredError = "provideDetailsOfFirstRentPeriod.firstPeriod.radio.error.required"
   private val firstDateStartInput = "first.startDate"
   private val firstDateEndInput = "first.endDate"
   private val firstRentPeriodRadio = "provideDetailsOfFirstSecondRentPeriod-radio-firstRentPeriodRadio"
   private val RentPeriodAmount = "RentPeriodAmount"
-  private lazy val firstPeriodAmountEmptyError = "provideDetailsOfFirstSecondRentPeriod.firstPeriod.amount.required.error"
+  private lazy val firstPeriodAmountEmptyError = "provideDetailsOfFirstRentPeriod.firstPeriod.amount.required.error"
 
   private val maxAmount: BigDecimal = BigDecimal("9999999.99")
   val messagesApi: MessagesApi = new DefaultMessagesApi()
@@ -144,9 +144,9 @@ object ProvideDetailsOfFirstRentPeriodForm extends CommonFormValidators with Map
     if rentAmount.isEmpty then
       Left(Seq(FormError(key, firstPeriodAmountEmptyError, args)))
     else if !rentAmount.matches(amountRegex.pattern()) then
-      Left(Seq(FormError(key, "provideDetailsOfFirstSecondRentPeriod.firstPeriod.amount.invalid.error", args)))
+      Left(Seq(FormError(key, "provideDetailsOfFirstRentPeriod.firstPeriod.amount.invalid.error", args)))
     else if BigDecimal(rentAmount) > maxAmount then
-      Left(Seq(FormError(key, "provideDetailsOfFirstSecondRentPeriod.firstPeriod.amount.max.error", args)))
+      Left(Seq(FormError(key, "provideDetailsOfFirstRentPeriod.firstPeriod.amount.max.error", args)))
     else
       Right(Some(BigDecimal(rentAmount)))
 
@@ -172,4 +172,8 @@ object ProvideDetailsOfFirstRentPeriodForm extends CommonFormValidators with Map
         firstRentPeriodRadio -> radioBoolean(radioFirstPeriodRequiredError),
         RentPeriodAmount -> of(using rentPeriodAmountFormatter())
       )(ProvideDetailsOfFirstRentPeriodForm.apply)(ProvideDetailsOfFirstRentPeriodForm.unapply)
+        .verifying(
+          "provideDetailsOfFirstRentPeriod.first.endDate.before.startDate.error",
+          firstRent => firstRent.firstDateStartInput.toLocalDate.isBefore(firstRent.firstDateEndInput.toLocalDate)
+        )
     )
