@@ -19,13 +19,14 @@ package uk.gov.hmrc.ngrraldfrontend.models.forms
 import play.api.data.*
 import play.api.data.Forms.*
 import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 
 import scala.math.BigDecimal.RoundingMode
 
 
 final case class HowMuchIsTotalAnnualRentForm(annualRent: BigDecimal)
 
-object HowMuchIsTotalAnnualRentForm extends CommonFormValidators {
+object HowMuchIsTotalAnnualRentForm extends Mappings {
   implicit val format: OFormat[HowMuchIsTotalAnnualRentForm] = Json.format[HowMuchIsTotalAnnualRentForm]
 
   private lazy val annualRent = "how–much–is–total–annual–rent-value"

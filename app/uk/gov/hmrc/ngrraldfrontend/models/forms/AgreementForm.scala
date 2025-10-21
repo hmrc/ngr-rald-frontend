@@ -41,7 +41,7 @@ final case class AgreementForm(
                                 breakClauseInfo: Option[String]
                               )
 
-object AgreementForm extends CommonFormValidators with Mappings with DateMappings{
+object AgreementForm extends Mappings with DateMappings{
   implicit val format: OFormat[AgreementForm] = Json.format[AgreementForm]
 
   private lazy val radioOpenEndedUnselectedError = "agreement.radio.openEnded.required.error"
