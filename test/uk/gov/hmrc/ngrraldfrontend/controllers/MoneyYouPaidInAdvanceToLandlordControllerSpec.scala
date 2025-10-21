@@ -85,8 +85,8 @@ class MoneyYouPaidInAdvanceToLandlordControllerSpec extends ControllerSpecSuppor
         val content = contentAsString(result)
         val document = Jsoup.parse(content)
         document.select("input[name=advanceMoney]").attr("value") mustBe "10000"
-        document.select("input[name=date.day]").attr("value") mustBe "01"
-        document.select("input[name=date.month]").attr("value") mustBe "01"
+        document.select("input[name=date.day]").attr("value") mustBe "1"
+        document.select("input[name=date.month]").attr("value") mustBe "1"
         document.select("input[name=date.year]").attr("value") mustBe "2000"
 
       }
