@@ -58,8 +58,7 @@ trait CommonFormValidators {
       case _ =>
         Invalid(errorKey)
     }
-  
-  //TODO this could be replaced?
+
   protected def isNotEmpty(value: String, errorKey: String): Constraint[String] =
     Constraint {
       case str if str.trim.nonEmpty =>
