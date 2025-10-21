@@ -87,7 +87,7 @@ class MoneyYouPaidInAdvanceToLandlordControllerSpec extends ControllerSpecSuppor
         document.select("input[name=advanceMoney]").attr("value") mustBe "10000"
         document.select("input[name=date.day]").attr("value") mustBe "01"
         document.select("input[name=date.month]").attr("value") mustBe "01"
-        document.select("input[name=date.year]").attr("value") mustBe "1990"
+        document.select("input[name=date.year]").attr("value") mustBe "2000"
 
       }
       "Return NotFoundException when property is not found in the mongo" in {
@@ -107,7 +107,7 @@ class MoneyYouPaidInAdvanceToLandlordControllerSpec extends ControllerSpecSuppor
             "advanceMoney" -> "10000",
             "date.day" -> "01",
             "date.month" -> "01",
-            "date.year" -> "1990"
+            "date.year" -> "2000"
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1")
 
@@ -121,7 +121,7 @@ class MoneyYouPaidInAdvanceToLandlordControllerSpec extends ControllerSpecSuppor
             "advanceMoney" -> "",
             "date.day" -> "01",
             "date.month" -> "01",
-            "date.year" -> "1990"
+            "date.year" -> "2000"
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1")
 
@@ -133,10 +133,10 @@ class MoneyYouPaidInAdvanceToLandlordControllerSpec extends ControllerSpecSuppor
       "Return BAD_REQUEST for missing day input and the correct view" in {
         val fakePostRequest = FakeRequest(routes.MoneyYouPaidInAdvanceToLandlordController.submit(NormalMode))
           .withFormUrlEncodedBody(
-            "advanceMoney" -> "1000",
+            "advanceMoney" -> "10000",
             "date.day" -> "",
             "date.month" -> "01",
-            "date.year" -> "1990"
+            "date.year" -> "2000"
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1")
 
@@ -148,10 +148,10 @@ class MoneyYouPaidInAdvanceToLandlordControllerSpec extends ControllerSpecSuppor
       "Return BAD_REQUEST for missing month input and the correct view" in {
         val fakePostRequest = FakeRequest(routes.MoneyYouPaidInAdvanceToLandlordController.submit(NormalMode))
           .withFormUrlEncodedBody(
-            "advanceMoney" -> "1000",
+            "advanceMoney" -> "10000",
             "date.day" -> "01",
             "date.month" -> "",
-            "date.year" -> "1990"
+            "date.year" -> "2000"
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1")
 
@@ -163,7 +163,7 @@ class MoneyYouPaidInAdvanceToLandlordControllerSpec extends ControllerSpecSuppor
       "Return BAD_REQUEST for missing year input and the correct view" in {
         val fakePostRequest = FakeRequest(routes.MoneyYouPaidInAdvanceToLandlordController.submit(NormalMode))
           .withFormUrlEncodedBody(
-            "advanceMoney" -> "1000",
+            "advanceMoney" -> "10000",
             "date.day" -> "01",
             "date.month" -> "01",
             "date.year" -> ""

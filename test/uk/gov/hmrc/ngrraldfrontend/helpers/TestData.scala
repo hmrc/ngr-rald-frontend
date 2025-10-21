@@ -139,8 +139,8 @@ trait TestData {
  val agreementVerbalModel: AgreementVerbal = AgreementVerbal(startDate = "2025-01-01", openEnded = false, endDate = Some("2025-02-02"))
 
  val interimRentSetByTheCourtModel: InterimRentSetByTheCourt = InterimRentSetByTheCourt("10000", "1990-01")
- 
- val moneyYouPaidInAdvanceToLandlordModel: MoneyYouPaidInAdvanceToLandlord = MoneyYouPaidInAdvanceToLandlord("10000", "1990-01-01")
+
+ val moneyYouPaidInAdvanceToLandlordModel: MoneyYouPaidInAdvanceToLandlord = MoneyYouPaidInAdvanceToLandlord("10000", "2000-01-01")
 
  val landlordModel: Landlord = Landlord("Joe Bloggs", true, None)
 
