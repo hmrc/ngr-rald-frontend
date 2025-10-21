@@ -89,18 +89,18 @@ class DidYouGetIncentiveForNotTriggeringBreakClauseControllerSpec extends Contro
     }
 
     "method submit" must {
-      "Return OK and the correct view after submitting with yesLumpSum" in {
+      "Return SEE_OTHER and the correct view after submitting with yesLumpSum" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val result = userAnswers(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.DidYouGetIncentiveForNotTriggeringBreakClauseController.submit(NormalMode))
           .withFormUrlEncodedBody(("incentive[0]" -> "yesLumpSum"))
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
-          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/did-you-get-incentive-for-not-triggering-break-clause")
+          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/how-much-was-the-lump-sum")
         })
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.DidYouGetIncentiveForNotTriggeringBreakClauseController.show(NormalMode).url)
+        redirectLocation(result) mustBe Some(routes.HowMuchWasTheLumpSumController.show(NormalMode).url)
       }
-      "Return OK and the correct view after submitting with yesLumpSum and YesRentFreePeriod" in {
+      "Return SEE_OTHER and the correct view after submitting with yesLumpSum and YesRentFreePeriod" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val result = userAnswers(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.DidYouGetIncentiveForNotTriggeringBreakClauseController.submit(NormalMode))
           .withFormUrlEncodedBody(
@@ -109,10 +109,36 @@ class DidYouGetIncentiveForNotTriggeringBreakClauseControllerSpec extends Contro
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
+          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/how-much-was-the-lump-sum")
+        })
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.HowMuchWasTheLumpSumController.show(NormalMode).url)
+      }
+      "Return SEE_OTHER and the correct view after submitting with YesRentFreePeriod" in {
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        val result = userAnswers(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.DidYouGetIncentiveForNotTriggeringBreakClauseController.submit(NormalMode))
+          .withFormUrlEncodedBody(
+            "incentive[1]" -> "yesRentFreePeriod"
+          )
+          .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
+        result.map(result => {
           result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/did-you-get-incentive-for-not-triggering-break-clause")
         })
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.DidYouGetIncentiveForNotTriggeringBreakClauseController.show(NormalMode).url)
+      }
+      "Return SEE_OTHER and the correct view after submitting with No, I did not get an incentive" in {
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        val result = userAnswers(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.DidYouGetIncentiveForNotTriggeringBreakClauseController.submit(NormalMode))
+          .withFormUrlEncodedBody(
+            "incentive[3]" -> "no"
+          )
+          .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
+        result.map(result => {
+          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/how-much-was-the-lump-sum")
+        })
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.HowMuchWasTheLumpSumController.show(NormalMode).url)
       }
       "Return Form with Errors when no checkbox is selected" in {
         val result = userAnswers(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.DidYouGetIncentiveForNotTriggeringBreakClauseController.submit(NormalMode))
