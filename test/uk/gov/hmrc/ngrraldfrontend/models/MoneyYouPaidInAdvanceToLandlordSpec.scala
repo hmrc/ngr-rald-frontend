@@ -21,12 +21,12 @@ import uk.gov.hmrc.ngrraldfrontend.helpers.TestSupport
 
 class MoneyYouPaidInAdvanceToLandlordSpec extends TestSupport {
 
-  val moneyYouPaidInAdvanceToLandlord: MoneyYouPaidInAdvanceToLandlord = MoneyYouPaidInAdvanceToLandlord(amount = "1000.00", date = "2020-1-1")
+  val moneyYouPaidInAdvanceToLandlord: MoneyYouPaidInAdvanceToLandlord = MoneyYouPaidInAdvanceToLandlord(amount = 1000.00, date = "2020-1-1")
 
   val moneyYouPaidInAdvanceToLandlordJson: JsValue = Json.parse(
     """
       |{
-      |"amount": "1000.00",
+      |"amount": 1000.00,
       |"date":"2020-1-1"
       |}
       |""".stripMargin
