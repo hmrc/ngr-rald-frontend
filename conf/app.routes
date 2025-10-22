@@ -194,3 +194,9 @@ GET        /did-you-get-incentive-for-not-triggering-break-clause               
 POST       /did-you-get-incentive-for-not-triggering-break-clause               uk.gov.hmrc.ngrraldfrontend.controllers.DidYouGetIncentiveForNotTriggeringBreakClauseController.submit(mode: Mode = NormalMode)
 GET        /did-you-get-incentive-for-not-triggering-break-clause/change        uk.gov.hmrc.ngrraldfrontend.controllers.DidYouGetIncentiveForNotTriggeringBreakClauseController.show(mode: Mode = CheckMode)
 POST       /did-you-get-incentive-for-not-triggering-break-clause/change        uk.gov.hmrc.ngrraldfrontend.controllers.DidYouGetIncentiveForNotTriggeringBreakClauseController.submit(mode: Mode = CheckMode)
+
+#About the rent free period
+GET        /about-the-rent-free-period               uk.gov.hmrc.ngrraldfrontend.controllers.AboutTheRentFreePeriodController.show(mode: Mode = NormalMode)
+POST       /about-the-rent-free-period               uk.gov.hmrc.ngrraldfrontend.controllers.AboutTheRentFreePeriodController.submit(mode: Mode = NormalMode)
+GET        /about-the-rent-free-period/change        uk.gov.hmrc.ngrraldfrontend.controllers.AboutTheRentFreePeriodController.show(mode: Mode = CheckMode)
+POST       /about-the-rent-free-period/change        uk.gov.hmrc.ngrraldfrontend.controllers.AboutTheRentFreePeriodController.submit(mode: Mode = CheckMode)
