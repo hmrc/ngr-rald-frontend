@@ -75,10 +75,10 @@ class DidYouPayAnyMoneyToLandlordControllerSpec extends ControllerSpecSupport {
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
-          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/did-you-pay-any-money-to-landlord") //TODO this is currently going to the wrong page as the journey hasn't yet been completed
+          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/money-you-paid-in-advance-to-landlord") 
         })
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.DidYouPayAnyMoneyToLandlordController.show(NormalMode).url)
+        redirectLocation(result) mustBe Some(routes.MoneyYouPaidInAdvanceToLandlordController.show(NormalMode).url)
       }
       "Return See_Other and the correct view after submitting no" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))

@@ -142,6 +142,8 @@ trait TestData {
 
  val landlordModel: Landlord = Landlord("Joe Bloggs", true, None)
 
+ val moneyYouPaidInAdvanceToLandlordModel: MoneyYouPaidInAdvanceToLandlord = MoneyYouPaidInAdvanceToLandlord(10000, "2000-01-01")
+
  val rentDatesAgreeStartModel: RentDatesAgreeStart = RentDatesAgreeStart("2025-01-01", "2025-02-02")
 
  val whatYourRentIncludesModelAllYes: WhatYourRentIncludes = WhatYourRentIncludes(true, true, true, Some(true), Some(true), Some(true), Some(5))
