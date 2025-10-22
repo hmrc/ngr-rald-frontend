@@ -30,8 +30,8 @@ import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 
 class ProvideDetailsOfFirstRentPeriodViewSpec extends ViewBaseSpec:
 
-  val view: ProvideDetailsOfFirstRentPeriodView = inject[ProvideDetailsOfFirstRentPeriodView]
-  val inputText: InputText = inject[InputText]
+  private val view: ProvideDetailsOfFirstRentPeriodView = inject[ProvideDetailsOfFirstRentPeriodView]
+  private val inputText: InputText = inject[InputText]
 
   object Strings:
     val address = "2A, RODLEY LANE, RODLEY, LEEDS, BH1 1HU"
@@ -102,10 +102,10 @@ class ProvideDetailsOfFirstRentPeriodViewSpec extends ViewBaseSpec:
 
   "ProvideDetailsOfFirstRentPeriodView" must {
     val firstRentPeriodView = view(Strings.address, form, startDateInput, endDateInput, firstPeriodRadio, NormalMode)
-    lazy implicit val document: Document = Jsoup.parse(firstRentPeriodView.body)
+    implicit val document: Document = Jsoup.parse(firstRentPeriodView.body)
     val htmlApply = view.apply(Strings.address, form, startDateInput, endDateInput, firstPeriodRadio, NormalMode).body
     val htmlRender = view.render(Strings.address, form, startDateInput, endDateInput, firstPeriodRadio, NormalMode, request, messages, mockConfig).body
-    lazy val htmlF = view.f(Strings.address, form, startDateInput, endDateInput, firstPeriodRadio, NormalMode)
+    val htmlF = view.f(Strings.address, form, startDateInput, endDateInput, firstPeriodRadio, NormalMode)
 
     "htmlF is not empty" in {
       htmlF.toString() must not be empty
