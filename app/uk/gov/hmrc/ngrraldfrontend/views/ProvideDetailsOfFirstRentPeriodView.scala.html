@@ -46,7 +46,7 @@
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, Some("provideDetailsOfFirstRentPeriod"),
-                Some(Seq("first.startDate", "first.endDate"))))
+                Some(Seq("startDate", "endDate"))))
         }
 
         <span class="govuk-caption-m">@selectedPropertyAddress</span>

@@ -24,7 +24,7 @@ case class ProvideDetailsOfFirstRentPeriod(
                                             startDate: LocalDate,
                                             endDate: LocalDate,
                                             isRentPayablePeriod: Boolean,
-                                            rentPeriodAmount: Option[BigDecimal]
+                                            rentPeriodAmount: Option[BigDecimal] = None
                                           )
 
 object ProvideDetailsOfFirstRentPeriod:

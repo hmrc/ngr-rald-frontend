@@ -81,11 +81,12 @@ object NGRRadio {
     )  
 
   def ngrRadio(radioName: String, radioButtons: Seq[NGRRadioButtons], ngrTitle: String,
-               ngrTitleClass: String = "govuk-fieldset__legend--m", hint: Option[String] = None)(implicit messages: Messages): NGRRadio =
+               ngrTitleClass: String = "govuk-fieldset__legend--m", hint: Option[String] = None,
+               isPageHeading: Boolean = true)(implicit messages: Messages): NGRRadio =
     NGRRadio(
       radioGroupName = NGRRadioName(radioName),
       NGRRadioButtons = radioButtons,
-      ngrTitle = Some(Legend(content = Text(messages(ngrTitle)), classes = ngrTitleClass, isPageHeading = true)),
+      ngrTitle = Some(Legend(content = Text(messages(ngrTitle)), classes = ngrTitleClass, isPageHeading = isPageHeading)),
       hint = hint
     )  
 
