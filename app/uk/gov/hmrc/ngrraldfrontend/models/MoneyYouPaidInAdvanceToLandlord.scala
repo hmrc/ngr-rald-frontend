@@ -14,22 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.ngrraldfrontend.viewmodels
+package uk.gov.hmrc.ngrraldfrontend.models
 
-import play.api.data.Field
-import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage
+import play.api.libs.json.{Json, OFormat}
 
-trait ErrorMessageAwareness {
+case class MoneyYouPaidInAdvanceToLandlord(amount: BigDecimal,
+                                    date: String
+                                   )
 
-  def errorMessage(field: Field)(implicit messages: Messages): Option[ErrorMessage] =
-    field.error
-      .map {
-        err =>
-          ErrorMessage(
-            content = Text(messages(err.message, err.args*)),
-            visuallyHiddenText = Some(messages("error.prefix"))
-          )
-      }
+object MoneyYouPaidInAdvanceToLandlord {
+  implicit val format: OFormat[MoneyYouPaidInAdvanceToLandlord] = Json.format[MoneyYouPaidInAdvanceToLandlord]
 }

@@ -36,7 +36,7 @@ import scala.util.Try
 
 final case class AgreementVerbalForm(radioValue: String, agreementStartDate: NGRDate, agreementEndDate: Option[NGRDate])
 
-object AgreementVerbalForm extends Mappings with DateMappings{
+object AgreementVerbalForm extends CommonFormValidators with DateMappings with Mappings {
   implicit val format: OFormat[AgreementVerbalForm] = Json.format[AgreementVerbalForm]
 
   private val radioUnselectedError = "agreementVerbal.radio.unselected.error"

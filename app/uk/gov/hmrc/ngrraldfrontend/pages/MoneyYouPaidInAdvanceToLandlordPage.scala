@@ -14,8 +14,16 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.ngrraldfrontend.models
+package uk.gov.hmrc.ngrraldfrontend.pages
 
-class WithName(string: String) {
-  override val toString: String = string
+import play.api.libs.json.JsPath
+import uk.gov.hmrc.ngrraldfrontend.models.MoneyYouPaidInAdvanceToLandlord
+
+
+case object MoneyYouPaidInAdvanceToLandlordPage extends QuestionPage[MoneyYouPaidInAdvanceToLandlord] {
+
+  override def toString: String = "moneyYouPaidInAdvanceToLandlord"
+
+  override def path: JsPath = JsPath \ toString
+  
 }

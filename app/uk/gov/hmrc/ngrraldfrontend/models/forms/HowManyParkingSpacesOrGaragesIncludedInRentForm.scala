@@ -30,7 +30,7 @@ final case class HowManyParkingSpacesOrGaragesIncludedInRentForm(
                                                                   garages: Int,
                                                                 )
 
-object HowManyParkingSpacesOrGaragesIncludedInRentForm extends Mappings {
+object HowManyParkingSpacesOrGaragesIncludedInRentForm extends CommonFormValidators with Mappings {
   implicit val format: OFormat[HowManyParkingSpacesOrGaragesIncludedInRentForm] = Json.format[HowManyParkingSpacesOrGaragesIncludedInRentForm]
 
   private lazy val fieldRequired = "howManyParkingSpacesOrGaragesIncludedInRent.error.required"
