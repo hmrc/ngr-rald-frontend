@@ -75,7 +75,7 @@ class DidYouPayAnyMoneyToLandlordControllerSpec extends ControllerSpecSupport {
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
-          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/did-you-pay-any-money-to-landlord") //TODO this is currently going to the wrong page as the journey hasn't yet been completed
+          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/did-you-pay-any-money-to-landlord")
         })
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.DidYouPayAnyMoneyToLandlordController.show(NormalMode).url)
@@ -88,10 +88,10 @@ class DidYouPayAnyMoneyToLandlordControllerSpec extends ControllerSpecSupport {
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
-          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/landlord") //TODO this is currently going to the wrong page as the journey hasn't yet been completed
+          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/money-you-paid-in-advance-to-landlord") //TODO this is currently going to the wrong page as the journey hasn't yet been completed
         })
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.LandlordController.show(NormalMode).url)
+        redirectLocation(result) mustBe Some(routes.MoneyYouPaidInAdvanceToLandlordController.show(NormalMode).url)
       }
       "Return Form with Errors when no radio selection is input" in {
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.DidYouPayAnyMoneyToLandlordController.submit(NormalMode))

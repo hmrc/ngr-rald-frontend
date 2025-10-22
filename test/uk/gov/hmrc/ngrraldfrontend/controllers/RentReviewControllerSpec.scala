@@ -83,7 +83,7 @@ class RentReviewControllerSpec  extends ControllerSpecSupport {
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.RepairsAndFittingOutController.show(NormalMode).url)
+        redirectLocation(result) shouldBe Some(routes.DidYouGetMoneyFromLandlordController.show(NormalMode).url)
       }
       "Return SEE_OTHER and the correct view after submitting without years and months when enter false on included rent view radio" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
@@ -94,7 +94,7 @@ class RentReviewControllerSpec  extends ControllerSpecSupport {
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.RepairsAndFittingOutController.show(NormalMode).url)
+        redirectLocation(result) shouldBe Some(routes.DidYouGetMoneyFromLandlordController.show(NormalMode).url)
       }
       "Return Form with Errors when no radio buttons are selected" in {
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentReviewController.submit(NormalMode))

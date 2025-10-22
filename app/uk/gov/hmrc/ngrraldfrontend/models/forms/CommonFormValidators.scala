@@ -51,6 +51,14 @@ trait CommonFormValidators {
         Invalid(errorKey, maximum)
     }
 
+  protected def nonEmptySet(errorKey: String): Constraint[Set[?]] =
+    Constraint {
+      case set if set.nonEmpty =>
+        Valid
+      case _ =>
+        Invalid(errorKey)
+    }
+
   protected def isNotEmpty(value: String, errorKey: String): Constraint[String] =
     Constraint {
       case str if str.trim.nonEmpty =>

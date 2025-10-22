@@ -7,6 +7,7 @@ service.continue = Continue
 service.saveAndContinue = Save and continue
 service.yes = Yes
 service.no = No
+service.or = or
 
 #NavigationBar
 nav.home=Account home
@@ -495,3 +496,28 @@ didYouPayAnyMoneyToLandlord.title = Did you pay any money in advance to the land
 didYouPayAnyMoneyToLandlord.p1 = This is in addition to rent, cost of buying the business, goodwill, trade fixtures or refundable deposits.
 didYouPayAnyMoneyToLandlord.empty.error = Select yes if you paid any money in advance to the landlord
 
+#did-you-get-incentive-for-not-triggering-break-clause
+didYouGetIncentiveForNotTriggeringBreakClause.title = Did you get incentive for not triggering the break clause?
+didYouGetIncentiveForNotTriggeringBreakClause.hint = Select all that apply
+didYouGetIncentiveForNotTriggeringBreakClause.checkbox = Yes, I got a lump sum
+didYouGetIncentiveForNotTriggeringBreakClause.checkbox1 = Yes, I got a rent-free period
+didYouGetIncentiveForNotTriggeringBreakClause.checkbox2 = No, I did not get an incentive
+didYouGetIncentiveForNotTriggeringBreakClause.required.error = Select which incentives you got for not triggering the break clause, or select ‘No, I did not get an incentive'
+
+#Money you paid in advance to landlord
+moneyYouPaidInAdvanceToLandlord.title = Money you paid in advance to the landlord
+moneyYouPaidInAdvanceToLandlord.label.1 = How much money did you pay in advance to the landlord (excluding VAT)?
+moneyYouPaidInAdvanceToLandlord.date.label.2 = When did you pay the money?
+moneyYouPaidInAdvanceToLandlord.date.hint.2 = For example, 27 6 2026
+moneyYouPaidInAdvanceToLandlord.advanceMoney.required.error = Enter how much money you paid in advance to the landlord (excluding VAT), in pounds
+moneyYouPaidInAdvanceToLandlord.advanceMoney.tooLarge.error = Money you paid in advance to the landlord (excluding VAT) must be £9,999,999.99 or less
+moneyYouPaidInAdvanceToLandlord.advanceMoney.format.error = Money you paid in advance to the landlord (excluding VAT) must be a number, like 50,000
+moneyYouPaidInAdvanceToLandlord.date.invalid.error = Date you paid the money must be a real date
+moneyYouPaidInAdvanceToLandlord.date.required.error = Enter the date you paid the money
+moneyYouPaidInAdvanceToLandlord.date.day.required.error = Date you paid the money must include a day
+moneyYouPaidInAdvanceToLandlord.date.month.required.error = Date you paid the money must include a month
+moneyYouPaidInAdvanceToLandlord.date.year.required.error = Date you paid the money must include a year
+moneyYouPaidInAdvanceToLandlord.date.dayAndYear.required.error = Date you paid the money must include a day and year
+moneyYouPaidInAdvanceToLandlord.date.monthAndYear.required.error = Date you paid the money must include a month and year
+moneyYouPaidInAdvanceToLandlord.date.dayAndMonth.required.error = Date you paid the money must include a day and month
+moneyYouPaidInAdvanceToLandlord.date.before.1900.error = Year you paid the money must be 1900 or after

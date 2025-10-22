@@ -16,10 +16,13 @@
 
 package uk.gov.hmrc.ngrraldfrontend.models.forms.mappings
 
+import models.Enumerable
 import play.api.data.FieldMapping
 import play.api.data.Forms.of
+import play.api.data.validation.{Constraint, Valid, ValidationResult}
+import uk.gov.hmrc.ngrraldfrontend.models.forms.CommonFormValidators
 
-trait Mappings extends Formatters:
+trait Mappings extends CommonFormValidators with Formatters:
 
   protected def radioText(errorKey: String = "error.required", args: Seq[String] = Seq.empty): FieldMapping[String] =
     of(stringFormatter(errorKey, args))
@@ -32,3 +35,21 @@ trait Mappings extends Formatters:
       of(stringFormatter(errorKey, args))
     else
       of(optionalStringFormatter(args))
+
+  def constraint[A](f: A => ValidationResult): Constraint[A] = Constraint[A]("")(f)
+
+  implicit class ConstraintUtil[A](cons: Constraint[A]) {
+
+    def andThen(newCons: Constraint[A]): Constraint[A] =
+      constraint((data: A) =>
+        cons.apply(data) match {
+          case Valid => newCons.apply(data)
+          case r => r
+        }
+      )
+  }
+
+  protected def enumerable[A](requiredKey: String = "error.required",
+                              invalidKey: String = "error.invalid",
+                              args: Seq[String] = Seq.empty)(implicit ev: Enumerable[A]): FieldMapping[A] =
+    of(enumerableFormatter[A](requiredKey, invalidKey, args))
