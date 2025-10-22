@@ -18,7 +18,7 @@ package uk.gov.hmrc.ngrraldfrontend.models
 
 import play.api.libs.json.{Json, OFormat}
 
-case class MoneyYouPaidInAdvanceToLandlord(amount: String,
+case class MoneyYouPaidInAdvanceToLandlord(amount: BigDecimal,
                                     date: String
                                    )
 

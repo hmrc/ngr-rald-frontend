@@ -52,7 +52,7 @@ class MoneyYouPaidInAdvanceToLandlordController @Inject()(moneyYouPaidInAdvanceT
       form = form,
       id = inputFieldName,
       name = inputFieldName,
-      label = messages(s"moneyYouPaidInAdvanceToLandlord.label.1"),
+      label = messages("moneyYouPaidInAdvanceToLandlord.label.1"),
       labelClasses = Some("govuk-fieldset__legend govuk-fieldset__legend--s"),
       isPageHeading = true,
       isVisible = true,
@@ -81,7 +81,7 @@ class MoneyYouPaidInAdvanceToLandlordController @Inject()(moneyYouPaidInAdvanceT
     (authenticate andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(MoneyYouPaidInAdvanceToLandlordPage) match {
         case None => form
-        case Some(value) => form.fill(MoneyYouPaidInAdvanceToLandlordForm(BigDecimal(value.amount), NGRDate.fromString(value.date)))
+        case Some(value) => form.fill(MoneyYouPaidInAdvanceToLandlordForm(value.amount, NGRDate.fromString(value.date)))
       }
         Future.successful(Ok(moneyYouPaidInAdvanceToLandlordView(
           form = preparedForm,
@@ -114,7 +114,7 @@ class MoneyYouPaidInAdvanceToLandlordController @Inject()(moneyYouPaidInAdvanceT
             )))
         },
         advanceMoney =>
-          val answers = MoneyYouPaidInAdvanceToLandlord(advanceMoney.amount.toString(),advanceMoney.date.makeString)
+          val answers = MoneyYouPaidInAdvanceToLandlord(advanceMoney.amount,advanceMoney.date.makeString)
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(MoneyYouPaidInAdvanceToLandlordPage, answers))
             _ <- sessionRepository.set(updatedAnswers)
