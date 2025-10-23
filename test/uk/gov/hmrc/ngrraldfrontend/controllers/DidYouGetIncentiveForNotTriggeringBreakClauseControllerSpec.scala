@@ -35,6 +35,7 @@ import uk.gov.hmrc.ngrraldfrontend.views.html.DidYouGetIncentiveForNotTriggering
 import scala.concurrent.Future
 
 class DidYouGetIncentiveForNotTriggeringBreakClauseControllerSpec extends ControllerSpecSupport {
+  
   val pageTitle = "Did you get incentive for not triggering the break clause?"
   val formProvider = new DidYouGetIncentiveForNotTriggeringBreakClauseForm()
   val view: DidYouGetIncentiveForNotTriggeringBreakClauseView = inject[DidYouGetIncentiveForNotTriggeringBreakClauseView]
