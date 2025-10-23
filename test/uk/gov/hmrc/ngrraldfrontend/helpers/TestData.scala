@@ -153,4 +153,7 @@ trait TestData {
  val rentBasedOnModel: RentBasedOn = RentBasedOn("Other", Some("The rent was agreed"))
 
  val repairsAndInsuranceModel  = RepairsAndInsurance("You", "Landlord", "YouAndLandlord")
+
+ val aboutRepairsAndFittingOutModel: AboutRepairsAndFittingOut = AboutRepairsAndFittingOut(cost = BigDecimal("1234.56"), date = "01/2025")
+
 }

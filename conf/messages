@@ -9,6 +9,9 @@ service.yes = Yes
 service.no = No
 service.or = or
 
+#Common
+common.pound = £
+
 #NavigationBar
 nav.home=Account home
 nav.signOut=Sign out
@@ -520,3 +523,16 @@ rentReviewDetails.startDate.dayAndYear.required.error = Date you will start payi
 rentReviewDetails.startDate.monthAndYear.required.error = Date you will start paying rent must include a month and year
 rentReviewDetails.startDate.invalid.error = Date you will start paying rent must be a real date
 rentReviewDetails.startDate.before.1900.error = Year you will start paying rent must be 1900 or after
+
+#About repairs and fitting out
+aboutRepairsAndFittingOut.title = About repairs and fitting out
+aboutRepairsAndFittingOut.date.heading = When did you do the repairs or fitting out?
+aboutRepairsAndFittingOut.date.hint = You only need to give us an approximate date, for example, 9 2025
+aboutRepairsAndFittingOut.cost.heading = How much did the repairs or fitting out cost (excluding VAT)?
+aboutRepairsAndFittingOut.cost.error.missing = Enter the repairs or fitting out cost (excluding VAT), in pounds
+aboutRepairsAndFittingOut.cost.error.exceed = Repairs or fitting out cost (excluding VAT) must be £9,999,999.99 or less
+aboutRepairsAndFittingOut.cost.error.nonNumeric = Repairs or fitting out cost (excluding VAT) must be a number, like 30,000.00
+aboutRepairsAndFittingOut.date.error.missing = Enter the date you did the repairs of fitting out
+aboutRepairsAndFittingOut.date.error.partial = Date you did the repairs of fitting out must include a month or year
+aboutRepairsAndFittingOut.date.error.invalid = Date you did the repairs of fitting out must be a real date
+aboutRepairsAndFittingOut.date.error.1900 = Date you did the repairs of fitting out must be 1900 or after
