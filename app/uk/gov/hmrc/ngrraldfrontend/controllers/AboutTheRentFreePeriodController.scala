@@ -52,7 +52,7 @@ class AboutTheRentFreePeriodController @Inject()(aboutTheRentFreePeriodView: Abo
       form = form,
       id = inputFieldName,
       name = inputFieldName,
-      label = messages(s"aboutTheRentFreePeriod.label"),
+      label = messages(s"aboutTheRentFreePeriod.months.label"),
       isVisible = true,
       classes = Some("govuk-input govuk-input--width-3")
     )

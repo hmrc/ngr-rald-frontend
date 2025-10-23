@@ -173,7 +173,7 @@ class Navigator @Inject()() {
     answers.get(DidYouGetIncentiveForNotTriggeringBreakClausePage) match {
       case Some(value) => value match {
         case value if value.checkBox.contains(YesLumpSum) || (value.checkBox.contains(YesLumpSum) && value.checkBox.contains(YesRentFreePeriod)) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchWasTheLumpSumController.show(NormalMode)
-        case value if value.checkBox.contains(YesRentFreePeriod) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouGetIncentiveForNotTriggeringBreakClauseController.show(NormalMode) //TODO should go to aboutTheRentFreePeriod
+        case value if value.checkBox.contains(YesRentFreePeriod) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.AboutTheRentFreePeriodController.show(NormalMode)
         case value => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchWasTheLumpSumController.show(NormalMode) // TODO should go to hasAnythingElseAffetcedTheRentPage
       }
     }
@@ -220,7 +220,7 @@ class Navigator @Inject()() {
         case None => throw new NotFoundException("Failed to find answers - DidYouPayAnyMoneyToLandlordPage")
       }
     case RepairsAndInsurancePage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentReviewController.show(NormalMode)
-    case AboutTheRentFreePeriodPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.AboutTheRentFreePeriodController.show(NormalMode)
+    case AboutTheRentFreePeriodPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.AboutTheRentFreePeriodController.show(NormalMode) //TODO Needs to go to has-anything-else-affected-the-rent when this is made
   }
 
   //TODO change to check your answers page
