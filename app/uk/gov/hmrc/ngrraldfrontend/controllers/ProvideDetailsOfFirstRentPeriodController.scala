@@ -83,7 +83,7 @@ class ProvideDetailsOfFirstRentPeriodController @Inject()(view: ProvideDetailsOf
               formWithCorrectedErrors,
               firstDateStartInput,
               firstDateEndInput,
-              buildRadios(formWithErrors, firstRentPeriodRadio(formWithCorrectedErrors, inputText)),
+              buildRadios(formWithCorrectedErrors, firstRentPeriodRadio(formWithCorrectedErrors, inputText)),
               mode
             ))),
           provideDetailsOfFirstRentPeriodForm =>

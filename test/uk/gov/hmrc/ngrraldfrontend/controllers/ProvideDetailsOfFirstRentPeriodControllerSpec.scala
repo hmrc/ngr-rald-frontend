@@ -90,7 +90,7 @@ class ProvideDetailsOfFirstRentPeriodControllerSpec extends ControllerSpecSuppor
     }
 
     ".submit" must {
-      "return OK and the correct view after submitting with start date, end date, yes radio button selected, rent amount" in {
+      "return SEE_OTHER after submitting with start date, end date, yes radio button selected, rent amount" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val result = controllerWithAnswers(None).submit(NormalMode)(authenticatedFakePostRequest(
           FakeRequest(routes.ProvideDetailsOfFirstRentPeriodController.submit(NormalMode))
@@ -109,7 +109,7 @@ class ProvideDetailsOfFirstRentPeriodControllerSpec extends ControllerSpecSuppor
         redirectLocation(result) mustBe Some(routes.HowMuchIsTotalAnnualRentController.show(NormalMode).url)
       }
 
-      "return OK and the correct view after submitting with start date, end date, no radio button selected" in {
+      "return SEE_OTHER after submitting with start date, end date, no radio button selected" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val result = controllerWithAnswers(None).submit(NormalMode)(authenticatedFakePostRequest(
           FakeRequest(routes.ProvideDetailsOfFirstRentPeriodController.submit(NormalMode))

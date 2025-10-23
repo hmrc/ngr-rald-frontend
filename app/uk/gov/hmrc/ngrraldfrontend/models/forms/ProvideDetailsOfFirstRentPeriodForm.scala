@@ -61,7 +61,7 @@ object ProvideDetailsOfFirstRentPeriodForm extends CommonFormValidators with Map
     fieldset = Some(Fieldset(
       legend = Some(Legend(
         content = Text(messages(dateInputLabel)),
-        classes = "govuk-fieldset__legend--s",
+        classes = "govuk-fieldset__legend--m",
         isPageHeading = false
       ))
     )),
