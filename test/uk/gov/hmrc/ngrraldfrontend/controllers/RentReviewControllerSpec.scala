@@ -26,17 +26,16 @@ import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redir
 import uk.gov.hmrc.auth.core.Nino
 import uk.gov.hmrc.http.{HeaderNames, NotFoundException}
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
-import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentReviewForm
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, NormalMode, RentReview, UserAnswers}
-import uk.gov.hmrc.ngrraldfrontend.pages.{DidYouAgreeRentWithLandlordPage, RentReviewPage}
+import uk.gov.hmrc.ngrraldfrontend.pages.RentReviewPage
+import uk.gov.hmrc.ngrraldfrontend.views.html.RentReviewView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputDateForMonthYear
-import uk.gov.hmrc.ngrraldfrontend.views.html.{DidYouAgreeRentWithLandlordView, RentReviewView}
 
 import scala.concurrent.Future
 
-class RentReviewControllerSpec  extends ControllerSpecSupport {
+class RentReviewControllerSpec extends ControllerSpecSupport {
   val pageTitle = "Rent review"
   val view: RentReviewView = inject[RentReviewView]
   val inputDateForMonthYear: InputDateForMonthYear = inject[InputDateForMonthYear]
@@ -72,9 +71,9 @@ class RentReviewControllerSpec  extends ControllerSpecSupport {
     }
 
     "method submit" must {
-      "Return SEE_OTHER and the correct view after submitting with month and year" in {
+      "Return SEE_OTHER and the correct view after submitting with month and year on new agreement journey" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentReviewController.submit(NormalMode))
+        val result = controllerProperty(newAgreementAnswers).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentReviewController.submit(NormalMode))
           .withFormUrlEncodedBody(
             RentReviewForm.hasIncludeRentReviewRadio -> "true",
             "date.month" -> "11",
@@ -83,11 +82,11 @@ class RentReviewControllerSpec  extends ControllerSpecSupport {
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.DidYouGetMoneyFromLandlordController.show(NormalMode).url)
+        redirectLocation(result) shouldBe Some(routes.RepairsAndFittingOutController.show(NormalMode).url)
       }
-      "Return SEE_OTHER and the correct view after submitting without years and months when enter false on included rent view radio" in {
+      "Return SEE_OTHER and the correct view after submitting without years and months when enter false on included rent view radio on renew agreement journey" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentReviewController.submit(NormalMode))
+        val result = controllerProperty(renewedAgreementAnswers).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentReviewController.submit(NormalMode))
           .withFormUrlEncodedBody(
             RentReviewForm.hasIncludeRentReviewRadio -> "false",
             RentReviewForm.canRentGoDownRadio -> "true"
@@ -181,7 +180,7 @@ class RentReviewControllerSpec  extends ControllerSpecSupport {
       "Return Exception if no address is in the mongo" in {
 
         val exception = intercept[NotFoundException] {
-          await(controllerNoProperty.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.DidYouAgreeRentWithLandlordController.submit(NormalMode))
+          await(controllerNoProperty.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentReviewController.submit(NormalMode))
             .withFormUrlEncodedBody(("did-you-agree-rent-with-landlord-radio", ""))
             .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some("")))))
         }

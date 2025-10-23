@@ -81,7 +81,21 @@ class LandlordControllerSpec extends ControllerSpecSupport {
           result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/landlord")
         })
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.WhatIsYourRentBasedOnController.show(NormalMode).url)
+        redirectLocation(result) mustBe Some(routes.RentReviewDetailsController.show(NormalMode).url)
+      }
+      "Return SEE_OTHER and the correct view after submitting with name and radio button selected while in the renew agreement journey" in {
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        val result = filledController(renewedAgreementAnswers).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.LandlordController.submit(NormalMode))
+          .withFormUrlEncodedBody(
+            "landlord-name-value" -> "Bob",
+            "landlord-radio" -> "false"
+          )
+          .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
+        result.map(result => {
+          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/landlord")
+        })
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.WhatTypeOfAgreementController.show(NormalMode).url)
       }
       "Return SEE_OTHER and the correct view after submitting with name and other radio button selected with description added while in the new agreement journey" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
