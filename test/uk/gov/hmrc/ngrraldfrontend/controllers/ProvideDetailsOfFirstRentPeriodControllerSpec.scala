@@ -45,8 +45,7 @@ class ProvideDetailsOfFirstRentPeriodControllerSpec extends ControllerSpecSuppor
   )(mockConfig, ec)
 
   val firstRentPeriodAnswers: Option[UserAnswers] = UserAnswers("id").set(ProvideDetailsOfFirstRentPeriodPage, firstRentPeriod).toOption
-  val firstRentPeriodAnswersMin: Option[UserAnswers] = UserAnswers("id").set(ProvideDetailsOfFirstRentPeriodPage, firstRentPeriodNoRentPayed).toOption
-
+  val firstRentPeriodAnswersNoRentPayed: Option[UserAnswers] = UserAnswers("id").set(ProvideDetailsOfFirstRentPeriodPage, firstRentPeriodNoRentPayed).toOption
 
   "ProvideDetailsOfFirstRentPeriodController" must {
     ".show" must {
@@ -74,7 +73,7 @@ class ProvideDetailsOfFirstRentPeriodControllerSpec extends ControllerSpecSuppor
       }
 
       "return OK and the correct view with prepopulated data if no rent payable" in {
-        val result = controllerWithAnswers(firstRentPeriodAnswersMin).show(NormalMode)(authenticatedFakeRequest)
+        val result = controllerWithAnswers(firstRentPeriodAnswersNoRentPayed).show(NormalMode)(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
         val document = Jsoup.parse(content)
