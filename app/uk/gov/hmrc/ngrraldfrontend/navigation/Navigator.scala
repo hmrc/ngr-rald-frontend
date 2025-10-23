@@ -34,7 +34,7 @@ class Navigator @Inject()() {
     case WhatTypeOfLeaseRenewalPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.LandlordController.show(NormalMode)
     case LandlordPage => answers =>
       (answers.get(TellUsAboutRentPage), answers.get(TellUsAboutYourRenewedAgreementPage), answers.get(TellUsAboutYourNewAgreementPage)) match {
-        case (Some(_), None, None) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatIsYourRentBasedOnController.show(NormalMode)
+        case (Some(_), None, None) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentReviewDetailsController.show(NormalMode)
         case (None, Some(_), None) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatTypeOfAgreementController.show(NormalMode)
         case (None, None, Some(_)) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatTypeOfAgreementController.show(NormalMode)
         case (Some(_), Some(_), Some(_)) => throw new RuntimeException("User should not have all three options")
@@ -50,6 +50,7 @@ class Navigator @Inject()() {
       }
     case AgreementPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatIsYourRentBasedOnController.show(NormalMode)
     case AgreementVerbalPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchIsTotalAnnualRentController.show(NormalMode)
+    case RentReviewDetailsPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatIsYourRentBasedOnController.show(NormalMode)
     case WhatIsYourRentBasedOnPage => answers =>
       answers.get(WhatIsYourRentBasedOnPage) match {
         case Some(value) => value.rentBased match {
@@ -195,32 +196,41 @@ class Navigator @Inject()() {
         }
         case None => throw new NotFoundException("Failed to find answers")
       }
-
-    case RentReviewPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouGetMoneyFromLandlordController.show(NormalMode)
+    case RentReviewPage => answers =>
+      answers.get(TellUsAboutYourRenewedAgreementPage) match {
+        case None => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RepairsAndFittingOutController.show(NormalMode)
+        case _    => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouGetMoneyFromLandlordController.show(NormalMode)
+      }
 
     case RepairsAndFittingOutPage => answers =>
       answers.get(RepairsAndFittingOutPage) match {
         case Some(value) => value match {
-          case true => uk.gov.hmrc.ngrraldfrontend.controllers.routes.LandlordController.show(NormalMode) //TODO Needs to go to about-repairs–and–fitting–out when this is made
+          case true => uk.gov.hmrc.ngrraldfrontend.controllers.routes.AboutRepairsAndFittingOutController.show(NormalMode) 
           case _    => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouGetMoneyFromLandlordController.show(NormalMode)
         }
         case None => throw new NotFoundException("Failed to find answers - RepairsAndFittingOutPage")
       }
 
+    case AboutRepairsAndFittingOutPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouGetMoneyFromLandlordController.show(NormalMode)
+
     case HowMuchWasTheLumpSumPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.LandlordController.show(NormalMode) //TODO This needs to be amended when the journey is completed - Page that dictates navigation is not yet completed
-    //TODO Next page not made yet
-    case HowMuchWasTheLumpSumPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(NormalMode) //TODO This needs to be amended when the journey is completed
     case ParkingSpacesOrGaragesNotIncludedInYourRentPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RepairsAndInsuranceController.show(NormalMode)
     case DidYouPayAnyMoneyToLandlordPage => answers =>
       answers.get(DidYouPayAnyMoneyToLandlordPage) match {
         case Some(value) => value match {
-          case true => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouPayAnyMoneyToLandlordController.show(NormalMode)
-          case _    => uk.gov.hmrc.ngrraldfrontend.controllers.routes.LandlordController.show(NormalMode) //TODO Needs to go to has-anything-else-affected-the-rent when this is made
+          case true => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouPayAnyMoneyToLandlordController.show(NormalMode) //TODO Needs to go to money you got from landlord or previous tenant when this is made
+          case _    => uk.gov.hmrc.ngrraldfrontend.controllers.routes.MoneyYouPaidInAdvanceToLandlordController.show(NormalMode)
         }
         case None => throw new NotFoundException("Failed to find answers - DidYouPayAnyMoneyToLandlordPage")
       }
-    case RepairsAndInsurancePage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentReviewController.show(NormalMode)
     case AboutTheRentFreePeriodPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.AboutTheRentFreePeriodController.show(NormalMode) //TODO Needs to go to has-anything-else-affected-the-rent when this is made
+    case RepairsAndInsurancePage => answers =>
+      answers.get(TellUsAboutRentPage) match {
+        case Some(value) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.ConfirmBreakClauseController.show(NormalMode)
+        case _           => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentReviewController.show(NormalMode)
+      }
+
+    case MoneyYouPaidInAdvanceToLandlordPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.MoneyYouPaidInAdvanceToLandlordController.show(NormalMode) //TODO Needs to go to Has Anything Else Affected The Rent
   }
 
   //TODO change to check your answers page

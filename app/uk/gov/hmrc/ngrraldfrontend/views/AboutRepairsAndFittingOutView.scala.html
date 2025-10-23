@@ -1,0 +1,68 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.ngrraldfrontend.viewmodels.govuk.all._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.ngrraldfrontend.views.html.components._
+@import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
+@import uk.gov.hmrc.ngrraldfrontend.models.forms.AboutRepairsAndFittingOutForm
+
+@this(
+        layout: Layout,
+        formHelper: FormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        inputDateForMonthYear: components.InputDateForMonthYear,
+        inputText: components.InputText,
+        saveAndContinueButton: saveAndContinueButton
+)
+
+@(theForm: Form[AboutRepairsAndFittingOutForm], propertyAddress: String, mode: Mode)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+
+@layout(pageTitle = Some(messages("aboutRepairsAndFittingOut.title")), showBackLink = true, fullWidth = false) {
+
+    @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.AboutRepairsAndFittingOutController.submit(mode), Symbol("autoComplete") -> "off") {
+        @if(theForm.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(theForm, Some("aboutRepairsAndFittingOut"), Some(Seq("fittingOutDate"))))
+        }
+
+        <span class="govuk-caption-m">@propertyAddress</span>
+
+        <h1 class="govuk-heading-l">@messages("aboutRepairsAndFittingOut.title")</h1>
+
+        @inputDateForMonthYear(
+            theForm,
+            legendContent = messages("aboutRepairsAndFittingOut.date.heading"),
+            legendAsPageHeading = false,
+            hintText = Some(messages("aboutRepairsAndFittingOut.date.hint"))
+        )
+
+        @inputText(
+            form = theForm,
+            id = "cost",
+            name = "cost",
+            label = messages("aboutRepairsAndFittingOut.cost.heading"),
+            labelClasses = Some("govuk-fieldset__legend govuk-fieldset__legend--s"),
+            isPageHeading = false,
+            isVisible = true,
+            classes = Some("govuk-input govuk-input--width-10"),
+            prefix = Some(PrefixOrSuffix(content = Text(messages("common.pound"))))
+        )
+
+
+
+        @saveAndContinueButton(msg = messages("service.continue"), isStartButton = false)
+    }
+}

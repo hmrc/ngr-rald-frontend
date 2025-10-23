@@ -172,13 +172,19 @@ POST       /rent-review                                  uk.gov.hmrc.ngrraldfron
 GET        /rent-review/change                           uk.gov.hmrc.ngrraldfrontend.controllers.RentReviewController.show(mode: Mode = CheckMode)
 POST       /rent-review/change                           uk.gov.hmrc.ngrraldfrontend.controllers.RentReviewController.submit(mode: Mode = CheckMode)
 
+#Rent review details
+GET        /rent-review-details                          uk.gov.hmrc.ngrraldfrontend.controllers.RentReviewDetailsController.show(mode: Mode = NormalMode)
+POST       /rent-review-details                          uk.gov.hmrc.ngrraldfrontend.controllers.RentReviewDetailsController.submit(mode: Mode = NormalMode)
+GET        /rent-review-details/change                   uk.gov.hmrc.ngrraldfrontend.controllers.RentReviewDetailsController.show(mode: Mode = CheckMode)
+POST       /rent-review-details/change                   uk.gov.hmrc.ngrraldfrontend.controllers.RentReviewDetailsController.submit(mode: Mode = CheckMode)
+
 #Did you pay any money to landlord
 GET        /did-you-pay-any-money-to-landlord            uk.gov.hmrc.ngrraldfrontend.controllers.DidYouPayAnyMoneyToLandlordController.show(mode: Mode = NormalMode)
 POST       /did-you-pay-any-money-to-landlord            uk.gov.hmrc.ngrraldfrontend.controllers.DidYouPayAnyMoneyToLandlordController.submit(mode: Mode = NormalMode)
 GET        /did-you-pay-any-money-to-landlord/change     uk.gov.hmrc.ngrraldfrontend.controllers.DidYouPayAnyMoneyToLandlordController.show(mode: Mode = CheckMode)
 POST       /did-you-pay-any-money-to-landlord/change     uk.gov.hmrc.ngrraldfrontend.controllers.DidYouPayAnyMoneyToLandlordController.submit(mode: Mode = CheckMode)
 
-#Rent review
+#Repairs and fitting out
 GET        /repairs-and-fitting-out                      uk.gov.hmrc.ngrraldfrontend.controllers.RepairsAndFittingOutController.show(mode: Mode = NormalMode)
 POST       /repairs-and-fitting-out                      uk.gov.hmrc.ngrraldfrontend.controllers.RepairsAndFittingOutController.submit(mode: Mode = NormalMode)
 GET        /repairs-and-fitting-out/change               uk.gov.hmrc.ngrraldfrontend.controllers.RepairsAndFittingOutController.show(mode: Mode = CheckMode)
@@ -200,3 +206,16 @@ GET        /about-the-rent-free-period               uk.gov.hmrc.ngrraldfrontend
 POST       /about-the-rent-free-period               uk.gov.hmrc.ngrraldfrontend.controllers.AboutTheRentFreePeriodController.submit(mode: Mode = NormalMode)
 GET        /about-the-rent-free-period/change        uk.gov.hmrc.ngrraldfrontend.controllers.AboutTheRentFreePeriodController.show(mode: Mode = CheckMode)
 POST       /about-the-rent-free-period/change        uk.gov.hmrc.ngrraldfrontend.controllers.AboutTheRentFreePeriodController.submit(mode: Mode = CheckMode)
+
+#Money you paid in advance to landlord
+GET        /money-you-paid-in-advance-to-landlord            uk.gov.hmrc.ngrraldfrontend.controllers.MoneyYouPaidInAdvanceToLandlordController.show(mode: Mode = NormalMode)
+POST       /money-you-paid-in-advance-to-landlord            uk.gov.hmrc.ngrraldfrontend.controllers.MoneyYouPaidInAdvanceToLandlordController.submit(mode: Mode = NormalMode)
+GET        /money-you-paid-in-advance-to-landlord/change     uk.gov.hmrc.ngrraldfrontend.controllers.MoneyYouPaidInAdvanceToLandlordController.show(mode: Mode = CheckMode)
+POST       /money-you-paid-in-advance-to-landlord/change     uk.gov.hmrc.ngrraldfrontend.controllers.MoneyYouPaidInAdvanceToLandlordController.submit(mode: Mode = CheckMode)
+
+#About repairs and fitting out
+GET        /about-repairs-and-fitting-out                uk.gov.hmrc.ngrraldfrontend.controllers.AboutRepairsAndFittingOutController.show(mode: Mode = NormalMode)
+POST       /about-repairs-and-fitting-out                uk.gov.hmrc.ngrraldfrontend.controllers.AboutRepairsAndFittingOutController.submit(mode: Mode = NormalMode)
+GET        /about-repairs-and-fitting-out/change         uk.gov.hmrc.ngrraldfrontend.controllers.AboutRepairsAndFittingOutController.show(mode: Mode = CheckMode)
+POST       /about-repairs-and-fitting-out/change         uk.gov.hmrc.ngrraldfrontend.controllers.AboutRepairsAndFittingOutController.submit(mode: Mode = CheckMode)
+

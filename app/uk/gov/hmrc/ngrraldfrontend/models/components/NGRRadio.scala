@@ -50,6 +50,12 @@ case object You extends RepairsAndInsurance
 case object Landlord extends RepairsAndInsurance
 case object YouAndLandlord extends RepairsAndInsurance
 
+sealed trait RentReviewDetails extends RadioEntry
+case object GoUpOrDown extends RentReviewDetails
+case object OnlyGoUp extends RentReviewDetails
+case object Arbitrator extends RentReviewDetails
+case object IndependentExpert extends RentReviewDetails
+
 case class NGRRadioName(key: String)
 
 case class NGRRadioButtons(radioContent: String,

@@ -144,6 +144,8 @@ trait TestData {
 
  val landlordModel: Landlord = Landlord("Joe Bloggs", true, None)
 
+ val moneyYouPaidInAdvanceToLandlordModel: MoneyYouPaidInAdvanceToLandlord = MoneyYouPaidInAdvanceToLandlord(10000, "2000-01-01")
+
  val rentDatesAgreeStartModel: RentDatesAgreeStart = RentDatesAgreeStart("2025-01-01", "2025-02-02")
 
  val whatYourRentIncludesModelAllYes: WhatYourRentIncludes = WhatYourRentIncludes(true, true, true, Some(true), Some(true), Some(true), Some(5))
@@ -153,4 +155,7 @@ trait TestData {
  val rentBasedOnModel: RentBasedOn = RentBasedOn("Other", Some("The rent was agreed"))
 
  val repairsAndInsuranceModel  = RepairsAndInsurance("You", "Landlord", "YouAndLandlord")
+
+ val aboutRepairsAndFittingOutModel: AboutRepairsAndFittingOut = AboutRepairsAndFittingOut(cost = BigDecimal("1234.56"), date = "01/2025")
+
 }
