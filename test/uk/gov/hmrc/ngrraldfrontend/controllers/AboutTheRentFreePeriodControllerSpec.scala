@@ -101,7 +101,7 @@ class AboutTheRentFreePeriodControllerSpec extends ControllerSpecSupport {
     }
 
     "method submit" must {
-      "Return OK and the correct view" in {
+      "Return SEE_OTHER and the correct view" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val fakePostRequest =  FakeRequest(routes.AboutTheRentFreePeriodController.submit(NormalMode))
           .withFormUrlEncodedBody(

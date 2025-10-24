@@ -47,17 +47,6 @@ class AboutTheRentFreePeriodController @Inject()(aboutTheRentFreePeriodView: Abo
                                                           mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with DateKeyFinder {
 
-  def generateInputText(form: Form[AboutTheRentFreePeriodForm], inputFieldName: String)(implicit messages: Messages): HtmlFormat.Appendable = {
-    inputText(
-      form = form,
-      id = inputFieldName,
-      name = inputFieldName,
-      label = messages(s"aboutTheRentFreePeriod.months.label"),
-      isVisible = true,
-      classes = Some("govuk-input govuk-input--width-3")
-    )
-  }
-
   def dateInput()(implicit messages: Messages): DateInput = DateInput(
     id = "date",
     namePrefix = Some("aboutTheRentFreePeriod"),
@@ -83,7 +72,6 @@ class AboutTheRentFreePeriodController @Inject()(aboutTheRentFreePeriodView: Abo
       Future.successful(Ok(aboutTheRentFreePeriodView(
         form = preparedForm,
         propertyAddress = request.property.addressFull,
-        howManyMonths = generateInputText(preparedForm, "howManyMonths"),
         dateInput = dateInput(),
         mode = mode
       )))
@@ -105,7 +93,6 @@ class AboutTheRentFreePeriodController @Inject()(aboutTheRentFreePeriodView: Abo
           Future.successful(BadRequest(aboutTheRentFreePeriodView(
             form = formWithCorrectedErrors,
             propertyAddress = request.property.addressFull,
-            howManyMonths = generateInputText(formWithCorrectedErrors, "howManyMonths"),
             dateInput = dateInput(),
             mode = mode
           )))

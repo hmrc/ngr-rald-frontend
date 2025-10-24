@@ -31,7 +31,7 @@
 )
 
 
-@(form:Form[AboutTheRentFreePeriodForm], propertyAddress: String, howManyMonths: Html, dateInput: DateInput, mode: Mode)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+@(form:Form[AboutTheRentFreePeriodForm], propertyAddress: String, dateInput: DateInput, mode: Mode)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
 @layout(pageTitle = Some(messages("aboutTheRentFreePeriod.title")), showBackLink = true, fullWidth = false) {
     @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.AboutTheRentFreePeriodController.submit(mode), Symbol("autoComplete") -> "off") {
@@ -40,7 +40,14 @@
         }
         <span class="govuk-caption-m">@propertyAddress</span>
         <h1 class="govuk-heading-l">@messages("aboutTheRentFreePeriod.title")</h1>
-        @howManyMonths
+        @inputText(
+        form = form,
+        id = "howManyMonths",
+        name = "howManyMonths",
+        label = messages(s"aboutTheRentFreePeriod.months.label"),
+        isVisible = true,
+        classes = Some("govuk-input govuk-input--width-3")
+        )
         @dateInputField(form, dateInput)
         @saveAndContinueButton(msg = messages("service.continue"), isStartButton = false)
     }

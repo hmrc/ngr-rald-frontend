@@ -65,7 +65,7 @@ class AboutTheRentFreePeriodFormSpec extends AnyWordSpec with Matchers {
       boundForm.errors shouldBe List(FormError("howManyMonths", List("aboutTheRentFreePeriod.months.invalid.error"), ArraySeq("""^\d+$""")))
     }
 
-    "fail to bind input greater than 100 for how much input field" in {
+    "fail to bind input greater than 99 for how much input field" in {
       val data = Map(
         "howManyMonths" -> "100",
         "date.day" -> "1",
@@ -75,6 +75,18 @@ class AboutTheRentFreePeriodFormSpec extends AnyWordSpec with Matchers {
       val boundForm = AboutTheRentFreePeriodForm.form.bind(data)
 
       boundForm.errors shouldBe List(FormError("howManyMonths", List("aboutTheRentFreePeriod.months.maximum.error"), ArraySeq(99)))
+    }
+
+    "fail to bind input less than 1 for how much input field" in {
+      val data = Map(
+        "howManyMonths" -> "0",
+        "date.day" -> "1",
+        "date.month" -> "1",
+        "date.year" -> "1990"
+      )
+      val boundForm = AboutTheRentFreePeriodForm.form.bind(data)
+
+      boundForm.errors shouldBe List(FormError("howManyMonths", List("aboutTheRentFreePeriod.months.minimum.error"), ArraySeq(1)))
     }
 
     "bind edge case of exactly 99" in {
@@ -117,6 +129,18 @@ class AboutTheRentFreePeriodFormSpec extends AnyWordSpec with Matchers {
       boundForm.errors should contain(FormError("date", "aboutTheRentFreePeriod.date.before.1900.error"))
     }
 
+    "fail to bind missing day input" in {
+      val data = Map(
+        "howManyMonths" -> "1",
+        "date.day" -> "",
+        "date.month" -> "13",
+        "date.year" -> "1990"
+      )
+      val boundForm = AboutTheRentFreePeriodForm.form.bind(data)
+
+      boundForm.errors should contain(FormError("date", "aboutTheRentFreePeriod.date.day.required.error"))
+    }
+
     "fail to bind missing month input" in {
       val data = Map(
         "howManyMonths" -> "1",
@@ -129,6 +153,18 @@ class AboutTheRentFreePeriodFormSpec extends AnyWordSpec with Matchers {
       boundForm.errors should contain(FormError("date", "aboutTheRentFreePeriod.date.month.required.error"))
     }
 
+    "fail to bind missing day and month input" in {
+      val data = Map(
+        "howManyMonths" -> "1",
+        "date.day" -> "",
+        "date.month" -> "",
+        "date.year" -> "1990"
+      )
+      val boundForm = AboutTheRentFreePeriodForm.form.bind(data)
+
+      boundForm.errors should contain(FormError("date", "aboutTheRentFreePeriod.date.dayAndMonth.required.error"))
+    }
+
     "fail to bind missing year input" in {
       val data = Map(
         "howManyMonths" -> "1",
@@ -139,6 +175,30 @@ class AboutTheRentFreePeriodFormSpec extends AnyWordSpec with Matchers {
       val boundForm = AboutTheRentFreePeriodForm.form.bind(data)
 
       boundForm.errors should contain(FormError("date", "aboutTheRentFreePeriod.date.year.required.error"))
+    }
+
+    "fail to bind missing day and year input" in {
+      val data = Map(
+        "howManyMonths" -> "1",
+        "date.day" -> "",
+        "date.month" -> "1",
+        "date.year" -> ""
+      )
+      val boundForm = AboutTheRentFreePeriodForm.form.bind(data)
+
+      boundForm.errors should contain(FormError("date", "aboutTheRentFreePeriod.date.dayAndYear.required.error"))
+    }
+
+    "fail to bind missing month and year input" in {
+      val data = Map(
+        "howManyMonths" -> "1",
+        "date.day" -> "1",
+        "date.month" -> "",
+        "date.year" -> ""
+      )
+      val boundForm = AboutTheRentFreePeriodForm.form.bind(data)
+
+      boundForm.errors should contain(FormError("date", "aboutTheRentFreePeriod.date.monthAndYear.required.error"))
     }
 
     "fail to bind non numeric format for month input" in {

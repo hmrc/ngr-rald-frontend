@@ -46,7 +46,7 @@ class AboutTheRentFreePeriodViewSpec extends ViewBaseSpec {
   object Selectors {
     val navTitle = "head > title"
     val heading = "#main-content > div > div.govuk-grid-column-two-thirds > form > h1"
-    val label1 = "#main-content > div > div.govuk-grid-column-two-thirds > form > div:nth-child(3) > h1"
+    val label1 = "#main-content > div > div.govuk-grid-column-two-thirds > form > div:nth-child(5) > label"
     val label2 = "#main-content > div > div.govuk-grid-column-two-thirds > form > div:nth-child(4) > fieldset > legend"
     val hint2 = "#date-hint"
     val startPayingDateDayInputLabel = "#date > div:nth-child(1) > div > label"
@@ -60,19 +60,6 @@ class AboutTheRentFreePeriodViewSpec extends ViewBaseSpec {
   val form = AboutTheRentFreePeriodForm.form.fillAndValidate(AboutTheRentFreePeriodForm(howManyMonths = 1, date = NGRDate(day = "1", month = "1", year = "2020")))
   val mockInputText: InputText = inject[InputText]
 
-  def generateInputText(form: Form[AboutTheRentFreePeriodForm], inputFieldName: String)(implicit messages: Messages): HtmlFormat.Appendable = {
-    mockInputText(
-      form = form,
-      id = inputFieldName,
-      name = inputFieldName,
-      label = messages("aboutTheRentFreePeriod.months.label"),
-      headingMessageArgs = Seq("govuk-fieldset__legend govuk-fieldset__legend--s"),
-      isPageHeading = true,
-      isVisible = true,
-      classes = Some("govuk-input govuk-input--width-5"),
-      prefix = Some(PrefixOrSuffix(content = Text("£")))
-    )
-  }
 
   def dateInput()(implicit messages: Messages): DateInput = DateInput(
     id = "date",
@@ -90,15 +77,15 @@ class AboutTheRentFreePeriodViewSpec extends ViewBaseSpec {
     ))
   )
 
-  val howManyMonths: HtmlFormat.Appendable = generateInputText(form, "months")
+
   val date: DateInput = dateInput()
 
   "AboutTheRentFreePeriod" must {
-    val aboutTheRentFreePeriodView = view(form, address, howManyMonths, date, NormalMode)
+    val aboutTheRentFreePeriodView = view(form, address, date, NormalMode)
     lazy implicit val document: Document = Jsoup.parse(aboutTheRentFreePeriodView.body)
-    val htmlApply = view.apply(form, address, howManyMonths, date, NormalMode).body
-    val htmlRender = view.render(form, address, howManyMonths, date, NormalMode, request, messages, mockConfig).body
-    lazy val htmlF = view.f(form, address, howManyMonths, date, NormalMode)
+    val htmlApply = view.apply(form, address, date, NormalMode).body
+    val htmlRender = view.render(form, address, date, NormalMode, request, messages, mockConfig).body
+    lazy val htmlF = view.f(form, address, date, NormalMode)
 
     "htmlF is not empty" in {
       htmlF.toString() must not be empty
@@ -119,7 +106,6 @@ class AboutTheRentFreePeriodViewSpec extends ViewBaseSpec {
     "show the correct title" in {
       elementText(Selectors.navTitle) mustBe Strings.title
     }
-
 
     "show correct label for how many months field" in {
       elementText(Selectors.label1) mustBe Strings.label1
