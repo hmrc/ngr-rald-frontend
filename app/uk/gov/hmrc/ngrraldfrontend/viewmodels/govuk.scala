@@ -17,5 +17,5 @@
 package uk.gov.hmrc.ngrraldfrontend.viewmodels
 
 object govuk {
-  object all extends ErrorSummaryFluency
+  object all extends ErrorSummaryFluency with ErrorSummaryCheckBoxViewModel
 }

@@ -33,7 +33,7 @@ class DidYouGetIncentiveForNotTriggeringBreakClauseViewSpec extends ViewBaseSpec
     val lumpSumCheckBox = "Yes, I got a lump sum"
     val rentFreePeriodCheckBox = "Yes, I got a rent-free period"
     val noIncentiveCheckBox = "No, I did not get an incentive"
-    val formError = "error.prefix: Select which incentives you got for not triggering the break clause, or select ‘No, I did not get an incentive"
+    val formError = "error.prefix: Select which incentives you got for not triggering the break clause, or select 'No, I did not get an incentive'"
     val continue = "Continue"
   }
 
