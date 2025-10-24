@@ -173,20 +173,11 @@ class Navigator @Inject()() {
     case DidYouGetIncentiveForNotTriggeringBreakClausePage => answers =>
     answers.get(DidYouGetIncentiveForNotTriggeringBreakClausePage) match {
       case Some(value) => value match {
-        case value if value.checkBox.contains(YesLumpSum) || (value.checkBox.contains(YesLumpSum) && value.checkBox.contains(YesRentFreePeriod)) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchWasTheLumpSumController.show(NormalMode)
+        case value if value.checkBox.contains(YesLumpSum) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchWasTheLumpSumController.show(NormalMode)
         case value if value.checkBox.contains(YesRentFreePeriod) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouGetIncentiveForNotTriggeringBreakClauseController.show(NormalMode) //TODO should go to aboutTheRentFreePeriod
         case value => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchWasTheLumpSumController.show(NormalMode) // TODO should go to hasAnythingElseAffetcedTheRentPage
       }
     }
-
-    case DidYouGetMoneyFromLandlordPage => answers =>
-      answers.get(DidYouGetMoneyFromLandlordPage) match {
-        case Some(value) => value match {
-          case true => uk.gov.hmrc.ngrraldfrontend.controllers.routes.LandlordController.show(NormalMode) //TODO Needs to go to money-from-landlord-or-previous-tenant-to-take-on-lease when this is made
-          case _    => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouPayAnyMoneyToLandlordController.show(NormalMode)
-        }
-        case None => throw new NotFoundException("Failed to find answers -  DidYouGetMoneyFromLandlordPage")
-      }
 
     case DoYouPayExtraForParkingSpacesPage => answers =>
       answers.get(DoYouPayExtraForParkingSpacesPage) match {
