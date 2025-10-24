@@ -26,57 +26,40 @@ import scala.math.BigDecimal.RoundingMode
 final case class AboutRepairsAndFittingOutForm(
                                                 date: NGRMonthYear,
                                                 cost: BigDecimal
-                                               
                                               )
 
 object AboutRepairsAndFittingOutForm extends CommonFormValidators with MonthYearMappings {
   implicit val format: OFormat[AboutRepairsAndFittingOutForm] = Json.format[AboutRepairsAndFittingOutForm]
-  
-  private lazy val dateMissingError    = "aboutRepairsAndFittingOut.date.error.missing"
-  private lazy val datePartialError    = "aboutRepairsAndFittingOut.date.error.partial"
-  private lazy val dateInvalidError    = "aboutRepairsAndFittingOut.date.error.invalid"
-  private lazy val dateBefore1900Error = "aboutRepairsAndFittingOut.date.error.1900"
-  
-  private lazy val costEmptyError      = "aboutRepairsAndFittingOut.cost.error.missing"
-  private lazy val costFormatError     = "aboutRepairsAndFittingOut.cost.error.nonNumeric"
-  private lazy val costMaxError        = "aboutRepairsAndFittingOut.cost.error.exceed"
-
-
-
   def unapply(form: AboutRepairsAndFittingOutForm): Option[(NGRMonthYear, BigDecimal )] =
     Some(form.date, form.cost )
 
-  private val dateErrorKeys: Map[DateErrorKeys, String] = Map(
-    Required -> dateMissingError,
-    Month    -> datePartialError,
-    Year     -> datePartialError
-  )
-
   val form: Form[AboutRepairsAndFittingOutForm] = Form(
     mapping(
-
-      "date" -> monthYearMapping.verifying(
-        firstError(
-          isMonthYearEmpty(dateErrorKeys),
-          isMonthYearValid(dateInvalidError),
-          isMonthYearAfter1900(dateBefore1900Error)
-        )
-      ),
-      "cost" -> text()
-        .transform[String](_.strip().replaceAll("[£|\\s]", "").replace(",", "."), identity)
+      "date" -> monthYearMapping
         .verifying(
           firstError(
-            isNotEmpty("aboutRepairsAndFittingOut", costEmptyError),
-            regexp(amountRegex.pattern(), costFormatError)
+            isMonthYearEmpty(errorKeys("aboutRepairsAndFittingOut", "date")),
+            isMonthYearValid("aboutRepairsAndFittingOut.date.invalid.error"),
+            isMonthYearAfter1900("aboutRepairsAndFittingOut.date.before.1900.error")
+          )
+        ),
+      "cost" -> text()
+        .transform[String](_.strip().replaceAll("[£|,|\\s]", ""), identity) 
+        .verifying(
+          firstError(
+            isNotEmpty("cost", "aboutRepairsAndFittingOut.cost.error.missing"),
+            regexp(amountRegex.pattern(), "aboutRepairsAndFittingOut.cost.error.nonNumeric")
           )
         )
         .transform[BigDecimal](BigDecimal(_).setScale(2, RoundingMode.HALF_UP), _.toString)
         .verifying(
-          maximumValue[BigDecimal](BigDecimal("9999999.99"), costMaxError)
+          maximumValue[BigDecimal](BigDecimal("9999999.99"), "aboutRepairsAndFittingOut.cost.error.exceed")
         )
     )(AboutRepairsAndFittingOutForm.apply)(AboutRepairsAndFittingOutForm.unapply)
   )
 }
+
+
 
 
 

@@ -35,8 +35,7 @@
 
     @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.AboutRepairsAndFittingOutController.submit(mode), Symbol("autoComplete") -> "off") {
         @if(theForm.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(theForm, Some("aboutRepairsAndFittingOut"), Some(Seq("fittingOutDate"))))
-        }
+            @govukErrorSummary(ErrorSummaryViewModel(theForm, Some("aboutRepairsAndFittingOut"), Some(Seq("date", "cost"))))        }
 
         <span class="govuk-caption-m">@propertyAddress</span>
 

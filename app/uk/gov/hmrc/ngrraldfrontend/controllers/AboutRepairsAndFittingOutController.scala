@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.ngrraldfrontend.controllers
 
+import play.api.data.FormError
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
@@ -25,6 +26,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.{AboutRepairsAndFittingOut, Mode, NGRM
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.AboutRepairsAndFittingOutPage
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
+import uk.gov.hmrc.ngrraldfrontend.utils.DateKeyFinder
 import uk.gov.hmrc.ngrraldfrontend.views.html.AboutRepairsAndFittingOutView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -40,7 +42,7 @@ class AboutRepairsAndFittingOutController @Inject()(
                                                      navigator: Navigator,
                                                      mcc: MessagesControllerComponents
                                                    )(implicit appConfig: AppConfig, ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport {
+  extends FrontendController(mcc) with I18nSupport with DateKeyFinder {
 
   private val form = AboutRepairsAndFittingOutForm.form
 
@@ -63,8 +65,12 @@ class AboutRepairsAndFittingOutController @Inject()(
 
   def submit(mode: Mode): Action[AnyContent] = (authenticate andThen getData).async { implicit request =>
     form.bindFromRequest().fold(
-      formWithErrors =>
-        Future.successful(BadRequest(view(formWithErrors, request.property.addressFull, mode))),
+      formWithErrors => {val correctedFormErrors = formWithErrors.errors.map { formError =>
+        setCorrectKey(formError, "aboutRepairsAndFittingOut", "date")
+      }
+        val formWithCorrectedErrors = formWithErrors.copy(errors = correctedFormErrors)
+        Future.successful(BadRequest(view(formWithCorrectedErrors, request.property.addressFull, mode)))
+      },
       validData => {
         val updatedModel = AboutRepairsAndFittingOut(
           cost = validData.cost,
