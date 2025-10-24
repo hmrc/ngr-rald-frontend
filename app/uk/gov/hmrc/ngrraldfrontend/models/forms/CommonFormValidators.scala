@@ -163,7 +163,7 @@ trait CommonFormValidators {
       Valid
 
   protected def isDateInvalid(date: NGRDate) =
-    Try(date.ngrDate).isFailure || (Try(date.ngrDate).isSuccess && date.year.length > 4)
+    Try(date.localDate).isFailure || (Try(date.localDate).isSuccess && date.year.length > 4)
   
   private def monthYearAfter1900Validation(date: NGRMonthYear, errorKey: String) =
     val maybeYear = date.year.toIntOption
@@ -183,7 +183,7 @@ trait CommonFormValidators {
       Valid
       
   protected def isDateBefore1900(date: NGRDate): Boolean =
-    Try(date.ngrDate).isSuccess && date.year.toInt < 1900
+    Try(date.localDate).isSuccess && date.year.toInt < 1900
 
   private def monthYearValidation(date: NGRMonthYear, errorKey: String) = {
     val maybeMonth = date.month.toIntOption

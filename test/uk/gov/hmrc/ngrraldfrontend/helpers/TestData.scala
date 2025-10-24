@@ -57,7 +57,20 @@ trait TestData {
   )
  )
 
- val firstSecondRentPeriod: ProvideDetailsOfFirstSecondRentPeriod = ProvideDetailsOfFirstSecondRentPeriod(
+  val firstRentPeriod: ProvideDetailsOfFirstRentPeriod = ProvideDetailsOfFirstRentPeriod(
+    startDate = LocalDate.of(2025, 1, 1),
+    endDate = LocalDate.of(2025, 1, 31),
+    isRentPayablePeriod = true,
+    rentPeriodAmount = Some(BigDecimal(1000))
+  )
+
+  val firstRentPeriodNoRentPayed: ProvideDetailsOfFirstRentPeriod = ProvideDetailsOfFirstRentPeriod(
+    startDate = LocalDate.of(2025, 1, 1),
+    endDate = LocalDate.of(2025, 1, 31),
+    isRentPayablePeriod = false
+  )
+
+  val firstSecondRentPeriod: ProvideDetailsOfFirstSecondRentPeriod = ProvideDetailsOfFirstSecondRentPeriod(
   firstDateStart = "2025-01-01",
   firstDateEnd = "2025-01-31",
   firstRentPeriodRadio = true,

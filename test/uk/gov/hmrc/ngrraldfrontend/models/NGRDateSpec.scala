@@ -46,7 +46,7 @@ class NGRDateSpec extends TestSupport {
     }
     "convert to LocalDate correctly" in {
       val date = NGRDate("15", "08", "2025")
-      date.ngrDate mustBe LocalDate.of(2025, 8, 15)
+      date.localDate mustBe LocalDate.of(2025, 8, 15)
     }
 
     "format date as string correctly" in {

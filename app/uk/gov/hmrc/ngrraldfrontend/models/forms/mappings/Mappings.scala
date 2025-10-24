@@ -22,9 +22,13 @@ import play.api.data.Forms.of
 import play.api.data.validation.{Constraint, Valid, ValidationResult}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.CommonFormValidators
 
-trait Mappings extends CommonFormValidators with Formatters{
+trait Mappings extends CommonFormValidators with Formatters:
+
   protected def radioText(errorKey: String = "error.required", args: Seq[String] = Seq.empty): FieldMapping[String] =
     of(stringFormatter(errorKey, args))
+
+  protected def radioBoolean(errorKey: String = "error.required", args: Seq[String] = Seq.empty): FieldMapping[Boolean] =
+    of(booleanFormatter(errorKey, args))
 
   protected def optionalRadioText(errorKey: String = "error.required", isOptional: Boolean, args: Seq[String] = Seq.empty): FieldMapping[String] =
     if (!isOptional)
@@ -49,4 +53,3 @@ trait Mappings extends CommonFormValidators with Formatters{
                               invalidKey: String = "error.invalid",
                               args: Seq[String] = Seq.empty)(implicit ev: Enumerable[A]): FieldMapping[A] =
     of(enumerableFormatter[A](requiredKey, invalidKey, args))
-}

@@ -94,6 +94,7 @@ class Navigator @Inject()() {
           }
         case None => throw new NotFoundException("Failed to find answers")
       }
+    case ProvideDetailsOfFirstRentPeriodPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchIsTotalAnnualRentController.show(NormalMode)
     case ProvideDetailsOfFirstSecondRentPeriodPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentPeriodsController.show(NormalMode)
     case RentPeriodsPage => answers =>
       answers.get(RentPeriodsPage) match {
