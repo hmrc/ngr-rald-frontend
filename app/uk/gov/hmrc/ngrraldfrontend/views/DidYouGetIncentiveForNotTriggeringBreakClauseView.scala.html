@@ -16,6 +16,7 @@
 
 @import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 @import uk.gov.hmrc.ngrraldfrontend.viewmodels.govuk.all._
+@import uk.gov.hmrc.ngrraldfrontend.viewmodels.ErrorSummaryCheckBoxViewModel
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.ngrraldfrontend.views.html.components._
 @import uk.gov.hmrc.ngrraldfrontend.models.forms.DidYouGetIncentiveForNotTriggeringBreakClauseForm
@@ -37,7 +38,7 @@
   @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouGetIncentiveForNotTriggeringBreakClauseController.submit(mode), Symbol("autoComplete") -> "off") {
     <span class="govuk-caption-m">@selectedPropertyAddress</span>
     @if(form.errors.nonEmpty) {
-        @govukErrorSummary(ErrorSummaryViewModel(form))
+        @govukErrorSummary(ErrorSummaryCheckBoxViewModel(form))
     }
 
     @govukCheckboxes(

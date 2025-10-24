@@ -43,30 +43,27 @@ object Incentive extends Enumerable.Implicits {
     values.zipWithIndex.map {
       case (value, index) =>
         value match {
-          case YesLumpSum => CheckboxItemViewModel(
-            content = Text(messages(s"didYouGetIncentiveForNotTriggeringBreakClause.checkbox")),
-            fieldId = "incentive",
-            index = index,
+          case YesLumpSum => CheckboxItem(
+            id = Some(s"incentive_$index"),
+            name = Some(s"incentive[$index]"),
+            content = Text(messages("didYouGetIncentiveForNotTriggeringBreakClause.checkbox")),
             value = value.toString,
             behaviour = None
           )
-          case YesRentFreePeriod => CheckboxItemViewModel(
-            content = Text(messages(s"didYouGetIncentiveForNotTriggeringBreakClause.checkbox1")),
-            fieldId = "incentive",
-            index = index,
+          case YesRentFreePeriod => CheckboxItem(
+            id = Some(s"incentive_$index"),
+            name = Some(s"incentive[$index]"),
+            content = Text(messages("didYouGetIncentiveForNotTriggeringBreakClause.checkbox1")),
             value = value.toString,
             behaviour = None
           )
-          case Divider => CheckboxItemViewModel(
-            fieldId = "incentive",
-            index = index,
-            value = value.toString,
-            divider = messages("service.or")
+          case Divider =>CheckboxItem(
+            divider = Some(messages("service.or"))
           )
-          case No => CheckboxItemViewModel(
-            content = Text(messages(s"didYouGetIncentiveForNotTriggeringBreakClause.checkbox2")),
-            fieldId = "incentive",
-            index = index,
+          case No =>  CheckboxItem(
+            id = Some(s"incentive_$index"),
+            name = Some(s"incentive[$index]"),
+            content = Text(messages("didYouGetIncentiveForNotTriggeringBreakClause.checkbox2")),
             value = value.toString,
             behaviour = Some(ExclusiveCheckbox)
           )
