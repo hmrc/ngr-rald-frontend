@@ -21,19 +21,13 @@ import play.api.data.Mapping
 import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDate
-import java.time.format.{DateTimeFormatter, TextStyle}
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 final case class NGRDate(day: String, month: String, year: String) {
-  lazy val ngrDate: LocalDate = LocalDate.of(year.toInt, month.toInt, day.toInt)
+  lazy val localDate: LocalDate = LocalDate.of(year.toInt, month.toInt, day.toInt)
 
-  def makeString: String = {
-    val monthStr = f"${month.toInt}%02d"
-    val dayStr = f"${day.toInt}%02d"
-    s"$year-$monthStr-$dayStr"
-  }
-
-  def toLocalDate: LocalDate = LocalDate.of(year.toInt, month.toInt, day.toInt)
+  def makeString: String = localDate.toString
 }
 
 object NGRDate {

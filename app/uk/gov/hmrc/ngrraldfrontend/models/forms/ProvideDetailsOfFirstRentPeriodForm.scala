@@ -121,8 +121,8 @@ object ProvideDetailsOfFirstRentPeriodForm extends CommonFormValidators with Map
 
   def formToAnswers(provideDetailsOfFirstRentPeriodForm: ProvideDetailsOfFirstRentPeriodForm): ProvideDetailsOfFirstRentPeriod =
     ProvideDetailsOfFirstRentPeriod(
-      provideDetailsOfFirstRentPeriodForm.firstDateStartInput.toLocalDate,
-      provideDetailsOfFirstRentPeriodForm.firstDateEndInput.toLocalDate,
+      provideDetailsOfFirstRentPeriodForm.firstDateStartInput.localDate,
+      provideDetailsOfFirstRentPeriodForm.firstDateEndInput.localDate,
       provideDetailsOfFirstRentPeriodForm.isRentPayablePeriod,
       if provideDetailsOfFirstRentPeriodForm.isRentPayablePeriod then provideDetailsOfFirstRentPeriodForm.rentPeriodAmount
       else None
@@ -176,6 +176,6 @@ object ProvideDetailsOfFirstRentPeriodForm extends CommonFormValidators with Map
       )(ProvideDetailsOfFirstRentPeriodForm.apply)(ProvideDetailsOfFirstRentPeriodForm.unapply)
         .verifying(
           "provideDetailsOfFirstRentPeriod.endDate.before.startDate.error",
-          firstRent => firstRent.firstDateStartInput.toLocalDate.isBefore(firstRent.firstDateEndInput.toLocalDate)
+          firstRent => firstRent.firstDateStartInput.localDate.isBefore(firstRent.firstDateEndInput.localDate)
         )
     )
