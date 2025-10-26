@@ -48,10 +48,8 @@ class ProvideDetailsOfFirstRentPeriodController @Inject()(view: ProvideDetailsOf
 
   def show(mode: Mode): Action[AnyContent] =
     (authenticate andThen getData).async { implicit request =>
-      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(ProvideDetailsOfFirstRentPeriodPage) match {
-        case None => form
-        case Some(value) => answerToForm(value)
-      }
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(ProvideDetailsOfFirstRentPeriodPage)
+        .fold(form)(form.fill)
       Future.successful(Ok(view(
         selectedPropertyAddress = request.property.addressFull,
         preparedForm,
@@ -86,9 +84,9 @@ class ProvideDetailsOfFirstRentPeriodController @Inject()(view: ProvideDetailsOf
               buildRadios(formWithCorrectedErrors, firstRentPeriodRadio(formWithCorrectedErrors, inputText)),
               mode
             ))),
-          provideDetailsOfFirstRentPeriodForm =>
+          provideDetailsOfFirstRentPeriod =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(ProvideDetailsOfFirstRentPeriodPage, formToAnswers(provideDetailsOfFirstRentPeriodForm)))
+              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(ProvideDetailsOfFirstRentPeriodPage, provideDetailsOfFirstRentPeriod))
               _ <- sessionRepository.set(updatedAnswers)
             } yield Redirect(navigator.nextPage(ProvideDetailsOfFirstRentPeriodPage, NormalMode, updatedAnswers))
         )

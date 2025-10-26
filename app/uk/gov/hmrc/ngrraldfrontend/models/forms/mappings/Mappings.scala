@@ -22,6 +22,8 @@ import play.api.data.Forms.of
 import play.api.data.validation.{Constraint, Valid, ValidationResult}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.CommonFormValidators
 
+import java.time.LocalDate
+
 trait Mappings extends CommonFormValidators with Formatters:
 
   protected def radioText(errorKey: String = "error.required", args: Seq[String] = Seq.empty): FieldMapping[String] =
@@ -53,3 +55,6 @@ trait Mappings extends CommonFormValidators with Formatters:
                               invalidKey: String = "error.invalid",
                               args: Seq[String] = Seq.empty)(implicit ev: Enumerable[A]): FieldMapping[A] =
     of(enumerableFormatter[A](requiredKey, invalidKey, args))
+
+  def dateMapping(errorKeyPrefix: String, extraDateValidations: DateValidation*): FieldMapping[LocalDate] =
+    of(using LocalDateFormatter(errorKeyPrefix, extraDateValidations*))

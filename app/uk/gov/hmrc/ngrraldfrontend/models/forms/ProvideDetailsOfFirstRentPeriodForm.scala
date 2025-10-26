@@ -20,7 +20,6 @@ import play.api.data.Forms.{mapping, of}
 import play.api.data.format.Formatter
 import play.api.data.{Form, FormError}
 import play.api.i18n.*
-import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.dateinput.DateInput
 import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.{Fieldset, Legend}
@@ -29,19 +28,12 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.input.PrefixOrSuffix
 import uk.gov.hmrc.ngrraldfrontend.models.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{ngrRadio, noButton, yesButton}
-import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
+import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.{CompareWithAnotherDateValidation, DateValidation, Mappings}
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 
-final case class ProvideDetailsOfFirstRentPeriodForm(
-                                                      firstDateStartInput: NGRDate,
-                                                      firstDateEndInput: NGRDate,
-                                                      isRentPayablePeriod: Boolean,
-                                                      rentPeriodAmount: Option[BigDecimal]
-                                                    )
+import java.time.LocalDate
 
-object ProvideDetailsOfFirstRentPeriodForm extends CommonFormValidators with Mappings with DateMappings:
-
-  implicit val format: OFormat[ProvideDetailsOfFirstRentPeriodForm] = Json.format[ProvideDetailsOfFirstRentPeriodForm]
+object ProvideDetailsOfFirstRentPeriodForm extends CommonFormValidators with Mappings:
 
   private lazy val radioFirstPeriodRequiredError = "provideDetailsOfFirstRentPeriod.firstPeriod.radio.error.required"
   private val firstDateStartInput = "startDate"
@@ -77,7 +69,7 @@ object ProvideDetailsOfFirstRentPeriodForm extends CommonFormValidators with Map
   def firstDateEndInput(implicit messages: Messages): DateInput =
     dateInput(firstDateEndInput, "provideDetailsOfFirstRentPeriod.endDate.label")
 
-  def firstRentPeriodRadio(form: Form[ProvideDetailsOfFirstRentPeriodForm], inputText: InputText)(implicit messages: Messages): NGRRadio =
+  def firstRentPeriodRadio(form: Form[ProvideDetailsOfFirstRentPeriod], inputText: InputText)(implicit messages: Messages): NGRRadio =
     ngrRadio(
       radioName = firstRentPeriodRadio,
       radioButtons = Seq(
@@ -99,33 +91,6 @@ object ProvideDetailsOfFirstRentPeriodForm extends CommonFormValidators with Map
       ),
       ngrTitle = "provideDetailsOfFirstSecondRentPeriod.firstPeriod.radio.label",
       isPageHeading = false
-    )
-
-  def unapply(provideDetailsOfFirstRentPeriodForm: ProvideDetailsOfFirstRentPeriodForm): Option[(NGRDate, NGRDate, Boolean, Option[BigDecimal])] =
-    Some(
-      provideDetailsOfFirstRentPeriodForm.firstDateStartInput,
-      provideDetailsOfFirstRentPeriodForm.firstDateEndInput,
-      provideDetailsOfFirstRentPeriodForm.isRentPayablePeriod,
-      provideDetailsOfFirstRentPeriodForm.rentPeriodAmount
-    )
-
-  def answerToForm(value: ProvideDetailsOfFirstRentPeriod): Form[ProvideDetailsOfFirstRentPeriodForm] =
-    form.fill(
-      ProvideDetailsOfFirstRentPeriodForm(
-        NGRDate.fromLocalDate(value.startDate),
-        NGRDate.fromLocalDate(value.endDate),
-        value.isRentPayablePeriod,
-        value.rentPeriodAmount
-      )
-    )
-
-  def formToAnswers(provideDetailsOfFirstRentPeriodForm: ProvideDetailsOfFirstRentPeriodForm): ProvideDetailsOfFirstRentPeriod =
-    ProvideDetailsOfFirstRentPeriod(
-      provideDetailsOfFirstRentPeriodForm.firstDateStartInput.localDate,
-      provideDetailsOfFirstRentPeriodForm.firstDateEndInput.localDate,
-      provideDetailsOfFirstRentPeriodForm.isRentPayablePeriod,
-      if provideDetailsOfFirstRentPeriodForm.isRentPayablePeriod then provideDetailsOfFirstRentPeriodForm.rentPeriodAmount
-      else None
     )
 
   private def rentPeriodAmountFormatter(args: Seq[String] = Seq.empty): Formatter[Option[BigDecimal]] =
@@ -152,30 +117,20 @@ object ProvideDetailsOfFirstRentPeriodForm extends CommonFormValidators with Map
     else
       Right(Some(BigDecimal(rentAmount)))
 
-  def form: Form[ProvideDetailsOfFirstRentPeriodForm] =
+  def form: Form[ProvideDetailsOfFirstRentPeriod] =
     Form(
       mapping(
-        firstDateStartInput -> dateMapping
-          .verifying(
-            firstError(
-              isDateEmpty(errorKeys("provideDetailsOfFirstRentPeriod", "startDate")),
-              isDateValid("provideDetailsOfFirstRentPeriod.startDate.invalid.error"),
-              isDateAfter1900("provideDetailsOfFirstRentPeriod.startDate.before.1900.error")
-            )
-          ),
-        firstDateEndInput -> dateMapping
-          .verifying(
-            firstError(
-              isDateEmpty(errorKeys("provideDetailsOfFirstRentPeriod", "endDate")),
-              isDateValid("provideDetailsOfFirstRentPeriod.endDate.invalid.error"),
-              isDateAfter1900("provideDetailsOfFirstRentPeriod.endDate.before.1900.error")
-            )
-          ),
+        firstDateStartInput -> dateMapping("provideDetailsOfFirstRentPeriod.startDate"),
+        firstDateEndInput -> dateMapping(
+          "provideDetailsOfFirstRentPeriod.endDate",
+          CompareWithAnotherDateValidation("before.startDate.error", "startDate", (end, start) => start.isBefore(end))
+        ),
         firstRentPeriodRadio -> radioBoolean(radioFirstPeriodRequiredError),
         rentPeriodAmount -> of(using rentPeriodAmountFormatter())
-      )(ProvideDetailsOfFirstRentPeriodForm.apply)(ProvideDetailsOfFirstRentPeriodForm.unapply)
-        .verifying(
-          "provideDetailsOfFirstRentPeriod.endDate.before.startDate.error",
-          firstRent => firstRent.firstDateStartInput.localDate.isBefore(firstRent.firstDateEndInput.localDate)
-        )
+      )(ProvideDetailsOfFirstRentPeriod.apply)(o =>  Some(
+        o.startDate,
+        o.endDate,
+        o.isRentPayablePeriod,
+        o.rentPeriodAmount
+      ))
     )

@@ -19,7 +19,7 @@
 @import uk.gov.hmrc.ngrraldfrontend.viewmodels.govuk.all._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.ngrraldfrontend.views.html.components._
-@import uk.gov.hmrc.ngrraldfrontend.models.forms.ProvideDetailsOfFirstRentPeriodForm
+@import uk.gov.hmrc.ngrraldfrontend.models.ProvideDetailsOfFirstRentPeriod
 
 @this(
         layout: Layout,
@@ -27,13 +27,12 @@
         govukErrorSummary: GovukErrorSummary,
         dateInputField: DateTextFields,
         govukRadios: GovukRadios,
-        inputText: components.InputText,
         saveAndContinueButton: saveAndContinueButton
 )
 
 @(
         selectedPropertyAddress: String,
-        form: Form[ProvideDetailsOfFirstRentPeriodForm],
+        form: Form[ProvideDetailsOfFirstRentPeriod],
         firstDateStartInput: DateInput,
         firstDateEndInput: DateInput,
         openEndedRadio: Radios,

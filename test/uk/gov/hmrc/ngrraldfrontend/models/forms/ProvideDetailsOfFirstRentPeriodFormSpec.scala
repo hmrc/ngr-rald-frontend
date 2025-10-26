@@ -19,44 +19,21 @@ package uk.gov.hmrc.ngrraldfrontend.models.forms
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.FormError
-import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.ngrraldfrontend.models.NGRDate
+import uk.gov.hmrc.ngrraldfrontend.models.ProvideDetailsOfFirstRentPeriod
+
+import java.time.LocalDate
 
 class ProvideDetailsOfFirstRentPeriodFormSpec extends AnyWordSpec with Matchers:
 
-  val firstRentPeriodForm: ProvideDetailsOfFirstRentPeriodForm =
-    ProvideDetailsOfFirstRentPeriodForm(
-      NGRDate.fromString("2025-01-01"),
-      NGRDate.fromString("2025-01-31"),
+  val firstRentPeriod: ProvideDetailsOfFirstRentPeriod =
+    ProvideDetailsOfFirstRentPeriod(
+      LocalDate.parse("2025-01-01"),
+      LocalDate.parse("2025-01-31"),
       true,
       Some(BigDecimal(1999000))
     )
 
-  val firstRentPeriodJson: JsValue =
-    Json.obj(
-      "firstDateStartInput" -> Json.obj(
-        "day" -> "1",
-        "month" -> "1",
-        "year" -> "2025"
-      ),
-      "firstDateEndInput" -> Json.obj(
-        "day" -> "31",
-        "month" -> "1",
-        "year" -> "2025"
-      ),
-      "isRentPayablePeriod" -> true,
-      "rentPeriodAmount" -> 1999000
-    )
-
   "ProvideDetailsOfFirstRentPeriodForm" should {
-    "serialize into json" in {
-      Json.toJson(firstRentPeriodForm) shouldBe firstRentPeriodJson
-    }
-
-    "deserialize from json" in {
-      firstRentPeriodJson.as[ProvideDetailsOfFirstRentPeriodForm] shouldBe firstRentPeriodForm
-    }
-
     "bind successfully with all the data provided" in {
       val data = Map(
         "startDate.day" -> "1",
@@ -71,9 +48,9 @@ class ProvideDetailsOfFirstRentPeriodFormSpec extends AnyWordSpec with Matchers:
       val boundForm = ProvideDetailsOfFirstRentPeriodForm.form.bind(data)
 
       boundForm.hasErrors shouldBe false
-      boundForm.value shouldBe Some(ProvideDetailsOfFirstRentPeriodForm(
-        NGRDate.fromString("2025-01-01"),
-        NGRDate.fromString("2025-01-31"),
+      boundForm.value shouldBe Some(ProvideDetailsOfFirstRentPeriod(
+        LocalDate.parse("2025-01-01"),
+        LocalDate.parse("2025-01-31"),
         true,
         Some(BigDecimal(1777000))
       ))
@@ -92,16 +69,16 @@ class ProvideDetailsOfFirstRentPeriodFormSpec extends AnyWordSpec with Matchers:
       val boundForm = ProvideDetailsOfFirstRentPeriodForm.form.bind(data)
 
       boundForm.hasErrors shouldBe false
-      boundForm.value shouldBe Some(ProvideDetailsOfFirstRentPeriodForm(
-        NGRDate.fromString("2025-01-01"),
-        NGRDate.fromString("2025-01-31"),
+      boundForm.value shouldBe Some(ProvideDetailsOfFirstRentPeriod(
+        LocalDate.parse("2025-01-01"),
+        LocalDate.parse("2025-01-31"),
         false,
         None
       ))
     }
 
     "unbind correctly to a data Map" in {
-      val form = ProvideDetailsOfFirstRentPeriodForm.form.fill(firstRentPeriodForm)
+      val form = ProvideDetailsOfFirstRentPeriodForm.form.fill(firstRentPeriod)
 
       form.data shouldBe Map(
         "startDate.day" -> "1",
@@ -119,8 +96,9 @@ class ProvideDetailsOfFirstRentPeriodFormSpec extends AnyWordSpec with Matchers:
       val boundForm = ProvideDetailsOfFirstRentPeriodForm.form.bind(Map.empty)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("startDate.day", "error.required"))
-      boundForm.errors should contain(FormError("endDate.day", "error.required"))
+      boundForm.errors.size shouldBe 3
+      boundForm.errors should contain(FormError("startDate", "provideDetailsOfFirstRentPeriod.startDate.required.error"))
+      boundForm.errors should contain(FormError("endDate", "provideDetailsOfFirstRentPeriod.endDate.required.error"))
       boundForm.errors should contain(
         FormError("provideDetailsOfFirstRentPeriod-radio-isRentPayablePeriod", "provideDetailsOfFirstRentPeriod.firstPeriod.radio.error.required")
       )
@@ -164,7 +142,7 @@ class ProvideDetailsOfFirstRentPeriodFormSpec extends AnyWordSpec with Matchers:
       boundForm.hasErrors shouldBe true
       boundForm.errors.size shouldBe 1
       boundForm.errors should contain(
-        FormError("", "provideDetailsOfFirstRentPeriod.endDate.before.startDate.error")
+        FormError("endDate", "provideDetailsOfFirstRentPeriod.endDate.before.startDate.error")
       )
     }
 

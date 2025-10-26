@@ -23,10 +23,13 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.Radios
 import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
+import uk.gov.hmrc.ngrraldfrontend.models.ProvideDetailsOfFirstRentPeriod
 import uk.gov.hmrc.ngrraldfrontend.models.forms.ProvideDetailsOfFirstRentPeriodForm
-import uk.gov.hmrc.ngrraldfrontend.models.{NGRDate, NormalMode}
+import uk.gov.hmrc.ngrraldfrontend.models.NormalMode
 import uk.gov.hmrc.ngrraldfrontend.views.html.ProvideDetailsOfFirstRentPeriodView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
+
+import java.time.LocalDate
 
 class ProvideDetailsOfFirstRentPeriodViewSpec extends ViewBaseSpec:
 
@@ -89,9 +92,9 @@ class ProvideDetailsOfFirstRentPeriodViewSpec extends ViewBaseSpec:
     val continue = "#continue"
 
   private val form = ProvideDetailsOfFirstRentPeriodForm.form.fillAndValidate(
-    ProvideDetailsOfFirstRentPeriodForm(
-      NGRDate.fromString("2025-01-01"),
-      NGRDate.fromString("2025-12-31"),
+    ProvideDetailsOfFirstRentPeriod(
+      LocalDate.parse("2025-01-01"),
+      LocalDate.parse("2025-12-31"),
       true,
       Some(BigDecimal(1999000))
     )
