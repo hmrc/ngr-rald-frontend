@@ -141,7 +141,7 @@ class AboutRepairsAndFittingOutControllerSpec extends ControllerSpecSupport {
 
           val result = controllerWithProperty(None).submit(NormalMode)(authenticatedFakePostRequest(request))
           status(result) mustBe BAD_REQUEST
-          contentAsString(result) must include("Date you did the repairs of fitting out must include a month or year")
+          contentAsString(result) must include("Date you did the repairs or fitting out must include a month or year")
         }
 
         "return BAD_REQUEST when year is missing" in {
@@ -155,7 +155,7 @@ class AboutRepairsAndFittingOutControllerSpec extends ControllerSpecSupport {
 
           val result = controllerWithProperty(None).submit(NormalMode)(authenticatedFakePostRequest(request))
           status(result) mustBe BAD_REQUEST
-          contentAsString(result) must include("Date you did the repairs of fitting out must include a month or year")
+          contentAsString(result) must include("Date you did the repairs or fitting out must include a month or year")
         }
 
         "throw NotFoundException when property is missing on submit" in {

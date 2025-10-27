@@ -85,7 +85,7 @@ class AboutRepairsAndFittingOutFormSpec extends AnyWordSpec with Matchers {
       )
       val boundForm = AboutRepairsAndFittingOutForm.form.bind(data)
 
-      boundForm.errors must contain(FormError("date", "aboutRepairsAndFittingOut.date.error.invalid"))
+      boundForm.errors must contain(FormError("date", "aboutRepairsAndFittingOut.date.invalid.error"))
     }
 
     "fail to bind year before 1900" in {
@@ -96,7 +96,7 @@ class AboutRepairsAndFittingOutFormSpec extends AnyWordSpec with Matchers {
       )
       val boundForm = AboutRepairsAndFittingOutForm.form.bind(data)
 
-      boundForm.errors must contain(FormError("date", "aboutRepairsAndFittingOut.date.error.1900"))
+      boundForm.errors must contain(FormError("date", "aboutRepairsAndFittingOut.date.before.1900.error"))
     }
 
     "bind and round cost to 2 decimal places" in {
@@ -123,7 +123,7 @@ class AboutRepairsAndFittingOutFormSpec extends AnyWordSpec with Matchers {
       )
       val boundForm = AboutRepairsAndFittingOutForm.form.bind(data)
 
-      boundForm.errors must contain(FormError("date", "aboutRepairsAndFittingOut.date.error.partial"))
+      boundForm.errors must contain(FormError("date", "aboutRepairsAndFittingOut.date.month.required.error"))
     }
 
     "fail to bind missing year" in {
@@ -134,7 +134,7 @@ class AboutRepairsAndFittingOutFormSpec extends AnyWordSpec with Matchers {
       )
       val boundForm = AboutRepairsAndFittingOutForm.form.bind(data)
 
-      boundForm.errors must contain(FormError("date", "aboutRepairsAndFittingOut.date.error.partial"))
+      boundForm.errors must contain(FormError("date", "aboutRepairsAndFittingOut.date.year.required.error"))
     }
 
     "fail to bind missing cost" in {
@@ -146,8 +146,9 @@ class AboutRepairsAndFittingOutFormSpec extends AnyWordSpec with Matchers {
       val boundForm = AboutRepairsAndFittingOutForm.form.bind(data)
 
       boundForm.errors must contain(
-        FormError("cost", List("aboutRepairsAndFittingOut.cost.error.missing"), List("aboutRepairsAndFittingOut"))
+        FormError("cost", List("aboutRepairsAndFittingOut.cost.error.missing"), List("cost"))
       )
     }
+
   }
 }
