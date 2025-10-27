@@ -44,7 +44,7 @@ class LocalDateFormatter(
         "year" -> optional(text)
       )
     ).bind(data).flatMap {
-      case (None, None, None) => oneError(key, s"$errorKeyPrefix.required.error")
+      case (None, None, None) => oneError(key, "required.error")
       case (Some(d), Some(m), Some(y)) =>
         validateDate(d, m, y, data).left.map { errorKeys =>
           errorKeys.map(errorKey => FormError(key, errorKey))
@@ -53,7 +53,7 @@ class LocalDateFormatter(
         val missedFields = (Seq(d, m, y) zip allDateFields).filter(_._1.isEmpty).map(_._2)
         val missedFieldsCapitalized = missedFields.map(v => if v == missedFields.head then v else v.capitalize)
         val focusKey = s"$key.${missedFields.head}"
-        val errorKey = missedFieldsCapitalized.mkString(s"$errorKeyPrefix.", "And", ".required.error")
+        val errorKey = missedFieldsCapitalized.mkString("", "And", ".required.error")
         oneError(focusKey, errorKey)
     }
 
@@ -64,8 +64,8 @@ class LocalDateFormatter(
       s"$key.year" -> value.getYear.toString
     )
 
-  private def oneError(key: String, message: String): Left[Seq[FormError], LocalDate] =
-    Left(Seq(FormError(key, message)))
+  private def oneError(key: String, errorTypeKey: String): Left[Seq[FormError], LocalDate] =
+    Left(Seq(FormError(key, s"$errorKeyPrefix.$errorTypeKey")))
 
   private def validateDate(day: String, month: String, year: String, data: Map[String, String]): Either[Seq[String], LocalDate] =
     Try(LocalDate.of(year.toInt, month.toInt, day.toInt)).toEither.left

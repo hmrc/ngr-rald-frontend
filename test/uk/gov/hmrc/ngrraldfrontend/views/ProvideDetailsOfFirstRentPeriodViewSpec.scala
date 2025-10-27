@@ -99,8 +99,8 @@ class ProvideDetailsOfFirstRentPeriodViewSpec extends ViewBaseSpec:
       Some(BigDecimal(1999000))
     )
   )
-  private val startDateInput: DateInput = ProvideDetailsOfFirstRentPeriodForm.firstDateStartInput
-  private val endDateInput: DateInput = ProvideDetailsOfFirstRentPeriodForm.firstDateEndInput
+  private val startDateInput: DateInput = ProvideDetailsOfFirstRentPeriodForm.startDateInput
+  private val endDateInput: DateInput = ProvideDetailsOfFirstRentPeriodForm.endDateInput
   private val firstPeriodRadio: Radios = buildRadios(form, ProvideDetailsOfFirstRentPeriodForm.firstRentPeriodRadio(form, inputText))
 
   "ProvideDetailsOfFirstRentPeriodView" must {

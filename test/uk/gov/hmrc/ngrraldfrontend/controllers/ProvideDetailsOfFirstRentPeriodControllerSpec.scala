@@ -21,8 +21,10 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
+import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redirectLocation, status}
+import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.pages.ProvideDetailsOfFirstRentPeriodPage
 import uk.gov.hmrc.ngrraldfrontend.views.html.ProvideDetailsOfFirstRentPeriodView
@@ -33,6 +35,16 @@ class ProvideDetailsOfFirstRentPeriodControllerSpec extends ControllerSpecSuppor
 
   val pageTitle = "First rent period"
   val view: ProvideDetailsOfFirstRentPeriodView = inject[ProvideDetailsOfFirstRentPeriodView]
+
+  val controllerNoProperty: ProvideDetailsOfFirstRentPeriodController = new ProvideDetailsOfFirstRentPeriodController(
+    view,
+    fakeAuth,
+    mockInputText,
+    mcc,
+    fakeData(None),
+    mockSessionRepository,
+    mockNavigator
+  )(mockConfig, ec)
 
   val controllerWithAnswers: Option[UserAnswers] => ProvideDetailsOfFirstRentPeriodController = answers => new ProvideDetailsOfFirstRentPeriodController(
     view,
@@ -85,6 +97,14 @@ class ProvideDetailsOfFirstRentPeriodControllerSpec extends ControllerSpecSuppor
         document.select("input[name=endDate.year]").attr("value") mustBe "2025"
         document.select("input[type=radio][name=provideDetailsOfFirstRentPeriod-radio-isRentPayablePeriod][value=true]").hasAttr("checked") mustBe false
         document.select("input[type=radio][name=provideDetailsOfFirstRentPeriod-radio-isRentPayablePeriod][value=false]").hasAttr("checked") mustBe true
+      }
+
+      "return a NotFoundException when no corresponding answers are found in MongoDB" in {
+        when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(None))
+        val exception = intercept[NotFoundException] {
+          await(controllerNoProperty.show(NormalMode)(authenticatedFakeRequest))
+        }
+        exception.getMessage must include("Could not find answers in backend mongo")
       }
     }
 
@@ -181,6 +201,18 @@ class ProvideDetailsOfFirstRentPeriodControllerSpec extends ControllerSpecSuppor
         val content = contentAsString(result)
         content must include(pageTitle)
         content must include("Enter the rent for the first rent period, in pounds")
+      }
+
+      "return a NotFoundException when no corresponding answers are found in MongoDB" in {
+        val exception = intercept[NotFoundException] {
+          await(
+            controllerNoProperty.submit(NormalMode)(authenticatedFakePostRequest(
+              FakeRequest(routes.LandlordController.submit(NormalMode))
+                .withFormUrlEncodedBody(("what-type-of-agreement-radio", ""))
+            ))
+          )
+        }
+        exception.getMessage must include("Could not find answers in backend mongo")
       }
     }
   }

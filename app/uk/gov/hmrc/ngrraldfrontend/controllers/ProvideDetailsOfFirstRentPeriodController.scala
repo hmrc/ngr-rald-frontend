@@ -51,10 +51,10 @@ class ProvideDetailsOfFirstRentPeriodController @Inject()(view: ProvideDetailsOf
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(ProvideDetailsOfFirstRentPeriodPage)
         .fold(form)(form.fill)
       Future.successful(Ok(view(
-        selectedPropertyAddress = request.property.addressFull,
+        request.property.addressFull,
         preparedForm,
-        firstDateStartInput,
-        firstDateEndInput,
+        startDateInput,
+        endDateInput,
         buildRadios(preparedForm, firstRentPeriodRadio(preparedForm, inputText)),
         mode = mode
       )))
@@ -77,10 +77,10 @@ class ProvideDetailsOfFirstRentPeriodController @Inject()(view: ProvideDetailsOf
             }
             val formWithCorrectedErrors = formWithErrors.copy(errors = correctedFormErrors)
             Future.successful(BadRequest(view(
-              selectedPropertyAddress = request.property.addressFull,
+              request.property.addressFull,
               formWithCorrectedErrors,
-              firstDateStartInput,
-              firstDateEndInput,
+              startDateInput,
+              endDateInput,
               buildRadios(formWithCorrectedErrors, firstRentPeriodRadio(formWithCorrectedErrors, inputText)),
               mode
             ))),

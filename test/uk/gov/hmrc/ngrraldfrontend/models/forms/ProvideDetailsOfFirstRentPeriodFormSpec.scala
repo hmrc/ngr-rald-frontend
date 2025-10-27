@@ -43,7 +43,7 @@ class ProvideDetailsOfFirstRentPeriodFormSpec extends AnyWordSpec with Matchers:
         "endDate.month" -> "1",
         "endDate.year" -> "2025",
         "provideDetailsOfFirstRentPeriod-radio-isRentPayablePeriod" -> "true",
-        "rentPeriodAmount" -> "1,777,000.00"
+        "rentPeriodAmount" -> "1,777,000.99"
       )
       val boundForm = ProvideDetailsOfFirstRentPeriodForm.form.bind(data)
 
@@ -52,7 +52,29 @@ class ProvideDetailsOfFirstRentPeriodFormSpec extends AnyWordSpec with Matchers:
         LocalDate.parse("2025-01-01"),
         LocalDate.parse("2025-01-31"),
         true,
-        Some(BigDecimal(1777000))
+        Some(BigDecimal(1777000.99))
+      ))
+    }
+
+    "bind successfully ensuring rentPeriodAmount is rounded to 2 decimal places" in {
+      val data = Map(
+        "startDate.day" -> "1",
+        "startDate.month" -> "1",
+        "startDate.year" -> "2025",
+        "endDate.day" -> "31",
+        "endDate.month" -> "1",
+        "endDate.year" -> "2025",
+        "provideDetailsOfFirstRentPeriod-radio-isRentPayablePeriod" -> "true",
+        "rentPeriodAmount" -> "1,777,000.449"
+      )
+      val boundForm = ProvideDetailsOfFirstRentPeriodForm.form.bind(data)
+
+      boundForm.hasErrors shouldBe false
+      boundForm.value shouldBe Some(ProvideDetailsOfFirstRentPeriod(
+        LocalDate.parse("2025-01-01"),
+        LocalDate.parse("2025-01-31"),
+        true,
+        Some(BigDecimal(1777000.45))
       ))
     }
 
@@ -101,6 +123,46 @@ class ProvideDetailsOfFirstRentPeriodFormSpec extends AnyWordSpec with Matchers:
       boundForm.errors should contain(FormError("endDate", "provideDetailsOfFirstRentPeriod.endDate.required.error"))
       boundForm.errors should contain(
         FormError("provideDetailsOfFirstRentPeriod-radio-isRentPayablePeriod", "provideDetailsOfFirstRentPeriod.firstPeriod.radio.error.required")
+      )
+    }
+
+    "return error if startDate is before 1900" in {
+      val data = Map(
+        "startDate.day" -> "1",
+        "startDate.month" -> "1",
+        "startDate.year" -> "1899",
+        "endDate.day" -> "31",
+        "endDate.month" -> "1",
+        "endDate.year" -> "1900",
+        "provideDetailsOfFirstRentPeriod-radio-isRentPayablePeriod" -> "true",
+        "rentPeriodAmount" -> "£777,000"
+      )
+      val boundForm = ProvideDetailsOfFirstRentPeriodForm.form.bind(data)
+
+      boundForm.hasErrors shouldBe true
+      boundForm.errors.size shouldBe 1
+      boundForm.errors should contain(
+        FormError("startDate", "provideDetailsOfFirstRentPeriod.startDate.before.1900.error")
+      )
+    }
+
+    "return error if endDate is invalid" in {
+      val data = Map(
+        "startDate.day" -> "1",
+        "startDate.month" -> "1",
+        "startDate.year" -> "2025",
+        "endDate.day" -> "33",
+        "endDate.month" -> "1",
+        "endDate.year" -> "2025",
+        "provideDetailsOfFirstRentPeriod-radio-isRentPayablePeriod" -> "true",
+        "rentPeriodAmount" -> "777,000.00"
+      )
+      val boundForm = ProvideDetailsOfFirstRentPeriodForm.form.bind(data)
+
+      boundForm.hasErrors shouldBe true
+      boundForm.errors.size shouldBe 1
+      boundForm.errors should contain(
+        FormError("endDate", "provideDetailsOfFirstRentPeriod.endDate.invalid.error")
       )
     }
 

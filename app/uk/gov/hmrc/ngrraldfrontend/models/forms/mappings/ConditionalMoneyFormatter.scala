@@ -29,13 +29,13 @@ import scala.util.matching.Regex
 class ConditionalMoneyFormatter(errorKeyPrefix: String, requiredOnCondition: Map[String, String] => Boolean)
   extends Formatter[Option[BigDecimal]]:
 
-  private val amountRegex: Regex = """^\d+\.?\d+$""".r
+  private val amountRegex: Regex = """^\d+\.?\d{0,4}$""".r
   private val maxAmount: BigDecimal = BigDecimal("9999999.99")
 
   override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[BigDecimal]] =
     val isRequired = requiredOnCondition(data)
     data.get(key) match {
-      case None if isRequired => oneError(key, s"$errorKeyPrefix.required.error")
+      case None if isRequired => oneError(key, "required.error")
       case Some(s) if isRequired => validateMoney(key, s.trim.replaceAll("[£,\\s]", ""))
       case _ => Right(None)
     }
@@ -43,16 +43,16 @@ class ConditionalMoneyFormatter(errorKeyPrefix: String, requiredOnCondition: Map
   override def unbind(key: String, value: Option[BigDecimal]): Map[String, String] =
     Map(key -> value.fold("")(_.toString))
 
-  private def oneError(key: String, message: String): Left[Seq[FormError], Option[BigDecimal]] =
-    Left(Seq(FormError(key, message)))
+  private def oneError(key: String, errorTypeKey: String): Left[Seq[FormError], Option[BigDecimal]] =
+    Left(Seq(FormError(key, s"$errorKeyPrefix.$errorTypeKey")))
 
   private def validateMoney(key: String, amount: String): Either[Seq[FormError], Option[BigDecimal]] =
     if amount.isEmpty then
-      oneError(key, s"$errorKeyPrefix.required.error")
+      oneError(key, "required.error")
     else if !amountRegex.matches(amount) then
-      oneError(key, s"$errorKeyPrefix.invalid.error")
+      oneError(key, "invalid.error")
     else
       Try(BigDecimal(amount).setScale(2, HALF_UP)).map { bigDecimal =>
-        if bigDecimal > maxAmount then oneError(key, s"$errorKeyPrefix.max.error")
+        if bigDecimal > maxAmount then oneError(key, "max.error")
         else Right(Some(bigDecimal))
-      }.getOrElse(oneError(key, s"$errorKeyPrefix.invalid.error"))
+      }.getOrElse(oneError(key, "invalid.error"))

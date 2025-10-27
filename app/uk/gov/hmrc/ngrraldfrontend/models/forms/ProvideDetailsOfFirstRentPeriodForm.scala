@@ -32,33 +32,18 @@ import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 
 import java.time.LocalDate
 
-object ProvideDetailsOfFirstRentPeriodForm extends CommonFormValidators with Mappings:
+object ProvideDetailsOfFirstRentPeriodForm extends CommonFormValidators with NGRDateInput with Mappings:
 
-  private val firstDateStartInput = "startDate"
-  private val firstDateEndInput = "endDate"
+  private val startDate = "startDate"
+  private val endDate = "endDate"
   private val firstRentPeriodRadio = "provideDetailsOfFirstRentPeriod-radio-isRentPayablePeriod"
   private val rentPeriodAmount = "rentPeriodAmount"
 
-  private def dateInput(dateInputName: String, dateInputLabel: String)(using messages: Messages): DateInput = DateInput(
-    id = dateInputName,
-    namePrefix = Some(dateInputName),
-    fieldset = Some(Fieldset(
-      legend = Some(Legend(
-        content = Text(messages(dateInputLabel)),
-        classes = "govuk-fieldset__legend--s",
-        isPageHeading = false
-      ))
-    )),
-    hint = Some(Hint(
-      content = Text(messages("date.hint"))
-    ))
-  )
+  def startDateInput(using messages: Messages): DateInput =
+    dateInput(startDate, "provideDetailsOfFirstRentPeriod.startDate.label")
 
-  def firstDateStartInput(using messages: Messages): DateInput =
-    dateInput(firstDateStartInput, "provideDetailsOfFirstRentPeriod.startDate.label")
-
-  def firstDateEndInput(using messages: Messages): DateInput =
-    dateInput(firstDateEndInput, "provideDetailsOfFirstRentPeriod.endDate.label")
+  def endDateInput(using messages: Messages): DateInput =
+    dateInput(endDate, "provideDetailsOfFirstRentPeriod.endDate.label")
 
   def firstRentPeriodRadio(form: Form[ProvideDetailsOfFirstRentPeriod], inputText: InputText)(using messages: Messages): NGRRadio =
     ngrRadio(
@@ -88,8 +73,8 @@ object ProvideDetailsOfFirstRentPeriodForm extends CommonFormValidators with Map
   val form: Form[ProvideDetailsOfFirstRentPeriod] =
     Form(
       mapping(
-        firstDateStartInput -> dateMapping("provideDetailsOfFirstRentPeriod.startDate"),
-        firstDateEndInput -> dateMapping(
+        startDate -> dateMapping("provideDetailsOfFirstRentPeriod.startDate"),
+        endDate -> dateMapping(
           "provideDetailsOfFirstRentPeriod.endDate",
           CompareWithAnotherDateValidation("before.startDate.error", "startDate", (end, start) => start.isBefore(end))
         ),

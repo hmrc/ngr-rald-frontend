@@ -31,11 +31,11 @@
 )
 
 @(
-        selectedPropertyAddress: String,
+        propertyAddress: String,
         form: Form[ProvideDetailsOfFirstRentPeriod],
-        firstDateStartInput: DateInput,
-        firstDateEndInput: DateInput,
-        openEndedRadio: Radios,
+        startDateInput: DateInput,
+        endDateInput: DateInput,
+        isRentPayablePeriodRadio: Radios,
         mode: Mode
 )(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
@@ -48,11 +48,11 @@
                 Some(Seq("startDate", "endDate"))))
         }
 
-        <span class="govuk-caption-m">@selectedPropertyAddress</span>
+        <span class="govuk-caption-m">@propertyAddress</span>
         <h1 class="govuk-heading-l">@messages("provideDetailsOfFirstRentPeriod.title")</h1>
-        @dateInputField(form, firstDateStartInput)
-        @dateInputField(form, firstDateEndInput)
-        @govukRadios(openEndedRadio)
+        @dateInputField(form, startDateInput)
+        @dateInputField(form, endDateInput)
+        @govukRadios(isRentPayablePeriodRadio)
 
         @saveAndContinueButton(msg = messages("service.continue"))
     }
