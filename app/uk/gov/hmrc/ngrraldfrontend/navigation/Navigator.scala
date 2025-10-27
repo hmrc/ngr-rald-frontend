@@ -161,20 +161,11 @@ class Navigator @Inject()() {
         case None => throw new NotFoundException("Failed to find answers -  ConfirmBreakClausePage")
       }
 
-    case DidYouGetMoneyFromLandlordPage => answers =>
-      answers.get(DidYouGetMoneyFromLandlordPage) match {
-        case Some(value) => value match {
-          case true => uk.gov.hmrc.ngrraldfrontend.controllers.routes.LandlordController.show(NormalMode) //TODO Needs to go to money-from-landlord-or-previous-tenant-to-take-on-lease when this is made
-          case _    => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouPayAnyMoneyToLandlordController.show(NormalMode)
-        }
-        case None => throw new NotFoundException("Failed to find answers -  DidYouGetMoneyFromLandlordPage")
-      }
-
     case DidYouGetIncentiveForNotTriggeringBreakClausePage => answers =>
     answers.get(DidYouGetIncentiveForNotTriggeringBreakClausePage) match {
       case Some(value) => value match {
-        case value if value.checkBox.contains(YesRentFreePeriod) && !value.checkBox.contains(YesLumpSum) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.AboutTheRentFreePeriodController.show(NormalMode)
-        case value if value.checkBox.contains(YesLumpSum) || value.checkBox.contains(YesLumpSum) && value.checkBox.contains(YesRentFreePeriod) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchWasTheLumpSumController.show(NormalMode)
+        case value if value.checkBox.size == 1 && value.checkBox.contains(YesRentFreePeriod) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.AboutTheRentFreePeriodController.show(NormalMode)
+        case value if value.checkBox.contains(YesLumpSum) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchWasTheLumpSumController.show(NormalMode)
         case value => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchWasTheLumpSumController.show(NormalMode)
       }
     }
@@ -215,8 +206,7 @@ class Navigator @Inject()() {
     case HowMuchWasTheLumpSumPage => answers => //TODO This needs to be amended when the journey is completed - Page that dictates navigation is not yet completed
       answers.get(DidYouGetIncentiveForNotTriggeringBreakClausePage) match {
         case Some(value) => value match {
-          case value if value.checkBox.contains(YesLumpSum) && !value.checkBox.contains(YesRentFreePeriod) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchWasTheLumpSumController.show(NormalMode) //TODO This needs to be amended when the journey is completed
-          case value if value.checkBox.contains(YesLumpSum) && value.checkBox.contains(YesRentFreePeriod) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.AboutTheRentFreePeriodController.show(NormalMode)
+          case value if value.checkBox.size == 1 && value.checkBox.contains(YesLumpSum) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchWasTheLumpSumController.show(NormalMode) //TODO This needs to be amended when the journey is completed          case value if value.checkBox.contains(YesLumpSum) && value.checkBox.contains(YesRentFreePeriod) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.AboutTheRentFreePeriodController.show(NormalMode)
           case value => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchWasTheLumpSumController.show(NormalMode)
         }
       }
