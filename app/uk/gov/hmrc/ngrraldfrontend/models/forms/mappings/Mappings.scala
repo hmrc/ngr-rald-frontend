@@ -58,3 +58,6 @@ trait Mappings extends CommonFormValidators with Formatters:
 
   def dateMapping(errorKeyPrefix: String, extraDateValidations: DateValidation*): FieldMapping[LocalDate] =
     of(using LocalDateFormatter(errorKeyPrefix, extraDateValidations*))
+
+  def conditionalMoney(errorKeyPrefix: String, requiredOnCondition: Map[String, String] => Boolean): FieldMapping[Option[BigDecimal]] =
+    of(using ConditionalMoneyFormatter(errorKeyPrefix, requiredOnCondition))

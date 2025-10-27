@@ -11,6 +11,7 @@ service.or = or
 
 #Common
 common.pound = £
+date.hint = For example, 27 6 2026
 
 #NavigationBar
 nav.home=Account home
@@ -213,6 +214,10 @@ provideDetailsOfFirstRentPeriod.endDate.invalid.error = End date of the first re
 provideDetailsOfFirstRentPeriod.endDate.before.1900.error = Year for the first rent period end date must be 1900 or after
 provideDetailsOfFirstRentPeriod.endDate.before.startDate.error = End date of this rent period must be a date after the period starts
 
+provideDetailsOfFirstRentPeriod.firstPeriod.radio.label = Do you pay rent in this period?
+provideDetailsOfFirstRentPeriod.firstPeriod.radio.conditional.hint.bold = How much is the rent for this period (excluding VAT)?
+provideDetailsOfFirstRentPeriod.firstPeriod.radio.conditional.hint = Enter the amount you pay each year (excluding VAT) even if the period is for more or less than a year.
+provideDetailsOfFirstRentPeriod.firstPeriod.radio.no = No, this is a rent-free period
 provideDetailsOfFirstRentPeriod.firstPeriod.radio.error.required = Select yes if you pay rent in this period
 provideDetailsOfFirstRentPeriod.firstPeriod.amount.required.error = Enter the rent for the first rent period, in pounds
 provideDetailsOfFirstRentPeriod.firstPeriod.amount.invalid.error = Rent for the first rent period must be a number, like 30,000
