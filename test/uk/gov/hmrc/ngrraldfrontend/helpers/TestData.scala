@@ -140,6 +140,8 @@ trait TestData {
 
  val interimRentSetByTheCourtModel: InterimRentSetByTheCourt = InterimRentSetByTheCourt("10000", "1990-01")
 
+ val aboutTheRentFreePeriodModel: AboutTheRentFreePeriod = AboutTheRentFreePeriod(1, "1990-01-01")
+
  val landlordModel: Landlord = Landlord("Joe Bloggs", true, None)
 
  val moneyYouPaidInAdvanceToLandlordModel: MoneyYouPaidInAdvanceToLandlord = MoneyYouPaidInAdvanceToLandlord(10000, "2000-01-01")

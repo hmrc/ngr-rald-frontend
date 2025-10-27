@@ -161,6 +161,14 @@ class Navigator @Inject()() {
         case None => throw new NotFoundException("Failed to find answers -  ConfirmBreakClausePage")
       }
 
+    case DidYouGetIncentiveForNotTriggeringBreakClausePage => answers =>
+    answers.get(DidYouGetIncentiveForNotTriggeringBreakClausePage) match {
+      case Some(value) => value match {
+        case value if value.checkBox.size == 1 && value.checkBox.contains(YesRentFreePeriod) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.AboutTheRentFreePeriodController.show(NormalMode)
+        case value if value.checkBox.contains(YesLumpSum) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchWasTheLumpSumController.show(NormalMode)
+        case value => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchWasTheLumpSumController.show(NormalMode)
+      }
+    }
     case DidYouGetMoneyFromLandlordPage => answers =>
       answers.get(DidYouGetMoneyFromLandlordPage) match {
         case Some(value) => value match {
@@ -169,15 +177,6 @@ class Navigator @Inject()() {
         }
         case None => throw new NotFoundException("Failed to find answers -  DidYouGetMoneyFromLandlordPage")
       }
-
-    case DidYouGetIncentiveForNotTriggeringBreakClausePage => answers =>
-    answers.get(DidYouGetIncentiveForNotTriggeringBreakClausePage) match {
-      case Some(value) => value match {
-        case value if value.checkBox.contains(YesLumpSum) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchWasTheLumpSumController.show(NormalMode)
-        case value if value.checkBox.contains(YesRentFreePeriod) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouGetIncentiveForNotTriggeringBreakClauseController.show(NormalMode) //TODO should go to aboutTheRentFreePeriod
-        case value => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchWasTheLumpSumController.show(NormalMode) // TODO should go to hasAnythingElseAffetcedTheRentPage
-      }
-    }
 
     case DoYouPayExtraForParkingSpacesPage => answers =>
       answers.get(DoYouPayExtraForParkingSpacesPage) match {
@@ -204,7 +203,14 @@ class Navigator @Inject()() {
 
     case AboutRepairsAndFittingOutPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouGetMoneyFromLandlordController.show(NormalMode)
 
-    case HowMuchWasTheLumpSumPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.LandlordController.show(NormalMode) //TODO This needs to be amended when the journey is completed - Page that dictates navigation is not yet completed
+    case HowMuchWasTheLumpSumPage => answers => //TODO This needs to be amended when the journey is completed - Page that dictates navigation is not yet completed
+      answers.get(DidYouGetIncentiveForNotTriggeringBreakClausePage) match {
+        case Some(value) => value match {
+          case value if value.checkBox.size == 1 && value.checkBox.contains(YesLumpSum) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchWasTheLumpSumController.show(NormalMode) //TODO This needs to be amended when the journey is completed          case value if value.checkBox.contains(YesLumpSum) && value.checkBox.contains(YesRentFreePeriod) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.AboutTheRentFreePeriodController.show(NormalMode)
+          case value => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchWasTheLumpSumController.show(NormalMode)
+        }
+      }
+
     case ParkingSpacesOrGaragesNotIncludedInYourRentPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RepairsAndInsuranceController.show(NormalMode)
     case DidYouPayAnyMoneyToLandlordPage => answers =>
       answers.get(DidYouPayAnyMoneyToLandlordPage) match {
@@ -214,7 +220,7 @@ class Navigator @Inject()() {
         }
         case None => throw new NotFoundException("Failed to find answers - DidYouPayAnyMoneyToLandlordPage")
       }
-
+    case AboutTheRentFreePeriodPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.AboutTheRentFreePeriodController.show(NormalMode) //TODO Needs to go to has-anything-else-affected-the-rent when this is made
     case RepairsAndInsurancePage => answers =>
       answers.get(TellUsAboutRentPage) match {
         case Some(value) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.ConfirmBreakClauseController.show(NormalMode)
