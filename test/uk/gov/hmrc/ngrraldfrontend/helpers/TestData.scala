@@ -153,6 +153,8 @@ trait TestData {
 
  val interimRentSetByTheCourtModel: InterimRentSetByTheCourt = InterimRentSetByTheCourt("10000", "1990-01")
 
+ val aboutTheRentFreePeriodModel: AboutTheRentFreePeriod = AboutTheRentFreePeriod(1, "1990-01-01")
+
  val landlordModel: Landlord = Landlord("Joe Bloggs", true, None)
 
  val moneyYouPaidInAdvanceToLandlordModel: MoneyYouPaidInAdvanceToLandlord = MoneyYouPaidInAdvanceToLandlord(10000, "2000-01-01")
@@ -166,4 +168,7 @@ trait TestData {
  val rentBasedOnModel: RentBasedOn = RentBasedOn("Other", Some("The rent was agreed"))
 
  val repairsAndInsuranceModel  = RepairsAndInsurance("You", "Landlord", "YouAndLandlord")
+
+ val aboutRepairsAndFittingOutModel: AboutRepairsAndFittingOut = AboutRepairsAndFittingOut(cost = BigDecimal("1234.56"), date = "01/2025")
+
 }

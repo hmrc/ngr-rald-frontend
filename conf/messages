@@ -9,6 +9,9 @@ service.yes = Yes
 service.no = No
 service.or = or
 
+#Common
+common.pound = £
+
 #NavigationBar
 nav.home=Account home
 nav.signOut=Sign out
@@ -504,6 +507,26 @@ didYouGetIncentiveForNotTriggeringBreakClause.checkbox1 = Yes, I got a rent-free
 didYouGetIncentiveForNotTriggeringBreakClause.checkbox2 = No, I did not get an incentive
 didYouGetIncentiveForNotTriggeringBreakClause.required.error = Select which incentives you got for not triggering the break clause, or select ‘No, I did not get an incentive'
 
+#About the rent free period
+aboutTheRentFreePeriod.title = About the rent-free period
+aboutTheRentFreePeriod.months.label = How many months in the rent-free period?
+aboutTheRentFreePeriod.date.label.2 = What was the rent period start date?
+aboutTheRentFreePeriod.date.hint.2 = For example, 27 6 2026
+aboutTheRentFreePeriod.months.required.error = Enter how many months your rent-free period is
+aboutTheRentFreePeriod.months.invalid.error = Rent-free period must be a number, like 6
+aboutTheRentFreePeriod.months.minimum.error = Rent-free period must be 1 month or more
+aboutTheRentFreePeriod.months.maximum.error = Rent-free period must be 99 months or less
+aboutTheRentFreePeriod.date.required.error = Enter how many months your rent-free period is
+aboutTheRentFreePeriod.date.day.required.error = Rent-free period start date must include a day
+aboutTheRentFreePeriod.date.dayAndMonth.required.error = Rent-free period start date must include a day and month
+aboutTheRentFreePeriod.date.dayAndYear.required.error = Rent-free period start date must include a day and year
+aboutTheRentFreePeriod.date.month.required.error = Rent-free period start date must include a month
+aboutTheRentFreePeriod.date.monthAndYear.required.error = Rent-free period start date must include a month and year
+aboutTheRentFreePeriod.date.year.required.error = Rent-free period start date must include a year
+aboutTheRentFreePeriod.date.invalid.error = Rent-free period start date must be a real date
+aboutTheRentFreePeriod.date.before.1900.error = Rent-free period start date must be 1900 or after
+aboutTheRentFreePeriod.date.required.error = Enter the date this payment was agreed for the rent-free period
+
 #Money you paid in advance to landlord
 moneyYouPaidInAdvanceToLandlord.title = Money you paid in advance to the landlord
 moneyYouPaidInAdvanceToLandlord.label.1 = How much money did you pay in advance to the landlord (excluding VAT)?
@@ -521,3 +544,47 @@ moneyYouPaidInAdvanceToLandlord.date.dayAndYear.required.error = Date you paid t
 moneyYouPaidInAdvanceToLandlord.date.monthAndYear.required.error = Date you paid the money must include a month and year
 moneyYouPaidInAdvanceToLandlord.date.dayAndMonth.required.error = Date you paid the money must include a day and month
 moneyYouPaidInAdvanceToLandlord.date.before.1900.error = Year you paid the money must be 1900 or after
+
+#Rent review details
+rentReviewDetails.title = Rent review
+rentReviewDetails.p1 = These details should be in a a document that sets out the new terms that you agreed with your landlord or their agent. This is often called a rent review memorandum.
+rentReviewDetails.annualAmount.label = How much is your new total annual rent?
+rentReviewDetails.annualAmount.hint = This is the amount you pay each year (excluding VAT) even if you pay monthly or quarterly
+rentReviewDetails.whatHappensAtRentReview.label = What did your agreement say could happen to the rent at rent review?
+rentReviewDetails.whatHappensAtRentReview.radio1.text = The rent can go up or down
+rentReviewDetails.whatHappensAtRentReview.radio2.text = The rent can only go up
+rentReviewDetails.startDate.label = When will you start paying rent?
+rentReviewDetails.startDate.hint = For example, 27 6 2026
+rentReviewDetails.hasAgreedNewRent.label = Did you and the landlord (or their agent) agree the new rent?
+rentReviewDetails.whoAgreed.label = Who agreed the new rent?
+rentReviewDetails.whoAgreed.radio1.text = An arbitrator
+rentReviewDetails.whoAgreed.radio2.text = An independent expert
+rentReviewDetails.annualAmount.required.error = Enter your new total annual rent, in pounds
+rentReviewDetails.annualAmount.invalid.error = New total annual rent must be a number, like 30,000
+rentReviewDetails.annualAmount.maximum.error = New total annual rent must be £9,999,999.99 or less
+rentReviewDetails.whatHappensAtRentReview.required.error = Select what your agreement said can happen at the rent review
+rentReviewDetails.hasAgreedNewRent.required.error = Select yes if you and the landlord (or their agent) agreed the new rent
+rentReviewDetails.whoAgreed.required.error = Select who agreed the new rent
+rentReviewDetails.startDate.required.error = Enter the date you will start paying rent
+rentReviewDetails.startDate.day.required.error = Date you will start paying rent must include a day
+rentReviewDetails.startDate.month.required.error = Date you will start paying rent must include a month
+rentReviewDetails.startDate.year.required.error = Date you will start paying rent must include a year
+rentReviewDetails.startDate.dayAndMonth.required.error = Date you will start paying rent must include a day and month
+rentReviewDetails.startDate.dayAndYear.required.error = Date you will start paying rent must include a day and year
+rentReviewDetails.startDate.monthAndYear.required.error = Date you will start paying rent must include a month and year
+rentReviewDetails.startDate.invalid.error = Date you will start paying rent must be a real date
+rentReviewDetails.startDate.before.1900.error = Year you will start paying rent must be 1900 or after
+
+#About repairs and fitting out
+aboutRepairsAndFittingOut.title = About repairs and fitting out
+aboutRepairsAndFittingOut.date.heading = When did you do the repairs or fitting out?
+aboutRepairsAndFittingOut.date.hint = You only need to give us an approximate date, for example, 9 2025
+aboutRepairsAndFittingOut.cost.heading = How much did the repairs or fitting out cost (excluding VAT)?
+aboutRepairsAndFittingOut.cost.error.missing = Enter the repairs or fitting out cost (excluding VAT), in pounds
+aboutRepairsAndFittingOut.cost.error.exceed = Repairs or fitting out cost (excluding VAT) must be £9,999,999.99 or less
+aboutRepairsAndFittingOut.cost.error.nonNumeric = Repairs or fitting out cost (excluding VAT) must be a number, like 30,000.00
+aboutRepairsAndFittingOut.date.required.error = Enter the date you did the repairs of fitting out
+aboutRepairsAndFittingOut.date.year.required.error = Date you did the repairs or fitting out must include a month or year
+aboutRepairsAndFittingOut.date.month.required.error = Date you did the repairs or fitting out must include a month or year
+aboutRepairsAndFittingOut.date.invalid.error = Date you did the repairs or fitting out must be a real date
+aboutRepairsAndFittingOut.date.before.1900.error = Date you did the repairs or fitting out must be 1900 or after

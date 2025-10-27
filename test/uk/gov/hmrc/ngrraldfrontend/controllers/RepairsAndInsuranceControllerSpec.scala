@@ -116,7 +116,7 @@ class RepairsAndInsuranceControllerSpec extends ControllerSpecSupport {
 
         val result = controllerProperty(rentAgreementAnswers).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.RentReviewController.show(NormalMode).url)
+        redirectLocation(result) mustBe Some(routes.ConfirmBreakClauseController.show(NormalMode).url)
       }
       "Return BAD_REQUEST for not selecting a internal repairs radio, showing the correct view and error" in {
         val fakePostRequest = FakeRequest(routes.RepairsAndInsuranceController.submit(NormalMode))
