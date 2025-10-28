@@ -43,7 +43,7 @@ class DidYouGetIncentiveForNotTriggeringBreakClauseViewSpec extends ViewBaseSpec
     val lumpSumCheckBox = "#main-content > div > div.govuk-grid-column-two-thirds > form > div > fieldset > div.govuk-checkboxes > div:nth-child(1) > label"
     val rentFreePeriodCheckBox = "#main-content > div > div.govuk-grid-column-two-thirds > form > div > fieldset > div.govuk-checkboxes > div:nth-child(2) > label"
     val noIncentiveCheckBox = "#main-content > div > div.govuk-grid-column-two-thirds > form > div > fieldset > div.govuk-checkboxes > div:nth-child(4) > label"
-    val formError = "#incentive-error"
+    val formError = "#Incentive-error"
     val continue = "#continue"
   }
 

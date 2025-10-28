@@ -44,7 +44,8 @@
     @govukCheckboxes(
         CheckboxesViewModel(
             form   = form,
-            name   = "incentive",
+            idPrefix = "Incentive",
+            name     = "incentive[]",
             legend = Legend(
                         content = Text(messages("didYouGetIncentiveForNotTriggeringBreakClause.title")),
                         classes = "govuk-fieldset__legend--l",

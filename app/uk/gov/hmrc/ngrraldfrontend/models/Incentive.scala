@@ -43,34 +43,34 @@ object Incentive extends Enumerable.Implicits {
     values.zipWithIndex.map {
       case (value, index) =>
         value match {
-          case YesLumpSum => CheckboxItem(
-            id = Some(s"incentive_$index"),
-            name = Some(s"incentive[$index]"),
-            content = Text(messages("didYouGetIncentiveForNotTriggeringBreakClause.checkbox")),
+          case YesLumpSum => CheckboxItemViewModel(
+            content = Text(messages(s"didYouGetIncentiveForNotTriggeringBreakClause.checkbox")),
+            fieldId = s"incentive",
+            index = index,
             value = value.toString,
-            behaviour = None
           )
-          case YesRentFreePeriod => CheckboxItem(
-            id = Some(s"incentive_$index"),
-            name = Some(s"incentive[$index]"),
-            content = Text(messages("didYouGetIncentiveForNotTriggeringBreakClause.checkbox1")),
+          case YesRentFreePeriod => CheckboxItemViewModel(
+            content = Text(messages(s"didYouGetIncentiveForNotTriggeringBreakClause.checkbox1")),
+            fieldId = s"incentive",
+            index = index,
             value = value.toString,
-            behaviour = None
           )
-          case Divider =>CheckboxItem(
-            divider = Some(messages("service.or"))
+          case Divider => CheckboxItemViewModel(
+            fieldId = s"incentive",
+            index = index,
+            value = value.toString,
+            divider = messages("service.or")
           )
-          case No =>  CheckboxItem(
-            id = Some(s"incentive_$index"),
-            name = Some(s"incentive[$index]"),
-            content = Text(messages("didYouGetIncentiveForNotTriggeringBreakClause.checkbox2")),
+          case No => CheckboxItemViewModel(
+            content = Text(messages(s"didYouGetIncentiveForNotTriggeringBreakClause.checkbox2")),
+            fieldId = s"incentive",
+            index = index,
             value = value.toString,
             behaviour = Some(ExclusiveCheckbox)
           )
         }
     }
   }
-
   implicit val enumerable: Enumerable[Incentive] =
     Enumerable(values.map(v => v.toString -> v) *)
 }

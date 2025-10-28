@@ -47,9 +47,8 @@ trait ErrorSummaryCheckBoxViewModel {
     private def deriveHref(error: FormError, form: Form[_], errorLinkOverrides: Map[String, String]): Option[String] = {
       val messages = error.messages
       val key = error.key
-
       if(messages.nonEmpty){
-        Some(s"#${key}_0")
+        Some(s"#Incentive")
       }else {
         Some(s"#${errorLinkOverrides.getOrElse(key, key)}")
       }
