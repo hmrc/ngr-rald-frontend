@@ -58,27 +58,27 @@ class DidYouGetIncentiveForNotTriggeringBreakClauseControllerSpec extends Contro
         status(result) mustBe OK
         val content = contentAsString(result)
         val document = Jsoup.parse(content)
-        document.select("#incentive_0").hasAttr("checked") mustBe true
-        document.select("#incentive_1").hasAttr("checked") mustBe false
-        document.select("#incentive_2").hasAttr("checked") mustBe false
+        document.select("#Incentive").hasAttr("checked") mustBe true
+        document.select("#Incentive-2").hasAttr("checked") mustBe false
+        document.select("#Incentive-4").hasAttr("checked") mustBe false
       }
       "Return OK and the correct view with prepopulated answers with YesLumpSum and YesRentFreePeriod incentive checked" in {
         val result = userAnswers(YesLumpSumYesRentFreePeriodAnswers).show(NormalMode)(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
         val document = Jsoup.parse(content)
-        document.select("#incentive_0").hasAttr("checked") mustBe true
-        document.select("#incentive_1").hasAttr("checked") mustBe true
-        document.select("#incentive_2").hasAttr("checked") mustBe false
+        document.select("#Incentive").hasAttr("checked") mustBe true
+        document.select("#Incentive-2").hasAttr("checked") mustBe true
+        document.select("#Incentive-4").hasAttr("checked") mustBe false
       }
       "Return OK and the correct view with prepopulated answers with no incentive checked" in {
         val result = userAnswers(NoAnswer).show(NormalMode)(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
         val document = Jsoup.parse(content)
-        document.select("#incentive_0").hasAttr("checked") mustBe false
-        document.select("#incentive_1").hasAttr("checked") mustBe false
-        document.select("#incentive_3").hasAttr("checked") mustBe true
+        document.select("#Incentive").hasAttr("checked") mustBe false
+        document.select("#Incentive-2").hasAttr("checked") mustBe false
+        document.select("#Incentive-4").hasAttr("checked") mustBe true
       }
       "Return NotFoundException when property is not found in the mongo" in {
         when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(None))

@@ -45,27 +45,25 @@ object Incentive extends Enumerable.Implicits {
         value match {
           case YesLumpSum => CheckboxItemViewModel(
             content = Text(messages(s"didYouGetIncentiveForNotTriggeringBreakClause.checkbox")),
-            fieldId = "incentive",
+            fieldId = s"incentive",
             index = index,
             value = value.toString,
-            behaviour = None
           )
           case YesRentFreePeriod => CheckboxItemViewModel(
             content = Text(messages(s"didYouGetIncentiveForNotTriggeringBreakClause.checkbox1")),
-            fieldId = "incentive",
+            fieldId = s"incentive",
             index = index,
             value = value.toString,
-            behaviour = None
           )
           case Divider => CheckboxItemViewModel(
-            fieldId = "incentive",
+            fieldId = s"incentive",
             index = index,
             value = value.toString,
             divider = messages("service.or")
           )
           case No => CheckboxItemViewModel(
             content = Text(messages(s"didYouGetIncentiveForNotTriggeringBreakClause.checkbox2")),
-            fieldId = "incentive",
+            fieldId = s"incentive",
             index = index,
             value = value.toString,
             behaviour = Some(ExclusiveCheckbox)
@@ -73,7 +71,6 @@ object Incentive extends Enumerable.Implicits {
         }
     }
   }
-
   implicit val enumerable: Enumerable[Incentive] =
     Enumerable(values.map(v => v.toString -> v) *)
 }

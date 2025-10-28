@@ -510,7 +510,7 @@ didYouGetIncentiveForNotTriggeringBreakClause.hint = Select all that apply
 didYouGetIncentiveForNotTriggeringBreakClause.checkbox = Yes, I got a lump sum
 didYouGetIncentiveForNotTriggeringBreakClause.checkbox1 = Yes, I got a rent-free period
 didYouGetIncentiveForNotTriggeringBreakClause.checkbox2 = No, I did not get an incentive
-didYouGetIncentiveForNotTriggeringBreakClause.required.error = Select which incentives you got for not triggering the break clause, or select ‘No, I did not get an incentive'
+didYouGetIncentiveForNotTriggeringBreakClause.required.error = Select which incentives you got for not triggering the break clause, or select ''No, I did not get an incentive''
 
 #About the rent free period
 aboutTheRentFreePeriod.title = About the rent-free period

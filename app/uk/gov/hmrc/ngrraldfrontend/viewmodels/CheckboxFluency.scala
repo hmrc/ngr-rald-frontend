@@ -31,28 +31,37 @@ object checkbox extends CheckboxFluency
 trait CheckboxFluency {
   object CheckboxesViewModel extends ErrorMessageAwareness with FieldsetFluency {
     def apply(
-               form: Form[?],
+               form: Form[_],
+               idPrefix: String,
                name: String,
                items: Seq[CheckboxItem],
-               legend: Legend
+               legend: Legend,
+               hint: Option[Hint] = None
              )(implicit messages: Messages): Checkboxes =
       apply(
         form = form,
+        idPrefix = idPrefix,
         name = name,
         items = items,
+        hint = hint,
         fieldset = FieldsetViewModel(legend)
       )
+
     def apply(
-               form: Form[?],
+               form: Form[_],
+               idPrefix: String,
                name: String,
+               hint: Option[Hint],
                items: Seq[CheckboxItem],
                fieldset: Fieldset
              )(implicit messages: Messages): Checkboxes =
       Checkboxes(
-        fieldset     = Some(fieldset),
-        name         = name,
-        errorMessage = errorMessage(form(name)),
-        items        = items.map {
+        fieldset = Some(fieldset),
+        idPrefix = Some(idPrefix),
+        name = name,
+        hint = hint,
+        errorMessage = errorMessage(form("incentive")),
+        items = items.map {
           item =>
             item.copy(checked = form.data.exists(data => data._2 == item.value))
         }
@@ -60,7 +69,7 @@ trait CheckboxFluency {
   }
   implicit class FluentCheckboxes(checkboxes: Checkboxes) {
     def withHint(hint: Hint): Checkboxes =
-      checkboxes copy (hint = Some(hint))
+      checkboxes.copy(hint = Some(hint))
   }
   object CheckboxItemViewModel {
 
@@ -74,8 +83,6 @@ trait CheckboxFluency {
              ): CheckboxItem =
       CheckboxItem(
         content = content,
-        id      = Some(s"${fieldId}_$index"),
-        name    = Some(s"$fieldId[$index]"),
         value = value,
         hint = hint,
         behaviour = behaviour
@@ -89,8 +96,7 @@ trait CheckboxFluency {
              ): CheckboxItem =
       CheckboxItem(
         content = Empty,
-        id      = Some(fieldId),
-        name    = Some(fieldId),
+        name = Some(s"$fieldId"),
         value = value,
         divider = Some(divider)
       )
