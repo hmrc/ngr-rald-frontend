@@ -11,6 +11,7 @@ service.or = or
 
 #Common
 common.pound = £
+date.hint = For example, 27 6 2026
 
 #NavigationBar
 nav.home=Account home
@@ -186,6 +187,41 @@ didYouAgreeRentWithLandlord.title = Did you agree the rent with your landlord or
 didYouAgreeRentWithLandlord.yes = Yes
 didYouAgreeRentWithLandlord.no = No, a court set the rent
 didYouAgreeRentWithLandlord.error.required = Select yes if you agreed the rent with your landlord or their agent
+
+# ProvideDetailsOfFirstRentPeriod
+provideDetailsOfFirstRentPeriod.title = First rent period
+
+provideDetailsOfFirstRentPeriod.startDate.label = When does the first rent period start?
+provideDetailsOfFirstRentPeriod.startDate.required.error = Enter the start date of the first rent period
+provideDetailsOfFirstRentPeriod.startDate.day.required.error = Start date of the first rent period must include a day
+provideDetailsOfFirstRentPeriod.startDate.month.required.error = Start date of the first rent period must include a month
+provideDetailsOfFirstRentPeriod.startDate.year.required.error = Start date of the first rent period must include a year
+provideDetailsOfFirstRentPeriod.startDate.dayAndMonth.required.error = Start date of the first rent period must include a day and month
+provideDetailsOfFirstRentPeriod.startDate.dayAndYear.required.error = Start date of the first rent period must include a day and year
+provideDetailsOfFirstRentPeriod.startDate.monthAndYear.required.error = Start date of the first rent period must include a month and year
+provideDetailsOfFirstRentPeriod.startDate.invalid.error = Start date of the first rent period must be a real date
+provideDetailsOfFirstRentPeriod.startDate.before.1900.error = Year for the first rent period start date must be 1900 or after
+
+provideDetailsOfFirstRentPeriod.endDate.label = When does the first rent period end?
+provideDetailsOfFirstRentPeriod.endDate.required.error = Enter the end date of the first rent period
+provideDetailsOfFirstRentPeriod.endDate.day.required.error = End date of the first rent period must include a day
+provideDetailsOfFirstRentPeriod.endDate.month.required.error = End date of the first rent period must include a month
+provideDetailsOfFirstRentPeriod.endDate.year.required.error = End date of the first rent period must include a year
+provideDetailsOfFirstRentPeriod.endDate.dayAndMonth.required.error = End date of the first rent period must include a day and month
+provideDetailsOfFirstRentPeriod.endDate.dayAndYear.required.error = End date of the first rent period must include a day and year
+provideDetailsOfFirstRentPeriod.endDate.monthAndYear.required.error = End date of the first rent period must include a month and year
+provideDetailsOfFirstRentPeriod.endDate.invalid.error = End date of the first rent period must be a real date
+provideDetailsOfFirstRentPeriod.endDate.before.1900.error = Year for the first rent period end date must be 1900 or after
+provideDetailsOfFirstRentPeriod.endDate.before.startDate.error = End date of this rent period must be a date after the period starts
+
+provideDetailsOfFirstRentPeriod.firstPeriod.radio.label = Do you pay rent in this period?
+provideDetailsOfFirstRentPeriod.firstPeriod.radio.conditional.hint.bold = How much is the rent for this period (excluding VAT)?
+provideDetailsOfFirstRentPeriod.firstPeriod.radio.conditional.hint = Enter the amount you pay each year (excluding VAT) even if the period is for more or less than a year.
+provideDetailsOfFirstRentPeriod.firstPeriod.radio.no = No, this is a rent-free period
+provideDetailsOfFirstRentPeriod.firstPeriod.radio.error.required = Select yes if you pay rent in this period
+provideDetailsOfFirstRentPeriod.firstPeriod.amount.required.error = Enter the rent for the first rent period, in pounds
+provideDetailsOfFirstRentPeriod.firstPeriod.amount.invalid.error = Rent for the first rent period must be a number, like 30,000
+provideDetailsOfFirstRentPeriod.firstPeriod.amount.max.error = Rent for the first rent period must be £9,999,999.99 or less
 
 #ProvideDetailsOfFirstSecondRentPeriod
 provideDetailsOfFirstSecondRentPeriod.title = Provide details of each rent period

@@ -76,6 +76,12 @@ POST       /did-you-agree-rent-with-landlord            uk.gov.hmrc.ngrraldfront
 GET        /did-you-agree-rent-with-landlord/change     uk.gov.hmrc.ngrraldfrontend.controllers.DidYouAgreeRentWithLandlordController.show(mode: Mode = CheckMode)
 POST       /did-you-agree-rent-with-landlord/change     uk.gov.hmrc.ngrraldfrontend.controllers.DidYouAgreeRentWithLandlordController.submit(mode: Mode = CheckMode)
 
+#Provide details of first rent period
+GET        /provide-details-of-first-rent-period            uk.gov.hmrc.ngrraldfrontend.controllers.ProvideDetailsOfFirstRentPeriodController.show(mode: Mode = NormalMode)
+POST       /provide-details-of-first-rent-period            uk.gov.hmrc.ngrraldfrontend.controllers.ProvideDetailsOfFirstRentPeriodController.submit(mode: Mode = NormalMode)
+GET        /provide-details-of-first-rent-period/change     uk.gov.hmrc.ngrraldfrontend.controllers.ProvideDetailsOfFirstRentPeriodController.show(mode: Mode = CheckMode)
+POST       /provide-details-of-first-rent-period/change     uk.gov.hmrc.ngrraldfrontend.controllers.ProvideDetailsOfFirstRentPeriodController.submit(mode: Mode = CheckMode)
+
 #Provide details of first second rent period
 GET        /provide-details-of-first-second-rent-period            uk.gov.hmrc.ngrraldfrontend.controllers.ProvideDetailsOfFirstSecondRentPeriodController.show(mode: Mode = NormalMode)
 POST       /provide-details-of-first-second-rent-period            uk.gov.hmrc.ngrraldfrontend.controllers.ProvideDetailsOfFirstSecondRentPeriodController.submit(mode: Mode = NormalMode)

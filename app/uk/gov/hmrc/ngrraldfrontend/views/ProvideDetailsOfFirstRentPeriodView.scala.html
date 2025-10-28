@@ -1,0 +1,59 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
+
+@import uk.gov.hmrc.ngrraldfrontend.viewmodels.govuk.all._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.ngrraldfrontend.views.html.components._
+@import uk.gov.hmrc.ngrraldfrontend.models.ProvideDetailsOfFirstRentPeriod
+
+@this(
+        layout: Layout,
+        formHelper: FormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        dateInputField: DateTextFields,
+        govukRadios: GovukRadios,
+        saveAndContinueButton: saveAndContinueButton
+)
+
+@(
+        propertyAddress: String,
+        form: Form[ProvideDetailsOfFirstRentPeriod],
+        startDateInput: DateInput,
+        endDateInput: DateInput,
+        isRentPayablePeriodRadio: Radios,
+        mode: Mode
+)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+
+@layout(pageTitle = Some(messages("provideDetailsOfFirstRentPeriod.title")), showBackLink = true, fullWidth = false) {
+
+    @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfFirstRentPeriodController.submit(mode), Symbol("autoComplete") -> "off") {
+
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form, Some("provideDetailsOfFirstRentPeriod"),
+                Some(Seq("startDate", "endDate"))))
+        }
+
+        <span class="govuk-caption-m">@propertyAddress</span>
+        <h1 class="govuk-heading-l">@messages("provideDetailsOfFirstRentPeriod.title")</h1>
+        @dateInputField(form, startDateInput)
+        @dateInputField(form, endDateInput)
+        @govukRadios(isRentPayablePeriodRadio)
+
+        @saveAndContinueButton(msg = messages("service.continue"))
+    }
+}

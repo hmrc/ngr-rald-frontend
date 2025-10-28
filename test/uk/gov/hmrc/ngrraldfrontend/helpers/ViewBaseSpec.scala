@@ -63,6 +63,9 @@ trait ViewBaseSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting with
     element(selector).text()
   }
 
+  def elementValue(selector: String)(implicit document: Document): String =
+    element(selector).`val`()
+
   def asDocument(html: Html): Document = Jsoup.parse(html.toString())
 
   def elementExtinct(cssSelector: String)(implicit document: Document): Assertion = {
