@@ -60,7 +60,6 @@ class DidYouGetIncentiveForNotTriggeringBreakClauseController @Inject()(
 
   def submit(mode: Mode): Action[AnyContent] =
     (authenticate andThen getData).async { implicit request =>
-      println(Console.YELLOW + form + Console.RESET)
       form.bindFromRequest().fold(
         formWithErrors => {
           Future.successful(BadRequest(view(
