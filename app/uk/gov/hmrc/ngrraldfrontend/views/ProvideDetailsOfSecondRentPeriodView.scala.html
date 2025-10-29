@@ -1,0 +1,69 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
+
+@import uk.gov.hmrc.ngrraldfrontend.viewmodels.govuk.all._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.ngrraldfrontend.views.html.components._
+@import uk.gov.hmrc.ngrraldfrontend.models.ProvideDetailsOfSecondRentPeriod
+
+@this(
+        layout: Layout,
+        formHelper: FormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        dateInputField: DateTextFields,
+        inputText: components.InputText,
+        govukRadios: GovukRadios,
+        saveAndContinueButton: saveAndContinueButton
+)
+
+@(
+        propertyAddress: String,
+        form: Form[ProvideDetailsOfSecondRentPeriod],
+        startDateInput: DateInput,
+        endDateInput: DateInput,
+        mode: Mode
+)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+
+@layout(pageTitle = Some(messages("provideDetailsOfSecondRentPeriod.title")), showBackLink = true, fullWidth = false) {
+
+    @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfSecondRentPeriodController.submit(mode), Symbol("autoComplete") -> "off") {
+
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form, Some("provideDetailsOfSecondRentPeriod"),
+                Some(Seq("startDate", "endDate"))))
+        }
+
+        <span class="govuk-caption-m">@propertyAddress</span>
+        <h1 class="govuk-heading-l">@messages("provideDetailsOfSecondRentPeriod.title")</h1>
+        @dateInputField(form, startDateInput)
+        @dateInputField(form, endDateInput)
+        @inputText(
+            form  =   form,
+            id    =  "provideDetailsOfSecondRentPeriod.rentPeriodAmount",
+            name  =  "provideDetailsOfSecondRentPeriod.rentPeriodAmount",
+            label =   messages("provideDetailsOfSecondRentPeriod.rentPeriodAmount.title"),
+            isPageHeading = false,
+            hint  = Some(Hint(content = Text(Messages("provideDetailsOfSecondRentPeriod.firstPeriod.radio.hint")))),
+            isVisible = true,
+            classes = Some("govuk-!-width-one-third"),
+            prefix = Some(PrefixOrSuffix(content = Text("£")))
+        )
+
+        @saveAndContinueButton(msg = messages("service.continue"))
+    }
+}
