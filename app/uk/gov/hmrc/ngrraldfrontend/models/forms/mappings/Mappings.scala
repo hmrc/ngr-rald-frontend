@@ -61,3 +61,6 @@ trait Mappings extends CommonFormValidators with Formatters:
 
   def conditionalMoney(errorKeyPrefix: String, requiredOnCondition: Map[String, String] => Boolean): FieldMapping[Option[BigDecimal]] =
     of(using ConditionalMoneyFormatter(errorKeyPrefix, requiredOnCondition))
+
+  def money(errorKeyPrefix: String): FieldMapping[Option[BigDecimal]] =
+    of(using ConditionalMoneyFormatter(errorKeyPrefix, _ => true))

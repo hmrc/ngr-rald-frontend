@@ -18,12 +18,26 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
 
 @this(govukDateInput: GovukDateInput)
+
 @(form: Form[_], dateInput: DateInput)(implicit messages: Messages)
+
+@formWithCorrectedErrors = @{
+    val secondaryErrors = form.errors.flatMap { formError =>
+        if(formError.messages.head.contains("AndMonth.required.error")) {
+            val monthKey = formError.key.replace(".day", ".month")
+            Seq(formError.copy(key = monthKey))
+        } else if(formError.messages.head.contains("AndYear.required.error")) {
+            val yearKey = formError.key.replace(".day", ".year").replace(".month", ".year")
+            Seq(formError.copy(key = yearKey))
+        } else Seq.empty
+    }
+    form.copy(errors = form.errors ++ secondaryErrors)
+}
 
 @govukDateInput(DateInput(
     id = dateInput.id,
     namePrefix = None,
     fieldset = dateInput.fieldset,
     hint = dateInput.hint,
-    errorMessage = form(dateInput.id).error.map(e => ErrorMessage.errorMessageWithDefaultStringsTranslated(content = Text(messages(e.message, e.args:_*))))
-).withDayMonthYearFormField(form(dateInput.id)))
+    errorMessage = form(dateInput.id).error.map(e => ErrorMessage.errorMessageWithDefaultStringsTranslated(content = Text(messages(e.message, e.args: _*))))
+).withDayMonthYearFormField(formWithCorrectedErrors(dateInput.id)))
