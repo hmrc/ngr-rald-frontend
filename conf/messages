@@ -593,3 +593,10 @@ aboutRepairsAndFittingOut.date.year.required.error = Date you did the repairs or
 aboutRepairsAndFittingOut.date.month.required.error = Date you did the repairs or fitting out must include a month or year
 aboutRepairsAndFittingOut.date.invalid.error = Date you did the repairs or fitting out must be a real date
 aboutRepairsAndFittingOut.date.before.1900.error = Date you did the repairs or fitting out must be 1900 or after
+
+#Has anything else affected the rent
+hasAnythingElseAffectedTheRent.title = Has anything else affected the rent?
+hasAnythingElseAffectedTheRent.required.error = Select yes if anything else has affected the rent.
+hasAnythingElseAffectedTheRent.reason.label = Can you tell us what else has affected the rent?
+hasAnythingElseAffectedTheRent.reason.error.required = Tell us what else has affected your rent
+hasAnythingElseAffectedTheRent.reason.error.maxLength = Maximum character allowed is 250

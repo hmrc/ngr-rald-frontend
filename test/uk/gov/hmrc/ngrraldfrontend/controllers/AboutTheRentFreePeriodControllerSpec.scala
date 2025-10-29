@@ -114,7 +114,7 @@ class AboutTheRentFreePeriodControllerSpec extends ControllerSpecSupport {
 
         val result = controllerProperty(None).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.AboutTheRentFreePeriodController.show(NormalMode).url)
+        redirectLocation(result) mustBe Some(routes.HasAnythingElseAffectedTheRentController.show(NormalMode).url)
       }
       "Return BAD_REQUEST for missing how much input and the correct view" in {
         val fakePostRequest = FakeRequest(routes.AboutTheRentFreePeriodController.submit(NormalMode))

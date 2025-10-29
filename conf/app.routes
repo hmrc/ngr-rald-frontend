@@ -225,3 +225,8 @@ POST       /about-repairs-and-fitting-out                uk.gov.hmrc.ngrraldfron
 GET        /about-repairs-and-fitting-out/change         uk.gov.hmrc.ngrraldfrontend.controllers.AboutRepairsAndFittingOutController.show(mode: Mode = CheckMode)
 POST       /about-repairs-and-fitting-out/change         uk.gov.hmrc.ngrraldfrontend.controllers.AboutRepairsAndFittingOutController.submit(mode: Mode = CheckMode)
 
+#Has anything else affected the rent
+GET        /has-anything-else-affected-the-rent                uk.gov.hmrc.ngrraldfrontend.controllers.HasAnythingElseAffectedTheRentController.show(mode: Mode = NormalMode)
+POST       /has-anything-else-affected-the-rent                uk.gov.hmrc.ngrraldfrontend.controllers.HasAnythingElseAffectedTheRentController.submit(mode: Mode = NormalMode)
+GET        /has-anything-else-affected-the-rent/change         uk.gov.hmrc.ngrraldfrontend.controllers.HasAnythingElseAffectedTheRentController.show(mode: Mode = CheckMode)
+POST       /has-anything-else-affected-the-rent/change         uk.gov.hmrc.ngrraldfrontend.controllers.HasAnythingElseAffectedTheRentController.submit(mode: Mode = CheckMode)

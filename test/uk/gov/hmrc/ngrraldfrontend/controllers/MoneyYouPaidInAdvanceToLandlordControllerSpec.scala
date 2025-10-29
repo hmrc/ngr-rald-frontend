@@ -96,7 +96,7 @@ class MoneyYouPaidInAdvanceToLandlordControllerSpec extends ControllerSpecSuppor
 
         val result = controllerProperty(None).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.MoneyYouPaidInAdvanceToLandlordController.show(NormalMode).url)
+        redirectLocation(result) mustBe Some(routes.HasAnythingElseAffectedTheRentController.show(NormalMode).url)
       }
       "Return BAD_REQUEST for missing how much input and the correct view" in {
         val fakePostRequest = FakeRequest(routes.MoneyYouPaidInAdvanceToLandlordController.submit(NormalMode))

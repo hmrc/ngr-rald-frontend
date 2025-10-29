@@ -79,10 +79,10 @@ object NGRRadio {
   def noButton(radioContent: String = "service.no", conditionalHtml: Option[Html] = None): NGRRadioButtons =
     NGRRadioButtons(radioContent = radioContent, radioValue = `false`, conditionalHtml = conditionalHtml)
 
-  def simpleNgrRadio(radioName: String, hint: Option[String] = None)(implicit messages: Messages): NGRRadio =
+  def simpleNgrRadio(radioName: String, hint: Option[String] = None, yesConditionalHtml: Option[Html] = None, noConditionalHtml: Option[Html] = None)(implicit messages: Messages): NGRRadio =
     NGRRadio(
       radioGroupName = NGRRadioName(radioName),
-      NGRRadioButtons = Seq(NGRRadio.yesButton(), NGRRadio.noButton()),
+      NGRRadioButtons = Seq(NGRRadio.yesButton(conditionalHtml = yesConditionalHtml), NGRRadio.noButton(conditionalHtml = noConditionalHtml)),
       hint = hint
     )  
 
