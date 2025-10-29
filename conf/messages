@@ -223,6 +223,42 @@ provideDetailsOfFirstRentPeriod.firstPeriod.amount.required.error = Enter the re
 provideDetailsOfFirstRentPeriod.firstPeriod.amount.invalid.error = Rent for the first rent period must be a number, like 30,000
 provideDetailsOfFirstRentPeriod.firstPeriod.amount.max.error = Rent for the first rent period must be £9,999,999.99 or less
 
+# ProvideDetailsOfSecondRentPeriod
+provideDetailsOfSecondRentPeriod.title = Second rent period
+
+provideDetailsOfSecondRentPeriod.startDate.label = Second rent period start date
+provideDetailsOfSecondRentPeriod.startDate.hint = This is the day after the first rent period ended
+provideDetailsOfSecondRentPeriod.startDate.required.error = Enter the start date of the second rent period
+provideDetailsOfSecondRentPeriod.startDate.day.required.error = Start date of the second rent period must include a day
+provideDetailsOfSecondRentPeriod.startDate.month.required.error = Start date of the second rent period must include a month
+provideDetailsOfSecondRentPeriod.startDate.year.required.error = Start date of the second rent period must include a year
+provideDetailsOfSecondRentPeriod.startDate.dayAndMonth.required.error = Start date of the second rent period must include a day and month
+provideDetailsOfSecondRentPeriod.startDate.dayAndYear.required.error = Start date of the second rent period must include a day and year
+provideDetailsOfSecondRentPeriod.startDate.monthAndYear.required.error = Start date of the second rent period must include a month and year
+provideDetailsOfSecondRentPeriod.startDate.invalid.error = Start date of the second rent period must be a real date
+provideDetailsOfSecondRentPeriod.startDate.before.1900.error = Year for the second rent period start date must be 1900 or after
+
+provideDetailsOfSecondRentPeriod.endDate.label = When does the second rent period end?
+provideDetailsOfSecondRentPeriod.endDate.required.error = Enter the end date of the second rent period
+provideDetailsOfSecondRentPeriod.endDate.day.required.error = End date of the second rent period must include a day
+provideDetailsOfSecondRentPeriod.endDate.month.required.error = End date of the second rent period must include a month
+provideDetailsOfSecondRentPeriod.endDate.year.required.error = End date of the second rent period must include a year
+provideDetailsOfSecondRentPeriod.endDate.dayAndMonth.required.error = End date of the second rent period must include a day and month
+provideDetailsOfSecondRentPeriod.endDate.dayAndYear.required.error = End date of the second rent period must include a day and year
+provideDetailsOfSecondRentPeriod.endDate.monthAndYear.required.error = End date of the second rent period must include a month and year
+provideDetailsOfSecondRentPeriod.endDate.invalid.error = End date of the second rent period must be a real date
+provideDetailsOfSecondRentPeriod.endDate.before.1900.error = Year for the second rent period end date must be 1900 or after
+provideDetailsOfSecondRentPeriod.endDate.before.startDate.error = End date of this rent period must be a date after the period starts
+
+provideDetailsOfSecondRentPeriod.firstPeriod.radio.label = Do you pay rent in this period?
+provideDetailsOfSecondRentPeriod.rentPeriodAmount.title = How much is the rent for this period (excluding VAT)?
+provideDetailsOfSecondRentPeriod.firstPeriod.radio.hint = Enter the amount you pay each year (excluding VAT) even if the period is for more or less than a year.
+provideDetailsOfSecondRentPeriod.firstPeriod.radio.no = No, this is a rent-free period
+provideDetailsOfSecondRentPeriod.firstPeriod.radio.error.required = Select yes if you pay rent in this period
+provideDetailsOfSecondRentPeriod.rentPeriodAmount.empty.error = Enter the rent for the second rent period, in pounds
+provideDetailsOfSecondRentPeriod.rentPeriodAmount.format.error = Rent for the second rent period must be a number, like 30,000
+provideDetailsOfSecondRentPeriod.rentPeriodAmount.amount.max.error = Rent for the second rent period must be £9,999,999.99 or less
+
 #ProvideDetailsOfFirstSecondRentPeriod
 provideDetailsOfFirstSecondRentPeriod.title = Provide details of each rent period
 provideDetailsOfFirstSecondRentPeriod.date.hint = For example, 27 6 2026
