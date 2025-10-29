@@ -167,7 +167,7 @@ class Navigator @Inject()() {
       case Some(value) => value match {
         case value if value.checkBox.size == 1 && value.checkBox.contains(YesRentFreePeriod) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.AboutTheRentFreePeriodController.show(NormalMode)
         case value if value.checkBox.contains(YesLumpSum) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchWasTheLumpSumController.show(NormalMode)
-        case value => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchWasTheLumpSumController.show(NormalMode)
+        case value => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HasAnythingElseAffectedTheRentController.show(NormalMode)
       }
     }
     case DidYouGetMoneyFromLandlordPage => answers =>
@@ -204,11 +204,11 @@ class Navigator @Inject()() {
 
     case AboutRepairsAndFittingOutPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouGetMoneyFromLandlordController.show(NormalMode)
 
-    case HowMuchWasTheLumpSumPage => answers => //TODO This needs to be amended when the journey is completed - Page that dictates navigation is not yet completed
+    case HowMuchWasTheLumpSumPage => answers =>
       answers.get(DidYouGetIncentiveForNotTriggeringBreakClausePage) match {
         case Some(value) => value match {
-          case value if value.checkBox.size == 1 && value.checkBox.contains(YesLumpSum) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchWasTheLumpSumController.show(NormalMode) //TODO This needs to be amended when the journey is completed          case value if value.checkBox.contains(YesLumpSum) && value.checkBox.contains(YesRentFreePeriod) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.AboutTheRentFreePeriodController.show(NormalMode)
-          case value => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchWasTheLumpSumController.show(NormalMode)
+          case value if value.checkBox.size == 1 && value.checkBox.contains(YesLumpSum) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HasAnythingElseAffectedTheRentController.show(NormalMode)
+          case value => uk.gov.hmrc.ngrraldfrontend.controllers.routes.AboutTheRentFreePeriodController.show(NormalMode)
         }
       }
 
@@ -217,18 +217,18 @@ class Navigator @Inject()() {
       answers.get(DidYouPayAnyMoneyToLandlordPage) match {
         case Some(value) => value match {
           case true => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouPayAnyMoneyToLandlordController.show(NormalMode) //TODO Needs to go to money you got from landlord or previous tenant when this is made
-          case _    => uk.gov.hmrc.ngrraldfrontend.controllers.routes.MoneyYouPaidInAdvanceToLandlordController.show(NormalMode)
+          case _    => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HasAnythingElseAffectedTheRentController.show(NormalMode)
         }
         case None => throw new NotFoundException("Failed to find answers - DidYouPayAnyMoneyToLandlordPage")
       }
-    case AboutTheRentFreePeriodPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.AboutTheRentFreePeriodController.show(NormalMode) //TODO Needs to go to has-anything-else-affected-the-rent when this is made
+    case AboutTheRentFreePeriodPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HasAnythingElseAffectedTheRentController.show(NormalMode)
     case RepairsAndInsurancePage => answers =>
       answers.get(TellUsAboutRentPage) match {
         case Some(value) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.ConfirmBreakClauseController.show(NormalMode)
         case _           => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentReviewController.show(NormalMode)
       }
 
-    case MoneyYouPaidInAdvanceToLandlordPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HasAnythingElseAffectedTheRentController.show(NormalMode) //TODO Needs to go to Has Anything Else Affected The Rent
+    case MoneyYouPaidInAdvanceToLandlordPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HasAnythingElseAffectedTheRentController.show(NormalMode)
 
     case HasAnythingElseAffectedTheRentPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.MoneyYouPaidInAdvanceToLandlordController.show(NormalMode) //TODO check your answers page
   }
