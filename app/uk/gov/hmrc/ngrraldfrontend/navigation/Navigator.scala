@@ -228,7 +228,9 @@ class Navigator @Inject()() {
         case _           => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentReviewController.show(NormalMode)
       }
 
-    case MoneyYouPaidInAdvanceToLandlordPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.MoneyYouPaidInAdvanceToLandlordController.show(NormalMode) //TODO Needs to go to Has Anything Else Affected The Rent
+    case MoneyYouPaidInAdvanceToLandlordPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HasAnythingElseAffectedTheRentController.show(NormalMode) //TODO Needs to go to Has Anything Else Affected The Rent
+
+    case HasAnythingElseAffectedTheRentPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.MoneyYouPaidInAdvanceToLandlordController.show(NormalMode) //TODO check your answers page
   }
 
   //TODO change to check your answers page
