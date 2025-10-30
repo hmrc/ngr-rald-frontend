@@ -21,7 +21,6 @@ import play.api.libs.json.{Json, OFormat}
 import java.time.LocalDate
 
 case class ProvideDetailsOfSecondRentPeriod(
-                                            startDate: LocalDate,
                                             endDate: LocalDate,
                                             rentPeriodAmount: BigDecimal
                                           )

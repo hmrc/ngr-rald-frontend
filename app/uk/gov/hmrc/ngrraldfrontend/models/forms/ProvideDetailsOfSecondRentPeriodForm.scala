@@ -35,15 +35,13 @@ import java.time.LocalDate
 
 object ProvideDetailsOfSecondRentPeriodForm extends CommonFormValidators with NGRDateInput with Mappings:
 
-  private val startDate = "startDate"
   private val endDate = "endDate"
   private val rentPeriodAmount = "provideDetailsOfSecondRentPeriod.rentPeriodAmount"
   private lazy val rentPeriodAmountEmptyError = "provideDetailsOfSecondRentPeriod.rentPeriodAmount.empty.error"
   private lazy val rentPeriodAmountMaxError = "provideDetailsOfSecondRentPeriod.rentPeriodAmount.amount.max.error"
   private lazy val rentPeriodAmountFormatError = "provideDetailsOfSecondRentPeriod.rentPeriodAmount.format.error"
 
-  def startDateInput(using messages: Messages): DateInput =
-    dateInput(startDate, "provideDetailsOfSecondRentPeriod.startDate.label", "provideDetailsOfSecondRentPeriod.startDate.hint")
+//  def startDateInput(using messages: Messages) = LocalDate()
 
   def endDateInput(using messages: Messages): DateInput =
     dateInput(endDate, "provideDetailsOfSecondRentPeriod.endDate.label", "date.hint")
@@ -52,8 +50,6 @@ object ProvideDetailsOfSecondRentPeriodForm extends CommonFormValidators with NG
   val form: Form[ProvideDetailsOfSecondRentPeriod] =
     Form(
       mapping(
-        startDate -> dateMapping(
-          "provideDetailsOfSecondRentPeriod.startDate"),
         endDate -> dateMapping(
           "provideDetailsOfSecondRentPeriod.endDate",
           CompareWithAnotherDateValidation("before.startDate.error", "startDate", (end, start) => start.isBefore(end))
@@ -71,7 +67,6 @@ object ProvideDetailsOfSecondRentPeriodForm extends CommonFormValidators with NG
             maximumValue[BigDecimal](BigDecimal("9999999.99"), rentPeriodAmountMaxError)
           )
       )(ProvideDetailsOfSecondRentPeriod.apply)(o => Some(
-        o.startDate,
         o.endDate,
         o.rentPeriodAmount
       ))
