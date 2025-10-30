@@ -34,7 +34,7 @@
 @(
         propertyAddress: String,
         form: Form[ProvideDetailsOfSecondRentPeriod],
-        startDateInput: DateInput,
+        firstRentPeriodEnd: String,
         endDateInput: DateInput,
         mode: Mode
 )(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
@@ -50,7 +50,11 @@
 
         <span class="govuk-caption-m">@propertyAddress</span>
         <h1 class="govuk-heading-l">@messages("provideDetailsOfSecondRentPeriod.title")</h1>
-        @dateInputField(form, startDateInput)
+        <h1 class="govuk-heading-s">@messages("provideDetailsOfSecondRentPeriod.startDate.label")</h1>
+        <p class="govuk-hint">@messages("provideDetailsOfSecondRentPeriod.startDate.hint")</p>
+
+        <p class="govuk-body">@firstRentPeriodEnd</p>
+
         @dateInputField(form, endDateInput)
         @inputText(
             form  =   form,
