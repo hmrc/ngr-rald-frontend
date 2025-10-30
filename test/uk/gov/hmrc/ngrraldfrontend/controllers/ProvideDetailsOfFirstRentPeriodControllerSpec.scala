@@ -125,7 +125,7 @@ class ProvideDetailsOfFirstRentPeriodControllerSpec extends ControllerSpecSuppor
             )
         ))
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.HowMuchIsTotalAnnualRentController.show(NormalMode).url)
+        redirectLocation(result) mustBe Some(routes.ProvideDetailsOfSecondRentPeriodController.show(NormalMode).url)
       }
 
       "return SEE_OTHER after submitting with start date, end date, no radio button selected" in {
@@ -143,7 +143,7 @@ class ProvideDetailsOfFirstRentPeriodControllerSpec extends ControllerSpecSuppor
             )
         ))
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.HowMuchIsTotalAnnualRentController.show(NormalMode).url)
+        redirectLocation(result) mustBe Some(routes.ProvideDetailsOfSecondRentPeriodController.show(NormalMode).url)
       }
 
       "return form with errors when day is empty for the start date" in {

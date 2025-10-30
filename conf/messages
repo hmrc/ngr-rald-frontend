@@ -228,15 +228,6 @@ provideDetailsOfSecondRentPeriod.title = Second rent period
 
 provideDetailsOfSecondRentPeriod.startDate.label = Second rent period start date
 provideDetailsOfSecondRentPeriod.startDate.hint = This is the day after the first rent period ended
-provideDetailsOfSecondRentPeriod.startDate.required.error = Enter the start date of the second rent period
-provideDetailsOfSecondRentPeriod.startDate.day.required.error = Start date of the second rent period must include a day
-provideDetailsOfSecondRentPeriod.startDate.month.required.error = Start date of the second rent period must include a month
-provideDetailsOfSecondRentPeriod.startDate.year.required.error = Start date of the second rent period must include a year
-provideDetailsOfSecondRentPeriod.startDate.dayAndMonth.required.error = Start date of the second rent period must include a day and month
-provideDetailsOfSecondRentPeriod.startDate.dayAndYear.required.error = Start date of the second rent period must include a day and year
-provideDetailsOfSecondRentPeriod.startDate.monthAndYear.required.error = Start date of the second rent period must include a month and year
-provideDetailsOfSecondRentPeriod.startDate.invalid.error = Start date of the second rent period must be a real date
-provideDetailsOfSecondRentPeriod.startDate.before.1900.error = Year for the second rent period start date must be 1900 or after
 
 provideDetailsOfSecondRentPeriod.endDate.label = When does the second rent period end?
 provideDetailsOfSecondRentPeriod.endDate.required.error = Enter the end date of the second rent period

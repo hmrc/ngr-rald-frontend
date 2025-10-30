@@ -19,16 +19,9 @@ package uk.gov.hmrc.ngrraldfrontend.models.forms
 import play.api.data.Form
 import play.api.data.Forms.*
 import play.api.i18n.*
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.dateinput.DateInput
-import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.{Fieldset, Legend}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.hint.Hint
-import uk.gov.hmrc.govukfrontend.views.viewmodels.input.PrefixOrSuffix
 import uk.gov.hmrc.ngrraldfrontend.models.*
-import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio
-import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{ngrRadio, noButton, yesButton}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.{CompareWithAnotherDateValidation, DateValidation, Mappings}
-import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 import scala.math.BigDecimal.RoundingMode
 
 import java.time.LocalDate
@@ -40,9 +33,7 @@ object ProvideDetailsOfSecondRentPeriodForm extends CommonFormValidators with NG
   private lazy val rentPeriodAmountEmptyError = "provideDetailsOfSecondRentPeriod.rentPeriodAmount.empty.error"
   private lazy val rentPeriodAmountMaxError = "provideDetailsOfSecondRentPeriod.rentPeriodAmount.amount.max.error"
   private lazy val rentPeriodAmountFormatError = "provideDetailsOfSecondRentPeriod.rentPeriodAmount.format.error"
-
-//  def startDateInput(using messages: Messages) = LocalDate()
-
+  
   def endDateInput(using messages: Messages): DateInput =
     dateInput(endDate, "provideDetailsOfSecondRentPeriod.endDate.label", "date.hint")
 
