@@ -40,10 +40,10 @@ object ProvideDetailsOfFirstRentPeriodForm extends CommonFormValidators with NGR
   private val rentPeriodAmount = "rentPeriodAmount"
 
   def startDateInput(using messages: Messages): DateInput =
-    dateInput(startDate, "provideDetailsOfFirstRentPeriod.startDate.label", "date.hint")
+    dateInput(startDate, "provideDetailsOfFirstRentPeriod.startDate.label")
 
   def endDateInput(using messages: Messages): DateInput =
-    dateInput(endDate, "provideDetailsOfFirstRentPeriod.endDate.label", "date.hint")
+    dateInput(endDate, "provideDetailsOfFirstRentPeriod.endDate.label")
 
   def firstRentPeriodRadio(form: Form[ProvideDetailsOfFirstRentPeriod], inputText: InputText)(using messages: Messages): NGRRadio =
     ngrRadio(

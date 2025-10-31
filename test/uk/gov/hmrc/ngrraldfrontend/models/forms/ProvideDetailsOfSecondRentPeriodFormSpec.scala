@@ -37,7 +37,7 @@ class ProvideDetailsOfSecondRentPeriodFormSpec extends AnyWordSpec with Matchers
         "endDate.day" -> "31",
         "endDate.month" -> "1",
         "endDate.year" -> "2025",
-        "provideDetailsOfSecondRentPeriod.rentPeriodAmount" -> "1,777,000.99"
+        "provideDetailsOfSecondRentPeriod" -> "1,777,000.99"
       )
       val boundForm = ProvideDetailsOfSecondRentPeriodForm.form.bind(data)
 
@@ -53,7 +53,7 @@ class ProvideDetailsOfSecondRentPeriodFormSpec extends AnyWordSpec with Matchers
         "endDate.day" -> "31",
         "endDate.month" -> "1",
         "endDate.year" -> "2025",
-        "provideDetailsOfSecondRentPeriod.rentPeriodAmount" -> "1,777,000.449"
+        "provideDetailsOfSecondRentPeriod" -> "1,777,000.449"
       )
       val boundForm = ProvideDetailsOfSecondRentPeriodForm.form.bind(data)
 
@@ -70,7 +70,7 @@ class ProvideDetailsOfSecondRentPeriodFormSpec extends AnyWordSpec with Matchers
         "endDate.day" -> "31",
         "endDate.month" -> "1",
         "endDate.year" -> "2025",
-        "provideDetailsOfSecondRentPeriod.rentPeriodAmount" -> "1999000"
+        "provideDetailsOfSecondRentPeriod" -> "1999000"
       )
     }
 
@@ -79,7 +79,7 @@ class ProvideDetailsOfSecondRentPeriodFormSpec extends AnyWordSpec with Matchers
         "endDate.day" -> "33",
         "endDate.month" -> "1",
         "endDate.year" -> "2025",
-        "provideDetailsOfSecondRentPeriod.rentPeriodAmount" -> "777,000.00"
+        "provideDetailsOfSecondRentPeriod" -> "777,000.00"
       )
       val boundForm = ProvideDetailsOfSecondRentPeriodForm.form.bind(data)
 
@@ -95,7 +95,7 @@ class ProvideDetailsOfSecondRentPeriodFormSpec extends AnyWordSpec with Matchers
         "endDate.day" -> "31",
         "endDate.month" -> "1",
         "endDate.year" -> "1899",
-        "provideDetailsOfSecondRentPeriod.rentPeriodAmount" -> "777000"
+        "provideDetailsOfSecondRentPeriod" -> "777000"
       )
       val boundForm = ProvideDetailsOfSecondRentPeriodForm.form.bind(data)
 
@@ -111,14 +111,14 @@ class ProvideDetailsOfSecondRentPeriodFormSpec extends AnyWordSpec with Matchers
         "endDate.day" -> "31",
         "endDate.month" -> "1",
         "endDate.year" -> "2025",
-        "provideDetailsOfSecondRentPeriod.rentPeriodAmount" -> ""
+        "provideDetailsOfSecondRentPeriod" -> ""
       )
       val boundForm = ProvideDetailsOfSecondRentPeriodForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
       boundForm.errors.size shouldBe 1
       boundForm.errors should contain(
-        FormError("provideDetailsOfSecondRentPeriod.rentPeriodAmount", "provideDetailsOfSecondRentPeriod.rentPeriodAmount.empty.error")
+        FormError("provideDetailsOfSecondRentPeriod", "provideDetailsOfSecondRentPeriod.required.error")
       )
     }
 
@@ -127,14 +127,14 @@ class ProvideDetailsOfSecondRentPeriodFormSpec extends AnyWordSpec with Matchers
         "endDate.day" -> "31",
         "endDate.month" -> "1",
         "endDate.year" -> "2025",
-        "provideDetailsOfSecondRentPeriod.rentPeriodAmount" -> "xyz"
+        "provideDetailsOfSecondRentPeriod" -> "xyz"
       )
       val boundForm = ProvideDetailsOfSecondRentPeriodForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
       boundForm.errors.size shouldBe 1
       boundForm.errors should contain(
-        FormError("provideDetailsOfSecondRentPeriod.rentPeriodAmount", "provideDetailsOfSecondRentPeriod.rentPeriodAmount.amount.invalid.error")
+        FormError("provideDetailsOfSecondRentPeriod", "provideDetailsOfSecondRentPeriod.invalid.error")
       )
     }
 
@@ -143,14 +143,14 @@ class ProvideDetailsOfSecondRentPeriodFormSpec extends AnyWordSpec with Matchers
         "endDate.day" -> "31",
         "endDate.month" -> "1",
         "endDate.year" -> "2025",
-        "provideDetailsOfSecondRentPeriod.rentPeriodAmount" -> "10,000,000.00"
+        "provideDetailsOfSecondRentPeriod" -> "10,000,000.00"
       )
       val boundForm = ProvideDetailsOfSecondRentPeriodForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
       boundForm.errors.size shouldBe 1
       boundForm.errors should contain(
-        FormError("provideDetailsOfSecondRentPeriod.rentPeriodAmount", "provideDetailsOfSecondRentPeriod.rentPeriodAmount.amount.max.error")
+        FormError("provideDetailsOfSecondRentPeriod", "provideDetailsOfSecondRentPeriod.max.error")
       )
     }
 

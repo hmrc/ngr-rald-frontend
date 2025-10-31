@@ -52,17 +52,16 @@
         <h1 class="govuk-heading-l">@messages("provideDetailsOfSecondRentPeriod.title")</h1>
         <h2 class="govuk-heading-s">@messages("provideDetailsOfSecondRentPeriod.startDate.label")</h2>
         <p class="govuk-hint">@messages("provideDetailsOfSecondRentPeriod.startDate.hint")</p>
-
         <p class="govuk-body">@firstRentPeriodEnd</p>
 
         @dateInputField(form, endDateInput)
         @inputText(
             form  =   form,
-            id    =  "provideDetailsOfSecondRentPeriod.rentPeriodAmount",
-            name  =  "provideDetailsOfSecondRentPeriod.rentPeriodAmount",
-            label =   messages("provideDetailsOfSecondRentPeriod.rentPeriodAmount.title"),
+            id    =  "provideDetailsOfSecondRentPeriod",
+            name  =  "provideDetailsOfSecondRentPeriod",
+            label =   messages("provideDetailsOfSecondRentPeriod.heading"),
             isPageHeading = false,
-            hint  = Some(Hint(content = Text(Messages("provideDetailsOfSecondRentPeriod.firstPeriod.radio.hint")))),
+            hint  = Some(Hint(content = Text(Messages("provideDetailsOfSecondRentPeriod.hint")))),
             isVisible = true,
             classes = Some("govuk-!-width-one-third"),
             prefix = Some(PrefixOrSuffix(content = Text("£")))

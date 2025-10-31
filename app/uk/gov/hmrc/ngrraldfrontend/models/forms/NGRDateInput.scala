@@ -27,7 +27,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.hint.Hint
  */
 trait NGRDateInput:
 
-  def dateInput(dateInputName: String, label: String, hint: String, isPageHeading: Boolean = false)(using messages: Messages): DateInput =
+  def dateInput(dateInputName: String, label: String, isPageHeading: Boolean = false)(using messages: Messages): DateInput =
     DateInput(
       id = dateInputName,
       namePrefix = Some(dateInputName),
@@ -39,6 +39,6 @@ trait NGRDateInput:
         ))
       )),
       hint = Some(Hint(
-        content = Text(messages(hint))
+        content = Text(messages("date.hint"))
       ))
     )
