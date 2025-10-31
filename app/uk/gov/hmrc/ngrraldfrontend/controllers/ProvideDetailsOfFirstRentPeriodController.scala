@@ -66,22 +66,12 @@ class ProvideDetailsOfFirstRentPeriodController @Inject()(view: ProvideDetailsOf
         .bindFromRequest()
         .fold(
           formWithErrors =>
-            val correctedFormErrors = formWithErrors.errors.map { formError =>
-              (formError.key, formError.messages) match
-                case (key, messages) if messages.head.contains("provideDetailsOfFirstRentPeriod.startDate") =>
-                  setCorrectKey(formError, "provideDetailsOfFirstRentPeriod", "startDate")
-                case (key, messages) if messages.head.contains("provideDetailsOfFirstRentPeriod.endDate") =>
-                  setCorrectKey(formError, "provideDetailsOfFirstRentPeriod", "endDate")
-                case _ =>
-                  formError
-            }
-            val formWithCorrectedErrors = formWithErrors.copy(errors = correctedFormErrors)
             Future.successful(BadRequest(view(
               request.property.addressFull,
-              formWithCorrectedErrors,
+              formWithErrors,
               startDateInput,
               endDateInput,
-              buildRadios(formWithCorrectedErrors, firstRentPeriodRadio(formWithCorrectedErrors, inputText)),
+              buildRadios(formWithErrors, firstRentPeriodRadio(formWithErrors, inputText)),
               mode
             ))),
           provideDetailsOfFirstRentPeriod =>
