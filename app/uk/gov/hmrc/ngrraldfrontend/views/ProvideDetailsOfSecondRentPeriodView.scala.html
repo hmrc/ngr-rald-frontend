@@ -27,7 +27,6 @@
         govukErrorSummary: GovukErrorSummary,
         dateInputField: DateTextFields,
         inputText: components.InputText,
-        govukRadios: GovukRadios,
         saveAndContinueButton: saveAndContinueButton
 )
 
@@ -57,11 +56,11 @@
         @dateInputField(form, endDateInput)
         @inputText(
             form  =   form,
-            id    =  "provideDetailsOfSecondRentPeriod",
-            name  =  "provideDetailsOfSecondRentPeriod",
-            label =   messages("provideDetailsOfSecondRentPeriod.heading"),
+            id    =  "rentPeriodAmount",
+            name  =  "rentPeriodAmount",
+            label =   messages("provideDetailsOfSecondRentPeriod.rentPeriodAmount.heading"),
             isPageHeading = false,
-            hint  = Some(Hint(content = Text(Messages("provideDetailsOfSecondRentPeriod.hint")))),
+            hint  = Some(Hint(content = Text(Messages("provideDetailsOfSecondRentPeriod.rentPeriodAmount.hint")))),
             isVisible = true,
             classes = Some("govuk-!-width-one-third"),
             prefix = Some(PrefixOrSuffix(content = Text("£")))

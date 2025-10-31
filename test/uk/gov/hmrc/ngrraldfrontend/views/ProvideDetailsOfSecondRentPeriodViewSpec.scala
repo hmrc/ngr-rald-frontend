@@ -65,9 +65,9 @@ class ProvideDetailsOfSecondRentPeriodViewSpec extends ViewBaseSpec:
     val endDateMonth = "#endDate\\.month"
     val endDateYear = "#endDate\\.year"
 
-    val rentAmountLabel = "label[for=provideDetailsOfSecondRentPeriod]"
-    val rentAmountHint = "#provideDetailsOfSecondRentPeriod\\-hint"
-    val rentAmount = "#provideDetailsOfSecondRentPeriod"
+    val rentAmountLabel = "label[for=rentPeriodAmount]"
+    val rentAmountHint = "#rentPeriodAmount-hint"
+    val rentAmount = "#rentPeriodAmount"
     val continue = "#continue"
 
   private val form = ProvideDetailsOfSecondRentPeriodForm.form.fillAndValidate(

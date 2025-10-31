@@ -37,7 +37,7 @@ class ProvideDetailsOfSecondRentPeriodFormSpec extends AnyWordSpec with Matchers
         "endDate.day" -> "31",
         "endDate.month" -> "1",
         "endDate.year" -> "2025",
-        "provideDetailsOfSecondRentPeriod" -> "1,777,000.99"
+        "rentPeriodAmount" -> "1,777,000.99"
       )
       val boundForm = ProvideDetailsOfSecondRentPeriodForm.form.bind(data)
 
@@ -53,7 +53,7 @@ class ProvideDetailsOfSecondRentPeriodFormSpec extends AnyWordSpec with Matchers
         "endDate.day" -> "31",
         "endDate.month" -> "1",
         "endDate.year" -> "2025",
-        "provideDetailsOfSecondRentPeriod" -> "1,777,000.449"
+        "rentPeriodAmount" -> "1,777,000.449"
       )
       val boundForm = ProvideDetailsOfSecondRentPeriodForm.form.bind(data)
 
@@ -70,7 +70,7 @@ class ProvideDetailsOfSecondRentPeriodFormSpec extends AnyWordSpec with Matchers
         "endDate.day" -> "31",
         "endDate.month" -> "1",
         "endDate.year" -> "2025",
-        "provideDetailsOfSecondRentPeriod" -> "1999000"
+        "rentPeriodAmount" -> "1999000"
       )
     }
 
@@ -79,7 +79,7 @@ class ProvideDetailsOfSecondRentPeriodFormSpec extends AnyWordSpec with Matchers
         "endDate.day" -> "33",
         "endDate.month" -> "1",
         "endDate.year" -> "2025",
-        "provideDetailsOfSecondRentPeriod" -> "777,000.00"
+        "rentPeriodAmount" -> "777,000.00"
       )
       val boundForm = ProvideDetailsOfSecondRentPeriodForm.form.bind(data)
 
@@ -95,7 +95,7 @@ class ProvideDetailsOfSecondRentPeriodFormSpec extends AnyWordSpec with Matchers
         "endDate.day" -> "31",
         "endDate.month" -> "1",
         "endDate.year" -> "1899",
-        "provideDetailsOfSecondRentPeriod" -> "777000"
+        "rentPeriodAmount" -> "777000"
       )
       val boundForm = ProvideDetailsOfSecondRentPeriodForm.form.bind(data)
 
@@ -111,14 +111,14 @@ class ProvideDetailsOfSecondRentPeriodFormSpec extends AnyWordSpec with Matchers
         "endDate.day" -> "31",
         "endDate.month" -> "1",
         "endDate.year" -> "2025",
-        "provideDetailsOfSecondRentPeriod" -> ""
+        "rentPeriodAmount" -> ""
       )
       val boundForm = ProvideDetailsOfSecondRentPeriodForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
       boundForm.errors.size shouldBe 1
       boundForm.errors should contain(
-        FormError("provideDetailsOfSecondRentPeriod", "provideDetailsOfSecondRentPeriod.required.error")
+        FormError("rentPeriodAmount", "provideDetailsOfSecondRentPeriod.rentPeriodAmount.required.error")
       )
     }
 
@@ -127,14 +127,14 @@ class ProvideDetailsOfSecondRentPeriodFormSpec extends AnyWordSpec with Matchers
         "endDate.day" -> "31",
         "endDate.month" -> "1",
         "endDate.year" -> "2025",
-        "provideDetailsOfSecondRentPeriod" -> "xyz"
+        "rentPeriodAmount" -> "xyz"
       )
       val boundForm = ProvideDetailsOfSecondRentPeriodForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
       boundForm.errors.size shouldBe 1
       boundForm.errors should contain(
-        FormError("provideDetailsOfSecondRentPeriod", "provideDetailsOfSecondRentPeriod.invalid.error")
+        FormError("rentPeriodAmount", "provideDetailsOfSecondRentPeriod.rentPeriodAmount.invalid.error")
       )
     }
 
@@ -143,14 +143,14 @@ class ProvideDetailsOfSecondRentPeriodFormSpec extends AnyWordSpec with Matchers
         "endDate.day" -> "31",
         "endDate.month" -> "1",
         "endDate.year" -> "2025",
-        "provideDetailsOfSecondRentPeriod" -> "10,000,000.00"
+        "rentPeriodAmount" -> "10,000,000.00"
       )
       val boundForm = ProvideDetailsOfSecondRentPeriodForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
       boundForm.errors.size shouldBe 1
       boundForm.errors should contain(
-        FormError("provideDetailsOfSecondRentPeriod", "provideDetailsOfSecondRentPeriod.max.error")
+        FormError("rentPeriodAmount", "provideDetailsOfSecondRentPeriod.rentPeriodAmount.max.error")
       )
     }
 

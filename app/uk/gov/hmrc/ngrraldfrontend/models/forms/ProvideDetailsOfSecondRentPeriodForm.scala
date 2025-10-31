@@ -29,7 +29,7 @@ import java.time.LocalDate
 object ProvideDetailsOfSecondRentPeriodForm extends CommonFormValidators with NGRDateInput with Mappings:
 
   private val endDate = "endDate"
-  private val rentPeriodAmount = "provideDetailsOfSecondRentPeriod"
+  private val rentPeriodAmount = "rentPeriodAmount"
   private lazy val rentPeriodAmountEmptyError = "provideDetailsOfSecondRentPeriod.empty.error"
   private lazy val rentPeriodAmountMaxError = "provideDetailsOfSecondRentPeriod.amount.max.error"
   private lazy val rentPeriodAmountFormatError = "provideDetailsOfSecondRentPeriod.format.error"
@@ -42,7 +42,7 @@ object ProvideDetailsOfSecondRentPeriodForm extends CommonFormValidators with NG
     Form(
       mapping(
         endDate -> dateMapping("provideDetailsOfSecondRentPeriod.endDate"),
-        rentPeriodAmount -> money(rentPeriodAmount)
+        rentPeriodAmount -> money("provideDetailsOfSecondRentPeriod.rentPeriodAmount")
       )(ProvideDetailsOfSecondRentPeriod.apply)(o => Some(
         o.endDate,
         o.rentPeriodAmount
