@@ -17,7 +17,7 @@
 package uk.gov.hmrc.ngrraldfrontend.models.forms.mappings
 
 import models.Enumerable
-import play.api.data.FieldMapping
+import play.api.data.{FieldMapping, Mapping}
 import play.api.data.Forms.of
 import play.api.data.validation.{Constraint, Valid, ValidationResult}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.CommonFormValidators
@@ -62,5 +62,5 @@ trait Mappings extends CommonFormValidators with Formatters:
   def conditionalMoney(errorKeyPrefix: String, requiredOnCondition: Map[String, String] => Boolean): FieldMapping[Option[BigDecimal]] =
     of(using ConditionalMoneyFormatter(errorKeyPrefix, requiredOnCondition))
 
-  def money(errorKeyPrefix: String): FieldMapping[Option[BigDecimal]] =
-    of(using ConditionalMoneyFormatter(errorKeyPrefix, _ => true))
+  def money(errorKeyPrefix: String): Mapping[BigDecimal] =
+    of(using ConditionalMoneyFormatter(errorKeyPrefix, _ => true)).transform(_.get, Option(_))

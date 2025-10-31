@@ -70,7 +70,7 @@ class Navigator @Inject()() {
     case AgreedRentChangePage => answers =>
       answers.get(AgreedRentChangePage) match {
         case Some(value) => value match {
-          case true => uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfFirstSecondRentPeriodController.show(NormalMode)
+          case true => uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfFirstRentPeriodController.show(NormalMode)
           case _    => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchIsTotalAnnualRentController.show(NormalMode)
         }
         case None => throw new NotFoundException("Failed to find answers")
@@ -94,7 +94,8 @@ class Navigator @Inject()() {
           }
         case None => throw new NotFoundException("Failed to find answers")
       }
-    case ProvideDetailsOfFirstRentPeriodPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchIsTotalAnnualRentController.show(NormalMode)
+    case ProvideDetailsOfFirstRentPeriodPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfSecondRentPeriodController.show(NormalMode)
+    case ProvideDetailsOfSecondRentPeriodPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfSecondRentPeriodController.show(NormalMode) //TODO Needs to go to card layout rent-periods
     case ProvideDetailsOfFirstSecondRentPeriodPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentPeriodsController.show(NormalMode)
     case RentPeriodsPage => answers =>
       answers.get(RentPeriodsPage) match {
