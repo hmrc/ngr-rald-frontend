@@ -47,7 +47,6 @@ class ProvideDetailsOfSecondRentPeriodControllerSpec extends ControllerSpecSuppo
 
 
   val firstRentPeriodAnswers: Option[UserAnswers] = UserAnswers("id").set(ProvideDetailsOfFirstRentPeriodPage, firstRentPeriod).toOption
-  val secondRentPeriodAnswers: Option[UserAnswers] = UserAnswers("id").set(ProvideDetailsOfSecondRentPeriodPage, secondRentPeriod).toOption
   val firstSecondAnswers: Option[UserAnswers] =
     UserAnswers("id").set(ProvideDetailsOfFirstRentPeriodPage, firstRentPeriod)
       .flatMap(_.set(ProvideDetailsOfSecondRentPeriodPage, secondRentPeriod))
@@ -70,7 +69,7 @@ class ProvideDetailsOfSecondRentPeriodControllerSpec extends ControllerSpecSuppo
         document.select("input[name=endDate.day]").attr("value") mustBe "31"
         document.select("input[name=endDate.month]").attr("value") mustBe "1"
         document.select("input[name=endDate.year]").attr("value") mustBe "2025"
-        document.select("input[name=provideDetailsOfSecondRentPeriod]").attr("value") mustBe "1000"
+        document.select("input[name=rentPeriodAmount]").attr("value") mustBe "1000"
       }
     }
 
@@ -83,7 +82,7 @@ class ProvideDetailsOfSecondRentPeriodControllerSpec extends ControllerSpecSuppo
               "endDate.day" -> "31",
               "endDate.month" -> "12",
               "endDate.year" -> "2026",
-              "provideDetailsOfSecondRentPeriod" -> "22000.00"
+              "rentPeriodAmount" -> "22000.00"
             )
         ))
         status(result) mustBe SEE_OTHER

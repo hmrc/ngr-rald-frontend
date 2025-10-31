@@ -62,7 +62,7 @@ class ProvideDetailsOfSecondRentPeriodController @Inject()(view: ProvideDetailsO
       }
 
       formatDate match {
-        case "" => Future.successful(Redirect(routes.ProvideDetailsOfSecondRentPeriodController.show(NormalMode)))
+        case "" => Future.successful(Redirect(routes.ProvideDetailsOfFirstRentPeriodController.show(NormalMode)))
         case _ =>
           val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(ProvideDetailsOfSecondRentPeriodPage).fold(form)(form.fill)
           Future.successful(Ok(view(
