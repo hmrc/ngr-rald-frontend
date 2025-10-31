@@ -29,34 +29,20 @@ import java.time.LocalDate
 object ProvideDetailsOfSecondRentPeriodForm extends CommonFormValidators with NGRDateInput with Mappings:
 
   private val endDate = "endDate"
-  private val rentPeriodAmount = "provideDetailsOfSecondRentPeriod.rentPeriodAmount"
-  private lazy val rentPeriodAmountEmptyError = "provideDetailsOfSecondRentPeriod.rentPeriodAmount.empty.error"
-  private lazy val rentPeriodAmountMaxError = "provideDetailsOfSecondRentPeriod.rentPeriodAmount.amount.max.error"
-  private lazy val rentPeriodAmountFormatError = "provideDetailsOfSecondRentPeriod.rentPeriodAmount.format.error"
-  
+  private val rentPeriodAmount = "provideDetailsOfSecondRentPeriod"
+  private lazy val rentPeriodAmountEmptyError = "provideDetailsOfSecondRentPeriod.empty.error"
+  private lazy val rentPeriodAmountMaxError = "provideDetailsOfSecondRentPeriod.amount.max.error"
+  private lazy val rentPeriodAmountFormatError = "provideDetailsOfSecondRentPeriod.format.error"
+
   def endDateInput(using messages: Messages): DateInput =
-    dateInput(endDate, "provideDetailsOfSecondRentPeriod.endDate.label", "date.hint")
+    dateInput(endDate, "provideDetailsOfSecondRentPeriod.endDate.label")
 
 
   val form: Form[ProvideDetailsOfSecondRentPeriod] =
     Form(
       mapping(
-        endDate -> dateMapping(
-          "provideDetailsOfSecondRentPeriod.endDate",
-          CompareWithAnotherDateValidation("before.startDate.error", "startDate", (end, start) => start.isBefore(end))
-        ),
-        rentPeriodAmount -> text()
-          .transform[String](_.strip().replaceAll("[£|,|\\s]", ""), identity)
-          .verifying(
-            firstError(
-              isNotEmpty(rentPeriodAmount, rentPeriodAmountEmptyError),
-              regexp(amountRegex.pattern(),rentPeriodAmountFormatError)
-            )
-          )
-          .transform[BigDecimal](BigDecimal(_).setScale(2, RoundingMode.HALF_UP), _.toString)
-          .verifying(
-            maximumValue[BigDecimal](BigDecimal("9999999.99"), rentPeriodAmountMaxError)
-          )
+        endDate -> dateMapping("provideDetailsOfSecondRentPeriod.endDate"),
+        rentPeriodAmount -> money(rentPeriodAmount)
       )(ProvideDetailsOfSecondRentPeriod.apply)(o => Some(
         o.endDate,
         o.rentPeriodAmount

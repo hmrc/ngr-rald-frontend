@@ -26,7 +26,7 @@ import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, UserAnswers}
-import uk.gov.hmrc.ngrraldfrontend.pages.ProvideDetailsOfSecondRentPeriodPage
+import uk.gov.hmrc.ngrraldfrontend.pages.{ProvideDetailsOfFirstRentPeriodPage, ProvideDetailsOfSecondRentPeriodPage}
 import uk.gov.hmrc.ngrraldfrontend.views.html.ProvideDetailsOfSecondRentPeriodView
 
 import scala.concurrent.Future
@@ -39,51 +39,55 @@ class ProvideDetailsOfSecondRentPeriodControllerSpec extends ControllerSpecSuppo
   val controllerWithAnswers: Option[UserAnswers] => ProvideDetailsOfSecondRentPeriodController = answers => new ProvideDetailsOfSecondRentPeriodController(
     view,
     fakeAuth,
-    mockInputText,
     mcc,
     fakeDataProperty(Some(property), answers),
     mockSessionRepository,
     mockNavigator
   )(mockConfig, ec)
 
+
+  val firstRentPeriodAnswers: Option[UserAnswers] = UserAnswers("id").set(ProvideDetailsOfFirstRentPeriodPage, firstRentPeriod).toOption
   val secondRentPeriodAnswers: Option[UserAnswers] = UserAnswers("id").set(ProvideDetailsOfSecondRentPeriodPage, secondRentPeriod).toOption
-  
+  val firstSecondAnswers: Option[UserAnswers] =
+    UserAnswers("id").set(ProvideDetailsOfFirstRentPeriodPage, firstRentPeriod)
+      .flatMap(_.set(ProvideDetailsOfSecondRentPeriodPage, secondRentPeriod))
+      .toOption
+
   "ProvideDetailsOfSecondRentPeriodController" must {
     ".show" must {
       "return OK and the correct view" in {
-        val result = controllerWithAnswers(None).show(NormalMode)(authenticatedFakeRequest)
+        val result = controllerWithAnswers(firstRentPeriodAnswers).show(NormalMode)(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
         content must include(pageTitle)
       }
 
       "return OK and the correct view with prepopulated data for rent payable period" in {
-        val result = controllerWithAnswers(secondRentPeriodAnswers).show(NormalMode)(authenticatedFakeRequest)
+        val result = controllerWithAnswers(firstSecondAnswers).show(NormalMode)(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
         val document = Jsoup.parse(content)
         document.select("input[name=endDate.day]").attr("value") mustBe "31"
         document.select("input[name=endDate.month]").attr("value") mustBe "1"
         document.select("input[name=endDate.year]").attr("value") mustBe "2025"
-        document.select("input[name=rentPeriodAmount]").attr("value") mustBe "1000"
+        document.select("input[name=provideDetailsOfSecondRentPeriod]").attr("value") mustBe "1000"
       }
     }
 
     ".submit" must {
-      "return SEE_OTHER after submitting with start date, end date, yes radio button selected, rent amount" in {
+      "return SEE_OTHER after submitting with end date selected, rent amount" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        val result = controllerWithAnswers(None).submit(NormalMode)(authenticatedFakePostRequest(
+        val result = controllerWithAnswers(firstSecondAnswers).submit(NormalMode)(authenticatedFakePostRequest(
           FakeRequest(routes.ProvideDetailsOfSecondRentPeriodController.submit(NormalMode))
             .withFormUrlEncodedBody(
               "endDate.day" -> "31",
               "endDate.month" -> "12",
               "endDate.year" -> "2026",
-              "rentPeriodAmount" -> "22000.00"
+              "provideDetailsOfSecondRentPeriod" -> "22000.00"
             )
         ))
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.HowMuchIsTotalAnnualRentController.show(NormalMode).url)
+        redirectLocation(result) mustBe Some(routes.ProvideDetailsOfSecondRentPeriodController.show(NormalMode).url)
       }
-      
     }
-  }
+    }

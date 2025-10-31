@@ -241,14 +241,11 @@ provideDetailsOfSecondRentPeriod.endDate.invalid.error = End date of the second 
 provideDetailsOfSecondRentPeriod.endDate.before.1900.error = Year for the second rent period end date must be 1900 or after
 provideDetailsOfSecondRentPeriod.endDate.before.startDate.error = End date of this rent period must be a date after the period starts
 
-provideDetailsOfSecondRentPeriod.firstPeriod.radio.label = Do you pay rent in this period?
-provideDetailsOfSecondRentPeriod.rentPeriodAmount.title = How much is the rent for this period (excluding VAT)?
-provideDetailsOfSecondRentPeriod.firstPeriod.radio.hint = Enter the amount you pay each year (excluding VAT) even if the period is for more or less than a year.
-provideDetailsOfSecondRentPeriod.firstPeriod.radio.no = No, this is a rent-free period
-provideDetailsOfSecondRentPeriod.firstPeriod.radio.error.required = Select yes if you pay rent in this period
-provideDetailsOfSecondRentPeriod.rentPeriodAmount.empty.error = Enter the rent for the second rent period, in pounds
-provideDetailsOfSecondRentPeriod.rentPeriodAmount.format.error = Rent for the second rent period must be a number, like 30,000
-provideDetailsOfSecondRentPeriod.rentPeriodAmount.amount.max.error = Rent for the second rent period must be £9,999,999.99 or less
+provideDetailsOfSecondRentPeriod.heading = How much is the rent for this period (excluding VAT)?
+provideDetailsOfSecondRentPeriod.hint = Enter the amount you pay each year (excluding VAT) even if the period is for more or less than a year.
+provideDetailsOfSecondRentPeriod.required.error = Enter the rent for the second rent period, in pounds
+provideDetailsOfSecondRentPeriod.invalid.error = Rent for the second rent period must be a number, like 30,000
+provideDetailsOfSecondRentPeriod.max.error = Rent for the second rent period must be £9,999,999.99 or less
 
 #ProvideDetailsOfFirstSecondRentPeriod
 provideDetailsOfFirstSecondRentPeriod.title = Provide details of each rent period
