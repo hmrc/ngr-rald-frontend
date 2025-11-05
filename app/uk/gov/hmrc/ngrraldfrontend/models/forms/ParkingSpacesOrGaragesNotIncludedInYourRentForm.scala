@@ -23,7 +23,6 @@ import play.api.data.{Form, FormError, Forms}
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.ngrraldfrontend.models.*
 import uk.gov.hmrc.ngrraldfrontend.models.forms.HowManyParkingSpacesOrGaragesIncludedInRentForm.wholePositiveNumberRegexp
-import uk.gov.hmrc.ngrraldfrontend.models.forms.ProvideDetailsOfFirstSecondRentPeriodForm.{amountRegex, dateMapping, firstError, isDateAfter1900, isDateEmpty, isDateValid, isNotEmpty, maximumValue, regexp}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 
 import scala.math.BigDecimal.RoundingMode
@@ -51,6 +50,26 @@ object ParkingSpacesOrGaragesNotIncludedInYourRentForm extends CommonFormValidat
       parkingSpacesOrGaragesNotIncludedInYourRentForm.garages,
       parkingSpacesOrGaragesNotIncludedInYourRentForm.totalCost,
       parkingSpacesOrGaragesNotIncludedInYourRentForm.agreementDate,
+    )
+
+  def answerToForm(value: ParkingSpacesOrGaragesNotIncludedInYourRent): Form[ParkingSpacesOrGaragesNotIncludedInYourRentForm] =
+    form.fill(
+      ParkingSpacesOrGaragesNotIncludedInYourRentForm(
+        value.uncoveredSpaces,
+        value.coveredSpaces,
+        value.garages,
+        value.totalCost,
+        NGRDate.fromString(value.agreementDate)
+      )
+    )
+
+  def formToAnswers(parkingSpacesOrGaragesNotIncludedInYourRentForm: ParkingSpacesOrGaragesNotIncludedInYourRentForm): ParkingSpacesOrGaragesNotIncludedInYourRent =
+    ParkingSpacesOrGaragesNotIncludedInYourRent(
+      parkingSpacesOrGaragesNotIncludedInYourRentForm.uncoveredSpaces,
+      parkingSpacesOrGaragesNotIncludedInYourRentForm.coveredSpaces,
+      parkingSpacesOrGaragesNotIncludedInYourRentForm.garages,
+      parkingSpacesOrGaragesNotIncludedInYourRentForm.totalCost,
+      parkingSpacesOrGaragesNotIncludedInYourRentForm.agreementDate.makeString
     )
 
   private def parkingFormatter(args: Seq[String] = Seq.empty): Formatter[Int] = new Formatter[Int] {

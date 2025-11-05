@@ -19,9 +19,11 @@ package uk.gov.hmrc.ngrraldfrontend.models
 import play.api.data.Form
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.ngrraldfrontend.helpers.TestSupport
+import uk.gov.hmrc.ngrraldfrontend.models.NGRDate.formatDate
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreementForm.dateMapping
 
 import java.time.LocalDate
+import java.time.format.DateTimeParseException
 
 class NGRDateSpec extends TestSupport {
 
@@ -52,6 +54,22 @@ class NGRDateSpec extends TestSupport {
     "format date as string correctly" in {
       val date = NGRDate("01", "12", "2023")
       date.makeString mustBe "2023-12-01"
+    }
+
+    "format date as string correctly with only 1 digit day" in {
+      val date = NGRDate("1", "12", "2023")
+      date.makeString mustBe "2023-12-01"
+    }
+
+    "format date throw exception when passing empty string" in {
+      assertThrows[DateTimeParseException] {
+        formatDate("")
+      }
+    }
+
+    "format date correctly with full month name" in {
+      val actual = formatDate("2023-12-01")
+      actual mustBe "1 December 2023"
     }
 
     "serialize and deserialize to/from JSON" in {

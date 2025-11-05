@@ -70,7 +70,7 @@ class AboutTheRentFreePeriodControllerSpec extends ControllerSpecSupport {
     navigator = mockNavigator,
     mcc = mcc)(mockConfig)
 
-  val aboutTheRentFreePeriodAnswers: Option[UserAnswers] = UserAnswers("id").set(AboutTheRentFreePeriodPage, aboutTheRentFreePeriodModel).toOption
+  val aboutTheRentFreePeriodAnswers: Option[UserAnswers] = userAnswers.set(AboutTheRentFreePeriodPage, aboutTheRentFreePeriodModel).toOption
 
   "AboutTheRentFreePeriodController" must {
     "method show" must {

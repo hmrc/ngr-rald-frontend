@@ -24,6 +24,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatTypeOfAgreementForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatTypeOfAgreementForm.form
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{Mode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.{WhatIsYourRentBasedOnPage, WhatTypeOfAgreementPage}
@@ -47,7 +48,7 @@ class WhatTypeOfAgreementController @Inject()(view: WhatTypeOfAgreementView,
 
   def show(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
-      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(WhatTypeOfAgreementPage) match {
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).get(WhatTypeOfAgreementPage) match {
         case None => form
         case Some(value) => form.fill(WhatTypeOfAgreementForm(value))
       }
@@ -76,7 +77,7 @@ class WhatTypeOfAgreementController @Inject()(view: WhatTypeOfAgreementView,
               ))),
           whatTypeOfAgreementForm =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
+              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(CredId(request.credId)))
                 .set(WhatTypeOfAgreementPage, whatTypeOfAgreementForm.radioValue))
               //Remove Rent Based on answer if agreement type is verbal
               newAnswers <- whatTypeOfAgreementForm.radioValue match

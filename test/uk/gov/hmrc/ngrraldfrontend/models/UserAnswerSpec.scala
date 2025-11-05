@@ -25,7 +25,7 @@ import java.time.Instant
 
 class UserAnswerSpec extends TestSupport {
 
-  val userAnswers: UserAnswers = UserAnswers(credId.value, Json.obj(
+  val userAnswers: UserAnswers = UserAnswers(credId, Json.obj(
     "tellUsAboutRenewedAgreement" -> "RenewedAgreement",
     "whatTypeOfLeaseRenewal" -> "SurrenderAndRenewal"
   ), Instant.ofEpochSecond(1759232590))

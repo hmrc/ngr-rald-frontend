@@ -57,7 +57,7 @@ class ParkingSpacesOrGaragesNotIncludedInYourRentControllerSpec extends Controll
     navigator = mockNavigator,
     )(mockConfig)
 
-  val parkingSpacesOrGaragesNotIncludedInYourRentAnswers: Option[UserAnswers] = UserAnswers("id").set(ParkingSpacesOrGaragesNotIncludedInYourRentPage, ParkingSpacesOrGaragesNotIncludedInYourRent(1, 2, 3, 2000, NGRDate(day = "01",month = "10",year = "2025"))).toOption
+  val parkingSpacesOrGaragesNotIncludedInYourRentAnswers: Option[UserAnswers] = userAnswers.set(ParkingSpacesOrGaragesNotIncludedInYourRentPage, ParkingSpacesOrGaragesNotIncludedInYourRent(1, 2, 3, 2000, NGRDate(day = "01",month = "10",year = "2025"))).toOption
 
   "ParkingSpacesOrGaragesNotIncludedInYourRentController" must {
     "method show" must {

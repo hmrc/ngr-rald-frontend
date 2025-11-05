@@ -23,6 +23,7 @@ import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatYourRentIncludesForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatYourRentIncludesForm.{answerToForm, form, formToAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{Mode, UserAnswers, WhatYourRentIncludes}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.{WhatIsYourRentBasedOnPage, WhatYourRentIncludesPage}
@@ -46,7 +47,7 @@ class WhatRentIncludesRatesWaterServiceController @Inject()(whatYourRentIncludes
 
   def show(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
-      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(WhatYourRentIncludesPage) match {
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).get(WhatYourRentIncludesPage) match {
         case Some(value) => answerToForm(value, isOTCLease = true)
         case None => form(isOTCLease = true)
       }
@@ -82,7 +83,7 @@ class WhatRentIncludesRatesWaterServiceController @Inject()(whatYourRentIncludes
         },
         whatYourRentIncludesForm =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
+            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(CredId(request.credId)))
               .set(WhatYourRentIncludesPage, formToAnswers(whatYourRentIncludesForm, isOTCLease = true)))
             _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(WhatYourRentIncludesPage, mode, updatedAnswers))

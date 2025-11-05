@@ -28,6 +28,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentPeriodsForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentPeriodsForm.form
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{Mode, NGRDate, ProvideDetailsOfFirstSecondRentPeriod, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.{ProvideDetailsOfFirstSecondRentPeriodPage, RentPeriodsPage}
@@ -155,9 +156,10 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
 
   def show(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
-      request.userAnswers.getOrElse(UserAnswers(request.credId)).get(ProvideDetailsOfFirstSecondRentPeriodPage) match {
+      val credId = CredId(request.credId)
+      request.userAnswers.getOrElse(UserAnswers(credId)).get(ProvideDetailsOfFirstSecondRentPeriodPage) match {
         case Some(value) =>
-          val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(RentPeriodsPage) match {
+          val preparedForm = request.userAnswers.getOrElse(UserAnswers(credId)).get(RentPeriodsPage) match {
             case Some(value) => form.fill(RentPeriodsForm(value.toString))
             case None => form
           }
@@ -179,7 +181,7 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
         .bindFromRequest()
         .fold(
           formWithErrors =>
-            request.userAnswers.getOrElse(UserAnswers(request.credId)).get(ProvideDetailsOfFirstSecondRentPeriodPage) match {
+            request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).get(ProvideDetailsOfFirstSecondRentPeriodPage) match {
               case Some(value) => Future.successful(BadRequest(view(
                 selectedPropertyAddress = request.property.addressFull,
                 formWithErrors,
@@ -190,7 +192,7 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
             },
           rentPeriodsForm =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
+              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(CredId(request.credId)))
                 .set(RentPeriodsPage, rentPeriodsForm.radioValue.toBoolean))
               _ <- sessionRepository.set(updatedAnswers)
             } yield Redirect(navigator.nextPage(RentPeriodsPage, mode, updatedAnswers))

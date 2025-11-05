@@ -26,6 +26,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatIsYourRentBasedOnForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatIsYourRentBasedOnForm.form
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{Mode, RentBasedOn, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.WhatIsYourRentBasedOnPage
@@ -79,7 +80,7 @@ class WhatIsYourRentBasedOnController @Inject()(view: WhatIsYourRentBasedOnView,
 
   def show(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
-      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(WhatIsYourRentBasedOnPage) match {
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).get(WhatIsYourRentBasedOnPage) match {
         case None => form
         case Some(value) => form.fill(WhatIsYourRentBasedOnForm(value.rentBased,value.otherDesc))
       }
@@ -97,7 +98,7 @@ class WhatIsYourRentBasedOnController @Inject()(view: WhatIsYourRentBasedOnView,
               buildRadios(formWithErrors, ngrRadio(formWithErrors)), request.property.addressFull, mode))),
           rentBasedOnForm =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
+              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(CredId(request.credId)))
                 .set(WhatIsYourRentBasedOnPage, 
                   RentBasedOn(rentBasedOnForm.radioValue, 
                     if (rentBasedOnForm.radioValue == "Other")

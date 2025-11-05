@@ -41,8 +41,8 @@ class AgreementControllerSpec extends ControllerSpecSupport {
   val controllerNoProperty: AgreementController = new AgreementController(view, fakeAuth, mockDateTextFieldsComponent, mockNGRCharacterCountComponent, mcc, fakeData(None),mockNavigator, mockSessionRepository)(mockConfig, ec)
   val controllerProperty: Option[UserAnswers] => AgreementController = answers => new AgreementController(view, fakeAuth, mockDateTextFieldsComponent, mockNGRCharacterCountComponent, mcc, fakeDataProperty(Some(property),answers),mockNavigator, mockSessionRepository)(mockConfig, ec)
   val over250Characters = "Bug Me Not PVT LTD, RODLEY LANE, RODLEY, LEEDS, BH1 1HU What is your rent based on?Open market value This is the rent a landlord could rent the property for if, it was available to anyoneA percentage of open market value This is a percentage of the rent a landlord could rent the property for if, it was available to anyoneTurnover top-up The rent is a fixed base rent with an additional payment based on a percentage of your turnoverA percentage of expected turnover The rent paid is based on a percentage of turnoverTotal Occupancy Cost leases (TOCs)The rent is the total cost of leasing the property. It includes base rent, business rates, insurance and utilities. It also includes common area maintenance and tenant improvements Indexation The rent is reviewed according to an index (such as Retail Price Index)Other The rent was agreed another way Can you tell us how your rent was agreed?"
-  val agreementAnswers: Option[UserAnswers] = UserAnswers("id").set(AgreementPage, agreementModel).toOption
-  val agreementAnswersMin: Option[UserAnswers] = UserAnswers("id").set(AgreementPage, agreementModelMin).toOption
+  val agreementAnswers: Option[UserAnswers] = userAnswers.set(AgreementPage, agreementModel).toOption
+  val agreementAnswersMin: Option[UserAnswers] = userAnswers.set(AgreementPage, agreementModelMin).toOption
 
   "Agreement controller" must {
     "method show" must {

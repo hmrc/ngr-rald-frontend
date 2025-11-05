@@ -38,8 +38,8 @@ class WhatTypeOfLeaseRenewalControllerSpec extends ControllerSpecSupport {
   val view: WhatTypeOfLeaseRenewalView = inject[WhatTypeOfLeaseRenewalView]
   val controllerNoProperty: WhatTypeOfLeaseRenewalController = new WhatTypeOfLeaseRenewalController(view, fakeAuth, fakeData(None),mockSessionRepository,mockNavigator, mcc)(mockConfig)
   val controllerProperty: Option[UserAnswers] => WhatTypeOfLeaseRenewalController = answers => new WhatTypeOfLeaseRenewalController(view, fakeAuth, fakeDataProperty(Some(property),answers),mockSessionRepository,mockNavigator, mcc)(mockConfig)
-  val renewedAgreementLeaseAnswers: Option[UserAnswers] = UserAnswers("id").set(WhatTypeOfLeaseRenewalPage, Constants.renewedAgreement).toOption
-  val surrenderAndRenewalAnswers: Option[UserAnswers] = UserAnswers("id").set(WhatTypeOfLeaseRenewalPage, Constants.surrenderAndRenewal).toOption
+  val renewedAgreementLeaseAnswers: Option[UserAnswers] = userAnswers.set(WhatTypeOfLeaseRenewalPage, Constants.renewedAgreement).toOption
+  val surrenderAndRenewalAnswers: Option[UserAnswers] = userAnswers.set(WhatTypeOfLeaseRenewalPage, Constants.surrenderAndRenewal).toOption
 
   "TypeOfLeaseRenewalController" must {
     "method show" must {

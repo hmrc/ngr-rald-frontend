@@ -23,6 +23,7 @@ import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{buildRadios, simpleNgrRadio}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.DoYouPayExtraForParkingSpacesForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.DoYouPayExtraForParkingSpacesForm.form
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{Mode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.DoYouPayExtraForParkingSpacesPage
@@ -44,7 +45,7 @@ class DoYouPayExtraForParkingSpacesController @Inject()(doYouPayExtraForParkingS
 
   def show(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
-      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(DoYouPayExtraForParkingSpacesPage) match {
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).get(DoYouPayExtraForParkingSpacesPage) match {
         case None => form
         case Some(value) => form.fill(DoYouPayExtraForParkingSpacesForm(value.toString))
       }
@@ -70,7 +71,7 @@ class DoYouPayExtraForParkingSpacesController @Inject()(doYouPayExtraForParkingS
         },
         radioValue =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
+            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(CredId(request.credId)))
               .set(DoYouPayExtraForParkingSpacesPage, radioValue.radioValue.toBoolean)
             )
             _ <- sessionRepository.set(updatedAnswers)

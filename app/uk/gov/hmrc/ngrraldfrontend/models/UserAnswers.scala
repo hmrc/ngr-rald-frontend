@@ -18,13 +18,14 @@ package uk.gov.hmrc.ngrraldfrontend.models
 
 import play.api.libs.json.*
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.queries.{Gettable, Settable}
 
 import java.time.Instant
 import scala.util.{Failure, Success, Try}
 
 final case class UserAnswers(
-                              credId: String,
+                              credId: CredId,
                               data: JsObject = Json.obj(),
                               lastUpdated: Instant = Instant.now
                             ) {
@@ -70,7 +71,7 @@ final case class UserAnswers(
   def getCurrentJourneyUserAnswers[A](page: Gettable[A], userAnswers: UserAnswers, credId: String)(implicit rds: Reads[A]): UserAnswers =
     userAnswers.get(page) match
       case Some(_) => userAnswers
-      case _ => UserAnswers(credId)
+      case _ => UserAnswers(CredId(credId))
 }
 
 object UserAnswers {
@@ -80,7 +81,7 @@ object UserAnswers {
     import play.api.libs.functional.syntax.*
 
     (
-      (__ \ "credId").read[String] and
+      (__ \ "credId").read[CredId] and
       (__ \ "data").read[JsObject] and
       (__ \ "lastUpdated").read(MongoJavatimeFormats.instantFormat)
     ) (UserAnswers.apply)
@@ -91,7 +92,7 @@ object UserAnswers {
     import play.api.libs.functional.syntax.*
 
     (
-      (__ \ "credId").write[String] and
+      (__ \ "credId").write[CredId] and
       (__ \ "data").write[JsObject] and
       (__ \ "lastUpdated").write(MongoJavatimeFormats.instantFormat)
     ) (ua => (ua.credId, ua.data, ua.lastUpdated))

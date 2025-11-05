@@ -38,7 +38,7 @@ class RentPeriodsControllerSpec extends ControllerSpecSupport {
   val controllerNoProperty: RentPeriodsController = new RentPeriodsController(view, fakeAuth, fakeData(None), mcc, mockSessionRepository, mockNavigator)(mockConfig, ec)
   val controllerProperty: Option[UserAnswers] => RentPeriodsController = answers => new RentPeriodsController(view, fakeAuth, fakeDataProperty(Some(property), answers), mcc, mockSessionRepository, mockNavigator)(mockConfig, ec)
 
-  lazy val firstSecondRentPeriodAnswers: Option[UserAnswers] = UserAnswers("id").set(ProvideDetailsOfFirstSecondRentPeriodPage, firstSecondRentPeriod).toOption
+  lazy val firstSecondRentPeriodAnswers: Option[UserAnswers] = userAnswers.set(ProvideDetailsOfFirstSecondRentPeriodPage, firstSecondRentPeriod).toOption
 
   "method show" must {
     "Return OK and the correct view when the user has said yes to having paid rent for the first period" in {

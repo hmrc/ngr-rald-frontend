@@ -18,7 +18,8 @@ package uk.gov.hmrc.ngrraldfrontend.repo
 
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.*
-import play.api.libs.json.Format
+import org.mongodb.scala.model.Indexes.ascending
+import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.mdc.Mdc
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
@@ -47,18 +48,26 @@ class SessionRepository @Inject()(
         IndexOptions()
           .name("lastUpdatedIdx")
           .expireAfter(appConfig.cacheTtl, TimeUnit.SECONDS)
+      ),
+      IndexModel(
+        ascending("credId.value"),
+        IndexOptions()
+          .background(false)
+          .name("credId.value")
+          .unique(true)
+          .partialFilterExpression(Filters.gte("credId.value", ""))
       )
     )
   ) {
 
   implicit val instantFormat: Format[Instant] = MongoJavatimeFormats.instantFormat
 
-  private def byId(id: String): Bson = Filters.equal("_id", id)
+  private def filterByCredId(id: String): Bson = Filters.equal("credId.value", id)
 
   def keepAlive(id: String): Future[Boolean] = Mdc.preservingMdc {
     collection
       .updateOne(
-        filter = byId(id),
+        filter = filterByCredId(id),
         update = Updates.set("lastUpdated", Instant.now(clock)),
       )
       .toFuture()
@@ -69,7 +78,7 @@ class SessionRepository @Inject()(
     keepAlive(id).flatMap {
       _ =>
         collection
-          .find(byId(id))
+          .find(filterByCredId(id))
           .headOption()
     }
   }
@@ -79,7 +88,7 @@ class SessionRepository @Inject()(
 
     collection
       .replaceOne(
-        filter      = byId(updatedAnswers.credId),
+        filter      = filterByCredId(updatedAnswers.credId.value),
         replacement = updatedAnswers,
         options     = ReplaceOptions().upsert(true)
       )
@@ -89,7 +98,7 @@ class SessionRepository @Inject()(
 
   def clear(credId: String): Future[Boolean] = Mdc.preservingMdc {
     collection
-      .deleteOne(byId(credId))
+      .deleteOne(filterByCredId(credId))
       .toFuture()
       .map(_ => true)
   }

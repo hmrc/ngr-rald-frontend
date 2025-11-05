@@ -21,6 +21,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.RenewedAgreement
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.TellUsAboutYourRenewedAgreementPage
@@ -51,7 +52,7 @@ class TellUsAboutYourRenewedAgreementController @Inject()(view: TellUsAboutYourA
         for {
           updatedAnswers <- Future.fromTry(request.userAnswers
             .map(answers => answers.getCurrentJourneyUserAnswers(TellUsAboutYourRenewedAgreementPage, answers, request.credId))
-            .getOrElse(UserAnswers(request.credId))
+            .getOrElse(UserAnswers(CredId(request.credId)))
             .set(TellUsAboutYourRenewedAgreementPage, RenewedAgreement))
           _ <- sessionRepository.set(updatedAnswers)
         } yield Redirect(navigator.nextPage(TellUsAboutYourRenewedAgreementPage, NormalMode, updatedAnswers))

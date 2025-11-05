@@ -22,6 +22,7 @@ import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.forms.HowMuchIsTotalAnnualRentForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.HowMuchIsTotalAnnualRentForm.form
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{Mode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.HowMuchIsTotalAnnualRentPage
@@ -44,7 +45,7 @@ class HowMuchIsTotalAnnualRentController @Inject()(howMuchIsTotalAnnualRentView:
 
   def show(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
-      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(HowMuchIsTotalAnnualRentPage) match {
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).get(HowMuchIsTotalAnnualRentPage) match {
         case None => form
         case Some(value) => form.fill(HowMuchIsTotalAnnualRentForm(value))
       }
@@ -68,7 +69,7 @@ class HowMuchIsTotalAnnualRentController @Inject()(howMuchIsTotalAnnualRentView:
         },
         rentAmount =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(HowMuchIsTotalAnnualRentPage, rentAmount.annualRent))
+            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).set(HowMuchIsTotalAnnualRentPage, rentAmount.annualRent))
             _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(HowMuchIsTotalAnnualRentPage, mode, updatedAnswers))
       )

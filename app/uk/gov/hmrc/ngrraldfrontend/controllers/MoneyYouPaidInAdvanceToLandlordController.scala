@@ -25,6 +25,7 @@ import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.forms.MoneyYouPaidInAdvanceToLandlordForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.MoneyYouPaidInAdvanceToLandlordForm.form
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{Mode, MoneyYouPaidInAdvanceToLandlord, NGRDate, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.MoneyYouPaidInAdvanceToLandlordPage
@@ -79,7 +80,7 @@ class MoneyYouPaidInAdvanceToLandlordController @Inject()(moneyYouPaidInAdvanceT
 
   def show(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
-      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(MoneyYouPaidInAdvanceToLandlordPage) match {
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).get(MoneyYouPaidInAdvanceToLandlordPage) match {
         case None => form
         case Some(value) => form.fill(MoneyYouPaidInAdvanceToLandlordForm(value.amount, NGRDate.fromString(value.date)))
       }
@@ -116,7 +117,7 @@ class MoneyYouPaidInAdvanceToLandlordController @Inject()(moneyYouPaidInAdvanceT
         advanceMoney =>
           val answers = MoneyYouPaidInAdvanceToLandlord(advanceMoney.amount,advanceMoney.date.makeString)
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(MoneyYouPaidInAdvanceToLandlordPage, answers))
+            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).set(MoneyYouPaidInAdvanceToLandlordPage, answers))
             _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(MoneyYouPaidInAdvanceToLandlordPage, mode, updatedAnswers))
       )

@@ -37,7 +37,7 @@ class CheckRentFreePeriodControllerSpec extends ControllerSpecSupport{
   val view: CheckRentFreePeriodView = inject[CheckRentFreePeriodView]
   val controllerNoProperty : CheckRentFreePeriodController = new CheckRentFreePeriodController(view,fakeAuth, fakeData(None), mockNavigator, mockSessionRepository, mcc)(mockConfig)
   val controllerProperty : Option[UserAnswers] => CheckRentFreePeriodController = answers => new CheckRentFreePeriodController(view,fakeAuth, fakeDataProperty(Some(property), answers), mockNavigator, mockSessionRepository, mcc)(mockConfig)
-  val checkRentFreePeriodAnswers: Option[UserAnswers] = UserAnswers("id").set(CheckRentFreePeriodPage, true).toOption
+  val checkRentFreePeriodAnswers: Option[UserAnswers] = userAnswers.set(CheckRentFreePeriodPage, true).toOption
 
   "CheckRentFreePeriodController" when {
     "calling show method" should {

@@ -16,13 +16,14 @@
 
 package uk.gov.hmrc.ngrraldfrontend.connectors
 
+import play.api.http.Status.CREATED
 import play.api.libs.json.Json
 import play.api.libs.ws.JsonBodyWritables.*
 import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, StringContextOps}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse, StringContextOps}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-import uk.gov.hmrc.ngrraldfrontend.models.PropertyLinkingUserAnswers
+import uk.gov.hmrc.ngrraldfrontend.models.{PropertyLinkingUserAnswers, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.vmvProperty.VMVProperty
 
@@ -52,6 +53,18 @@ class NGRConnector @Inject()(http: HttpClientV2,
       .map {
         case Some(propertyLinkingUserAnswers) => Some(propertyLinkingUserAnswers.vmvProperty)
         case None => None
+      }
+  }
+
+  def upsertRaldUserAnswers(model: UserAnswers)(implicit hc: HeaderCarrier):  Future[HttpResponse] = {
+    http.post(url("upsert-rald-user-answers"))
+      .withBody(Json.toJson(model))
+      .execute[HttpResponse]
+      .map { response =>
+        response.status match {
+          case CREATED => response
+          case _ => throw new Exception(s"${response.status}: ${response.body}")
+        }
       }
   }
 }

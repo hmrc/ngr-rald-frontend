@@ -23,11 +23,7 @@ import play.api.data.format.Formatter
 import java.time.LocalDate
 import scala.util.{Right, Try}
 
-/**
- * Handles binding 3 date fields to [[java.time.LocalDate LocalDate]] and unbinding from LocalDate to 3 date fields.
- *
- * @author Yuriy Tumakha
- */
+//Handles binding 3 date fields to [[java.time.LocalDate LocalDate]] and unbinding from LocalDate to 3 date fields.
 class LocalDateFormatter(
                           errorKeyPrefix: String,
                           extraDateValidations: DateValidation*

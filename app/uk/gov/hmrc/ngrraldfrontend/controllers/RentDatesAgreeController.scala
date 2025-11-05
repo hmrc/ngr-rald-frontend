@@ -24,6 +24,7 @@ import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentDatesAgreeForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentDatesAgreeForm.form
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{Mode, NGRDate, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.RentDatesAgreePage
@@ -63,7 +64,7 @@ class RentDatesAgreeController @Inject()(rentDatesAgreeView: RentDatesAgreeView,
 
   def show(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
-      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(RentDatesAgreePage) match {
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).get(RentDatesAgreePage) match {
       case None => form
       case Some(value) => form.fill(RentDatesAgreeForm(NGRDate.fromString(value)))
     }
@@ -97,7 +98,7 @@ class RentDatesAgreeController @Inject()(rentDatesAgreeView: RentDatesAgreeView,
         },
         dateValue =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(RentDatesAgreePage, dateValue.dateInput.makeString))
+            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).set(RentDatesAgreePage, dateValue.dateInput.makeString))
             _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(RentDatesAgreePage, mode, updatedAnswers))
       )

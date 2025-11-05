@@ -36,7 +36,7 @@ class RentInterimControllerSpec extends ControllerSpecSupport {
   val view: RentInterimView = inject[RentInterimView]
   val controllerNoProperty: RentInterimController = new RentInterimController(view, fakeAuth, fakeData(None), mockNavigator, mockSessionRepository, mcc)(mockConfig)
   val controllerProperty: Option[UserAnswers] => RentInterimController = answers => new RentInterimController(view, fakeAuth, fakeDataProperty(Some(property), answers), mockNavigator, mockSessionRepository, mcc)(mockConfig)
-  val rentInterimAnswers: Option[UserAnswers] =  UserAnswers("id").set(RentInterimPage, true).toOption
+  val rentInterimAnswers: Option[UserAnswers] =  userAnswers.set(RentInterimPage, true).toOption
 
   "RentInterimController" must {
     "method show" must {

@@ -68,7 +68,7 @@ class DataRetrievalActionSpec extends ControllerSpecSupport with MockHttpV2{
       "when property is not found" should {
 
         "throw NotFoundException" in {
-          when(mockSessionRepository.get(any())) thenReturn Future(Some(UserAnswers("id")))
+          when(mockSessionRepository.get(any())) thenReturn Future(Some(userAnswers))
 
           val stubConnector = new StubNGRConnectorReturnsNone
           val action = new Harness(mockSessionRepository, stubConnector, mockConfig)
@@ -87,7 +87,7 @@ class DataRetrievalActionSpec extends ControllerSpecSupport with MockHttpV2{
     "when there is data in the cache" should {
 
       "must build a userAnswers object and add it to the request" in {
-        when(mockSessionRepository.get(any())) thenReturn Future(Some(UserAnswers("id")))
+        when(mockSessionRepository.get(any())) thenReturn Future(Some(userAnswers))
 
         val stubConnector = new StubNGRConnector(property)
         val action = new Harness(mockSessionRepository, stubConnector, mockConfig)

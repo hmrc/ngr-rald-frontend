@@ -23,6 +23,7 @@ import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.DoesYourRentIncludeParkingForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.DoesYourRentIncludeParkingForm.form
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{Mode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.DoesYourRentIncludeParkingPage
@@ -45,7 +46,7 @@ class DoesYourRentIncludeParkingController  @Inject()(doesYourRentIncludeParking
 
   def show(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
-      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(DoesYourRentIncludeParkingPage) match {
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).get(DoesYourRentIncludeParkingPage) match {
         case None => form
         case Some(value) => form.fill(DoesYourRentIncludeParkingForm(value.toString))
 
@@ -72,7 +73,7 @@ class DoesYourRentIncludeParkingController  @Inject()(doesYourRentIncludeParking
         },
         radioValue =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
+            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(CredId(request.credId)))
               .set(DoesYourRentIncludeParkingPage, radioValue.radio.toBoolean))
             _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(DoesYourRentIncludeParkingPage, mode, updatedAnswers))

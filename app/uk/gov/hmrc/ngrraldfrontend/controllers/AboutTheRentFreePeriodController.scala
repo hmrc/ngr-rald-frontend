@@ -25,7 +25,8 @@ import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AboutTheRentFreePeriodForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AboutTheRentFreePeriodForm.form
-import uk.gov.hmrc.ngrraldfrontend.models.{Mode, AboutTheRentFreePeriod, NGRDate, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
+import uk.gov.hmrc.ngrraldfrontend.models.{AboutTheRentFreePeriod, Mode, NGRDate, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.AboutTheRentFreePeriodPage
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
@@ -65,7 +66,7 @@ class AboutTheRentFreePeriodController @Inject()(aboutTheRentFreePeriodView: Abo
 
   def show(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
-      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(AboutTheRentFreePeriodPage) match {
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).get(AboutTheRentFreePeriodPage) match {
         case None => form
         case Some(value) => form.fill(AboutTheRentFreePeriodForm(value.months, NGRDate.fromString(value.date)))
       }
@@ -100,7 +101,7 @@ class AboutTheRentFreePeriodController @Inject()(aboutTheRentFreePeriodView: Abo
         howManyMonths =>
           val answers = AboutTheRentFreePeriod(howManyMonths.howManyMonths, howManyMonths.date.makeString)
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(AboutTheRentFreePeriodPage, answers))
+            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).set(AboutTheRentFreePeriodPage, answers))
             _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(AboutTheRentFreePeriodPage, mode, updatedAnswers))
       )

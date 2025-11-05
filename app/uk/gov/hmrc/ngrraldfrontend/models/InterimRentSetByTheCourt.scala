@@ -18,7 +18,7 @@ package uk.gov.hmrc.ngrraldfrontend.models
 
 import play.api.libs.json.{Json, OFormat}
 
-case class InterimRentSetByTheCourt(amount: String,
+case class InterimRentSetByTheCourt(amount: BigDecimal,
                                     date: String
                                    )
 
