@@ -154,4 +154,100 @@ class ProvideDetailsOfSecondRentPeriodFormSpec extends AnyWordSpec with Matchers
       )
     }
 
+    "return error if day is missing" in {
+      val data = Map(
+        "endDate.day" -> "",
+        "endDate.month" -> "1",
+        "endDate.year" -> "2025",
+        "provideDetailsOfSecondRentPeriod" -> "1,777,000.99"
+      )
+      val boundForm = ProvideDetailsOfSecondRentPeriodForm.form.bind(data)
+
+      boundForm.hasErrors shouldBe true
+      boundForm.errors.size shouldBe 1
+      boundForm.errors should contain(
+        FormError("endDate.day", "provideDetailsOfSecondRentPeriod.endDate.day.required.error")
+      )
+    }
+
+    "return error if month is missing" in {
+      val data = Map(
+        "endDate.day" -> "1",
+        "endDate.month" -> "",
+        "endDate.year" -> "2025",
+        "provideDetailsOfSecondRentPeriod" -> "1,777,000.99"
+      )
+      val boundForm = ProvideDetailsOfSecondRentPeriodForm.form.bind(data)
+
+      boundForm.hasErrors shouldBe true
+      boundForm.errors.size shouldBe 1
+      boundForm.errors should contain(
+        FormError("endDate.month", "provideDetailsOfSecondRentPeriod.endDate.month.required.error")
+      )
+    }
+
+    "return error if year is missing" in {
+      val data = Map(
+        "endDate.day" -> "1",
+        "endDate.month" -> "1",
+        "endDate.year" -> "",
+        "provideDetailsOfSecondRentPeriod" -> "1,777,000.99"
+      )
+      val boundForm = ProvideDetailsOfSecondRentPeriodForm.form.bind(data)
+
+      boundForm.hasErrors shouldBe true
+      boundForm.errors.size shouldBe 1
+      boundForm.errors should contain(
+        FormError("endDate.year", "provideDetailsOfSecondRentPeriod.endDate.year.required.error")
+      )
+    }
+
+    "return error if day and month is missing" in {
+      val data = Map(
+        "endDate.day" -> "",
+        "endDate.month" -> "",
+        "endDate.year" -> "2025",
+        "provideDetailsOfSecondRentPeriod" -> "1,777,000.99"
+      )
+      val boundForm = ProvideDetailsOfSecondRentPeriodForm.form.bind(data)
+
+      boundForm.hasErrors shouldBe true
+      boundForm.errors.size shouldBe 1
+      boundForm.errors should contain(
+        FormError("endDate.day", "provideDetailsOfSecondRentPeriod.endDate.dayAndMonth.required.error")
+      )
+    }
+
+    "return error if day and year is missing" in {
+      val data = Map(
+        "endDate.day" -> "",
+        "endDate.month" -> "1",
+        "endDate.year" -> "",
+        "provideDetailsOfSecondRentPeriod" -> "1,777,000.99"
+      )
+      val boundForm = ProvideDetailsOfSecondRentPeriodForm.form.bind(data)
+
+      boundForm.hasErrors shouldBe true
+      boundForm.errors.size shouldBe 1
+      boundForm.errors should contain(
+        FormError("endDate.day", "provideDetailsOfSecondRentPeriod.endDate.dayAndYear.required.error")
+      )
+    }
+
+    "return error if month and year is missing" in {
+      val data = Map(
+        "endDate.day" -> "1",
+        "endDate.month" -> "",
+        "endDate.year" -> "",
+        "provideDetailsOfSecondRentPeriod" -> "1,777,000.99"
+      )
+      val boundForm = ProvideDetailsOfSecondRentPeriodForm.form.bind(data)
+
+      boundForm.hasErrors shouldBe true
+      boundForm.errors.size shouldBe 1
+      boundForm.errors should contain(
+        FormError("endDate.month", "provideDetailsOfSecondRentPeriod.endDate.monthAndYear.required.error")
+      )
+    }
+
   }

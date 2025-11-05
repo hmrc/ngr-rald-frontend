@@ -19,14 +19,19 @@ package uk.gov.hmrc.ngrraldfrontend.models.forms
 import play.api.data.Form
 import play.api.data.Forms.*
 import play.api.i18n.*
+import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.dateinput.DateInput
 import uk.gov.hmrc.ngrraldfrontend.models.*
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.{CompareWithAnotherDateValidation, DateValidation, Mappings}
-import scala.math.BigDecimal.RoundingMode
 
+import scala.math.BigDecimal.RoundingMode
 import java.time.LocalDate
 
-object ProvideDetailsOfSecondRentPeriodForm extends CommonFormValidators with NGRDateInput with Mappings:
+case class ProvideDetailsOfSecondRentPeriodForm(endDate: NGRDate, rentPeriodAmount: BigDecimal)
+
+object ProvideDetailsOfSecondRentPeriodForm extends CommonFormValidators with NGRDateInput with Mappings {
+  
+  implicit val format: OFormat[ProvideDetailsOfSecondRentPeriodForm] = Json.format[ProvideDetailsOfSecondRentPeriodForm]
 
   private val endDate = "endDate"
   private val rentPeriodAmount = "rentPeriodAmount"
@@ -34,17 +39,34 @@ object ProvideDetailsOfSecondRentPeriodForm extends CommonFormValidators with NG
   private lazy val rentPeriodAmountMaxError = "provideDetailsOfSecondRentPeriod.amount.max.error"
   private lazy val rentPeriodAmountFormatError = "provideDetailsOfSecondRentPeriod.format.error"
 
+  
+  def unapply(provideDetailsOfSecondRentPeriodForm: ProvideDetailsOfSecondRentPeriodForm): Option[(NGRDate, BigDecimal)] =
+    Some(provideDetailsOfSecondRentPeriodForm.endDate, provideDetailsOfSecondRentPeriodForm.rentPeriodAmount)
+
+  def answerToForm(provideDetailsOfSecondRentPeriod: ProvideDetailsOfSecondRentPeriod): Form[ProvideDetailsOfSecondRentPeriodForm] =
+    form.fill(
+      ProvideDetailsOfSecondRentPeriodForm(
+        endDate = NGRDate.fromString(provideDetailsOfSecondRentPeriod.endDate),
+        rentPeriodAmount = provideDetailsOfSecondRentPeriod.rentPeriodAmount,
+      )
+    )
+
+  def formToAnswers(provideDetailsOfSecondRentPeriodForm: ProvideDetailsOfSecondRentPeriodForm): ProvideDetailsOfSecondRentPeriod =
+    ProvideDetailsOfSecondRentPeriod(
+      provideDetailsOfSecondRentPeriodForm.endDate.makeString,
+      provideDetailsOfSecondRentPeriodForm.rentPeriodAmount
+    )
+
   def endDateInput(using messages: Messages): DateInput =
     dateInput(endDate, "provideDetailsOfSecondRentPeriod.endDate.label")
 
 
-  val form: Form[ProvideDetailsOfSecondRentPeriod] =
+  def form: Form[ProvideDetailsOfSecondRentPeriodForm] = {
     Form(
       mapping(
         endDate -> dateMapping("provideDetailsOfSecondRentPeriod.endDate"),
         rentPeriodAmount -> money("provideDetailsOfSecondRentPeriod.rentPeriodAmount")
-      )(ProvideDetailsOfSecondRentPeriod.apply)(o => Some(
-        o.endDate,
-        o.rentPeriodAmount
-      ))
+      )(ProvideDetailsOfSecondRentPeriod.apply)(ProvideDetailsOfSecondRentPeriod.unapply)
     )
+  }
+}

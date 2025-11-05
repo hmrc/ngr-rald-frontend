@@ -53,22 +53,23 @@ class ProvideDetailsOfSecondRentPeriodViewSpec extends ViewBaseSpec:
     val continue = "Continue"
 
 
-  object Selectors:
+  object Selectors {
     val address = "span.govuk-caption-m"
-    val heading = "h1"
-    val endDateLabel = "legend:has(+ #endDate-hint)"
+    val heading = "#main-content > div > div.govuk-grid-column-two-thirds > form > h1"
+    val endDateLabel = "#main-content > div > div.govuk-grid-column-two-thirds > form > div:nth-child(6) > fieldset > legend"
     val endDateHint = "#endDate-hint"
-    val endDateDayLabel = "label[for=endDate.day]"
-    val endDateMonthLabel = "label[for=endDate.month]"
-    val endDateYearLabel = "label[for=endDate.year]"
+    val endDateDayLabel = "#endDate > div:nth-child(1) > div > label"
+    val endDateMonthLabel = "#endDate > div:nth-child(2) > div > label"
+    val endDateYearLabel = "#endDate > div:nth-child(3) > div > label"
     val endDateDay = "#endDate\\.day"
     val endDateMonth = "#endDate\\.month"
     val endDateYear = "#endDate\\.year"
 
-    val rentAmountLabel = "label[for=rentPeriodAmount]"
-    val rentAmountHint = "#rentPeriodAmount-hint"
-    val rentAmount = "#rentPeriodAmount"
+    val rentAmountLabel = "#main-content > div > div.govuk-grid-column-two-thirds > form > div:nth-child(7) > label"
+    val rentAmountHint = "#provideDetailsOfSecondRentPeriod-hint"
+    val rentAmount = "#provideDetailsOfSecondRentPeriod"
     val continue = "#continue"
+  }
 
   private val form = ProvideDetailsOfSecondRentPeriodForm.form.fillAndValidate(
     ProvideDetailsOfSecondRentPeriod(

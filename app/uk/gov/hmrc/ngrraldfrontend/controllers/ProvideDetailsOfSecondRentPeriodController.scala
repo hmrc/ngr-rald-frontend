@@ -22,13 +22,12 @@ import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.forms.ProvideDetailsOfSecondRentPeriodForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.ProvideDetailsOfSecondRentPeriodForm.*
-import uk.gov.hmrc.ngrraldfrontend.models.{Mode, NormalMode, ProvideDetailsOfSecondRentPeriod, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{Mode, NGRDate, NormalMode, ProvideDetailsOfSecondRentPeriod, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.{ProvideDetailsOfFirstRentPeriodPage, ProvideDetailsOfSecondRentPeriodPage}
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.utils.DateKeyFinder
 import uk.gov.hmrc.ngrraldfrontend.views.html.ProvideDetailsOfSecondRentPeriodView
-
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import play.api.libs.json.*
 
@@ -52,26 +51,29 @@ class ProvideDetailsOfSecondRentPeriodController @Inject()(view: ProvideDetailsO
 
   def show(mode: Mode): Action[AnyContent] =
     (authenticate andThen getData).async { implicit request =>
-
       def formatDate = {
         val firstRentPeriodEnd = request.userAnswers.getOrElse(UserAnswers(request.credId))
           .get(ProvideDetailsOfFirstRentPeriodPage).map(_.endDate).getOrElse("").toString
-        val date = LocalDate.parse(firstRentPeriodEnd)
-        val outputFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.UK)
-        date.format(outputFormatter)
+        NGRDate.formatDate(firstRentPeriodEnd)
       }
 
-      formatDate match {
+      val firstRentPeriodEnd = request.userAnswers.getOrElse(UserAnswers(request.credId))
+        .get(ProvideDetailsOfFirstRentPeriodPage).map(_.endDate).getOrElse("")
+      
+      firstRentPeriodEnd match {
         case "" => Future.successful(Redirect(routes.ProvideDetailsOfFirstRentPeriodController.show(NormalMode)))
         case _ =>
-          val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(ProvideDetailsOfSecondRentPeriodPage).fold(form)(form.fill)
+          val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(ProvideDetailsOfSecondRentPeriodPage) match {
+            case None => form
+            case Some(value) => answerToForm(value)
+          }
           Future.successful(Ok(view(
             request.property.addressFull,
             preparedForm,
-            formatDate,
+            NGRDate.formatDate(firstRentPeriodEnd.toString),
             endDateInput,
             mode = mode
-            )))
+          )))
       }
     }
 
@@ -84,9 +86,7 @@ class ProvideDetailsOfSecondRentPeriodController @Inject()(view: ProvideDetailsO
             def formatDate = {
               val firstRentPeriodEnd = request.userAnswers.getOrElse(UserAnswers(request.credId))
                 .get(ProvideDetailsOfFirstRentPeriodPage).map(_.endDate).getOrElse(ProvideDetailsOfSecondRentPeriodPage).toString
-              val date = LocalDate.parse(firstRentPeriodEnd)
-              val outputFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.UK)
-              date.format(outputFormatter)
+              NGRDate.formatDate(firstRentPeriodEnd)
             }
 
             Future.successful(BadRequest(view(

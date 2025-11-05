@@ -21,6 +21,6 @@ import uk.gov.hmrc.ngrraldfrontend.models.{ProvideDetailsOfFirstRentPeriod, Prov
 
 case object ProvideDetailsOfSecondRentPeriodPage extends QuestionPage[ProvideDetailsOfSecondRentPeriod]:
 
-  override def path: JsPath = JsPath \ "steppedRent" \ toString
+  override def path: JsPath = JsPath \ toString
 
   override def toString: String = "secondRentPeriod"
