@@ -40,7 +40,7 @@ class LandlordControllerSpec extends ControllerSpecSupport {
   val controllerNoProperty: LandlordController = new LandlordController(view, fakeAuth, mockNGRCharacterCountComponent, mcc, fakeData(None), mockSessionRepository, mockNavigator)(mockConfig, ec)
   val controllerProperty: LandlordController = new LandlordController(view, fakeAuth, mockNGRCharacterCountComponent, mcc, fakeDataProperty(Some(property),None), mockSessionRepository, mockNavigator)(mockConfig, ec)
   lazy val filledController: Option[UserAnswers] => LandlordController = answers => LandlordController(view, fakeAuth, mockNGRCharacterCountComponent, mcc, fakeDataProperty(Some(property), answers), mockSessionRepository, mockNavigator)
-  lazy val landlordAnswers: Option[UserAnswers] = userAnswers.set(LandlordPage, landlordModel).toOption
+  lazy val landlordAnswers: Option[UserAnswers] = userAnswersWithoutData.set(LandlordPage, landlordModel).toOption
 
   "Landlord controller" must {
     "method show" must {

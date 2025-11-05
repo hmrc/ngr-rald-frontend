@@ -41,9 +41,9 @@ class DidYouGetIncentiveForNotTriggeringBreakClauseControllerSpec extends Contro
   val view: DidYouGetIncentiveForNotTriggeringBreakClauseView = inject[DidYouGetIncentiveForNotTriggeringBreakClauseView]
   val controllerNoProperty: DidYouGetIncentiveForNotTriggeringBreakClauseController = new DidYouGetIncentiveForNotTriggeringBreakClauseController(view = view,authenticate =  fakeAuth, fakeData(None), formProvider = formProvider,sessionRepository = mockSessionRepository,navigator = mockNavigator,mcc = mcc)(mockConfig, ec)
   val userAnswers: Option[UserAnswers] => DidYouGetIncentiveForNotTriggeringBreakClauseController = answers => new DidYouGetIncentiveForNotTriggeringBreakClauseController(view = view,authenticate =  fakeAuth,getData = fakeDataProperty(Some(property), answers), formProvider = formProvider,sessionRepository = mockSessionRepository,navigator = mockNavigator,mcc = mcc)(mockConfig, ec)
-  val YesLumpSumAnswers: Option[UserAnswers] = userAnswers.set(DidYouGetIncentiveForNotTriggeringBreakClausePage, DidYouGetIncentiveForNotTriggeringBreakClause(checkBox = Set(YesLumpSum))).toOption
-  val YesLumpSumYesRentFreePeriodAnswers: Option[UserAnswers] = userAnswers.set(DidYouGetIncentiveForNotTriggeringBreakClausePage, DidYouGetIncentiveForNotTriggeringBreakClause(checkBox = Set(YesLumpSum, YesRentFreePeriod))).toOption
-  val NoAnswer: Option[UserAnswers] = userAnswers.set(DidYouGetIncentiveForNotTriggeringBreakClausePage, DidYouGetIncentiveForNotTriggeringBreakClause(checkBox = Set(No))).toOption
+  val YesLumpSumAnswers: Option[UserAnswers] = userAnswersWithoutData.set(DidYouGetIncentiveForNotTriggeringBreakClausePage, DidYouGetIncentiveForNotTriggeringBreakClause(checkBox = Set(YesLumpSum))).toOption
+  val YesLumpSumYesRentFreePeriodAnswers: Option[UserAnswers] = userAnswersWithoutData.set(DidYouGetIncentiveForNotTriggeringBreakClausePage, DidYouGetIncentiveForNotTriggeringBreakClause(checkBox = Set(YesLumpSum, YesRentFreePeriod))).toOption
+  val NoAnswer: Option[UserAnswers] = userAnswersWithoutData.set(DidYouGetIncentiveForNotTriggeringBreakClausePage, DidYouGetIncentiveForNotTriggeringBreakClause(checkBox = Set(No))).toOption
 
   "Did You Get Incentive For Not Triggering Break Clause Controller" must {
     "method show" must {

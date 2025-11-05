@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.ngrraldfrontend.util
+package uk.gov.hmrc.ngrraldfrontend.utils
 
 import uk.gov.hmrc.ngrraldfrontend.helpers.TestSupport
 import uk.gov.hmrc.ngrraldfrontend.utils.CurrencyHelper

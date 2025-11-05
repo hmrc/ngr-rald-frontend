@@ -56,8 +56,8 @@ class ProvideDetailsOfFirstRentPeriodControllerSpec extends ControllerSpecSuppor
     mockNavigator
   )(mockConfig, ec)
 
-  val firstRentPeriodAnswers: Option[UserAnswers] = userAnswers.set(ProvideDetailsOfFirstRentPeriodPage, firstRentPeriod).toOption
-  val firstRentPeriodAnswersNoRentPayed: Option[UserAnswers] = userAnswers.set(ProvideDetailsOfFirstRentPeriodPage, firstRentPeriodNoRentPayed).toOption
+  val firstRentPeriodAnswers: Option[UserAnswers] = userAnswersWithoutData.set(ProvideDetailsOfFirstRentPeriodPage, firstRentPeriod).toOption
+  val firstRentPeriodAnswersNoRentPayed: Option[UserAnswers] = userAnswersWithoutData.set(ProvideDetailsOfFirstRentPeriodPage, firstRentPeriodNoRentPayed).toOption
 
   "ProvideDetailsOfFirstRentPeriodController" must {
     ".show" must {

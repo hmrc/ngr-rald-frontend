@@ -55,7 +55,7 @@ class RentDatesAgreeControllerSpec extends ControllerSpecSupport {
     mockSessionRepository
   )(mockConfig, ec)
 
-  val rentDatesAgreeAnswers: Option[UserAnswers] = userAnswers.set(RentDatesAgreePage, "2025-02-01").toOption
+  val rentDatesAgreeAnswers: Option[UserAnswers] = userAnswersWithoutData.set(RentDatesAgreePage, "2025-02-01").toOption
 
 
 

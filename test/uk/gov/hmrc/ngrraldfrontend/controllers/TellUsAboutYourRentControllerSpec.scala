@@ -62,7 +62,7 @@ class TellUsAboutYourRentControllerSpec extends ControllerSpecSupport {
       }
       "Return SEE_OTHER and the correct view when user resumes rent review journey" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        val result = controllerProperty(Some(UserAnswers(credId.value, Json.obj(
+        val result = controllerProperty(Some(UserAnswers(credId, Json.obj(
           "tellUsAboutRent" -> "RentAgreement",
           "landlord" -> Json.obj(
             "landlordName" -> "Anna"
@@ -73,7 +73,7 @@ class TellUsAboutYourRentControllerSpec extends ControllerSpecSupport {
       }
       "Return SEE_OTHER and the correct view when user switched to rent review journey" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        val result = controllerProperty(Some(UserAnswers(credId.value, Json.obj(
+        val result = controllerProperty(Some(UserAnswers(credId, Json.obj(
           "tellUsAboutRenewedAgreement" -> "RenewedAgreement",
           "whatTypeOfLeaseRenewal" -> "SurrenderAndRenewal"
         ), Instant.now))).submit()(authenticatedFakeRequest)

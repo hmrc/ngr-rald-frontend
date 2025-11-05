@@ -38,7 +38,7 @@ class DidYouGetMoneyFromLandlordControllerSpec extends ControllerSpecSupport {
   val view: DidYouGetMoneyFromLandlordView = inject[DidYouGetMoneyFromLandlordView]
   val controllerNoProperty: DidYouGetMoneyFromLandlordController = new DidYouGetMoneyFromLandlordController(view, fakeAuth, fakeData(None), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
   val controllerProperty: Option[UserAnswers] => DidYouGetMoneyFromLandlordController = answers => new DidYouGetMoneyFromLandlordController(view, fakeAuth, fakeDataProperty(Some(property),answers), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
-  val didYouGetMoneyFromLandlordAnswers: Option[UserAnswers] =  userAnswers.set(DidYouGetMoneyFromLandlordPage, true).toOption
+  val didYouGetMoneyFromLandlordAnswers: Option[UserAnswers] =  userAnswersWithoutData.set(DidYouGetMoneyFromLandlordPage, true).toOption
 
 
   "DidYouGetMoneyFromLandlord Controller" must {

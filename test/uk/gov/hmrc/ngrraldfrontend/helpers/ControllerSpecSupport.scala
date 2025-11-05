@@ -44,12 +44,11 @@ trait ControllerSpecSupport extends TestSupport {
   val mockNavigator: Navigator = inject[Navigator]
   val mockInputText: InputText = inject[InputText]
   val mockNGRCharacterCountComponent: NGRCharacterCountComponent = inject[NGRCharacterCountComponent]
-  val mockNgrConnector: NGRConnector = mock[NGRConnector]
   implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
   val fakeAuth = new FakeAuthenticatedRequest(mcc.parsers.defaultBodyParser)
-  val userAnswers = UserAnswers(CredId("id"))
-  val renewedAgreementAnswers: Option[UserAnswers] = userAnswers.set(TellUsAboutYourRenewedAgreementPage, RenewedAgreement).toOption
-  val newAgreementAnswers: Option[UserAnswers] = userAnswers.set(TellUsAboutYourNewAgreementPage, NewAgreement).toOption
-  val rentAgreementAnswers: Option[UserAnswers] = userAnswers.set(TellUsAboutRentPage, RentAgreement).toOption
+  val userAnswersWithoutData = UserAnswers(CredId("id"))
+  val renewedAgreementAnswers: Option[UserAnswers] = userAnswersWithoutData.set(TellUsAboutYourRenewedAgreementPage, RenewedAgreement).toOption
+  val newAgreementAnswers: Option[UserAnswers] = userAnswersWithoutData.set(TellUsAboutYourNewAgreementPage, NewAgreement).toOption
+  val rentAgreementAnswers: Option[UserAnswers] = userAnswersWithoutData.set(TellUsAboutRentPage, RentAgreement).toOption
   
 }

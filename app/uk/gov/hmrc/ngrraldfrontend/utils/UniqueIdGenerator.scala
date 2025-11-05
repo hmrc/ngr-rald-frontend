@@ -14,35 +14,37 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.ngrraldfrontend.utils
+package utils
 
 import java.security.SecureRandom
 
 object UniqueIdGenerator {
 
-  private val generator: SecureRandom = new SecureRandom()
-  private val allowedChars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
-  private val length = allowedChars.length
+  private[utils] val allowedChars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
+  private val generator = new SecureRandom()
+  private val referenceLength = 12
+  private val groupSize = 4
 
   def generateId: String = {
-    @annotation.tailrec
-    def loop(i: Int, acc: List[Char]): List[Char] = {
-      if (i >= 12) acc
-      else {
-        val char = allowedChars(generator.nextInt(length))
-        val updatedAcc = if (i > 0 && i % 4 == 0) char :: '-' :: acc else char :: acc
-        loop(i + 1, updatedAcc)
-      }
-    }
+    val raw = (1 to referenceLength)
+      .map(_ => allowedChars(generator.nextInt(allowedChars.length)))
+      .mkString
 
-    loop(0, Nil).mkString
+    format(raw)
   }
 
   def validateId(id: String): Either[Error, String] = {
-    val sanitised = id.replace("\\s", "").replace("-","").toUpperCase()
-    if (sanitised.length != 12 || !sanitised.forall(allowedChars.contains(_))) Left(new Error("Invalid reference"))
-    else Right(sanitised.grouped(4).mkString("-"))
+    val sanitised = id.replaceAll("\\s", "").replaceAll("-", "").toUpperCase
+
+    if (sanitised.length != referenceLength || !sanitised.forall(allowedChars.contains(_)))
+      Left(new Error("Invalid reference"))
+    else
+      Right(format(sanitised))
   }
 
+  def format(raw: String): String =
+    raw.grouped(groupSize).mkString("-")
 
+  def parse(formatted: String): String =
+    formatted.replaceAll("-", "").toUpperCase
 }

@@ -39,7 +39,7 @@ class WhatTypeOfAgreementControllerSpec extends ControllerSpecSupport {
   val view: WhatTypeOfAgreementView = inject[WhatTypeOfAgreementView]
   val controllerProperty: Option[UserAnswers] => WhatTypeOfAgreementController = answers => new WhatTypeOfAgreementController(view, fakeAuth, mcc, fakeDataProperty(Some(property),answers), mockNavigator, mockSessionRepository)(mockConfig, ec)
   val controllerNoProperty: WhatTypeOfAgreementController = new WhatTypeOfAgreementController(view, fakeAuth, mcc, fakeData(None), mockNavigator, mockSessionRepository)(mockConfig, ec)
-  val whatTypeOfAgreementAnswers: Option[UserAnswers] = userAnswers.set(WhatTypeOfAgreementPage, "Verbal").toOption
+  val whatTypeOfAgreementAnswers: Option[UserAnswers] = userAnswersWithoutData.set(WhatTypeOfAgreementPage, "Verbal").toOption
 
 
 

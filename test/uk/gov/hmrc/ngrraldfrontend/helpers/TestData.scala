@@ -151,7 +151,7 @@ trait TestData {
  
  val agreementVerbalModel: AgreementVerbal = AgreementVerbal(startDate = "2025-01-01", openEnded = false, endDate = Some("2025-02-02"))
 
- val interimRentSetByTheCourtModel: InterimRentSetByTheCourt = InterimRentSetByTheCourt("10000", "1990-01")
+ val interimRentSetByTheCourtModel: InterimRentSetByTheCourt = InterimRentSetByTheCourt(BigDecimal("10000"), "1990-01")
 
  val aboutTheRentFreePeriodModel: AboutTheRentFreePeriod = AboutTheRentFreePeriod(1, "1990-01-01")
 

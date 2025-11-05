@@ -21,12 +21,12 @@ import uk.gov.hmrc.ngrraldfrontend.helpers.TestSupport
 
 class InterimRentSetByTheCourtSpec extends TestSupport {
 
-  val interimRentSetByTheCourt: InterimRentSetByTheCourt = InterimRentSetByTheCourt(amount = "1000.00", date = "2020-1")
+  val interimRentSetByTheCourt: InterimRentSetByTheCourt = InterimRentSetByTheCourt(amount = BigDecimal("1000.00"), date = "2020-1")
 
   val interimRentSetByTheCourtJson: JsValue = Json.parse(
     """
       |{
-      |"amount": "1000.00",
+      |"amount": 1000.00,
       |"date":"2020-1"
       |}
       |""".stripMargin

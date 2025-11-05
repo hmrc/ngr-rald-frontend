@@ -38,7 +38,7 @@ class RepairsAndFittingOutControllerSpec extends ControllerSpecSupport {
   val view: RepairsAndFittingOutView = inject[RepairsAndFittingOutView]
   val controllerNoProperty: RepairsAndFittingOutController = new RepairsAndFittingOutController(view, fakeAuth, fakeData(None), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
   val controllerProperty: Option[UserAnswers] => RepairsAndFittingOutController = answers => new RepairsAndFittingOutController(view, fakeAuth, fakeDataProperty(Some(property),answers), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
-  val confirmBreakClauseAnswers: Option[UserAnswers] =  userAnswers.set(RepairsAndFittingOutPage, true).toOption
+  val confirmBreakClauseAnswers: Option[UserAnswers] =  userAnswersWithoutData.set(RepairsAndFittingOutPage, true).toOption
 
 
   "RepairsAndFittingOutController" must {

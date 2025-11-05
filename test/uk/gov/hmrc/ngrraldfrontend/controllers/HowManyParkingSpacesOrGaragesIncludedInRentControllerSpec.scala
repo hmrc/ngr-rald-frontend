@@ -52,7 +52,7 @@ class HowManyParkingSpacesOrGaragesIncludedInRentControllerSpec extends Controll
     navigator = mockNavigator,
     mcc = mcc)(mockConfig)
 
-  val howManyParkingGaragesAnswers: Option[UserAnswers] = userAnswers.set(HowManyParkingSpacesOrGaragesIncludedInRentPage, HowManyParkingSpacesOrGarages(1,2,3)).toOption
+  val howManyParkingGaragesAnswers: Option[UserAnswers] = userAnswersWithoutData.set(HowManyParkingSpacesOrGaragesIncludedInRentPage, HowManyParkingSpacesOrGarages(1,2,3)).toOption
 
   "HowManyParkingSpacesOrGaragesIncludedInRentController" must {
     "method show" must {

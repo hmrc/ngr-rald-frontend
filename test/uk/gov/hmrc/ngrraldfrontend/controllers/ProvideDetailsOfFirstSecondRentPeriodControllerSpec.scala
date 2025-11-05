@@ -58,8 +58,8 @@ class ProvideDetailsOfFirstSecondRentPeriodSpec extends ControllerSpecSupport {
     mockNavigator
   )(mockConfig, ec)
 
-  val firstSecondRentPeriodAnswers: Option[UserAnswers] = userAnswers.set(ProvideDetailsOfFirstSecondRentPeriodPage, firstSecondRentPeriod).toOption
-  val firstSecondRentPeriodAnswersMin: Option[UserAnswers] = userAnswers.set(ProvideDetailsOfFirstSecondRentPeriodPage, firstSecondRentPeriodNoRentPayed).toOption
+  val firstSecondRentPeriodAnswers: Option[UserAnswers] = userAnswersWithoutData.set(ProvideDetailsOfFirstSecondRentPeriodPage, firstSecondRentPeriod).toOption
+  val firstSecondRentPeriodAnswersMin: Option[UserAnswers] = userAnswersWithoutData.set(ProvideDetailsOfFirstSecondRentPeriodPage, firstSecondRentPeriodNoRentPayed).toOption
 
 
   "Agreement controller" must {

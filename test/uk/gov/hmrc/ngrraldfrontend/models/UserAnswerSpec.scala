@@ -33,7 +33,9 @@ class UserAnswerSpec extends TestSupport {
   val userAnswersJson: JsValue = Json.parse(
     """
       |{
-      | "credId":"1234",
+      | "credId":{
+      |   "value": "1234"
+      |},
       | "data":{
       |   "tellUsAboutRenewedAgreement": "RenewedAgreement",
       |   "whatTypeOfLeaseRenewal":"SurrenderAndRenewal"
