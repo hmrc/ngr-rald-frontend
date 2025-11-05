@@ -60,10 +60,10 @@ class DeclarationController @Inject()(declarationView: DeclarationView,
             ngrConnector.upsertRaldUserAnswers(updatedAnswers).flatMap(
               _.status match
                 case CREATED => Future.successful(Redirect(navigator.nextPage(DeclarationPage, NormalMode, updatedAnswers)))
-                case _ => Future.failed(new Exception(s"Failed upsert to backend for credId: ${request.credId}"))
+                case _       => Future.failed(new Exception(s"Failed upsert to backend for credId: ${request.credId}"))
           )
           case _ => Future.failed(new Exception(s"Could not save reference for credId: ${request.credId}"))
         }
-      } yield Redirect(navigator.nextPage(DeclarationPage, NormalMode, updatedAnswers))//result
+      } yield result
     }
 }
