@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package utils
+package uk.gov.hmrc.ngrraldfrontend.util
 
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
-import utils.UniqueIdGenerator
+import uk.gov.hmrc.ngrraldfrontend.utils.UniqueIdGenerator
 
 class UniqueIdGeneratorSpec extends AnyFreeSpec with Matchers {
 

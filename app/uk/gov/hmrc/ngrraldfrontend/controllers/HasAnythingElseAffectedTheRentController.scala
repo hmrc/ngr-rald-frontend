@@ -28,6 +28,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.components.NGRCharacterCount
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{buildRadios, simpleNgrRadio}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.HasAnythingElseAffectedTheRentForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.HasAnythingElseAffectedTheRentForm.form
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{HasAnythingElseAffectedTheRent, Mode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.HasAnythingElseAffectedTheRentPage
@@ -63,7 +64,7 @@ class HasAnythingElseAffectedTheRentController @Inject()(hasAnythingElseAffected
 
   def show(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
-      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(HasAnythingElseAffectedTheRentPage) match {
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).get(HasAnythingElseAffectedTheRentPage) match {
         case None => form
         case Some(value) => form.fill(HasAnythingElseAffectedTheRentForm(value.radio.toString, value.reason))
       }
@@ -89,7 +90,7 @@ class HasAnythingElseAffectedTheRentController @Inject()(hasAnythingElseAffected
         },
         radioValue =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
+            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(CredId(request.credId)))
               .set(HasAnythingElseAffectedTheRentPage, HasAnythingElseAffectedTheRent(radioValue.radioValue.toBoolean, radioValue.reason)))
             _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(HasAnythingElseAffectedTheRentPage, mode, updatedAnswers))

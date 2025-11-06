@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package utils
+package uk.gov.hmrc.ngrraldfrontend.utils
 
 import java.security.SecureRandom
 
 object UniqueIdGenerator {
 
-  private[utils] val allowedChars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
+  val allowedChars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
   private val generator = new SecureRandom()
   private val referenceLength = 12
   private val groupSize = 4
