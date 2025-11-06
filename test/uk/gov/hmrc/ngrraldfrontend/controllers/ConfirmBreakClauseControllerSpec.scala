@@ -87,10 +87,10 @@ class ConfirmBreakClauseControllerSpec extends ControllerSpecSupport {
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
         result.map(result => {
-          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/landlord") //TODO this is currently going to the wrong page as the journey hasn't yet been completed
+          result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/has-anything-else-affected-the-rent") //TODO this is currently going to the wrong page as the journey hasn't yet been completed
         })
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.LandlordController.show(NormalMode).url)
+        redirectLocation(result) mustBe Some(routes.HasAnythingElseAffectedTheRentController.show(NormalMode).url)
       }
       "Return Form with Errors when no radio selection is input" in {
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.ConfirmBreakClauseController.submit(NormalMode))
