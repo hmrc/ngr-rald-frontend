@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.ngrraldfrontend.controllers
 
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
@@ -30,6 +31,7 @@ import uk.gov.hmrc.ngrraldfrontend.utils.DateKeyFinder
 import uk.gov.hmrc.ngrraldfrontend.views.html.ProvideDetailsOfSecondRentPeriodView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import play.api.libs.json.*
+import uk.gov.hmrc.http.NotFoundException
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -47,30 +49,25 @@ class ProvideDetailsOfSecondRentPeriodController @Inject()(view: ProvideDetailsO
                                                          )(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with DateKeyFinder:
 
-
+  private def getPreviousEndDate(userAnswers: UserAnswers): Option[LocalDate] =
+    userAnswers.get(ProvideDetailsOfFirstRentPeriodPage).map(_.endDate.plusDays(1))
 
   def show(mode: Mode): Action[AnyContent] =
     (authenticate andThen getData).async { implicit request =>
-      def formatDate = {
-        val firstRentPeriodEnd = request.userAnswers.getOrElse(UserAnswers(request.credId))
-          .get(ProvideDetailsOfFirstRentPeriodPage).map(_.endDate).getOrElse("").toString
-        NGRDate.formatDate(firstRentPeriodEnd)
-      }
 
-      val firstRentPeriodEnd = request.userAnswers.getOrElse(UserAnswers(request.credId))
-        .get(ProvideDetailsOfFirstRentPeriodPage).map(_.endDate).getOrElse("")
+      val firstRentPeriodEndDate: Option[LocalDate] = getPreviousEndDate(request.userAnswers.getOrElse(UserAnswers(request.credId)))
       
-      firstRentPeriodEnd match {
-        case "" => Future.successful(Redirect(routes.ProvideDetailsOfFirstRentPeriodController.show(NormalMode)))
-        case _ =>
+      firstRentPeriodEndDate match {
+        case None => Future.successful(Redirect(routes.ProvideDetailsOfFirstRentPeriodController.show(NormalMode)))
+        case Some(previousEndDate) =>
           val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(ProvideDetailsOfSecondRentPeriodPage) match {
-            case None => form
-            case Some(value) => answerToForm(value)
+            case None => form(previousEndDate)
+            case Some(value) => answerToForm(value, previousEndDate)
           }
           Future.successful(Ok(view(
             request.property.addressFull,
             preparedForm,
-            NGRDate.formatDate(firstRentPeriodEnd.toString),
+            NGRDate.formatDate(previousEndDate.toString),
             endDateInput,
             mode = mode
           )))
@@ -79,26 +76,32 @@ class ProvideDetailsOfSecondRentPeriodController @Inject()(view: ProvideDetailsO
 
   def submit(mode: Mode): Action[AnyContent] =
     (authenticate andThen getData).async { implicit request =>
-      form
+      val previousEndDate: LocalDate = getPreviousEndDate(request.userAnswers.getOrElse(UserAnswers(request.credId)))
+        .getOrElse(throw new NotFoundException("Can't find previous end date"))
+      form(previousEndDate)
         .bindFromRequest()
         .fold(
           formWithErrors =>
-            def formatDate = {
-              val firstRentPeriodEnd = request.userAnswers.getOrElse(UserAnswers(request.credId))
-                .get(ProvideDetailsOfFirstRentPeriodPage).map(_.endDate).getOrElse(ProvideDetailsOfSecondRentPeriodPage).toString
-              NGRDate.formatDate(firstRentPeriodEnd)
+            val correctedFormErrors = formWithErrors.errors.map { formError =>
+              (formError.key, formError.messages) match
+                case (key, messages) if messages.head.contains("provideDetailsOfSecondRentPeriod.endDate") =>
+                  setCorrectKey(formError, "provideDetailsOfSecondRentPeriod", "endDate")
+                case _ =>
+                  formError
             }
+            val formWithCorrectedErrors = formWithErrors.copy(errors = correctedFormErrors)
 
             Future.successful(BadRequest(view(
               request.property.addressFull,
-              formWithErrors,
-              formatDate,
+              formWithCorrectedErrors,
+              NGRDate.formatDate(previousEndDate.toString),
               endDateInput,
               mode
             ))),
-          provideDetailsOfSecondRentPeriod =>
+          provideDetailsOfSecondRentPeriodForm =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(ProvideDetailsOfSecondRentPeriodPage, provideDetailsOfSecondRentPeriod))
+              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
+                .set(ProvideDetailsOfSecondRentPeriodPage, formToAnswers(provideDetailsOfSecondRentPeriodForm)))
               _ <- sessionRepository.set(updatedAnswers)
             } yield Redirect(navigator.nextPage(ProvideDetailsOfSecondRentPeriodPage, NormalMode, updatedAnswers))
         )

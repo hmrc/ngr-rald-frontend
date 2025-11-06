@@ -29,9 +29,9 @@ import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentPeriodsForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentPeriodsForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.models.{Mode, NGRDate, ProvideDetailsOfFirstSecondRentPeriod, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{Mode, NGRDate, ProvideDetailsOfFirstRentPeriod, ProvideDetailsOfSecondRentPeriod, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
-import uk.gov.hmrc.ngrraldfrontend.pages.{ProvideDetailsOfFirstSecondRentPeriodPage, RentPeriodsPage}
+import uk.gov.hmrc.ngrraldfrontend.pages.{ProvideDetailsOfFirstRentPeriodPage, ProvideDetailsOfSecondRentPeriodPage, RentPeriodsPage}
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.utils.CurrencyHelper
 import uk.gov.hmrc.ngrraldfrontend.views.html.RentPeriodView
@@ -50,7 +50,7 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
                                      )(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with CurrencyHelper {
 
-  def firstTable(rentPeriods: ProvideDetailsOfFirstSecondRentPeriod)(implicit messages: Messages): Table =
+  def firstTable(firstRentPeriods: ProvideDetailsOfFirstRentPeriod)(implicit messages: Messages): Table =
     Table(
       rows = Seq(
         Seq(
@@ -58,7 +58,7 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
             content = Text(messages("rentPeriods.first.startDate"))
           ),
           TableRow(
-            content = Text(NGRDate.formatDate(rentPeriods.firstDateStart)),
+            content = Text(NGRDate.formatDate(firstRentPeriods.startDate.toString)),
             attributes = Map(
               "id" -> "first-period-start-date-id"
             )
@@ -69,13 +69,13 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
             content = Text(messages("rentPeriods.first.endDate"))
           ),
           TableRow(
-            content = Text(NGRDate.formatDate(rentPeriods.firstDateEnd)),
+            content = Text(NGRDate.formatDate(firstRentPeriods.endDate.toString)),
             attributes = Map(
               "id" -> "first-period-end-date-id"
             )
           )
         ),
-        rentPeriods.firstRentPeriodAmount match
+        firstRentPeriods.rentPeriodAmount match
             case Some(answer) => Seq(
               TableRow(
                 content = Text(messages("rentPeriods.first.rentValue"))
@@ -94,7 +94,7 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
           ),
           TableRow(
             content = Text(
-              if (rentPeriods.firstRentPeriodRadio) {
+              if (firstRentPeriods.isRentPayablePeriod) {
                 "Yes"
               } else {
                 "No"
@@ -112,14 +112,14 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
       firstCellIsHeader = true
     )
 
-  def secondTable(rentPeriods: ProvideDetailsOfFirstSecondRentPeriod)(implicit messages: Messages): Table = Table(
+  def secondTable(firstRentPeriods: ProvideDetailsOfFirstRentPeriod, secondRentPeriods: ProvideDetailsOfSecondRentPeriod)(implicit messages: Messages): Table = Table(
     rows = Seq(
       Seq(
         TableRow(
           content = Text(messages("rentPeriods.second.startDate"))
         ),
         TableRow(
-          content = Text(NGRDate.formatDate(rentPeriods.secondDateStart)),
+          content = Text(NGRDate.formatDate(firstRentPeriods.endDate.plusDays(1).toString)),
           attributes = Map(
             "id" -> "second-period-start-date-id"
           )
@@ -130,7 +130,7 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
           content = Text(messages("rentPeriods.second.endDate"))
         ),
         TableRow(
-          content = Text(NGRDate.formatDate(rentPeriods.secondDateEnd)),
+          content = Text(NGRDate.formatDate(secondRentPeriods.endDate)),
           attributes = Map(
             "id" -> "second-period-end-date-id"
           )
@@ -141,7 +141,7 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
           content = Text(messages("rentPeriods.second.rentValue"))
         ),
         TableRow(
-          content = Text(formatRentValue(rentPeriods.secondHowMuchIsRent.toDouble)),
+          content = Text(formatRentValue(secondRentPeriods.rentPeriodAmount.toDouble)),
           attributes = Map(
             "id" -> "second-period-rent-value-id"
           )
@@ -156,21 +156,21 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
 
   def show(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
-      val credId = CredId(request.credId)
-      request.userAnswers.getOrElse(UserAnswers(credId)).get(ProvideDetailsOfFirstSecondRentPeriodPage) match {
-        case Some(value) =>
-          val preparedForm = request.userAnswers.getOrElse(UserAnswers(credId)).get(RentPeriodsPage) match {
+      val userAnswers = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId)))
+      (userAnswers.get(ProvideDetailsOfFirstRentPeriodPage), userAnswers.get(ProvideDetailsOfSecondRentPeriodPage)) match {
+        case (Some(firstRentPeriod), Some(secondRentPeriod)) =>
+          val preparedForm = userAnswers.get(RentPeriodsPage) match {
             case Some(value) => form.fill(RentPeriodsForm(value.toString))
             case None => form
           }
           Future.successful(Ok(view(
             selectedPropertyAddress = request.property.addressFull,
             preparedForm,
-            firstTable = firstTable(value),
-            secondTable = secondTable(value),
+            firstTable = firstTable(firstRentPeriod),
+            secondTable = secondTable(firstRentPeriod, secondRentPeriod),
             ngrRadio = buildRadios(preparedForm, RentPeriodsForm.rentPeriodsRadio(preparedForm)),
             mode = mode)))
-        case None => throw new Exception("Not found answers")
+        case (_, _) => throw new Exception("Not found answers")
       }
     }
   }
@@ -181,14 +181,15 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
         .bindFromRequest()
         .fold(
           formWithErrors =>
-            request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).get(ProvideDetailsOfFirstSecondRentPeriodPage) match {
-              case Some(value) => Future.successful(BadRequest(view(
+            val userAnswers = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId)))
+            (userAnswers.get(ProvideDetailsOfFirstRentPeriodPage), userAnswers.get(ProvideDetailsOfSecondRentPeriodPage)) match {
+              case (Some(firstRentPeriod), Some(secondRentPeriod)) => Future.successful(BadRequest(view(
                 selectedPropertyAddress = request.property.addressFull,
                 formWithErrors,
-                firstTable = firstTable(value),
-                secondTable = secondTable(value),
+                firstTable = firstTable(firstRentPeriod),
+                secondTable = secondTable(firstRentPeriod, secondRentPeriod),
                 buildRadios(formWithErrors, RentPeriodsForm.rentPeriodsRadio(formWithErrors)), mode = mode)))
-              case None => throw new NotFoundException("Couldn't find user Answers")
+              case (_, _) => throw new NotFoundException("Couldn't find user Answers")
             },
           rentPeriodsForm =>
             for {

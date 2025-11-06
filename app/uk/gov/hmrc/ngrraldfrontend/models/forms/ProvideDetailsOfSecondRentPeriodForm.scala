@@ -22,29 +22,25 @@ import play.api.i18n.*
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.dateinput.DateInput
 import uk.gov.hmrc.ngrraldfrontend.models.*
-import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.{CompareWithAnotherDateValidation, DateValidation, Mappings}
+import uk.gov.hmrc.ngrraldfrontend.models.forms.LandlordForm.money
 
-import scala.math.BigDecimal.RoundingMode
 import java.time.LocalDate
 
 case class ProvideDetailsOfSecondRentPeriodForm(endDate: NGRDate, rentPeriodAmount: BigDecimal)
 
-object ProvideDetailsOfSecondRentPeriodForm extends CommonFormValidators with NGRDateInput with Mappings {
-  
+object ProvideDetailsOfSecondRentPeriodForm extends CommonFormValidators with NGRDateInput with DateMappings {
+
   implicit val format: OFormat[ProvideDetailsOfSecondRentPeriodForm] = Json.format[ProvideDetailsOfSecondRentPeriodForm]
 
   private val endDate = "endDate"
   private val rentPeriodAmount = "rentPeriodAmount"
-  private lazy val rentPeriodAmountEmptyError = "provideDetailsOfSecondRentPeriod.empty.error"
-  private lazy val rentPeriodAmountMaxError = "provideDetailsOfSecondRentPeriod.amount.max.error"
-  private lazy val rentPeriodAmountFormatError = "provideDetailsOfSecondRentPeriod.format.error"
 
-  
+
   def unapply(provideDetailsOfSecondRentPeriodForm: ProvideDetailsOfSecondRentPeriodForm): Option[(NGRDate, BigDecimal)] =
     Some(provideDetailsOfSecondRentPeriodForm.endDate, provideDetailsOfSecondRentPeriodForm.rentPeriodAmount)
 
-  def answerToForm(provideDetailsOfSecondRentPeriod: ProvideDetailsOfSecondRentPeriod): Form[ProvideDetailsOfSecondRentPeriodForm] =
-    form.fill(
+  def answerToForm(provideDetailsOfSecondRentPeriod: ProvideDetailsOfSecondRentPeriod, previousEndDate: LocalDate): Form[ProvideDetailsOfSecondRentPeriodForm] =
+    form(previousEndDate).fill(
       ProvideDetailsOfSecondRentPeriodForm(
         endDate = NGRDate.fromString(provideDetailsOfSecondRentPeriod.endDate),
         rentPeriodAmount = provideDetailsOfSecondRentPeriod.rentPeriodAmount,
@@ -61,12 +57,20 @@ object ProvideDetailsOfSecondRentPeriodForm extends CommonFormValidators with NG
     dateInput(endDate, "provideDetailsOfSecondRentPeriod.endDate.label")
 
 
-  def form: Form[ProvideDetailsOfSecondRentPeriodForm] = {
+  def form(previousEndDate: LocalDate): Form[ProvideDetailsOfSecondRentPeriodForm] = {
     Form(
       mapping(
-        endDate -> dateMapping("provideDetailsOfSecondRentPeriod.endDate"),
+        endDate -> dateMapping
+          .verifying(
+            firstError(
+              isDateEmpty(errorKeys("provideDetailsOfSecondRentPeriod", "endDate")),
+              isDateValid("provideDetailsOfSecondRentPeriod.endDate.invalid.error"),
+              isDateAfter1900("provideDetailsOfSecondRentPeriod.endDate.before.1900.error"),
+              isDateBeforeStartDate("provideDetailsOfSecondRentPeriod.endDate.before.startDate.error", NGRDate.fromLocalDate(previousEndDate))
+            )
+          ),
         rentPeriodAmount -> money("provideDetailsOfSecondRentPeriod.rentPeriodAmount")
-      )(ProvideDetailsOfSecondRentPeriod.apply)(ProvideDetailsOfSecondRentPeriod.unapply)
+      )(ProvideDetailsOfSecondRentPeriodForm.apply)(ProvideDetailsOfSecondRentPeriodForm.unapply)
     )
   }
 }

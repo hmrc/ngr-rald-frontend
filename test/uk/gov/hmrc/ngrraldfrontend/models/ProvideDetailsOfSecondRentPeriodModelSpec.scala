@@ -20,13 +20,11 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.*
 
-import java.time.LocalDate
-
 class ProvideDetailsOfSecondRentPeriodModelSpec extends AnyFlatSpec with Matchers:
 
   "ProvideDetailsOfSecondRentPeriod" should "serialize to JSON correctly" in {
     val rentDetails = ProvideDetailsOfSecondRentPeriod(
-      endDate = LocalDate.of(2025, 1, 31),
+      endDate = "2025-01-31",
       rentPeriodAmount = BigDecimal(1000)
     )
 
@@ -45,6 +43,6 @@ class ProvideDetailsOfSecondRentPeriodModelSpec extends AnyFlatSpec with Matcher
         |""".stripMargin)
 
     val result = json.as[ProvideDetailsOfSecondRentPeriod]
-    result.endDate shouldBe LocalDate.of(2025, 1, 31)
+    result.endDate shouldBe "2025-01-31"
     result.rentPeriodAmount shouldBe BigDecimal(111000)
   }

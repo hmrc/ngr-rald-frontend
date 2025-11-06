@@ -19,7 +19,7 @@
 @import uk.gov.hmrc.ngrraldfrontend.viewmodels.govuk.all._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.ngrraldfrontend.views.html.components._
-@import uk.gov.hmrc.ngrraldfrontend.models.ProvideDetailsOfSecondRentPeriod
+@import uk.gov.hmrc.ngrraldfrontend.models.forms.ProvideDetailsOfSecondRentPeriodForm
 
 @this(
         layout: Layout,
@@ -32,7 +32,7 @@
 
 @(
         propertyAddress: String,
-        form: Form[ProvideDetailsOfSecondRentPeriod],
+        form: Form[ProvideDetailsOfSecondRentPeriodForm],
         firstRentPeriodEnd: String,
         endDateInput: DateInput,
         mode: Mode
@@ -43,8 +43,7 @@
     @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfSecondRentPeriodController.submit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form, Some("provideDetailsOfSecondRentPeriod"),
-                Some(Seq("startDate", "endDate"))))
+            @govukErrorSummary(ErrorSummaryViewModel(form, Some("provideDetailsOfSecondRentPeriod"), Some(Seq("endDate"))))
         }
 
         <span class="govuk-caption-m">@propertyAddress</span>

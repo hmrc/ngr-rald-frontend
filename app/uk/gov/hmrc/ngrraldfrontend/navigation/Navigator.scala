@@ -19,7 +19,7 @@ package uk.gov.hmrc.ngrraldfrontend.navigation
 import play.api.mvc.Call
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.models.Incentive.{YesLumpSum, YesRentFreePeriod}
-import uk.gov.hmrc.ngrraldfrontend.models.{CheckMode, Mode, NormalMode, ProvideDetailsOfFirstSecondRentPeriod, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{CheckMode, Mode, NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.pages.*
 
 import javax.inject.{Inject, Singleton}
@@ -84,7 +84,7 @@ class Navigator @Inject()() {
       answers.get(DidYouAgreeRentWithLandlordPage) match {
         case Some(value)  =>
           value match {
-            case true => answers.get(ProvideDetailsOfFirstSecondRentPeriodPage) match {
+            case true => answers.get(ProvideDetailsOfSecondRentPeriodPage) match {
               case Some(value) => value match {
                 case value => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeController.show(NormalMode)
               }
@@ -95,12 +95,11 @@ class Navigator @Inject()() {
         case None => throw new NotFoundException("Failed to find answers")
       }
     case ProvideDetailsOfFirstRentPeriodPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfSecondRentPeriodController.show(NormalMode)
-    case ProvideDetailsOfSecondRentPeriodPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfSecondRentPeriodController.show(NormalMode) //TODO Needs to go to card layout rent-periods
-    case ProvideDetailsOfFirstSecondRentPeriodPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentPeriodsController.show(NormalMode)
+    case ProvideDetailsOfSecondRentPeriodPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentPeriodsController.show(NormalMode)
     case RentPeriodsPage => answers =>
       answers.get(RentPeriodsPage) match {
         case Some(value) => value match {
-          case true => uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfFirstSecondRentPeriodController.show(NormalMode)
+          case true => uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfFirstRentPeriodController.show(NormalMode) //TODO: need to connected to additional period
           case _    => answers.get(TellUsAboutYourNewAgreementPage) match {
             case Some(_) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeController.show(NormalMode)
             case None => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouAgreeRentWithLandlordController.show(NormalMode)
@@ -148,7 +147,7 @@ class Navigator @Inject()() {
       }
     case HowManyParkingSpacesOrGaragesIncludedInRentPage => _ =>  uk.gov.hmrc.ngrraldfrontend.controllers.routes.DoYouPayExtraForParkingSpacesController.show(NormalMode)
     case InterimSetByTheCourtPage => answers =>
-      answers.get(ProvideDetailsOfFirstSecondRentPeriodPage) match {
+      answers.get(ProvideDetailsOfSecondRentPeriodPage) match {
         case Some(_) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeController.show(NormalMode)
         case None    => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(NormalMode)
       }

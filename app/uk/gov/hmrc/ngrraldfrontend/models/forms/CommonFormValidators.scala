@@ -131,6 +131,15 @@ trait CommonFormValidators {
       dateAfter1900Validation(date, errorKey)
     )
 
+  protected def isDateBeforeStartDate[A](errorKey: String, startDate: NGRDate): Constraint[A] =
+    Constraint((input: A) =>
+      val endDate = input.asInstanceOf[NGRDate]
+      if (isEndDateBeforeStartDate(startDate, endDate))
+        Invalid(errorKey)
+      else
+        Valid
+    )  
+
   protected def dateEmptyValidation(date: NGRDate, errorKeys: Map[DateErrorKeys, String]): ValidationResult =
     val errorKey = getDateErrorKey(date, errorKeys)
     if (errorKey.isEmpty)
@@ -184,6 +193,9 @@ trait CommonFormValidators {
       
   protected def isDateBefore1900(date: NGRDate): Boolean =
     Try(date.localDate).isSuccess && date.year.toInt < 1900
+
+  protected def isEndDateBeforeStartDate(startDate: NGRDate, endDate: NGRDate): Boolean =
+    Try(startDate.localDate).isSuccess && Try(endDate.localDate).isSuccess && endDate.localDate.isBefore(startDate.localDate)  
 
   private def monthYearValidation(date: NGRMonthYear, errorKey: String) = {
     val maybeMonth = date.month.toIntOption

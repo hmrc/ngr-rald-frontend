@@ -61,7 +61,7 @@ trait TestData {
     startDate = LocalDate.of(2025, 1, 1),
     endDate = LocalDate.of(2025, 1, 31),
     isRentPayablePeriod = true,
-    rentPeriodAmount = Some(BigDecimal(1000))
+    rentPeriodAmount = Some(BigDecimal(1000.46))
   )
 
   val firstRentPeriodNoRentPayed: ProvideDetailsOfFirstRentPeriod = ProvideDetailsOfFirstRentPeriod(
@@ -71,28 +71,8 @@ trait TestData {
   )
 
  val secondRentPeriod: ProvideDetailsOfSecondRentPeriod = ProvideDetailsOfSecondRentPeriod(
-  endDate = LocalDate.of(2025, 1, 31),
-  rentPeriodAmount = BigDecimal(1000)
- )
-
-  val firstSecondRentPeriod: ProvideDetailsOfFirstSecondRentPeriod = ProvideDetailsOfFirstSecondRentPeriod(
-  firstDateStart = "2025-01-01",
-  firstDateEnd = "2025-01-31",
-  firstRentPeriodRadio = true,
-  firstRentPeriodAmount = Some(BigDecimal(1000)),
-  secondDateStart = "2025-02-01",
-  secondDateEnd = "2025-02-28",
-  secondHowMuchIsRent = BigDecimal(1000)
- )
-
- val firstSecondRentPeriodNoRentPayed: ProvideDetailsOfFirstSecondRentPeriod = ProvideDetailsOfFirstSecondRentPeriod(
-  firstDateStart = "2025-01-01",
-  firstDateEnd = "2025-01-31",
-  firstRentPeriodRadio = false,
-  firstRentPeriodAmount = None,
-  secondDateStart = "2025-02-01",
-  secondDateEnd = "2025-02-28",
-  secondHowMuchIsRent = BigDecimal(1000)
+  endDate = "2025-03-31",
+  rentPeriodAmount = BigDecimal(1350)
  )
 
  val testRegistrationModel: RatepayerRegistration = RatepayerRegistration(

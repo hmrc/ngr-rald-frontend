@@ -19,12 +19,9 @@ package uk.gov.hmrc.ngrraldfrontend.views
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import uk.gov.hmrc.govukfrontend.views.viewmodels.dateinput.DateInput
-import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.Radios
 import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
-import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, ProvideDetailsOfSecondRentPeriod}
-import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio
-import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.ProvideDetailsOfSecondRentPeriodForm
+import uk.gov.hmrc.ngrraldfrontend.models.{NGRDate, NormalMode}
 import uk.gov.hmrc.ngrraldfrontend.views.html.ProvideDetailsOfSecondRentPeriodView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 
@@ -38,6 +35,8 @@ class ProvideDetailsOfSecondRentPeriodViewSpec extends ViewBaseSpec:
   object Strings:
     val address = "2A, RODLEY LANE, RODLEY, LEEDS, BH1 1HU"
     val heading = "Second rent period"
+    val startDateLabel = "Second rent period start date"
+    val startDateHint = "This is the day after the first rent period ended"
     val endDateLabel = "When does the second rent period end?"
     val endDateHint = "For example, 27 6 2026"
     val endDateDayLabel = "Day"
@@ -46,7 +45,7 @@ class ProvideDetailsOfSecondRentPeriodViewSpec extends ViewBaseSpec:
     val endDateDay = "31"
     val endDateMonth = "12"
     val endDateYear = "2025"
-    val formatDate = "1st January 2000"
+    val formatDate = "1 January 2000"
     val rentAmountLabel = "How much is the rent for this period (excluding VAT)?"
     val rentAmountHint = "Enter the amount you pay each year (excluding VAT) even if the period is for more or less than a year."
     val rentAmount = "1999000"
@@ -54,8 +53,11 @@ class ProvideDetailsOfSecondRentPeriodViewSpec extends ViewBaseSpec:
 
 
   object Selectors {
-    val address = "span.govuk-caption-m"
+    val address = "#main-content > div > div.govuk-grid-column-two-thirds > form > span"
     val heading = "#main-content > div > div.govuk-grid-column-two-thirds > form > h1"
+    val startDateLabel = "#main-content > div > div.govuk-grid-column-two-thirds > form > h2"
+    val startDateHint = "#main-content > div > div.govuk-grid-column-two-thirds > form > p.govuk-hint"
+    val startDate = "#main-content > div > div.govuk-grid-column-two-thirds > form > p.govuk-body"
     val endDateLabel = "#main-content > div > div.govuk-grid-column-two-thirds > form > div:nth-child(6) > fieldset > legend"
     val endDateHint = "#endDate-hint"
     val endDateDayLabel = "#endDate > div:nth-child(1) > div > label"
@@ -66,14 +68,14 @@ class ProvideDetailsOfSecondRentPeriodViewSpec extends ViewBaseSpec:
     val endDateYear = "#endDate\\.year"
 
     val rentAmountLabel = "#main-content > div > div.govuk-grid-column-two-thirds > form > div:nth-child(7) > label"
-    val rentAmountHint = "#provideDetailsOfSecondRentPeriod-hint"
-    val rentAmount = "#provideDetailsOfSecondRentPeriod"
+    val rentAmountHint = "#rentPeriodAmount-hint"
+    val rentAmount = "#rentPeriodAmount"
     val continue = "#continue"
   }
 
-  private val form = ProvideDetailsOfSecondRentPeriodForm.form.fillAndValidate(
-    ProvideDetailsOfSecondRentPeriod(
-      LocalDate.parse("2025-12-31"),
+  private val form = ProvideDetailsOfSecondRentPeriodForm.form(LocalDate.parse("2025-10-01")).fillAndValidate(
+    ProvideDetailsOfSecondRentPeriodForm(
+      NGRDate("31", "12", "2025"),
       BigDecimal(1999000)
     )
   )
@@ -83,7 +85,7 @@ class ProvideDetailsOfSecondRentPeriodViewSpec extends ViewBaseSpec:
   "ProvideDetailsOfSecondRentPeriodView" must {
     val secondRentPeriodView = view(Strings.address, form, Strings.formatDate, endDateInput, NormalMode)
     implicit val document: Document = Jsoup.parse(secondRentPeriodView.body)
-    val htmlApply = view.apply(Strings.address, form, Strings.formatDate,endDateInput, NormalMode).body
+    val htmlApply = view.apply(Strings.address, form, Strings.formatDate, endDateInput, NormalMode).body
     val htmlRender = view.render(Strings.address, form, Strings.formatDate, endDateInput, NormalMode, request, messages, mockConfig).body
     val htmlF = view.f(Strings.address, form, Strings.formatDate, endDateInput, NormalMode)
 
@@ -109,6 +111,18 @@ class ProvideDetailsOfSecondRentPeriodViewSpec extends ViewBaseSpec:
 
     "show correct heading" in {
       elementText(Selectors.heading) mustBe Strings.heading
+    }
+
+    "show correct start date" in {
+      elementText(Selectors.startDate) mustBe Strings.formatDate
+    }
+
+    "show correct start date hint" in {
+      elementText(Selectors.startDateHint) mustBe Strings.startDateHint
+    }
+
+    "show correct start date label" in {
+      elementText(Selectors.startDateLabel) mustBe Strings.startDateLabel
     }
 
     "show correct end date label" in {
