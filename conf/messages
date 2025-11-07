@@ -605,6 +605,7 @@ checkAnswers.agreement.whatTypeOfAgreement = What type of agreement do you have?
 
 checkAnswers.rent.label = Rent details
 checkAnswers.rent.whatIsYourRentBasedOn = What is your rent based on?
+checkAnswers.rent.otherReason = Can you tell us how your rent was agreed?
 checkAnswers.rent.agreedRentChange = Have you agreed in advance with the landlord when and by how much rent goes up?
 checkAnswers.rent.didYouAgreeRentWithLandlord = Did you agree the rent with your landlord or their agent?
 checkAnswers.rent.rentInterim = Did the court also set an interim rent?
