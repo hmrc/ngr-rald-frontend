@@ -23,7 +23,7 @@ import java.util.regex.Pattern
 import scala.util.Try
 
 trait CommonFormValidators {
-  val amountRegex: Pattern = Pattern.compile("([0-9]+\\.[0-9]+|[0-9]+)")
+  val amountRegex: Pattern = Pattern.compile("^\\d+\\.?\\d+")
   val wholePositiveNumberRegexp: Pattern = Pattern.compile("^\\d+$")
 
 
