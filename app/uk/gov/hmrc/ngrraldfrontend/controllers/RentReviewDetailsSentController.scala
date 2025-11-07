@@ -39,6 +39,7 @@ import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.views.html.{ConfirmBreakClauseView, RentReviewDetailsSentView}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.ngrraldfrontend.models.components.{TableData, TableHeader, TableRowIsActive, TableRowLink, TableRowText}
+import uk.gov.hmrc.ngrraldfrontend.utils.UniqueIdGenerator
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -51,18 +52,6 @@ class RentReviewDetailsSentController @Inject()(view: RentReviewDetailsSentView,
                                                 sessionRepository: SessionRepository,
                                                 navigator: Navigator
                                                )(implicit appConfig: AppConfig, executionContext: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
-
-  private def generateTable(propertyList: List[VMVProperty])(implicit messages: Messages): Table = {
-    TableData(
-      headers = Seq(
-        TableHeader("Address", "govuk-table__caption--s govuk-!-width-half"),
-        TableHeader("Property reference", "govuk-table__caption--s, govuk-!-width-one-quarter")),
-      rows = propertyList.map(property => Seq(
-        TableRowText(property.addressFull),
-        TableRowText(property.localAuthorityReference))),
-      caption = Some(messages(""))
-    ).toTable
-  }
 
   def firstTable(property: VMVProperty)(implicit messages: Messages): Table =
     Table(
@@ -86,22 +75,16 @@ class RentReviewDetailsSentController @Inject()(view: RentReviewDetailsSentView,
           ))))
 
 
-  def confirmation(): Action[AnyContent] =
+  def confirmation(recoveryId: Option[String]): Action[AnyContent] =
     (authenticate).async { implicit request: AuthenticatedUserRequest[AnyContent] =>
       ngrConnector.getLinkedProperty(CredId(request.credId.getOrElse(""))).flatMap {
-        case Some(vmvProperty) => Future.successful(Ok(view(firstTable(vmvProperty))))
+        case Some(vmvProperty) => Future.successful(Ok(view(
+          Some(UniqueIdGenerator.generateId),
+          firstTable(vmvProperty),
+          request.email.getOrElse("")
+        )))
         case None => Future.failed(throw new NotFoundException("Unable to find match Linked Properties"))
       }
     }
-
-//  def confirmation: Action[AnyContent] = {
-//    (authenticate andThen getData).async { implicit AuthenticatedUserRequest =>
-//      val propertyAddress = AuthenticatedUserRequest.property.addressFull
-//      val propertyReference = AuthenticatedUserRequest.property.localAuthorityReference
-//      val email = AuthenticatedUserRequest.property
-//
-//      Future.successful(Ok(view(propertyAddress, propertyReference)))
-//    }
-//  }
 }
 

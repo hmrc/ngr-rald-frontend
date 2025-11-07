@@ -608,10 +608,11 @@ declaration.accept = Accept and send
 
 #Rent Review Details Sent Confirmation
 rentReviewDetailsSent.title = Renewed agreement details sent
-rentReviewDetailsSent.p1 = Your reference is {0}
-rentReviewDetailsSent.p2 = Print this page
+rentReviewDetailsSent.p1 = Your reference is
+rentReviewDetailsSent.print = Print this page
 rentReviewDetailsSent.p3 = <b>Address</b>
 rentReviewDetailsSent.p4 = <b>Property Reference</b>
 rentReviewDetailsSent.p5 = We have sent a confirmation email to {0}
 rentReviewDetailsSent.h1 = What happens next?
 rentReviewDetailsSent.p6 = We will review the information you sent to us. If we need to clarify anything or need more details, we will contact you by email
+rentReviewDetailsSent.goHome = Go to your account home
