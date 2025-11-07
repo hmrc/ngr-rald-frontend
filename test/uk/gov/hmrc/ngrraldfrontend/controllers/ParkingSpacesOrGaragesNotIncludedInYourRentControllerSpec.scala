@@ -57,7 +57,7 @@ class ParkingSpacesOrGaragesNotIncludedInYourRentControllerSpec extends Controll
     navigator = mockNavigator,
     )(mockConfig)
 
-  val parkingSpacesOrGaragesNotIncludedInYourRentAnswers: Option[UserAnswers] = UserAnswers("id").set(ParkingSpacesOrGaragesNotIncludedInYourRentPage, ParkingSpacesOrGaragesNotIncludedInYourRent(1, 2, 3, 2000, NGRDate(day = "01",month = "10",year = "2025"))).toOption
+  val parkingSpacesOrGaragesNotIncludedInYourRentAnswers: Option[UserAnswers] = userAnswersWithoutData.set(ParkingSpacesOrGaragesNotIncludedInYourRentPage, ParkingSpacesOrGaragesNotIncludedInYourRent(1, 2, 3, 2000, "2025-10-01")).toOption
 
   "ParkingSpacesOrGaragesNotIncludedInYourRentController" must {
     "method show" must {
@@ -76,7 +76,7 @@ class ParkingSpacesOrGaragesNotIncludedInYourRentControllerSpec extends Controll
         document.select("input[name=coveredSpaces]").attr("value") mustEqual "2"
         document.select("input[name=garages]").attr("value")  mustEqual "3"
         document.select("#totalCost").attr("value")  mustEqual "2000"
-        document.select("#agreementDate\\.day").attr("value")  mustEqual "01"
+        document.select("#agreementDate\\.day").attr("value")  mustEqual "1"
         document.select("#agreementDate\\.month").attr("value")  mustEqual "10"
         document.select("#agreementDate\\.year").attr("value")  mustEqual "2025"
       }

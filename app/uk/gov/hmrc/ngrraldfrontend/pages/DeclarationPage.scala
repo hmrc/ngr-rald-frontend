@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.ngrraldfrontend.models.forms.mappings
+package uk.gov.hmrc.ngrraldfrontend.pages
 
-import java.time.LocalDate
+import play.api.libs.json.JsPath
 
-abstract class DateValidation:
+case object DeclarationPage extends QuestionPage[String]{
 
-  def errorTypeKey: String
+  override def toString: String = "requestSentReference"
 
-  def validateDateAndData(date: LocalDate, data: Map[String, String]): Boolean
+  override def path: JsPath = JsPath \ toString
+
+}

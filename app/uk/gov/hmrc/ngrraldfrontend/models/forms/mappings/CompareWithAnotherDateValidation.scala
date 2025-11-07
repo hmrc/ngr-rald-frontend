@@ -20,9 +20,6 @@ import play.api.data.FormError
 
 import java.time.LocalDate
 
-/**
- * @author Yuriy Tumakha
- */
 case class CompareWithAnotherDateValidation(errorTypeKey: String, anotherDateField: String, validate: (LocalDate, LocalDate) => Boolean) extends DateValidation:
 
   private val localDateFormatter: LocalDateFormatter = LocalDateFormatter(anotherDateField)

@@ -30,7 +30,7 @@ class ParkingSpacesOrGaragesNotIncludedInYourRentSpec extends AnyFlatSpec with M
       coveredSpaces = 1,
       garages = 1,
       totalCost = BigDecimal(150.50),
-      agreementDate = NGRDate("01","10","2025")
+      agreementDate = "2025-10-01"
     )
 
     val json = Json.toJson(parkingInfo)
@@ -39,7 +39,7 @@ class ParkingSpacesOrGaragesNotIncludedInYourRentSpec extends AnyFlatSpec with M
       "coveredSpaces" -> 1,
       "garages" -> 1,
       "totalCost" -> 150.50,
-      "agreementDate" -> Json.obj("day" -> "01", "month" -> "10", "year" -> "2025")
+      "agreementDate" -> "2025-10-01"
     )
   }
 
@@ -49,7 +49,7 @@ class ParkingSpacesOrGaragesNotIncludedInYourRentSpec extends AnyFlatSpec with M
       "coveredSpaces" -> 1,
       "garages" -> 1,
       "totalCost" -> 150.50,
-      "agreementDate" -> Json.obj("day" -> "01", "month" -> "10", "year" -> "2025")
+      "agreementDate" -> "2025-10-01"
     )
 
     val expected = ParkingSpacesOrGaragesNotIncludedInYourRent(
@@ -57,7 +57,7 @@ class ParkingSpacesOrGaragesNotIncludedInYourRentSpec extends AnyFlatSpec with M
       coveredSpaces = 1,
       garages = 1,
       totalCost = BigDecimal(150.50),
-      agreementDate = NGRDate("01","10","2025")
+      agreementDate = "2025-10-01"
     )
 
     json.as[ParkingSpacesOrGaragesNotIncludedInYourRent] shouldBe expected

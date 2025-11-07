@@ -26,6 +26,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.{NewAgreement, RenewedAg
 import uk.gov.hmrc.ngrraldfrontend.models.AuthenticatedUserRequest
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.models.UserAnswers
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.requests.OptionalDataRequest
 import uk.gov.hmrc.ngrraldfrontend.models.vmvProperty.VMVProperty
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
@@ -43,56 +44,11 @@ trait ControllerSpecSupport extends TestSupport {
   val mockNavigator: Navigator = inject[Navigator]
   val mockInputText: InputText = inject[InputText]
   val mockNGRCharacterCountComponent: NGRCharacterCountComponent = inject[NGRCharacterCountComponent]
-  val mockNgrConnector: NGRConnector = mock[NGRConnector]
   implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
   val fakeAuth = new FakeAuthenticatedRequest(mcc.parsers.defaultBodyParser)
-  val renewedAgreementAnswers: Option[UserAnswers] = UserAnswers("id").set(TellUsAboutYourRenewedAgreementPage, RenewedAgreement).toOption
-  val newAgreementAnswers: Option[UserAnswers] = UserAnswers("id").set(TellUsAboutYourNewAgreementPage, NewAgreement).toOption
-  val rentAgreementAnswers: Option[UserAnswers] = UserAnswers("id").set(TellUsAboutRentPage, RentAgreement).toOption
-
-
-  //  def mockRequest(hasCredId: Boolean = false, hasNino: Boolean = true): Unit =
-//    when(mockAuthJourney andThen mockGetData) thenReturn new ActionBuilder[AuthenticatedUserRequest, AnyContent] {
-//      override def invokeBlock[A](request: Request[A], block: AuthenticatedUserRequest[A] => Future[Result]): Future[Result] = {
-//        val authRequest = AuthenticatedUserRequest(
-//          request,
-//          None,
-//          None,
-//          Some("user@email.com"),
-//          Some(property),
-//          if (hasCredId) Some("1234") else None,
-//          None,
-//          None,
-//          nino = if (hasNino) Nino(hasNino = true, Some("AA000003D")) else Nino(hasNino = false, None)
-//        )
-//        block(authRequest)
-//      }
-//
-//      override def parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
-//
-//      override protected def executionContext: ExecutionContext = ec
-//    }
-//
-//
-//  def mockRequestWithoutProperty(hasCredId: Boolean = false, hasNino: Boolean = true): Unit =
-//    when(mockAuthJourney andThen mockGetData) thenReturn new ActionBuilder[AuthenticatedUserRequest, AnyContent] {
-//      override def invokeBlock[A](request: Request[A], block: AuthenticatedUserRequest[A] => Future[Result]): Future[Result] = {
-//        val authRequest = AuthenticatedUserRequest(
-//          request,
-//          None,
-//          None,
-//          Some("user@email.com"),
-//          None,
-//          if (hasCredId) Some("1234") else None,
-//          None,
-//          None,
-//          nino = if (hasNino) Nino(hasNino = true, Some("AA000003D")) else Nino(hasNino = false, None)
-//        )
-//        block(authRequest)
-//      }
-//
-//      override def parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
-//
-//      override protected def executionContext: ExecutionContext = ec
-//    }
+  val userAnswersWithoutData = UserAnswers(CredId("id"))
+  val renewedAgreementAnswers: Option[UserAnswers] = userAnswersWithoutData.set(TellUsAboutYourRenewedAgreementPage, RenewedAgreement).toOption
+  val newAgreementAnswers: Option[UserAnswers] = userAnswersWithoutData.set(TellUsAboutYourNewAgreementPage, NewAgreement).toOption
+  val rentAgreementAnswers: Option[UserAnswers] = userAnswersWithoutData.set(TellUsAboutRentPage, RentAgreement).toOption
+  
 }

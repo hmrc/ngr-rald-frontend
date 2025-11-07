@@ -24,6 +24,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RepairsAndInsuranceForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RepairsAndInsuranceForm.form
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{Mode, RepairsAndInsurance, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.RepairsAndInsurancePage
@@ -45,7 +46,7 @@ class RepairsAndInsuranceController @Inject()(repairsAndInsuranceView: RepairsAn
 
   def show(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
-      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(RepairsAndInsurancePage) match {
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).get(RepairsAndInsurancePage) match {
         case None => form
         case Some(value) => form.fill(RepairsAndInsuranceForm(value.internalRepairs, value.externalRepairs, value.buildingInsurance))
       }
@@ -76,7 +77,7 @@ class RepairsAndInsuranceController @Inject()(repairsAndInsuranceView: RepairsAn
         repairsAndInsurance =>
           val answers = RepairsAndInsurance(repairsAndInsurance.internalRepairs, repairsAndInsurance.externalRepairs, repairsAndInsurance.buildingInsurance)
           for{
-            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(RepairsAndInsurancePage, answers))
+            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).set(RepairsAndInsurancePage, answers))
             _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(RepairsAndInsurancePage, mode, updatedAnswers))
       )

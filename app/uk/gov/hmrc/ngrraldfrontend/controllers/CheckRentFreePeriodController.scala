@@ -23,6 +23,7 @@ import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{buildRadios, simpleNgrRadio}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.CheckRentFreePeriodForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.CheckRentFreePeriodForm.form
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{Mode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.CheckRentFreePeriodPage
@@ -44,7 +45,7 @@ class CheckRentFreePeriodController @Inject()(checkRentFreePeriodView: CheckRent
 
   def show(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
-      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(CheckRentFreePeriodPage) match {
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).get(CheckRentFreePeriodPage) match {
         case None => form
         case Some(value) => form.fill(CheckRentFreePeriodForm(value.toString))
       }
@@ -70,7 +71,7 @@ class CheckRentFreePeriodController @Inject()(checkRentFreePeriodView: CheckRent
         },
         radioValue =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
+            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(CredId(request.credId)))
               .set(CheckRentFreePeriodPage, radioValue.radioValue.toBoolean))
             _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(CheckRentFreePeriodPage, mode, updatedAnswers))

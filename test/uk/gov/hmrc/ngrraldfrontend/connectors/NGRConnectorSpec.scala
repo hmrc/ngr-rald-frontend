@@ -19,10 +19,10 @@ package uk.gov.hmrc.ngrraldfrontend.connectors
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import uk.gov.hmrc.http.NotFoundException
+import uk.gov.hmrc.http.{HttpResponse, NotFoundException}
 import uk.gov.hmrc.ngrraldfrontend.helpers.TestData
 import uk.gov.hmrc.ngrraldfrontend.mocks.MockHttpV2
-import uk.gov.hmrc.ngrraldfrontend.models.PropertyLinkingUserAnswers
+import uk.gov.hmrc.ngrraldfrontend.models.{PropertyLinkingUserAnswers, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.registration.*
 import uk.gov.hmrc.ngrraldfrontend.models.registration.ReferenceType.TRN
 import uk.gov.hmrc.ngrraldfrontend.models.vmvProperty.VMVProperty
@@ -60,6 +60,38 @@ class NGRConnectorSpec extends MockHttpV2 with TestData {
       setupMockHttpV2Get(s"${mockConfig.nextGenerationRatesHost}/next-generation-rates/get-property-linking-user-answers")(None)
       val result = ngrConnector.getLinkedProperty(credId)
       result.futureValue mustBe None
+    }
+  }
+
+  "upsertRaldUserAnswers" when {
+    "return HttpResponse when the response is 201 CREATED" in {
+      val raldUserAnswers: UserAnswers = UserAnswers(credId = credId)
+      val response: HttpResponse = HttpResponse(201, "Created")
+      setupMockHttpV2Post(s"${mockConfig.nextGenerationRatesHost}/next-generation-rates/upsert-rald-user-answers")(response)
+      val result: Future[HttpResponse] = ngrConnector.upsertRaldUserAnswers(raldUserAnswers)
+      result.futureValue.status mustBe 201
+    }
+
+    "throw an exception when response is not 201" in {
+      val raldUserAnswers: UserAnswers = UserAnswers(credId = credId)
+      val response: HttpResponse = HttpResponse(400, "Bad Request")
+
+      setupMockHttpV2Post(s"${mockConfig.nextGenerationRatesHost}/next-generation-rates/upsert-rald-user-answers")(response)
+
+      val exception = intercept[Exception] {
+        ngrConnector.upsertRaldUserAnswers(raldUserAnswers).futureValue
+      }
+      exception.getMessage must include("400: Bad Request")
+    }
+
+    "propagate exception when the request fails" in {
+      val raldUserAnswers: UserAnswers = UserAnswers(credId = credId)
+
+      setupMockHttpV2FailedPost(s"${mockConfig.nextGenerationRatesHost}/next-generation-rates/upsert-rald-user-answers")
+      val exception = intercept[RuntimeException] {
+        ngrConnector.upsertRaldUserAnswers(raldUserAnswers).futureValue
+      }
+      exception.getMessage must include("Request Failed")
     }
   }
 }

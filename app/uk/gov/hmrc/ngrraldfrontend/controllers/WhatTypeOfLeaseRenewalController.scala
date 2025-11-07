@@ -23,6 +23,7 @@ import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatTypeOfLeaseRenewalForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatTypeOfLeaseRenewalForm.{RenewedAgreement, SurrenderAndRenewal, form}
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{Mode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.WhatTypeOfLeaseRenewalPage
@@ -49,7 +50,7 @@ class WhatTypeOfLeaseRenewalController @Inject()(whatTypeOfLeaseRenewalView: Wha
     (authenticate andThen getData).async { implicit request =>
 
       val preparedForm = request.userAnswers
-        .getOrElse(UserAnswers(request.credId))
+        .getOrElse(UserAnswers(CredId(request.credId)))
         .get(WhatTypeOfLeaseRenewalPage) match {
         case None => WhatTypeOfLeaseRenewalForm.form
         case Some(value) =>
@@ -85,7 +86,7 @@ class WhatTypeOfLeaseRenewalController @Inject()(whatTypeOfLeaseRenewalView: Wha
             case RenewedAgreement => renewedAgreement
             case SurrenderAndRenewal => surrenderAndRenewal
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(WhatTypeOfLeaseRenewalPage, typeOfLeaseRenewal))
+            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).set(WhatTypeOfLeaseRenewalPage, typeOfLeaseRenewal))
             _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(WhatTypeOfLeaseRenewalPage, mode, updatedAnswers))
       )

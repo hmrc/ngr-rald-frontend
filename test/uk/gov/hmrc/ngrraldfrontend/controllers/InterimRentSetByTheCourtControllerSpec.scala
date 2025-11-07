@@ -72,7 +72,7 @@ class InterimRentSetByTheCourtControllerSpec extends ControllerSpecSupport {
     navigator = mockNavigator,
     mcc = mcc)(mockConfig)
 
-  val interimSetByTheCourtAnswers: Option[UserAnswers] = UserAnswers("id").set(InterimSetByTheCourtPage, interimRentSetByTheCourtModel).toOption
+  val interimSetByTheCourtAnswers: Option[UserAnswers] = userAnswersWithoutData.set(InterimSetByTheCourtPage, interimRentSetByTheCourtModel).toOption
 
   "InterimRentSetByTheCourtController" must {
     "method show" must {

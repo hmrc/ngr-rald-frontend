@@ -22,6 +22,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AboutRepairsAndFittingOutForm
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{AboutRepairsAndFittingOut, Mode, NGRMonthYear, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.AboutRepairsAndFittingOutPage
@@ -48,7 +49,7 @@ class AboutRepairsAndFittingOutController @Inject()(
 
   def show(mode: Mode): Action[AnyContent] = (authenticate andThen getData).async { implicit request =>
     val preparedForm = request.userAnswers
-      .getOrElse(UserAnswers(request.credId))
+      .getOrElse(UserAnswers(CredId(request.credId)))
       .get(AboutRepairsAndFittingOutPage) match {
       case None => form
       case Some(value) =>
@@ -79,7 +80,7 @@ class AboutRepairsAndFittingOutController @Inject()(
 
         for {
           updatedAnswers <- Future.fromTry(
-            request.userAnswers.getOrElse(UserAnswers(request.credId))
+            request.userAnswers.getOrElse(UserAnswers(CredId(request.credId)))
               .set(AboutRepairsAndFittingOutPage, updatedModel)
           )
           _ <- sessionRepository.set(updatedAnswers)

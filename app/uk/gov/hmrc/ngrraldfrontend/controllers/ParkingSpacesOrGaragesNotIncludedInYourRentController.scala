@@ -25,7 +25,8 @@ import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.forms.ParkingSpacesOrGaragesNotIncludedInYourRentForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.ParkingSpacesOrGaragesNotIncludedInYourRentForm.*
-import uk.gov.hmrc.ngrraldfrontend.models.{Mode, ParkingSpacesOrGaragesNotIncludedInYourRent, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
+import uk.gov.hmrc.ngrraldfrontend.models.{Mode, NGRDate, ParkingSpacesOrGaragesNotIncludedInYourRent, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.ParkingSpacesOrGaragesNotIncludedInYourRentPage
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
@@ -78,9 +79,9 @@ class ParkingSpacesOrGaragesNotIncludedInYourRentController @Inject()(view: Park
   
   def show(mode: Mode):Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
-      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(ParkingSpacesOrGaragesNotIncludedInYourRentPage) match {
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).get(ParkingSpacesOrGaragesNotIncludedInYourRentPage) match {
         case None => form
-        case Some(value) => form.fill(ParkingSpacesOrGaragesNotIncludedInYourRentForm(value.uncoveredSpaces, value.coveredSpaces, value.garages, value.totalCost, value.agreementDate))
+        case Some(value) => answerToForm(value)
       }
       Future.successful(Ok(view(
         form = preparedForm,
@@ -117,9 +118,8 @@ class ParkingSpacesOrGaragesNotIncludedInYourRentController @Inject()(view: Park
           )))
         },
         parkingSpacesOrGaragesNotIncludedInYourRent =>
-          val answers = ParkingSpacesOrGaragesNotIncludedInYourRent(parkingSpacesOrGaragesNotIncludedInYourRent.uncoveredSpaces, parkingSpacesOrGaragesNotIncludedInYourRent.coveredSpaces, parkingSpacesOrGaragesNotIncludedInYourRent.garages, parkingSpacesOrGaragesNotIncludedInYourRent.totalCost, parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate)
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(ParkingSpacesOrGaragesNotIncludedInYourRentPage, answers))
+            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).set(ParkingSpacesOrGaragesNotIncludedInYourRentPage, formToAnswers(parkingSpacesOrGaragesNotIncludedInYourRent)))
             _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(ParkingSpacesOrGaragesNotIncludedInYourRentPage, mode, updatedAnswers))
       )

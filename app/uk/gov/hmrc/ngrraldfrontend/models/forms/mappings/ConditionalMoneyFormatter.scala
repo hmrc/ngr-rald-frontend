@@ -23,9 +23,6 @@ import scala.math.BigDecimal.RoundingMode.HALF_UP
 import scala.util.Try
 import scala.util.matching.Regex
 
-/**
- * @author Yuriy Tumakha
- */
 class ConditionalMoneyFormatter(errorKeyPrefix: String, requiredOnCondition: Map[String, String] => Boolean)
   extends Formatter[Option[BigDecimal]]:
 

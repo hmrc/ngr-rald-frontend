@@ -52,7 +52,7 @@ class MoneyYouPaidInAdvanceToLandlordControllerSpec extends ControllerSpecSuppor
     navigator = mockNavigator,
     mcc = mcc)(mockConfig)
 
-  val moneyYouPaidInAdvanceToLandlordAnswers: Option[UserAnswers] = UserAnswers("id").set(MoneyYouPaidInAdvanceToLandlordPage, moneyYouPaidInAdvanceToLandlordModel).toOption
+  val moneyYouPaidInAdvanceToLandlordAnswers: Option[UserAnswers] = userAnswersWithoutData.set(MoneyYouPaidInAdvanceToLandlordPage, moneyYouPaidInAdvanceToLandlordModel).toOption
 
   "MoneyYouPaidInAdvanceToLandlordController" must {
     "method show" must {

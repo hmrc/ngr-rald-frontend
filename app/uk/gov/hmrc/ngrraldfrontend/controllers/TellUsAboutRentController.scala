@@ -21,6 +21,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.RentAgreement
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.TellUsAboutRentPage
@@ -51,7 +52,7 @@ class TellUsAboutRentController @Inject()(view: TellUsAboutYourAgreementView,
       for {
         updatedAnswers <- Future.fromTry(request.userAnswers
           .map(answers => answers.getCurrentJourneyUserAnswers(TellUsAboutRentPage, answers, request.credId))
-          .getOrElse(UserAnswers(request.credId)).set(TellUsAboutRentPage, RentAgreement))
+          .getOrElse(UserAnswers(CredId(request.credId))).set(TellUsAboutRentPage, RentAgreement))
         _ <- sessionRepository.set(updatedAnswers)
       } yield Redirect(navigator.nextPage(TellUsAboutRentPage, NormalMode, updatedAnswers))
     }

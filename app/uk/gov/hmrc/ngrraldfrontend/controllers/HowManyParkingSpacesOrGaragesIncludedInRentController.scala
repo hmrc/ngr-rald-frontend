@@ -24,6 +24,7 @@ import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.forms.HowManyParkingSpacesOrGaragesIncludedInRentForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.HowManyParkingSpacesOrGaragesIncludedInRentForm.form
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{HowManyParkingSpacesOrGarages, Mode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.HowManyParkingSpacesOrGaragesIncludedInRentPage
@@ -61,7 +62,7 @@ class HowManyParkingSpacesOrGaragesIncludedInRentController @Inject()(howManyPar
   
   def show(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
-      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(HowManyParkingSpacesOrGaragesIncludedInRentPage) match {
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).get(HowManyParkingSpacesOrGaragesIncludedInRentPage) match {
         case None => form
         case Some(value) => form.fill(HowManyParkingSpacesOrGaragesIncludedInRentForm(
           value.uncoveredSpaces,
@@ -105,7 +106,7 @@ class HowManyParkingSpacesOrGaragesIncludedInRentController @Inject()(howManyPar
         parkingSpacesOrGaragesIncluded =>
           val answers = HowManyParkingSpacesOrGarages(parkingSpacesOrGaragesIncluded.uncoveredSpaces, parkingSpacesOrGaragesIncluded.coveredSpaces, parkingSpacesOrGaragesIncluded.garages)
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(HowManyParkingSpacesOrGaragesIncludedInRentPage, answers))
+            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).set(HowManyParkingSpacesOrGaragesIncludedInRentPage, answers))
             _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(HowManyParkingSpacesOrGaragesIncludedInRentPage, mode, updatedAnswers))
       )

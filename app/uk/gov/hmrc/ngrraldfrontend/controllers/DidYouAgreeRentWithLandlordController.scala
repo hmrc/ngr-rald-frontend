@@ -24,6 +24,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.DidYouAgreeRentWithLandlordForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.DidYouAgreeRentWithLandlordForm.form
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{Mode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.DidYouAgreeRentWithLandlordPage
@@ -46,7 +47,7 @@ class DidYouAgreeRentWithLandlordController @Inject()(didYouAgreeRentWithLandlor
 
   def show(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
-      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(DidYouAgreeRentWithLandlordPage) match {
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).get(DidYouAgreeRentWithLandlordPage) match {
         case None => form
         case Some(value) => form.fill(DidYouAgreeRentWithLandlordForm(value.toString))
       }
@@ -72,7 +73,7 @@ class DidYouAgreeRentWithLandlordController @Inject()(didYouAgreeRentWithLandlor
         },
         radioValue =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
+            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(CredId(request.credId)))
               .set(DidYouAgreeRentWithLandlordPage, radioValue.radioValue.toBoolean))
             _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(DidYouAgreeRentWithLandlordPage, mode, updatedAnswers))

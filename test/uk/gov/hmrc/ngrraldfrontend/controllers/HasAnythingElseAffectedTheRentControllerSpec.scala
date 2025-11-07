@@ -37,7 +37,7 @@ class HasAnythingElseAffectedTheRentControllerSpec extends ControllerSpecSupport
   val view: HasAnythingElseAffectedTheRentView = inject[HasAnythingElseAffectedTheRentView]
   val controllerProperty: Option[UserAnswers] => HasAnythingElseAffectedTheRentController = answers => new HasAnythingElseAffectedTheRentController(view, fakeAuth, mockNGRCharacterCountComponent,fakeDataProperty(Some(property),answers), mockNavigator, mockSessionRepository, mcc)(mockConfig, ec)
   val controllerNoProperty: HasAnythingElseAffectedTheRentController = new HasAnythingElseAffectedTheRentController(view, fakeAuth, mockNGRCharacterCountComponent, fakeData(None), mockNavigator, mockSessionRepository, mcc)(mockConfig, ec)
-  val whatIsYourRentBasedOnAnswers: Option[UserAnswers] = UserAnswers("id").set(HasAnythingElseAffectedTheRentPage, hasAnythingElseAffectedTheRentModel).toOption
+  val whatIsYourRentBasedOnAnswers: Option[UserAnswers] = userAnswersWithoutData.set(HasAnythingElseAffectedTheRentPage, hasAnythingElseAffectedTheRentModel).toOption
 
   "What is your rent based on controller" must {
     "method show" must {

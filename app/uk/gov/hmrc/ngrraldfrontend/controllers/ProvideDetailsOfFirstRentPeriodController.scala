@@ -23,6 +23,7 @@ import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.ProvideDetailsOfFirstRentPeriodForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.ProvideDetailsOfFirstRentPeriodForm.*
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{Mode, NormalMode, ProvideDetailsOfFirstRentPeriod, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.ProvideDetailsOfFirstRentPeriodPage
@@ -48,7 +49,7 @@ class ProvideDetailsOfFirstRentPeriodController @Inject()(view: ProvideDetailsOf
 
   def show(mode: Mode): Action[AnyContent] =
     (authenticate andThen getData).async { implicit request =>
-      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(ProvideDetailsOfFirstRentPeriodPage)
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).get(ProvideDetailsOfFirstRentPeriodPage)
         .fold(form)(form.fill)
       Future.successful(Ok(view(
         request.property.addressFull,
@@ -76,7 +77,7 @@ class ProvideDetailsOfFirstRentPeriodController @Inject()(view: ProvideDetailsOf
             ))),
           provideDetailsOfFirstRentPeriod =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(ProvideDetailsOfFirstRentPeriodPage, provideDetailsOfFirstRentPeriod))
+              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).set(ProvideDetailsOfFirstRentPeriodPage, provideDetailsOfFirstRentPeriod))
               _ <- sessionRepository.set(updatedAnswers)
             } yield Redirect(navigator.nextPage(ProvideDetailsOfFirstRentPeriodPage, NormalMode, updatedAnswers))
         )

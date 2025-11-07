@@ -600,3 +600,8 @@ hasAnythingElseAffectedTheRent.required.error = Select yes if anything else has 
 hasAnythingElseAffectedTheRent.reason.label = Can you tell us what else has affected the rent?
 hasAnythingElseAffectedTheRent.reason.error.required = Tell us what else has affected your rent
 hasAnythingElseAffectedTheRent.reason.error.maxLength = Maximum character allowed is 250
+
+#Declaration
+declaration.title = Declaration
+declaration.p1 = By submitting these details, you declare that to the best of your knowledge the information given is correct and complete.
+declaration.accept = Accept and send

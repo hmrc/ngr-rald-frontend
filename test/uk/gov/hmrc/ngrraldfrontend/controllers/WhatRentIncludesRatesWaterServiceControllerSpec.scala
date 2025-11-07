@@ -53,8 +53,8 @@ class WhatRentIncludesRatesWaterServiceControllerSpec  extends ControllerSpecSup
     mockSessionRepository,
     mockNavigator,
     mcc)(mockConfig, ec)
-  val whatYourRentIncludesAnswersAllYes: Option[UserAnswers] = UserAnswers("id").set(WhatYourRentIncludesPage, whatYourRentIncludesModelAllYes).toOption
-  val whatYourRentIncludesAnswersAllNo: Option[UserAnswers] = UserAnswers("id").set(WhatYourRentIncludesPage, whatYourRentIncludesModelAllNo).toOption
+  val whatYourRentIncludesAnswersAllYes: Option[UserAnswers] = userAnswersWithoutData.set(WhatYourRentIncludesPage, whatYourRentIncludesModelAllYes).toOption
+  val whatYourRentIncludesAnswersAllNo: Option[UserAnswers] = userAnswersWithoutData.set(WhatYourRentIncludesPage, whatYourRentIncludesModelAllNo).toOption
 
   "Tell us about what your rent includes rates water service controller" must {
     "method show" must {

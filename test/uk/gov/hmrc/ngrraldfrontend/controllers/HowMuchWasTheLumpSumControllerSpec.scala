@@ -38,7 +38,7 @@ class HowMuchWasTheLumpSumControllerSpec extends ControllerSpecSupport {
   val view: HowMuchWasTheLumpSumView = inject[HowMuchWasTheLumpSumView]
   val controllerNoProperty: HowMuchWasTheLumpSumController = new HowMuchWasTheLumpSumController(view, fakeAuth, fakeData(None), mockSessionRepository, mockNavigator, mcc)(mockConfig)
   val controllerProperty: HowMuchWasTheLumpSumController = new HowMuchWasTheLumpSumController(view, fakeAuth, fakeDataProperty(Some(property),None), mockSessionRepository, mockNavigator, mcc)(mockConfig)
-  lazy val howMuchIsTotalAnnualRentAnswers: Option[UserAnswers] = UserAnswers("id").set(HowMuchWasTheLumpSumPage, BigDecimal(1234.67)).toOption
+  lazy val howMuchIsTotalAnnualRentAnswers: Option[UserAnswers] = userAnswersWithoutData.set(HowMuchWasTheLumpSumPage, BigDecimal(1234.67)).toOption
   lazy val filledController: Option[UserAnswers] => HowMuchWasTheLumpSumController = answers => HowMuchWasTheLumpSumController(
     view, fakeAuth, fakeDataProperty(Some(property), answers), mockSessionRepository, mockNavigator, mcc
   )

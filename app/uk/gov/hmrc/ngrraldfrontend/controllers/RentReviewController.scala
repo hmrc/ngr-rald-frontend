@@ -23,6 +23,7 @@ import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentReviewForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentReviewForm.{answerToForm, form, formToAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{Mode, RentReview, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.RentReviewPage
@@ -46,7 +47,7 @@ class RentReviewController @Inject()(rentReviewView: RentReviewView,
 
   def show(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
-      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(RentReviewPage) match {
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).get(RentReviewPage) match {
         case None => form
         case Some(value) => answerToForm(value)
       }
@@ -74,7 +75,7 @@ class RentReviewController @Inject()(rentReviewView: RentReviewView,
         },
         rentReviewForm =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
+            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(CredId(request.credId)))
               .set(RentReviewPage, formToAnswers(rentReviewForm))
             )
             _ <- sessionRepository.set(updatedAnswers)

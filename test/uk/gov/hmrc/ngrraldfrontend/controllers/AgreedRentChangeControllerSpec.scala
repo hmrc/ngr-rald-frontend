@@ -43,7 +43,7 @@ class AgreedRentChangeControllerSpec extends ControllerSpecSupport {
   val view: AgreedRentChangeView = inject[AgreedRentChangeView]
   val controllerNoProperty = new AgreedRentChangeController(view, fakeAuth, fakeData(None), mockSessionRepository, mockNavigator, mcc)(mockConfig)
   val controllerProperty: Option[UserAnswers] => AgreedRentChangeController = answers => new AgreedRentChangeController(view, fakeAuth, fakeDataProperty(Some(property), answers), mockSessionRepository, mockNavigator, mcc)(mockConfig)
-  val agreedRentChangeAnswers: Option[UserAnswers] = UserAnswers("id").set(AgreedRentChangePage, true).toOption
+  val agreedRentChangeAnswers: Option[UserAnswers] = userAnswersWithoutData.set(AgreedRentChangePage, true).toOption
 
   "AgreedRentChangeController" must {
     "method show" should {

@@ -24,6 +24,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreementForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AgreementForm.{answerToForm, form, formToAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{Agreement, Mode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.AgreementPage
@@ -49,7 +50,7 @@ class AgreementController @Inject()(view: AgreementView,
 
   def show(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
-      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(AgreementPage) match {
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).get(AgreementPage) match {
         case None => form
         case Some(value) => answerToForm(value)
       }
@@ -91,7 +92,7 @@ class AgreementController @Inject()(view: AgreementView,
             ))),
           agreementForm =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
+              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(CredId(request.credId)))
                 .set(AgreementPage, formToAnswers(agreementForm)))
               _ <- sessionRepository.set(updatedAnswers)
             } yield Redirect(navigator.nextPage(AgreementPage, mode, updatedAnswers))

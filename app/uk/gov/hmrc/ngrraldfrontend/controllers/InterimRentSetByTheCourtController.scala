@@ -25,6 +25,7 @@ import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.forms.InterimRentSetByTheCourtForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.InterimRentSetByTheCourtForm.form
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{InterimRentSetByTheCourt, Mode, NGRMonthYear, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.InterimSetByTheCourtPage
@@ -63,9 +64,9 @@ class InterimRentSetByTheCourtController @Inject()(interimRentSetByTheCourtView:
 
   def show(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
-      val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(InterimSetByTheCourtPage) match {
+      val preparedForm = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).get(InterimSetByTheCourtPage) match {
         case None => form
-        case Some(value) => form.fill(InterimRentSetByTheCourtForm(BigDecimal(value.amount), NGRMonthYear.fromString(value.date)))
+        case Some(value) => form.fill(InterimRentSetByTheCourtForm(value.amount, NGRMonthYear.fromString(value.date)))
       }
         Future.successful(Ok(interimRentSetByTheCourtView(
           form = preparedForm,
@@ -96,9 +97,9 @@ class InterimRentSetByTheCourtController @Inject()(interimRentSetByTheCourtView:
             )))
         },
         interimRent =>
-          val answers = InterimRentSetByTheCourt(interimRent.amount.toString(),interimRent.date.makeString)
+          val answers = InterimRentSetByTheCourt(interimRent.amount,interimRent.date.makeString)
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(InterimSetByTheCourtPage, answers))
+            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).set(InterimSetByTheCourtPage, answers))
             _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(InterimSetByTheCourtPage, mode, updatedAnswers))
       )

@@ -22,6 +22,7 @@ import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentDatesAgreeStartForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentDatesAgreeStartForm.form
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{Mode, NGRDate, RentDatesAgreeStart, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.RentDatesAgreeStartPage
@@ -45,7 +46,7 @@ class RentDatesAgreeStartController @Inject()(view: RentDatesAgreeStartView,
 
   def show(mode: Mode): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
-      val preparedFrom = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(RentDatesAgreeStartPage) match {
+      val preparedFrom = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).get(RentDatesAgreeStartPage) match {
         case None => form
         case Some(value) => form.fill(RentDatesAgreeStartForm(NGRDate.fromString(value.agreedDate), NGRDate.fromString(value.startPayingDate)))
       }
@@ -72,7 +73,7 @@ class RentDatesAgreeStartController @Inject()(view: RentDatesAgreeStartView,
             Future.successful(BadRequest(view(formWithCorrectedErrors, request.property.addressFull, mode))),
           rentDatesAgreeStartForm =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(RentDatesAgreeStartPage, RentDatesAgreeStart(rentDatesAgreeStartForm.agreedDate.makeString, rentDatesAgreeStartForm.startPayingDate.makeString)))
+              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).set(RentDatesAgreeStartPage, RentDatesAgreeStart(rentDatesAgreeStartForm.agreedDate.makeString, rentDatesAgreeStartForm.startPayingDate.makeString)))
               _ <- sessionRepository.set(updatedAnswers)
             } yield Redirect(navigator.nextPage(RentDatesAgreeStartPage, mode, updatedAnswers)))
     }

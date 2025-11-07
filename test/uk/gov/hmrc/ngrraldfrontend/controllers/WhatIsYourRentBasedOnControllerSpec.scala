@@ -37,7 +37,7 @@ class WhatIsYourRentBasedOnControllerSpec extends ControllerSpecSupport {
   val view: WhatIsYourRentBasedOnView = inject[WhatIsYourRentBasedOnView]
   val controllerProperty: Option[UserAnswers] => WhatIsYourRentBasedOnController = answers => new WhatIsYourRentBasedOnController(view, fakeAuth, mockNGRCharacterCountComponent, mcc, fakeDataProperty(Some(property),answers), mockNavigator, mockSessionRepository)(mockConfig, ec)
   val controllerNoProperty: WhatIsYourRentBasedOnController = new WhatIsYourRentBasedOnController(view, fakeAuth, mockNGRCharacterCountComponent, mcc, fakeData(None), mockNavigator, mockSessionRepository)(mockConfig, ec)
-  val whatIsYourRentBasedOnAnswers: Option[UserAnswers] = UserAnswers("id").set(WhatIsYourRentBasedOnPage, rentBasedOnModel).toOption
+  val whatIsYourRentBasedOnAnswers: Option[UserAnswers] = userAnswersWithoutData.set(WhatIsYourRentBasedOnPage, rentBasedOnModel).toOption
 
   "What is your rent based on controller" must {
     "method show" must {

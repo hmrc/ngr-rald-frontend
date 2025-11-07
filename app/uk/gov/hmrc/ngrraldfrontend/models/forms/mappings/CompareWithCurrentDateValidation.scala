@@ -18,9 +18,6 @@ package uk.gov.hmrc.ngrraldfrontend.models.forms.mappings
 
 import java.time.{LocalDate, ZoneId, ZonedDateTime}
 
-/**
- * @author Yuriy Tumakha
- */
 case class CompareWithCurrentDateValidation(errorTypeKey: String, validate: (LocalDate, LocalDate) => Boolean) extends DateValidation:
 
   private val ukTimezone: ZoneId = ZoneId.of("Europe/London")

@@ -22,6 +22,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.forms.DidYouGetIncentiveForNotTriggeringBreakClauseForm
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{DidYouGetIncentiveForNotTriggeringBreakClause, Mode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.DidYouGetIncentiveForNotTriggeringBreakClausePage
@@ -46,7 +47,7 @@ class DidYouGetIncentiveForNotTriggeringBreakClauseController @Inject()(
 
     def show(mode: Mode): Action[AnyContent] = {
       (authenticate andThen getData).async { implicit request =>
-        val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(DidYouGetIncentiveForNotTriggeringBreakClausePage) match {
+        val preparedForm = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).get(DidYouGetIncentiveForNotTriggeringBreakClausePage) match {
           case None => form
           case Some(value) => form.fill(value)
         }
@@ -70,7 +71,7 @@ class DidYouGetIncentiveForNotTriggeringBreakClauseController @Inject()(
         },
         radioValue =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId)).set(DidYouGetIncentiveForNotTriggeringBreakClausePage, radioValue))
+            updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).set(DidYouGetIncentiveForNotTriggeringBreakClausePage, radioValue))
             _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(DidYouGetIncentiveForNotTriggeringBreakClausePage, mode, updatedAnswers))
       )

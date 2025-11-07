@@ -51,7 +51,7 @@ class RepairsAndInsuranceControllerSpec extends ControllerSpecSupport {
     sessionRepository = mockSessionRepository,
     mcc = mcc)(mockConfig)
 
-  val repairsAndInsuranceAnswers = UserAnswers("id").set(RepairsAndInsurancePage, repairsAndInsuranceModel).toOption
+  val repairsAndInsuranceAnswers = userAnswersWithoutData.set(RepairsAndInsurancePage, repairsAndInsuranceModel).toOption
 
   "RepairsAndInsuranceController" must {
     "method show" must {

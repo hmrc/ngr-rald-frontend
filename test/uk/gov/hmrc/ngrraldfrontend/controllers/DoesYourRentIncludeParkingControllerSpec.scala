@@ -38,7 +38,7 @@ class DoesYourRentIncludeParkingControllerSpec extends ControllerSpecSupport {
   val view: DoesYourRentIncludeParkingView = inject[DoesYourRentIncludeParkingView]
   val controllerNoProperty: DoesYourRentIncludeParkingController = new DoesYourRentIncludeParkingController(view, fakeAuth, fakeData(None), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
   val controllerProperty: Option[UserAnswers] => DoesYourRentIncludeParkingController = answers => new DoesYourRentIncludeParkingController(view, fakeAuth, fakeDataProperty(Some(property),answers), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
-  val doesYourRentIncludeParkingAnswers: Option[UserAnswers] =  UserAnswers("id").set(DoesYourRentIncludeParkingPage, true).toOption
+  val doesYourRentIncludeParkingAnswers: Option[UserAnswers] =  userAnswersWithoutData.set(DoesYourRentIncludeParkingPage, true).toOption
 
 
   "Does Your Rent IncludeParking Controller" must {

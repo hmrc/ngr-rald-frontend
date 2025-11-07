@@ -23,7 +23,7 @@ case class ParkingSpacesOrGaragesNotIncludedInYourRent(
                                                         coveredSpaces: Int,
                                                         garages: Int,
                                                         totalCost: BigDecimal,
-                                                        agreementDate: NGRDate
+                                                        agreementDate: String
                                                       )
 
 object ParkingSpacesOrGaragesNotIncludedInYourRent {
