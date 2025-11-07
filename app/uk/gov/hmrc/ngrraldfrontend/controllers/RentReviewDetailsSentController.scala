@@ -76,12 +76,12 @@ class RentReviewDetailsSentController @Inject()(view: RentReviewDetailsSentView,
 
 
   def confirmation(recoveryId: Option[String]): Action[AnyContent] =
-    (authenticate).async { implicit request: AuthenticatedUserRequest[AnyContent] =>
-      ngrConnector.getLinkedProperty(CredId(request.credId.getOrElse(""))).flatMap {
+    (authenticate andThen getData).async { implicit request =>
+      ngrConnector.getLinkedProperty(CredId(request.credId)).flatMap {
         case Some(vmvProperty) => Future.successful(Ok(view(
           Some(UniqueIdGenerator.generateId),
           firstTable(vmvProperty),
-          request.email.getOrElse("")
+          "test"
         )))
         case None => Future.failed(throw new NotFoundException("Unable to find match Linked Properties"))
       }
