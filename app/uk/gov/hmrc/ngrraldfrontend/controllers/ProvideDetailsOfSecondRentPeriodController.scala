@@ -32,6 +32,7 @@ import uk.gov.hmrc.ngrraldfrontend.views.html.ProvideDetailsOfSecondRentPeriodVi
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import play.api.libs.json.*
 import uk.gov.hmrc.http.NotFoundException
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -54,13 +55,13 @@ class ProvideDetailsOfSecondRentPeriodController @Inject()(view: ProvideDetailsO
 
   def show(mode: Mode): Action[AnyContent] =
     (authenticate andThen getData).async { implicit request =>
-
-      val firstRentPeriodEndDate: Option[LocalDate] = getPreviousEndDate(request.userAnswers.getOrElse(UserAnswers(request.credId)))
+      val credId = CredId(request.credId)
+      val firstRentPeriodEndDate: Option[LocalDate] = getPreviousEndDate(request.userAnswers.getOrElse(UserAnswers(credId)))
       
       firstRentPeriodEndDate match {
         case None => Future.successful(Redirect(routes.ProvideDetailsOfFirstRentPeriodController.show(NormalMode)))
         case Some(previousEndDate) =>
-          val preparedForm = request.userAnswers.getOrElse(UserAnswers(request.credId)).get(ProvideDetailsOfSecondRentPeriodPage) match {
+          val preparedForm = request.userAnswers.getOrElse(UserAnswers(credId)).get(ProvideDetailsOfSecondRentPeriodPage) match {
             case None => form(previousEndDate)
             case Some(value) => answerToForm(value, previousEndDate)
           }
@@ -76,7 +77,7 @@ class ProvideDetailsOfSecondRentPeriodController @Inject()(view: ProvideDetailsO
 
   def submit(mode: Mode): Action[AnyContent] =
     (authenticate andThen getData).async { implicit request =>
-      val previousEndDate: LocalDate = getPreviousEndDate(request.userAnswers.getOrElse(UserAnswers(request.credId)))
+      val previousEndDate: LocalDate = getPreviousEndDate(request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))))
         .getOrElse(throw new NotFoundException("Can't find previous end date"))
       form(previousEndDate)
         .bindFromRequest()
@@ -100,7 +101,7 @@ class ProvideDetailsOfSecondRentPeriodController @Inject()(view: ProvideDetailsO
             ))),
           provideDetailsOfSecondRentPeriodForm =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.credId))
+              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(CredId(request.credId)))
                 .set(ProvideDetailsOfSecondRentPeriodPage, formToAnswers(provideDetailsOfSecondRentPeriodForm)))
               _ <- sessionRepository.set(updatedAnswers)
             } yield Redirect(navigator.nextPage(ProvideDetailsOfSecondRentPeriodPage, NormalMode, updatedAnswers))

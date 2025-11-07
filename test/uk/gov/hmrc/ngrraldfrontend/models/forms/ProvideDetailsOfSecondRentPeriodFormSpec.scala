@@ -22,6 +22,7 @@ import play.api.data.{Form, FormError}
 import uk.gov.hmrc.ngrraldfrontend.models.NGRDate
 
 import java.time.LocalDate
+import scala.collection.immutable.ArraySeq
 
 class ProvideDetailsOfSecondRentPeriodFormSpec extends AnyWordSpec with Matchers:
 
@@ -232,7 +233,7 @@ class ProvideDetailsOfSecondRentPeriodFormSpec extends AnyWordSpec with Matchers
       boundForm.hasErrors shouldBe true
       boundForm.errors.size shouldBe 1
       boundForm.errors should contain(
-        FormError("rentPeriodAmount", "provideDetailsOfSecondRentPeriod.rentPeriodAmount.required.error")
+        FormError("rentPeriodAmount", "provideDetailsOfSecondRentPeriod.rentPeriodAmount.required.error", ArraySeq("rentPeriodAmount"))
       )
     }
 
@@ -248,7 +249,7 @@ class ProvideDetailsOfSecondRentPeriodFormSpec extends AnyWordSpec with Matchers
       boundForm.hasErrors shouldBe true
       boundForm.errors.size shouldBe 1
       boundForm.errors should contain(
-        FormError("rentPeriodAmount", "provideDetailsOfSecondRentPeriod.rentPeriodAmount.invalid.error")
+        FormError("rentPeriodAmount", "provideDetailsOfSecondRentPeriod.rentPeriodAmount.invalid.error", ArraySeq("([0-9]+\\.[0-9]+|[0-9]+)"))
       )
     }
 
@@ -264,7 +265,7 @@ class ProvideDetailsOfSecondRentPeriodFormSpec extends AnyWordSpec with Matchers
       boundForm.hasErrors shouldBe true
       boundForm.errors.size shouldBe 1
       boundForm.errors should contain(
-        FormError("rentPeriodAmount", "provideDetailsOfSecondRentPeriod.rentPeriodAmount.max.error")
+        FormError("rentPeriodAmount", "provideDetailsOfSecondRentPeriod.rentPeriodAmount.max.error", ArraySeq(9999999.99))
       )
     }
   }

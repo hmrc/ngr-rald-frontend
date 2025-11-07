@@ -45,9 +45,9 @@ class ProvideDetailsOfSecondRentPeriodControllerSpec extends ControllerSpecSuppo
   )(mockConfig, ec)
 
 
-  val firstRentPeriodAnswers: Option[UserAnswers] = UserAnswers("id").set(ProvideDetailsOfFirstRentPeriodPage, firstRentPeriod).toOption
+  val firstRentPeriodAnswers: Option[UserAnswers] = userAnswersWithoutData.set(ProvideDetailsOfFirstRentPeriodPage, firstRentPeriod).toOption
   val firstSecondAnswers: Option[UserAnswers] =
-    UserAnswers("id").set(ProvideDetailsOfFirstRentPeriodPage, firstRentPeriod)
+    userAnswersWithoutData.set(ProvideDetailsOfFirstRentPeriodPage, firstRentPeriod)
       .flatMap(_.set(ProvideDetailsOfSecondRentPeriodPage, secondRentPeriod))
       .toOption
 
@@ -73,7 +73,7 @@ class ProvideDetailsOfSecondRentPeriodControllerSpec extends ControllerSpecSuppo
       }
 
       "return SEE_OTHER and redirect to first rent period page" in {
-        val result = controllerWithAnswers(Some(UserAnswers("id"))).show(NormalMode)(authenticatedFakeRequest)
+        val result = controllerWithAnswers(Some(userAnswersWithoutData)).show(NormalMode)(authenticatedFakeRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.ProvideDetailsOfFirstRentPeriodController.show(NormalMode).url)
       }
@@ -216,7 +216,7 @@ class ProvideDetailsOfSecondRentPeriodControllerSpec extends ControllerSpecSuppo
       }
       "Return NotFoundException when first rent period is not found in user answers" in {
         val exception = intercept[NotFoundException] {
-          await(controllerWithAnswers(Some(UserAnswers("id"))).submit(NormalMode)(authenticatedFakePostRequest(
+          await(controllerWithAnswers(Some(userAnswersWithoutData)).submit(NormalMode)(authenticatedFakePostRequest(
             FakeRequest(routes.ProvideDetailsOfSecondRentPeriodController.submit(NormalMode))
               .withFormUrlEncodedBody(
                 "endDate.day" -> "",

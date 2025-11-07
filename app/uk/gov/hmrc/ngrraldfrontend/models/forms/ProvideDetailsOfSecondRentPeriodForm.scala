@@ -22,9 +22,9 @@ import play.api.i18n.*
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.dateinput.DateInput
 import uk.gov.hmrc.ngrraldfrontend.models.*
-import uk.gov.hmrc.ngrraldfrontend.models.forms.LandlordForm.money
 
 import java.time.LocalDate
+import scala.math.BigDecimal.RoundingMode
 
 case class ProvideDetailsOfSecondRentPeriodForm(endDate: NGRDate, rentPeriodAmount: BigDecimal)
 
@@ -69,7 +69,18 @@ object ProvideDetailsOfSecondRentPeriodForm extends CommonFormValidators with NG
               isDateBeforeStartDate("provideDetailsOfSecondRentPeriod.endDate.before.startDate.error", NGRDate.fromLocalDate(previousEndDate))
             )
           ),
-        rentPeriodAmount -> money("provideDetailsOfSecondRentPeriod.rentPeriodAmount")
+        rentPeriodAmount -> text()
+          .transform[String](_.strip().replaceAll("[£|,|\\s]", ""), identity)
+          .verifying(
+            firstError(
+              isNotEmpty(rentPeriodAmount, "provideDetailsOfSecondRentPeriod.rentPeriodAmount.required.error"),
+              regexp(amountRegex.pattern(), "provideDetailsOfSecondRentPeriod.rentPeriodAmount.invalid.error")
+            )
+          )
+          .transform[BigDecimal](BigDecimal(_).setScale(2, RoundingMode.HALF_UP), _.toString)
+          .verifying(
+            maximumValue[BigDecimal](BigDecimal("9999999.99"), "provideDetailsOfSecondRentPeriod.rentPeriodAmount.max.error")
+          )
       )(ProvideDetailsOfSecondRentPeriodForm.apply)(ProvideDetailsOfSecondRentPeriodForm.unapply)
     )
   }
