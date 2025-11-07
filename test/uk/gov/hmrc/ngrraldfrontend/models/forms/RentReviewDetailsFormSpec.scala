@@ -136,7 +136,7 @@ class RentReviewDetailsFormSpec extends AnyWordSpec with Matchers {
       val boundForm = RentReviewDetailsForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError(RentReviewDetailsForm.annualAmount, "rentReviewDetails.annualAmount.invalid.error", ArraySeq("([0-9]+\\.[0-9]+|[0-9]+)")))
+      boundForm.errors should contain(FormError(RentReviewDetailsForm.annualAmount, "rentReviewDetails.annualAmount.invalid.error", ArraySeq("^\\d+\\.?\\d{0,}$")))
     }
     "Return errors when annual rent amount is too big" in {
       val data = Map(RentReviewDetailsForm.annualAmount -> "234500000000000000000000000000",

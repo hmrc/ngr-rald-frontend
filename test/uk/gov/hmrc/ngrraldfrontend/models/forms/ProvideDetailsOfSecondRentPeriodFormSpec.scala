@@ -249,7 +249,7 @@ class ProvideDetailsOfSecondRentPeriodFormSpec extends AnyWordSpec with Matchers
       boundForm.hasErrors shouldBe true
       boundForm.errors.size shouldBe 1
       boundForm.errors should contain(
-        FormError("rentPeriodAmount", "provideDetailsOfSecondRentPeriod.rentPeriodAmount.invalid.error", ArraySeq("([0-9]+\\.[0-9]+|[0-9]+)"))
+        FormError("rentPeriodAmount", "provideDetailsOfSecondRentPeriod.rentPeriodAmount.invalid.error", ArraySeq("^\\d+\\.?\\d{0,}$"))
       )
     }
 

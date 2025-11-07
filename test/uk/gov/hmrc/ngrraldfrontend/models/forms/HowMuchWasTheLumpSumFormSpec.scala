@@ -67,7 +67,7 @@ class HowMuchWasTheLumpSumFormSpec extends AnyWordSpec with Matchers {
       val data = Map("how–much–was–the–lump–sum-value" -> "abc")
       val boundForm = HowMuchWasTheLumpSumForm.form.bind(data)
 
-      boundForm.errors should contain(FormError("how–much–was–the–lump–sum-value", List("howMuchWasTheLumpSum.format.error"), ArraySeq("([0-9]+\\.[0-9]+|[0-9]+)")))
+      boundForm.errors should contain(FormError("how–much–was–the–lump–sum-value", List("howMuchWasTheLumpSum.format.error"), ArraySeq("^\\d+\\.?\\d{0,}$")))
     }
 
     "fail to bind input greater than 9999999.99" in {

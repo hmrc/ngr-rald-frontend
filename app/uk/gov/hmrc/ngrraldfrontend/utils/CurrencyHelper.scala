@@ -16,8 +16,6 @@
 
 package uk.gov.hmrc.ngrraldfrontend.utils
 
-import org.apache.commons.lang3.StringUtils
-
 import java.text.NumberFormat
 import java.util.Locale
 

@@ -62,7 +62,7 @@ class MoneyYouPaidInAdvanceToLandlordFormSpec extends AnyWordSpec with Matchers 
       )
       val boundForm = MoneyYouPaidInAdvanceToLandlordForm.form.bind(data)
       boundForm.hasErrors shouldBe true
-      boundForm.errors shouldBe List(FormError("advanceMoney", List("moneyYouPaidInAdvanceToLandlord.advanceMoney.format.error"), ArraySeq("""([0-9]+\.[0-9]+|[0-9]+)""")))
+      boundForm.errors shouldBe List(FormError("advanceMoney", List("moneyYouPaidInAdvanceToLandlord.advanceMoney.format.error"), ArraySeq("""^\d+\.?\d{0,}$""")))
     }
 
     "fail to bind input greater than 9999999.99 for how much input field" in {

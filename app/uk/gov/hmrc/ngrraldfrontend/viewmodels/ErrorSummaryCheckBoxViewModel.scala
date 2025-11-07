@@ -20,7 +20,6 @@ import play.api.data.{Form, FormError}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.errorsummary.{ErrorLink, ErrorSummary}
-import uk.gov.hmrc.ngrraldfrontend.utils.DateKeyFinder
 
 trait ErrorSummaryCheckBoxViewModel {
 
