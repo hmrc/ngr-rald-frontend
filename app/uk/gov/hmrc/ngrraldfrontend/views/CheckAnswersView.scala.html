@@ -38,7 +38,7 @@
     whatYourRentIncludesSummary: SummaryList,
     repairsAndInsurance: SummaryList,
     rentReview: SummaryList,
-    payments: SummaryList,
+    payments: Option[SummaryList],
 )(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 @heading = @{messages("checkAnswers.title")}
 @layout(pageTitle = Some(messages("checkAnswers.title")), showBackLink = true, fullWidth = true) {
@@ -74,8 +74,10 @@
     <h2 class="govuk-heading-m">@messages("checkAnswers.rentReview.label")</h2>
     @govukSummaryList(rentReview)
 
-    <h2 class="govuk-heading-m">@messages("checkAnswers.payments.label")</h2>
-    @govukSummaryList(payments)
+    @if(payments.nonEmpty){
+        <h2 class="govuk-heading-m">@messages("checkAnswers.payments.label")</h2>
+        @govukSummaryList(payments.get)
+    }
 
     <div class="govuk-button-group">
         @saveAndContinueButton(msg =  messages("Continue"), isStartButton = false, href = Some("temphref"))

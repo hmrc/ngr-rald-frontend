@@ -631,6 +631,11 @@ checkAnswers.rentReview.label = Rent review
 checkAnswers.rentReview.hasIncludeRentReview = Does your agreement include a rent review?
 checkAnswers.rentReview.howOftenReviewed = How often is your rent reviewed?
 checkAnswers.rentReview.canRentGoDown = Can the rent go down when it is reviewed?
+checkAnswers.rentReviewDetails.annualAmount = How much is your new total annual rent?
+checkAnswers.rentReviewDetails.whatHappensAtRentReview = What did your agreement say could happen to the rent at rent review?
+checkAnswers.rentReviewDetails.startDate = When will you start paying rent?
+checkAnswers.rentReviewDetails.hasAgreedNewRent = Did you and the landlord (or their agent) agree the new rent?
+checkAnswers.rentReviewDetails.whoAgreed = Who agreed the new rent?
 
 checkAnswers.payments.label = Payments
 checkAnswers.payments.didYouGetMoneyFromLandlord = Did you get any money from the landlord or previous tenant to take on the lease?
