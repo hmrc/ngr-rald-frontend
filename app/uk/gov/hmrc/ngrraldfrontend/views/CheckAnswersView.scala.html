@@ -36,9 +36,11 @@
     rentSummary: SummaryList,
     firstRentPeriod: Option[SummaryList],
     whatYourRentIncludesSummary: SummaryList,
+    parkingSummary: SummaryList,
     repairsAndInsurance: SummaryList,
     rentReview: SummaryList,
     payments: Option[SummaryList],
+    breakClause: Option[SummaryList]
 )(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 @heading = @{messages("checkAnswers.title")}
 @layout(pageTitle = Some(messages("checkAnswers.title")), showBackLink = true, fullWidth = true) {
@@ -68,6 +70,9 @@
     <h2 class="govuk-heading-m">@messages("checkAnswers.whatYourRentIncludes.label")</h2>
     @govukSummaryList(whatYourRentIncludesSummary)
 
+    <h2 class="govuk-heading-m">@messages("checkAnswers.parking.label")</h2>
+    @govukSummaryList(parkingSummary)
+
     <h2 class="govuk-heading-m">@messages("checkAnswers.repairsAndInsurance.label")</h2>
     @govukSummaryList(repairsAndInsurance)
 
@@ -79,6 +84,10 @@
         @govukSummaryList(payments.get)
     }
 
+    @if(breakClause.nonEmpty){
+        <h2 class="govuk-heading-m">@messages("checkAnswers.breakClause.label")</h2>
+        @govukSummaryList(breakClause.get)
+    }
     <div class="govuk-button-group">
         @saveAndContinueButton(msg =  messages("Continue"), isStartButton = false, href = Some("temphref"))
     </div>
