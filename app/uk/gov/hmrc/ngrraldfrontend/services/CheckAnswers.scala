@@ -19,13 +19,12 @@ package uk.gov.hmrc.ngrraldfrontend.services
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryListRow
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import uk.gov.hmrc.ngrraldfrontend.models.NGRSummaryListRow.summarise
 import uk.gov.hmrc.ngrraldfrontend.models.*
+import uk.gov.hmrc.ngrraldfrontend.models.NGRSummaryListRow.summarise
 import uk.gov.hmrc.ngrraldfrontend.pages.*
 
 object CheckAnswers {
 
-  //THIS IS OPTIONAL
   def createLeaseRenewalsSummaryRows(credId: String, userAnswers: Option[UserAnswers])
                                     (implicit messages: Messages): Option[SummaryList] = {
     userAnswers.getOrElse(UserAnswers(credId)).get(WhatTypeOfLeaseRenewalPage) match {
@@ -55,7 +54,6 @@ object CheckAnswers {
     }
   }
 
-  //THIS IS NOT OPTIONAL
   def createLandlordSummaryRows(credId: String, userAnswers: Option[UserAnswers])
                                (implicit messages: Messages): SummaryList = {
     SummaryList(
@@ -119,7 +117,6 @@ object CheckAnswers {
     )
   }
 
-  //THIS IS OPTIONAL
   def createAgreementDetailsRows(credId: String, userAnswers: Option[UserAnswers])
                                 (implicit messages: Messages): Option[SummaryList] = {
     userAnswers.getOrElse(UserAnswers(credId)).get(WhatTypeOfAgreementPage) match {
@@ -150,7 +147,6 @@ object CheckAnswers {
     }
   }
 
-  //THIS IS NOT OPTIONAL
   def createRentRows(credId: String, userAnswers: Option[UserAnswers])
                     (implicit messages: Messages): SummaryList = {
     val whatIsYourRentBasedOn = NGRSummaryListRow(
@@ -256,7 +252,6 @@ object CheckAnswers {
     )
   }
 
-  //THIS IS OPTIONAL
   def createRentPeriodRow(credId: String, userAnswers: Option[UserAnswers])
                          (implicit messages: Messages): Option[SummaryList] = {
     val link = uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatTypeOfAgreementController.show(CheckMode)
@@ -298,7 +293,6 @@ object CheckAnswers {
     }
   }
 
-  //THIS IS NOT OPTIONAL
   def createWhatYourRentIncludesRows(credId: String, userAnswers: Option[UserAnswers])(implicit messages: Messages): SummaryList = {
     val answers = userAnswers.getOrElse(UserAnswers(credId))
     val whatYourRentIncludesOpt = answers.get(WhatYourRentIncludesPage)
@@ -467,17 +461,89 @@ object CheckAnswers {
   }
 
 
-  def createRentReviewRows(credId: String, userAnswers: Option[UserAnswers])(implicit messages: Messages): Seq[SummaryListRow] = {
-    val valueOpt = userAnswers.getOrElse(UserAnswers(credId)).get(RentReviewPage)
-    val link = uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentReviewController.show(CheckMode)
+  def createRentReviewRows(credId: String, userAnswers: Option[UserAnswers])(implicit messages: Messages): SummaryList = {
+    val rentReviewPageAnswers = userAnswers.getOrElse(UserAnswers(credId)).get(RentReviewPage)
+    val rentDetailsPageAnswers = userAnswers.getOrElse(UserAnswers(credId)).get(RentReviewDetailsPage)
+    val rentReviewlink = uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentReviewController.show(CheckMode)
+    val rentDetailslink = uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentReviewDetailsController.show(CheckMode)
+
+    val annualAmount: Seq[NGRSummaryListRow] = Seq(
+      NGRSummaryListRow(
+        messages("checkAnswers.rentReviewDetails.annualAmount"),
+        None,
+        Seq(rentDetailsPageAnswers.map(value => s"£ ${value.annualRentAmount.toString()}").getOrElse(messages("service.notProvided"))),
+        changeLink = Some(Link(
+          href = rentDetailslink,
+          linkId = "annual-amount",
+          messageKey = "service.change",
+          visuallyHiddenMessageKey = Some("annual-amount")
+        ))
+      )
+    )
+
+    val whatHappensAtRentReview: Seq[NGRSummaryListRow] = Seq(
+      NGRSummaryListRow(
+        messages("checkAnswers.rentReviewDetails.whatHappensAtRentReview"),
+        None,
+        Seq(rentDetailsPageAnswers.map(value => value.whatHappensAtRentReview match {case "OnlyGoUp" => messages("rentReviewDetails.whatHappensAtRentReview.radio2.text")case _ => messages("rentReviewDetails.whatHappensAtRentReview.radio1.text") }).getOrElse(messages("service.notProvided"))),
+        changeLink = Some(Link(
+          href = rentDetailslink,
+          linkId = "what-happens-at-rent-review",
+          messageKey = "service.change",
+          visuallyHiddenMessageKey = Some("what-happens-at-rent-review")
+        ))
+      )
+    )
+
+    val startDate: Seq[NGRSummaryListRow] = Seq(
+      NGRSummaryListRow(
+        messages("checkAnswers.rentReviewDetails.startDate"),
+        None,
+        Seq(rentDetailsPageAnswers.map(_.startDate).getOrElse(messages("service.notProvided"))),
+        changeLink = Some(Link(
+          href = rentDetailslink,
+          linkId = "start-date",
+          messageKey = "service.change",
+          visuallyHiddenMessageKey = Some("start-date")
+        ))
+      )
+    )
+
+    val hasAgreedNewRent: Seq[NGRSummaryListRow] = Seq(
+      NGRSummaryListRow(
+        messages("checkAnswers.rentReviewDetails.hasAgreedNewRent"),
+        None,
+        Seq(rentDetailsPageAnswers.map(value => if(value.hasAgreedNewRent) messages("service.yes") else messages("service.no")).getOrElse(messages("service.notProvided"))),
+        changeLink = Some(Link(
+          href = rentDetailslink,
+          linkId = "has-agreed-new-rent",
+          messageKey = "service.change",
+          visuallyHiddenMessageKey = Some("has-agreed-new-rent")
+        ))
+      )
+    )
+
+    val whoAgreed: Seq[NGRSummaryListRow] = Seq(
+      NGRSummaryListRow(
+        messages("checkAnswers.rentReviewDetails.whoAgreed"),
+        None,
+        Seq(rentDetailsPageAnswers.map(_.whoAgreed.map{value => if (value == "Arbitrator") {messages("rentReviewDetails.whoAgreed.radio1.text")} else messages("rentReviewDetails.whoAgreed.radio2.text")}.getOrElse(messages("service.notProvided"))).getOrElse(messages("service.notProvided"))),
+        changeLink = Some(Link(
+          href = rentDetailslink,
+          linkId = "who-agreed",
+          messageKey = "service.change",
+          visuallyHiddenMessageKey = Some("who-agreed")
+        ))
+      )
+    )
 
     val hasIncludeRentReview: Seq[NGRSummaryListRow] = Seq(
       NGRSummaryListRow(
         messages("checkAnswers.rentReview.hasIncludeRentReview"),
         None,
-        Seq(valueOpt.map(v => if (v.hasIncludeRentReview) "Yes" else "No").getOrElse(messages("service.notProvided"))),
+        Seq(rentReviewPageAnswers.map(value => if (value.hasIncludeRentReview) "Yes" else "No").getOrElse(messages("service.notProvided"))),
         changeLink = Some(Link(
-          href = link,
+          href = rentReviewlink,
           linkId = "has-include-rent-review",
           messageKey = "service.change",
           visuallyHiddenMessageKey = Some("has-include-rent-review")
@@ -485,13 +551,13 @@ object CheckAnswers {
       )
     )
 
-    val howOftenReviewed: Seq[NGRSummaryListRow] = valueOpt.map { value =>
+    val howOftenReviewed: Seq[NGRSummaryListRow] = rentReviewPageAnswers.map { value =>
       NGRSummaryListRow(
         messages("checkAnswers.whatYourRentIncludes.rentIncService"),
         None,
         Seq(s"${value.rentReviewYears.map(_.toString).getOrElse("")} years ${value.rentReviewMonths.map(_.toString).getOrElse("")} months"),
         changeLink = Some(Link(
-          href = link,
+          href = rentReviewlink,
           linkId = "how-often-reviewed",
           messageKey = messages("service.change"),
           visuallyHiddenMessageKey = Some("how-often-reviewed")
@@ -499,13 +565,13 @@ object CheckAnswers {
       )
     }.toSeq
 
-    val canRentGoDown: Seq[NGRSummaryListRow] = valueOpt.map { value =>
+    val canRentGoDown: Seq[NGRSummaryListRow] = rentReviewPageAnswers.map { value =>
       NGRSummaryListRow(
         messages("checkAnswers.whatYourRentIncludes.rentIncService"),
         None,
         value = Seq(if (value.canRentGoDown) messages("service.yes") else messages("service.no")),
         changeLink = Some(Link(
-          href = link,
+          href = rentReviewlink,
           linkId = "can-rent-go-down",
           messageKey = messages("service.change"),
           visuallyHiddenMessageKey = Some(messages("can-rent-go-down"))
@@ -513,46 +579,77 @@ object CheckAnswers {
       )
     }.toSeq
 
-    valueOpt match {
-      case Some(value) if !value.hasIncludeRentReview =>
-        hasIncludeRentReview.map(summarise) ++ canRentGoDown.map(summarise)
-      case Some(_) =>
-        hasIncludeRentReview.map(summarise) ++ howOftenReviewed.map(summarise) ++ canRentGoDown.map(summarise)
-      case None =>
-        Seq.empty
+    (rentReviewPageAnswers, rentDetailsPageAnswers) match {
+      case (Some(value), None) if !value.hasIncludeRentReview =>
+        SummaryList( hasIncludeRentReview.map(summarise) ++ canRentGoDown.map(summarise))
+      case (Some(_), None) =>
+        SummaryList(hasIncludeRentReview.map(summarise) ++ howOftenReviewed.map(summarise) ++ canRentGoDown.map(summarise))
+      case (None, Some(value)) if value.whoAgreed.nonEmpty => SummaryList(annualAmount.map(summarise) ++ whatHappensAtRentReview.map(summarise) ++ startDate.map(summarise) ++ hasAgreedNewRent.map(summarise) ++ whoAgreed.map(summarise))
+      case (None, Some(_))  => SummaryList(annualAmount.map(summarise) ++ whatHappensAtRentReview.map(summarise) ++ startDate.map(summarise) ++ hasAgreedNewRent.map(summarise))
+      case (None, None) => SummaryList(Seq.empty)
     }
   }
 
-  def createPaymentRows(credId: String, userAnswers: Option[UserAnswers])(implicit messages: Messages): Seq[SummaryListRow] = {
+  def createPaymentRows(credId: String, userAnswers: Option[UserAnswers])(implicit messages: Messages): Option[SummaryList] = {
+    val didYouGetMoneyFromLandlord = userAnswers.getOrElse(UserAnswers(credId)).get(DidYouGetMoneyFromLandlordPage)
+    val didYouPayAnyMoneyToLandlord = userAnswers.getOrElse(UserAnswers(credId)).get(DidYouPayAnyMoneyToLandlordPage)
 
-    val didYouGetMoneyFromLandlord: Seq[NGRSummaryListRow] = Seq(
-      NGRSummaryListRow(
-        messages("checkAnswers.payments.didYouGetMoneyFromLandlord"),
-        None,
-        Seq(userAnswers.getOrElse(UserAnswers(credId)).get(DidYouAgreeRentWithLandlordPage).map(value => if (value) "Yes" else messages("didYouAgreeRentWithLandlord.no")).getOrElse(messages("service.notProvided"))),
-        changeLink = Some(Link(
-          href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouAgreeRentWithLandlordController.show(CheckMode),
-          linkId = "building-insurance",
-          messageKey = "service.change",
-          visuallyHiddenMessageKey = Some("building-insurance")
-        ))
+    def didYouGetMoneyFromLandlordSummary(value: Boolean): Seq[NGRSummaryListRow] = {
+      Seq(
+        NGRSummaryListRow(
+          messages("checkAnswers.payments.didYouGetMoneyFromLandlord"),
+          None,
+          Seq(if (value) "Yes" else messages("didYouAgreeRentWithLandlord.no")),
+          changeLink = Some(Link(
+            href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouAgreeRentWithLandlordController.show(CheckMode),
+            linkId = "building-insurance",
+            messageKey = "service.change",
+            visuallyHiddenMessageKey = Some("building-insurance")
+          ))
+        )
       )
-    )
+    }
 
-    val didYouPayAnyMoneyToLandlord: Seq[NGRSummaryListRow] = Seq(
-      NGRSummaryListRow(
-        messages("checkAnswers.payments.didYouPayAnyMoneyToLandlord"),
-        None,
-        Seq(userAnswers.getOrElse(UserAnswers(credId)).get(DidYouPayAnyMoneyToLandlordPage).map(value => if (value) "Yes" else "No").getOrElse(messages("service.notProvided"))),
-        changeLink = Some(Link(
-          href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouPayAnyMoneyToLandlordController.show(CheckMode),
-          linkId = "building-insurance",
-          messageKey = "service.change",
-          visuallyHiddenMessageKey = Some("building-insurance")
-        ))
+    def didYouPayAnyMoneyToLandlordSummary(value: Boolean): Seq[NGRSummaryListRow] = {
+      Seq(
+        NGRSummaryListRow(
+          messages("checkAnswers.payments.didYouPayAnyMoneyToLandlord"),
+          None,
+          Seq(if (value) "Yes" else "No"),
+          changeLink = Some(Link(
+            href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouPayAnyMoneyToLandlordController.show(CheckMode),
+            linkId = "building-insurance",
+            messageKey = "service.change",
+            visuallyHiddenMessageKey = Some("building-insurance")
+          ))
+        )
       )
-    )
+    }
 
-    didYouGetMoneyFromLandlord.map(summarise) ++ didYouPayAnyMoneyToLandlord.map(summarise)
+    (didYouGetMoneyFromLandlord, didYouPayAnyMoneyToLandlord) match {
+      case (Some(didYouGetMoneyFromLandlord), Some(didYouPayAnyMoneyToLandlord)) =>
+        Some(
+          SummaryList(
+            rows =
+              didYouGetMoneyFromLandlordSummary(didYouGetMoneyFromLandlord).map(summarise) ++
+                didYouPayAnyMoneyToLandlordSummary(didYouPayAnyMoneyToLandlord).map(summarise)
+          )
+        )
+      case (Some(didYouGetMoneyFromLandlord), None) =>
+        Some(
+          SummaryList(
+            rows =
+              didYouGetMoneyFromLandlordSummary(didYouGetMoneyFromLandlord).map(summarise)
+          )
+        )
+      case (None, Some(didYouPayAnyMoneyToLandlord)) =>
+        Some(
+          SummaryList(
+            rows =
+              didYouPayAnyMoneyToLandlordSummary(didYouPayAnyMoneyToLandlord).map(summarise)
+          )
+        )
+      case (None, None) => None
+    }
   }
 }
