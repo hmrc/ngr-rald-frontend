@@ -67,4 +67,12 @@ class NGRConnector @Inject()(http: HttpClientV2,
         }
       }
   }
+
+  def getRaldUserAnswers(credId: CredId)(implicit hc: HeaderCarrier): Future[Option[UserAnswers]] = {
+    implicit val rds: HttpReads[UserAnswers] = readFromJson
+    val model: UserAnswers = UserAnswers(credId)
+    http.get(url("get-rald-user-answers"))
+      .withBody(Json.toJson(model))
+      .execute[Option[UserAnswers]]
+  }
 }

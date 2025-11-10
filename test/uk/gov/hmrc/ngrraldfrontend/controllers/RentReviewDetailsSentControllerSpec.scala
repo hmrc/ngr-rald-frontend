@@ -40,21 +40,16 @@ class  RentReviewDetailsSentControllerSpec extends ControllerSpecSupport with De
   "RentReviewDetailsSent Controller" must {
     "method show" must {
       "Return OK and the correct view" in {
+        val raldUserAnswers: UserAnswers = UserAnswers(credId)
+        val response: Option[UserAnswers] = Some(raldUserAnswers)
+        when(mockNGRConnector.getRaldUserAnswers(any())(any()))
+          .thenReturn(Future.successful(response))
         val result = controller.confirmation().apply(authenticatedFakeRequest)
         status(result) mustBe OK
         contentType(result) shouldBe Some("text/html")
         val content = contentAsString(result)
         content must include(pageTitle)
       }
-    }
-  }
-
-  "method show123" must {
-    "Return OK and the correct view" in {
-      val result = controller.confirmation()(authenticatedFakeRequest)
-      status(result) mustBe OK
-      val content = contentAsString(result)
-      content must include(pageTitle)
     }
   }
 }
