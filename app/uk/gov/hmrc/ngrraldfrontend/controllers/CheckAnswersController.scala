@@ -50,9 +50,11 @@ class CheckAnswersController @Inject()(view: CheckAnswersView,
         rentSummary = createRentRows(credId = request.credId, userAnswers = request.userAnswers),
         firstRentPeriod = createRentPeriodRow(credId = request.credId, userAnswers = request.userAnswers),
         whatYourRentIncludesSummary = createWhatYourRentIncludesRows(credId = request.credId, userAnswers = request.userAnswers),
+        parkingSummary = createGarageOrParkingRows(credId = request.credId, userAnswers = request.userAnswers),
         repairsAndInsurance = createRepairsAndInsurance(credId = request.credId, userAnswers = request.userAnswers),
         rentReview = createRentReviewRows(credId = request.credId, userAnswers = request.userAnswers),
-        payments = createPaymentRows(credId = request.credId, userAnswers = request.userAnswers)
+        payments = createPaymentRows(credId = request.credId, userAnswers = request.userAnswers),
+        breakClause = createBreakClauseRows(credId = request.credId, userAnswers = request.userAnswers)
       )))
     }
   }

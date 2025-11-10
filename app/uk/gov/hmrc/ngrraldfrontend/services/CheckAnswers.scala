@@ -56,7 +56,7 @@ object CheckAnswers {
         value = displayValue,
         linkId = "property-address",
         href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatTypeOfLeaseRenewalController.show(CheckMode),
-        hiddenKey =  "property-address"
+        hiddenKey = "property-address"
       )
       SummaryList(Seq(summarise(row)))
     }
@@ -95,6 +95,103 @@ object CheckAnswers {
     }
 
     val rows = Seq(nameRow, relationshipRow) ++ relationshipReasonRow.toSeq
+
+    SummaryList(rows.map(summarise))
+  }
+
+  def createGarageOrParkingRows(credId: String, userAnswers: Option[UserAnswers])
+                               (implicit messages: Messages): SummaryList = {
+    val answers = userAnswers.getOrElse(UserAnswers(credId))
+    val doesYourRentIncludeParkingValue = answers.get(DoesYourRentIncludeParkingPage)
+    val howManyParkingSpacesOrGaragesIncludedInRentValue = answers.get(HowManyParkingSpacesOrGaragesIncludedInRentPage)
+    val doYouPayExtraForParkingSpacesValue = answers.get(DoYouPayExtraForParkingSpacesPage)
+    val parkingSpacesOrGaragesNotIncludedInYourRentPageValue = answers.get(ParkingSpacesOrGaragesNotIncludedInYourRentPage)
+
+    val doesYourRentIncludeParking = buildRow(
+      labelKey = "checkAnswers.parking.doesYourRentIncludeParking",
+      value = doesYourRentIncludeParkingValue.map(value => if (value) {
+        messages("service.yes")
+      } else {
+        messages("service.no")
+      }).getOrElse(messages("service.notProvided")),
+      linkId = "landlord-full-name",
+      href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.DoesYourRentIncludeParkingController.show(CheckMode),
+      hiddenKey = "landlord-full-name"
+    )
+
+    val howManyParkingSpacesOrGaragesIncludedInRent = howManyParkingSpacesOrGaragesIncludedInRentValue.map {
+      value =>
+        buildRow(
+          labelKey = "checkAnswers.parking.howManyParkingSpacesOrGaragesIncludedInRent",
+          value =
+            s"""
+              ${messages("parkingSpacesOrGaragesNotIncludedInYourRent.uncoveredSpaces.label")} ${value.uncoveredSpaces}
+              ${messages("parkingSpacesOrGaragesNotIncludedInYourRent.coveredSpaces.label")} ${value.coveredSpaces}
+              ${messages("parkingSpacesOrGaragesNotIncludedInYourRent.garages.label")} ${value.garages}
+              """,
+          linkId = "landlord-relationship-reason",
+          href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowManyParkingSpacesOrGaragesIncludedInRentController.show(CheckMode),
+          hiddenKey = "landlord-relationship-reason"
+        )
+    }
+
+    val doYouPayExtraForParkingSpaces = buildRow(
+      labelKey = "checkAnswers.parking.doYouPayExtraForParkingSpaces",
+      value = doYouPayExtraForParkingSpacesValue.map(value => if (value) {
+        messages("service.yes")
+      } else {
+        messages("service.no")
+      }).getOrElse(messages("service.notProvided")),
+      linkId = "landlord-full-name",
+      href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.DoYouPayExtraForParkingSpacesController.show(CheckMode),
+      hiddenKey = "landlord-full-name"
+    )
+
+    val parkingSpacesOrGaragesNotIncludedInYourRent = parkingSpacesOrGaragesNotIncludedInYourRentPageValue.map {
+      value =>
+        buildRow(
+          labelKey = "checkAnswers.parking.parkingSpacesOrGaragesNotIncludedInYourRent",
+          value =
+            s"""
+              ${messages("parkingSpacesOrGaragesNotIncludedInYourRent.uncoveredSpaces.label")} ${value.uncoveredSpaces}
+              ${messages("parkingSpacesOrGaragesNotIncludedInYourRent.coveredSpaces.label")} ${value.coveredSpaces}
+              ${messages("parkingSpacesOrGaragesNotIncludedInYourRent.garages.label")} ${value.garages}
+              """,
+          linkId = "landlord-relationship-reason",
+          href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.show(CheckMode),
+          hiddenKey = "landlord-relationship-reason"
+        )
+    }
+
+    val totalCost = parkingSpacesOrGaragesNotIncludedInYourRentPageValue.map {
+      value =>
+        buildRow(
+          labelKey = "checkAnswers.parking.parkingSpacesOrGaragesNotIncludedInYourRent.totalCost",
+          value = value.totalCost.toString(),
+          linkId = "landlord-relationship-reason",
+          href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.show(CheckMode),
+          hiddenKey = "landlord-relationship-reason"
+        )
+    }
+
+    val agreementDate = parkingSpacesOrGaragesNotIncludedInYourRentPageValue.map {
+      value =>
+        buildRow(
+          labelKey = "checkAnswers.parking.parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate",
+          value = value.agreementDate.makeString,
+          linkId = "landlord-relationship-reason",
+          href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.show(CheckMode),
+          hiddenKey = "landlord-relationship-reason"
+        )
+    }
+
+    val rows =
+      Seq(doesYourRentIncludeParking) ++
+        howManyParkingSpacesOrGaragesIncludedInRent.toSeq ++
+        Seq(doYouPayExtraForParkingSpaces) ++
+        parkingSpacesOrGaragesNotIncludedInYourRent.toSeq ++
+        totalCost.toSeq ++ agreementDate
+
 
     SummaryList(rows.map(summarise))
   }
@@ -329,12 +426,12 @@ object CheckAnswers {
     val link = uk.gov.hmrc.ngrraldfrontend.controllers.routes.RepairsAndInsuranceController.show(CheckMode)
 
     def convertAnswer(answer: String): String =
-      answer match{
+      answer match {
         case "YouAndLandlord" => messages("repairsAndInsurance.radio.youAndLandlord")
         case "Landlord" => messages("repairsAndInsurance.radio.landlord")
         case message => message
       }
-      
+
     val internalRepairs = buildRow(
       labelKey = "checkAnswers.repairsAndInsurance.internalRepairs",
       value = valueOpt.map(v => convertAnswer(v.internalRepairs)).getOrElse(messages("service.notProvided")),
@@ -410,7 +507,7 @@ object CheckAnswers {
       labelKey = "checkAnswers.rentReviewDetails.whatHappensAtRentReview",
       value = rentDetails.map(_.whatHappensAtRentReview match {
         case "OnlyGoUp" => messages("rentReviewDetails.whatHappensAtRentReview.radio2.text")
-        case _          => messages("rentReviewDetails.whatHappensAtRentReview.radio1.text")
+        case _ => messages("rentReviewDetails.whatHappensAtRentReview.radio1.text")
       }).getOrElse(messages("service.notProvided")),
       linkId = "what-happens-at-rent-review",
       href = rentDetailsLink,
@@ -435,7 +532,7 @@ object CheckAnswers {
 
     val whoAgreed = rentDetails.flatMap(_.whoAgreed).map {
       case "Arbitrator" => messages("rentReviewDetails.whoAgreed.radio1.text")
-      case _            => messages("rentReviewDetails.whoAgreed.radio2.text")
+      case _ => messages("rentReviewDetails.whoAgreed.radio2.text")
     }.getOrElse(messages("service.notProvided"))
 
     val whoAgreedRow = buildRow(
@@ -491,4 +588,32 @@ object CheckAnswers {
 
     if (rows.nonEmpty) Some(SummaryList(rows.map(summarise))) else None
   }
+
+  def createBreakClauseRows(credId: String, userAnswers: Option[UserAnswers])
+                           (implicit messages: Messages): Option[SummaryList] = {
+
+    val answers = userAnswers.getOrElse(UserAnswers(credId))
+    val confirmBreakClause = answers.get(ConfirmBreakClausePage)
+    
+    confirmBreakClause.map { value =>
+      val displayValue = if (value) {
+        messages("service.yes")
+      } else {
+        messages("service.no")
+      }
+      
+      val confirmBreakClause = buildRow(
+        labelKey = "checkAnswers.breakClause.confirmBreakClause",
+        value = displayValue,
+        linkId = "property-address",
+        href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ConfirmBreakClauseController.show(CheckMode),
+        hiddenKey = "property-address"
+      )
+      
+      val 
+      
+      SummaryList(Seq(summarise(confirmBreakClause)))
+    }
+  }
+  
 }
