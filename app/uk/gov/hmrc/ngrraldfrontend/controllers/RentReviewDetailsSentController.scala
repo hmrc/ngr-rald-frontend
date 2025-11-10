@@ -34,7 +34,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.registration.{CredId, RatepayerRegistr
 import uk.gov.hmrc.ngrraldfrontend.models.vmvProperty.VMVProperty
 import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, Mode, NGRSummaryListRow, PropertyLinkingUserAnswers, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
-import uk.gov.hmrc.ngrraldfrontend.pages.ConfirmBreakClausePage
+import uk.gov.hmrc.ngrraldfrontend.pages.{ConfirmBreakClausePage, DeclarationPage}
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.views.html.{ConfirmBreakClauseView, RentReviewDetailsSentView}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -48,9 +48,7 @@ class RentReviewDetailsSentController @Inject()(view: RentReviewDetailsSentView,
                                                 authenticate: AuthRetrievals,
                                                 mcc: MessagesControllerComponents,
                                                 getData: DataRetrievalAction,
-                                                ngrConnector: NGRConnector,
-                                                sessionRepository: SessionRepository,
-                                                navigator: Navigator
+                                                ngrConnector: NGRConnector
                                                )(implicit appConfig: AppConfig, executionContext: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
   def firstTable(property: VMVProperty)(implicit messages: Messages): Table =
@@ -75,13 +73,13 @@ class RentReviewDetailsSentController @Inject()(view: RentReviewDetailsSentView,
           ))))
 
 
-  def confirmation(recoveryId: Option[String]): Action[AnyContent] =
+  def confirmation(): Action[AnyContent] =
     (authenticate andThen getData).async { implicit request =>
       ngrConnector.getLinkedProperty(CredId(request.credId)).flatMap {
         case Some(vmvProperty) => Future.successful(Ok(view(
-          Some(UniqueIdGenerator.generateId),
+          request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).get(DeclarationPage),
           firstTable(vmvProperty),
-          "test"
+          request.email.getOrElse("")
         )))
         case None => Future.failed(throw new NotFoundException("Unable to find match Linked Properties"))
       }

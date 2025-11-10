@@ -20,7 +20,6 @@
 @import uk.gov.hmrc.ngrraldfrontend.viewmodels.govuk.all._
 @import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 @import uk.gov.hmrc.ngrraldfrontend.models.components.NavigationBarContent
-@import uk.gov.hmrc.ngrraldfrontend.models.forms.CheckRentFreePeriodForm
 
 
 @this(
@@ -30,16 +29,16 @@
         govukTable : GovukTable,
         saveAndContinueButton: saveAndContinueButton)
 
-@(recoveryId: Option[String], table: Table, email: String)(implicit request: RequestHeader, messages: Messages,  appConfig: AppConfig)
+@(reference: Option[String], table: Table, email: String)(implicit request: RequestHeader, messages: Messages,  appConfig: AppConfig)
 
 @panelContent = {
-@Messages("rentReviewDetailsSent.p1") @recoveryId.getOrElse("TestRecoveryId")
+@Messages("rentReviewDetailsSent.p1") @reference.getOrElse("TestRecoveryId")
 }
 
 
 @layout(pageTitle = Some(messages("rentReviewDetailsSent.title")), showBackLink = false) {
 
- @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentReviewDetailsSentController.confirmation(recoveryId), Symbol("autoComplete") -> "off") {
+ @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentReviewDetailsSentController.confirmation(), Symbol("autoComplete") -> "off") {
 
   @govukPanel(Panel(
    title = Text(Messages("rentReviewDetailsSent.title")),

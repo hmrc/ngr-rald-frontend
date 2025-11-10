@@ -20,6 +20,6 @@ import play.api.mvc.{Request, WrappedRequest}
 import uk.gov.hmrc.ngrraldfrontend.models.UserAnswers
 import uk.gov.hmrc.ngrraldfrontend.models.vmvProperty.VMVProperty
 
-case class OptionalDataRequest[A] (request: Request[A], credId: String, userAnswers: Option[UserAnswers], property: VMVProperty) extends WrappedRequest[A](request)
+case class OptionalDataRequest[A] (request: Request[A], credId: String, userAnswers: Option[UserAnswers], property: VMVProperty, email: Option[String]) extends WrappedRequest[A](request)
 
 case class DataRequest[A] (request: Request[A], credId: String, userAnswers: UserAnswers) extends WrappedRequest[A](request)

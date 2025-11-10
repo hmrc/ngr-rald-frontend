@@ -231,8 +231,8 @@ POST       /has-anything-else-affected-the-rent                uk.gov.hmrc.ngrra
 GET        /has-anything-else-affected-the-rent/change         uk.gov.hmrc.ngrraldfrontend.controllers.HasAnythingElseAffectedTheRentController.show(mode: Mode = CheckMode)
 POST       /has-anything-else-affected-the-rent/change         uk.gov.hmrc.ngrraldfrontend.controllers.HasAnythingElseAffectedTheRentController.submit(mode: Mode = CheckMode)
 #About repairs and fitting out
-GET        /rent-review-details-sent               uk.gov.hmrc.ngrraldfrontend.controllers.RentReviewDetailsSentController.confirmation(recoveryId: Option[String])
-POST       /rent-review-details-sent               uk.gov.hmrc.ngrraldfrontend.controllers.RentReviewDetailsSentController.confirmation(recoveryId: Option[String])
+GET        /rent-review-details-sent               uk.gov.hmrc.ngrraldfrontend.controllers.RentReviewDetailsSentController.confirmation()
+POST       /rent-review-details-sent               uk.gov.hmrc.ngrraldfrontend.controllers.RentReviewDetailsSentController.confirmation()
 
 
 #Declaration

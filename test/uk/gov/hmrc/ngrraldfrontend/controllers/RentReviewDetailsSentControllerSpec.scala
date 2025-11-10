@@ -21,59 +21,40 @@ import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.shouldBe
 import play.api.http.Status.{CREATED, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.DefaultAwaitTimeout
-import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
+import play.api.test.Helpers.{await, contentAsString, contentType, redirectLocation, status}
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.ngrraldfrontend.config.{AppConfig, FrontendAppConfig}
 import uk.gov.hmrc.ngrraldfrontend.helpers.{ControllerSpecSupport, TestData}
-import uk.gov.hmrc.ngrraldfrontend.models.PropertyLinkingUserAnswers
-import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.views.html.DeclarationView
+import uk.gov.hmrc.ngrraldfrontend.models.{PropertyLinkingUserAnswers, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.registration.{CredId, RatepayerRegistrationValuation}
+import uk.gov.hmrc.ngrraldfrontend.views.html.RentReviewDetailsSentView
 
 import scala.concurrent.Future
 
-class DeclarationControllerSpec extends ControllerSpecSupport with DefaultAwaitTimeout {
-  lazy val view: DeclarationView = inject[DeclarationView]
-  def controller() = new DeclarationController(
-    view,
-    mockAuthJourney,
-    mockMandatoryCheck,
-    mockPropertyLinkingRepo,
-    mockNgrConnector,
-    mcc
-  )
 
-  val baseAnswers: PropertyLinkingUserAnswers = PropertyLinkingUserAnswers(
-    credId = CredId(testCredId.providerId),
-    vmvProperty = properties1.properties.head
-  )
+class  RentReviewDetailsSentControllerSpec extends ControllerSpecSupport with DefaultAwaitTimeout {
+  val pageTitle = "Renewed agreement details sent"
+  val view: RentReviewDetailsSentView = inject[RentReviewDetailsSentView]
+  val controller: RentReviewDetailsSentController = new RentReviewDetailsSentController(view, fakeAuth, mcc, fakeData(None), mockNGRConnector)
 
-  "DeclarationController" must {
+  "RentReviewDetailsSent Controller" must {
+    "method show" must {
+      "Return OK and the correct view" in {
+        val result = controller.confirmation().apply(authenticatedFakeRequest)
+        status(result) mustBe OK
+        contentType(result) shouldBe Some("text/html")
+        val content = contentAsString(result)
+        content must include(pageTitle)
+      }
+    }
+  }
+
+  "method show123" must {
     "Return OK and the correct view" in {
-      val result = controller().show()(authenticatedFakeRequest)
+      val result = controller.confirmation()(authenticatedFakeRequest)
       status(result) mustBe OK
       val content = contentAsString(result)
-      content must include("Declaration")
+      content must include(pageTitle)
     }
-
-
-    "method accept" must {
-      "Return OK and the correct view" in {
-        when(mockPropertyLinkingRepo.insertRequestSentReference(any(), any())).thenReturn(Future.successful(Some(PropertyLinkingUserAnswers(credId = CredId(null), vmvProperty = testVmvProperty))))
-        when(mockNgrConnector.upsertPropertyLinkingUserAnswers(any())(any())).thenReturn(Future.successful(HttpResponse(CREATED, "Created Successfully")))
-        val result = controller().accept()(authenticatedFakeRequest)
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.AddPropertyRequestSentController.show.url)
-      }
-      "Throw exception when fail to upsert property linking to the backend" in {
-        when(mockPropertyLinkingRepo.insertRequestSentReference(any(), any())).thenReturn(Future.successful(Some(PropertyLinkingUserAnswers(credId = CredId(null), vmvProperty = testVmvProperty))))
-        when(mockNgrConnector.upsertPropertyLinkingUserAnswers(any())(any())).thenReturn(Future.successful(HttpResponse(INTERNAL_SERVER_ERROR, "Internal server error")))
-        mockMandatoryCheckRequest()
-        val exception = intercept[Exception] {
-          await(controller().accept(authenticatedFakeRequest))
-        }
-        exception.getMessage contains "Failed upsert to backend for credId: 1234" mustBe true
-      }
-    }
-
   }
 }
