@@ -60,7 +60,7 @@ class InterimRentSetByTheCourtFormSpec extends AnyWordSpec with Matchers {
       )
       val boundForm = InterimRentSetByTheCourtForm.form.bind(data)
       boundForm.hasErrors shouldBe true
-      boundForm.errors shouldBe List(FormError("interimAmount", List("interimRentSetByTheCourt.interimAmount.format.error"), ArraySeq("""([0-9]+\.[0-9]+|[0-9]+)""")))
+      boundForm.errors shouldBe List(FormError("interimAmount", List("interimRentSetByTheCourt.interimAmount.format.error"), ArraySeq("""^\d+\.?\d{0,}$""")))
     }
 
     "fail to bind input greater than 9999999.99 for how much input field" in {

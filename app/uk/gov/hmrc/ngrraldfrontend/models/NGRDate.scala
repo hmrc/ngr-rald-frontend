@@ -39,7 +39,7 @@ object NGRDate {
     date.format(outputFormatter)
   }
 
-  private def fromLocalDate(date: LocalDate): NGRDate =
+  def fromLocalDate(date: LocalDate): NGRDate =
     NGRDate(date.getDayOfMonth.toString, date.getMonthValue.toString, date.getYear.toString)
 
   def fromString(dateString: String): NGRDate =

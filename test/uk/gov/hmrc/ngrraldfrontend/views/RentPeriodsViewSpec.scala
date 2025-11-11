@@ -23,17 +23,17 @@ import play.api.data.Form
 import play.api.mvc.MessagesControllerComponents
 import uk.gov.hmrc.ngrraldfrontend.actions.{FakeAuthenticatedRequest, FakeDataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.controllers.RentPeriodsController
-import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
+import uk.gov.hmrc.ngrraldfrontend.helpers.{TestData, ViewBaseSpec}
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentPeriodsForm
-import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, ProvideDetailsOfFirstSecondRentPeriod, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.views.html.RentPeriodView
 
 import scala.concurrent.ExecutionContext
 
-class RentPeriodsViewSpec extends ViewBaseSpec {
+class RentPeriodsViewSpec extends ViewBaseSpec with TestData {
   implicit lazy val ec: ExecutionContext = inject[ExecutionContext]
   lazy val mcc: MessagesControllerComponents = inject[MessagesControllerComponents]
   val fakeAuth = new FakeAuthenticatedRequest(mcc.parsers.defaultBodyParser)
@@ -48,29 +48,19 @@ class RentPeriodsViewSpec extends ViewBaseSpec {
 
   val heading = "Rent periods"
   val title = s"$heading - GOV.UK"
-  val firsPeriodStartDate = "1 February 2025"
-  val firstPeriodEndDate = "1 March 2025"
-  val secondPeriodStartDate = "1 April 2025"
-  val secondPeriodEndDate = "1 August 2025"
+  val firsPeriodStartDate = "1 January 2025"
+  val firstPeriodEndDate = "31 January 2025"
+  val secondPeriodStartDate = "1 February 2025"
+  val secondPeriodEndDate = "31 March 2025"
   val firstPeriodRentQuestion = "Yes"
-  val firstRentAmount = "£2,300.46"
+  val firstRentAmount = "£1,000.46"
   val secondRentAmount = "£1,350"
   val additionPeriodQuestion = "Do you need to add another rent period?"
   val yesRadio = "Yes"
   val noRadio = "No"
   val saveButton = "Continue"
-
-  val firstSecondRentPeriods = ProvideDetailsOfFirstSecondRentPeriod(
-    firstDateStart = "2025-02-01",
-    firstDateEnd = "2025-03-01",
-    firstRentPeriodRadio = true,
-    firstRentPeriodAmount = Some(BigDecimal(2300.4567)),
-    secondDateStart = "2025-04-01",
-    secondDateEnd = "2025-08-01",
-    secondHowMuchIsRent = BigDecimal(1350)
-  )
-  val firstTable = rentPeriodsController.firstTable(firstSecondRentPeriods)
-  val secondTable = rentPeriodsController.secondTable(firstSecondRentPeriods)
+  val firstTable = rentPeriodsController.firstTable(firstRentPeriod)
+  val secondTable = rentPeriodsController.secondTable(firstRentPeriod, secondRentPeriod)
   private val form: Form[RentPeriodsForm] = RentPeriodsForm.form.fillAndValidate(RentPeriodsForm("false"))
   val radio = buildRadios(form, RentPeriodsForm.rentPeriodsRadio(form))
 

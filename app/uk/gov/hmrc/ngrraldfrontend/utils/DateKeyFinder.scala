@@ -27,7 +27,6 @@ trait DateKeyFinder {
   def findKey(data: Map[String, String], fieldName: String): String = {
     val dayOpt: Option[String] = data.get(s"$fieldName.day")
     val monthOpt: Option[String] = data.get(s"$fieldName.month")
-    val yearOpt: Option[String] = data.get(s"$fieldName.year")
     if (dayOpt.exists(day => isDayInvalid(day, monthOpt)))
       s"$fieldName.day"
     else if (monthOpt.exists(isMonthInvalid))

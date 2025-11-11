@@ -16,28 +16,27 @@
 
 package uk.gov.hmrc.ngrraldfrontend.models.forms
 
-import play.api.data.{Form, FormError}
-import play.api.data.Forms.{mapping, optional, of}
+import play.api.data.Forms.{mapping, of}
 import play.api.data.format.Formatter
-import play.api.data.validation.{Constraint, Invalid, Valid, ValidationResult}
+import play.api.data.{Form, FormError}
 import play.api.i18n.Messages
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{ngrRadio, noButton, yesButton}
 import uk.gov.hmrc.ngrraldfrontend.models.components.{NGRRadio, NGRRadioButtons}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.LandlordForm.wholePositiveNumberRegexp
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
-import uk.gov.hmrc.ngrraldfrontend.models.{MonthYearMappings, NGRDate, NGRMonthYear, RentReview}
+import uk.gov.hmrc.ngrraldfrontend.models.{MonthYearMappings, NGRMonthYear, RentReview}
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputDateForMonthYear
 
 case class RentReviewForm(hasIncludeRentReview: String, monthsYears: Option[NGRMonthYear], canRentGoDown: String)
 
 object RentReviewForm extends Mappings with MonthYearMappings {
-  
+
   implicit val format: OFormat[RentReviewForm] = Json.format[RentReviewForm]
 
   val hasIncludeRentReviewRadio = "has-include-rent-review-radio"
   val canRentGoDownRadio = "can-rent-go-down-radio"
-  
+
   def unapply(rentReviewForm: RentReviewForm): Option[(String, Option[NGRMonthYear], String)] =
     Some(rentReviewForm.hasIncludeRentReview, rentReviewForm.monthsYears, rentReviewForm.canRentGoDown)
 
@@ -69,13 +68,13 @@ object RentReviewForm extends Mappings with MonthYearMappings {
         case (None, None) if hasRentReview => Left(Seq(FormError(key, "rentReview.date.required.error", args)))
         case (Some(month), Some(year)) if hasRentReview => isMonthYearValid(month.trim, year.trim, key, args)
         case (Some(month), Some(year)) => Right(Some(NGRMonthYear(month, year)))
-        case (None, None) => Right(None)
+        case (_, _) => Right(None)
       }
 
     override def unbind(key: String, value: Option[NGRMonthYear]): Map[String, String] =
       Map(
         s"$key.month" -> value.map(_.month).getOrElse(""),
-        s"$key.year"  -> value.map(_.year).getOrElse("")
+        s"$key.year" -> value.map(_.year).getOrElse("")
       )
   }
 
