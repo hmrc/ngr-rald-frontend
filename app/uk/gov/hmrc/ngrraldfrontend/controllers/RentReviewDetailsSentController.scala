@@ -81,7 +81,7 @@ class RentReviewDetailsSentController @Inject()(view: RentReviewDetailsSentView,
           firstTable(request.property),
           request.email.getOrElse("")
         )))
-        case None => Future.failed(throw new NotFoundException("Unable to find match Linked Properties"))
+        case None => Future.failed(throw new NotFoundException("Unable to find rald user answers"))
       }
     }
 }

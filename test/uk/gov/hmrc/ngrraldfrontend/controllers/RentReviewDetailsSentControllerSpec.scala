@@ -35,16 +35,15 @@ import scala.concurrent.Future
 class  RentReviewDetailsSentControllerSpec extends ControllerSpecSupport with DefaultAwaitTimeout {
   val pageTitle = "Renewed agreement details sent"
   val view: RentReviewDetailsSentView = inject[RentReviewDetailsSentView]
-  val controller: RentReviewDetailsSentController = new RentReviewDetailsSentController(view, fakeAuth, mcc, fakeData(None), mockNGRConnector)
+  val controller: RentReviewDetailsSentController = new RentReviewDetailsSentController(view, fakeAuth, mcc, fakeDataProperty(Some(property), Some(userAnswersWithoutData)), mockNGRConnector)
 
   "RentReviewDetailsSent Controller" must {
     "method show" must {
       "Return OK and the correct view" in {
-        val raldUserAnswers: UserAnswers = UserAnswers(credId)
-        val response: Option[UserAnswers] = Some(raldUserAnswers)
+        val response: Option[UserAnswers] = Some(userAnswersWithoutData)
         when(mockNGRConnector.getRaldUserAnswers(any())(any()))
           .thenReturn(Future.successful(response))
-        val result = controller.confirmation().apply(authenticatedFakeRequest)
+        val result = controller.confirmation()(authenticatedFakeRequestEmail)
         status(result) mustBe OK
         contentType(result) shouldBe Some("text/html")
         val content = contentAsString(result)

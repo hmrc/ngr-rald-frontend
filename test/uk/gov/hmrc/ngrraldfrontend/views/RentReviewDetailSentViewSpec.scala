@@ -47,12 +47,10 @@ class RentReviewDetailSentViewSpec extends ViewBaseSpec {
     )
 
     object Strings {
-      val reference: String = "1234"
-      val email: String = "test@testUser.com"
       val title: String = "Renewed agreement details sent"
       val yourRef: String = "Your reference is 1234"
       val print: String = "Print this page"
-      val emailText: String = "We have sent a confirmation email to"
+      val emailText: String = "We have sent a confirmation email to test@testUser.com"
       val whatNext: String = "What happens next?"
       val goBack: String = "Go to your account home"
     }
@@ -64,6 +62,7 @@ class RentReviewDetailSentViewSpec extends ViewBaseSpec {
       val title = "#main-content > div > div.govuk-grid-column-two-thirds > form > div > h1"
       val yourRef = "#main-content > div > div.govuk-grid-column-two-thirds > form > div > div"
       val print = "#printPage > a"
+      val emailText = "#main-content > div > div.govuk-grid-column-two-thirds > form > p:nth-child(4)"
       val whatNext = "#main-content > div > div.govuk-grid-column-two-thirds > form > h2"
       val goBack = "#main-content > div > div.govuk-grid-column-two-thirds > form > p:nth-child(7)"
     }
@@ -90,7 +89,8 @@ class RentReviewDetailSentViewSpec extends ViewBaseSpec {
       "display correct content" in {
         elementText(Selectors.title) mustBe Strings.title
         elementText(Selectors.yourRef) must include(Strings.yourRef)
-        elementText(Selectors.print) mustBe "Print this page"
+        elementText(Selectors.print) mustBe Strings.print
+        elementText(Selectors.emailText) mustBe Strings.emailText
         elementText(Selectors.whatNext) mustBe Strings.whatNext
         elementText(Selectors.goBack) mustBe Strings.goBack
       }
