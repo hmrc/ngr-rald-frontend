@@ -60,7 +60,7 @@ class ProvideDetailsOfFirstRentPeriodControllerSpec extends ControllerSpecSuppor
   val firstRentPeriodAnswersNoRentPayed: Option[UserAnswers] = userAnswersWithoutData.set(ProvideDetailsOfFirstRentPeriodPage, firstRentPeriodNoRentPayed).toOption
 
   "ProvideDetailsOfFirstRentPeriodController" must {
-    ".show" must {
+    "method show" must {
       "return OK and the correct view" in {
         val result = controllerWithAnswers(None).show(NormalMode)(authenticatedFakeRequest)
         status(result) mustBe OK
@@ -81,7 +81,7 @@ class ProvideDetailsOfFirstRentPeriodControllerSpec extends ControllerSpecSuppor
         document.select("input[name=endDate.year]").attr("value") mustBe "2025"
         document.select("input[type=radio][name=provideDetailsOfFirstRentPeriod-radio-isRentPayablePeriod][value=true]").hasAttr("checked") mustBe true
         document.select("input[type=radio][name=provideDetailsOfFirstRentPeriod-radio-isRentPayablePeriod][value=false]").hasAttr("checked") mustBe false
-        document.select("input[name=rentPeriodAmount]").attr("value") mustBe "1000"
+        document.select("input[name=rentPeriodAmount]").attr("value") mustBe "1000.46"
       }
 
       "return OK and the correct view with prepopulated data if no rent payable" in {
@@ -108,7 +108,7 @@ class ProvideDetailsOfFirstRentPeriodControllerSpec extends ControllerSpecSuppor
       }
     }
 
-    ".submit" must {
+    "method submit" must {
       "return SEE_OTHER after submitting with start date, end date, yes radio button selected, rent amount" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val result = controllerWithAnswers(None).submit(NormalMode)(authenticatedFakePostRequest(
@@ -125,7 +125,7 @@ class ProvideDetailsOfFirstRentPeriodControllerSpec extends ControllerSpecSuppor
             )
         ))
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.HowMuchIsTotalAnnualRentController.show(NormalMode).url)
+        redirectLocation(result) mustBe Some(routes.ProvideDetailsOfSecondRentPeriodController.show(NormalMode).url)
       }
 
       "return SEE_OTHER after submitting with start date, end date, no radio button selected" in {
@@ -143,7 +143,7 @@ class ProvideDetailsOfFirstRentPeriodControllerSpec extends ControllerSpecSuppor
             )
         ))
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.HowMuchIsTotalAnnualRentController.show(NormalMode).url)
+        redirectLocation(result) mustBe Some(routes.ProvideDetailsOfSecondRentPeriodController.show(NormalMode).url)
       }
 
       "return form with errors when day is empty for the start date" in {

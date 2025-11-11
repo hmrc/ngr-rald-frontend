@@ -26,8 +26,8 @@ import uk.gov.hmrc.auth.core.Nino
 import uk.gov.hmrc.http.{HeaderNames, NotFoundException}
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, NormalMode, ProvideDetailsOfFirstSecondRentPeriod, UserAnswers}
-import uk.gov.hmrc.ngrraldfrontend.pages.{ProvideDetailsOfFirstSecondRentPeriodPage, RentPeriodsPage}
+import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, NormalMode, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.pages.{ProvideDetailsOfFirstRentPeriodPage, ProvideDetailsOfSecondRentPeriodPage, RentPeriodsPage}
 import uk.gov.hmrc.ngrraldfrontend.views.html.RentPeriodView
 
 import scala.concurrent.Future
@@ -38,7 +38,8 @@ class RentPeriodsControllerSpec extends ControllerSpecSupport {
   val controllerNoProperty: RentPeriodsController = new RentPeriodsController(view, fakeAuth, fakeData(None), mcc, mockSessionRepository, mockNavigator)(mockConfig, ec)
   val controllerProperty: Option[UserAnswers] => RentPeriodsController = answers => new RentPeriodsController(view, fakeAuth, fakeDataProperty(Some(property), answers), mcc, mockSessionRepository, mockNavigator)(mockConfig, ec)
 
-  lazy val firstSecondRentPeriodAnswers: Option[UserAnswers] = userAnswersWithoutData.set(ProvideDetailsOfFirstSecondRentPeriodPage, firstSecondRentPeriod).toOption
+  lazy val firstSecondRentPeriodAnswers: Option[UserAnswers] = userAnswersWithoutData.set(ProvideDetailsOfFirstRentPeriodPage, firstRentPeriod)
+    .flatMap(_.set(ProvideDetailsOfSecondRentPeriodPage, secondRentPeriod)).toOption
 
   "method show" must {
     "Return OK and the correct view when the user has said yes to having paid rent for the first period" in {
@@ -53,6 +54,12 @@ class RentPeriodsControllerSpec extends ControllerSpecSupport {
       status(result) mustBe OK
       val content = contentAsString(result)
       val document = Jsoup.parse(content)
+      document.select("td[id=first-period-start-date-id]").text() mustBe "1 January 2025"
+      document.select("td[id=first-period-end-date-id]").text() mustBe "31 January 2025"
+      document.select("td[id=first-period-rent-value-id]").text() mustBe "£1,000.46"
+      document.select("td[id=first-period-has-pay-id]").text() mustBe "Yes"
+      document.select("td[id=second-period-start-date-id]").text() mustBe "1 February 2025"
+      document.select("td[id=second-period-end-date-id]").text() mustBe "31 March 2025"
       document.select("input[type=radio][name=rent-periods-radio][value=true]").hasAttr("checked") mustBe true
       document.select("input[type=radio][name=rent-periods-radio][value=false]").hasAttr("checked") mustBe false
     }
@@ -76,7 +83,7 @@ class RentPeriodsControllerSpec extends ControllerSpecSupport {
         result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/landlord")
       })
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(routes.ProvideDetailsOfFirstSecondRentPeriodController.show(NormalMode).url)
+      redirectLocation(result) mustBe Some(routes.ProvideDetailsOfFirstRentPeriodController.show(NormalMode).url)
     }
     "Return SEE_OTHER and the correct view after submitting no" in {
       when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))

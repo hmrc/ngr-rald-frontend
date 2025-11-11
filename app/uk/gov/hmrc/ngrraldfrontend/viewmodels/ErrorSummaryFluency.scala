@@ -67,7 +67,8 @@ trait ErrorSummaryFluency {
     private def matchingKey(form: Form[_], key: String, messages: Seq[String], pageName: String, fieldName: String, errorLinkOverrides: Map[String, String]): Option[String] =
       if (messages.contains(s"$pageName.$fieldName.required.error") || messages.contains(s"$pageName.$fieldName.invalid.error"))
         Some(s"#${findKey(form.data, fieldName)}")
-      else if (messages.contains(s"$pageName.$fieldName.dayAndMonth.required.error") || messages.contains(s"$pageName.$fieldName.dayAndYear.required.error"))
+      else if (messages.contains(s"$pageName.$fieldName.dayAndMonth.required.error") || messages.contains(s"$pageName.$fieldName.dayAndYear.required.error") ||
+      messages.contains(s"$pageName.$fieldName.before.startDate.error"))
         Some(s"#$fieldName.day")
       else if (messages.contains(s"$pageName.$fieldName.monthAndYear.required.error"))
         Some(s"#$fieldName.month")

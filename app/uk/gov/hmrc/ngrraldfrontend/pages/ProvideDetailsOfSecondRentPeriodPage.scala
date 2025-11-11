@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.ngrraldfrontend.utils
+package uk.gov.hmrc.ngrraldfrontend.pages
 
-import java.text.NumberFormat
-import java.util.Locale
+import play.api.libs.json.JsPath
+import uk.gov.hmrc.ngrraldfrontend.models.{ProvideDetailsOfFirstRentPeriod, ProvideDetailsOfSecondRentPeriod}
 
-trait CurrencyHelper {
-  def formatRentValue(rentValue: Double): String = {
-    val ukFormatter = NumberFormat.getCurrencyInstance(Locale.UK)
-    ukFormatter.format(rentValue).replaceAll("[.]0{2}", "")
-  }
-}
+case object ProvideDetailsOfSecondRentPeriodPage extends QuestionPage[ProvideDetailsOfSecondRentPeriod]:
+
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "secondRentPeriod"

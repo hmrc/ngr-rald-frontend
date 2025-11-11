@@ -59,7 +59,7 @@ class HowMuchIsTotalAnnualRentFormSpec extends AnyWordSpec with Matchers {
       val data = Map("how–much–is–total–annual–rent-value" -> "abc")
       val boundForm = HowMuchIsTotalAnnualRentForm.form.bind(data)
 
-      boundForm.errors should contain(FormError("how–much–is–total–annual–rent-value", List("howMuchIsTotalAnnualRent.format.error"), ArraySeq("([0-9]+\\.[0-9]+|[0-9]+)")))
+      boundForm.errors should contain(FormError("how–much–is–total–annual–rent-value", List("howMuchIsTotalAnnualRent.format.error"), ArraySeq("^\\d+\\.?\\d{0,}$")))
     }
 
     "fail to bind input greater than 9999999.99" in {

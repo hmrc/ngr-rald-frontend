@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.ngrraldfrontend.pages
+package uk.gov.hmrc.ngrraldfrontend.models
 
-import play.api.libs.json.JsPath
-import uk.gov.hmrc.ngrraldfrontend.models.ProvideDetailsOfFirstSecondRentPeriod
+import play.api.libs.json.{Json, OFormat}
 
-case object ProvideDetailsOfFirstSecondRentPeriodPage extends QuestionPage[ProvideDetailsOfFirstSecondRentPeriod] {
+import java.time.LocalDate
 
-  override def path: JsPath = JsPath \ toString
+case class ProvideDetailsOfSecondRentPeriod(
+                                            endDate: String,
+                                            rentPeriodAmount: BigDecimal
+                                          )
 
-  override def toString: String = "provideDetailsOfFirstSecondRentPeriod"
-  
-}
+object ProvideDetailsOfSecondRentPeriod:
+
+  implicit val format: OFormat[ProvideDetailsOfSecondRentPeriod] = Json.format[ProvideDetailsOfSecondRentPeriod]

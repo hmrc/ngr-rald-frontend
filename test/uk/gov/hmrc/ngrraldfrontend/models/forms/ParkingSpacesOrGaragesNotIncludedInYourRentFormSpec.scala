@@ -248,7 +248,7 @@ class ParkingSpacesOrGaragesNotIncludedInYourRentFormSpec  extends AnyWordSpec w
       val boundForm = ParkingSpacesOrGaragesNotIncludedInYourRentForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors shouldBe List(FormError("totalCost", List("parkingSpacesOrGaragesNotIncludedInYourRent.totalCost.invalid.error"), ArraySeq("""([0-9]+\.[0-9]+|[0-9]+)""")))
+      boundForm.errors shouldBe List(FormError("totalCost", List("parkingSpacesOrGaragesNotIncludedInYourRent.totalCost.invalid.error"), ArraySeq("""^\d+\.?\d{0,}$""")))
     }
     "fail to bind when the input field is greater than £9,999,999.99 for total cost" in {
       val data = Map(

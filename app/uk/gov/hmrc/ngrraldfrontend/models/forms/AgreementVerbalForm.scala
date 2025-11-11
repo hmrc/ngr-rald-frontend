@@ -16,10 +16,10 @@
 
 package uk.gov.hmrc.ngrraldfrontend.models.forms
 
-import play.api.data.{Form, FormError}
-import play.api.data.Forms.{mapping, optional, of}
+import play.api.data.Forms.{mapping, of}
 import play.api.data.format.Formatter
-import play.api.data.validation.{Constraint, Invalid, Valid}
+import play.api.data.validation.Constraint
+import play.api.data.{Form, FormError}
 import play.api.i18n.Messages
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
@@ -32,11 +32,9 @@ import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{ngrRadio, noButto
 import uk.gov.hmrc.ngrraldfrontend.models.forms.mappings.Mappings
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.DateTextFields
 
-import scala.util.Try
-
 final case class AgreementVerbalForm(radioValue: String, agreementStartDate: NGRDate, agreementEndDate: Option[NGRDate])
 
-object AgreementVerbalForm extends Mappings with DateMappings{
+object AgreementVerbalForm extends Mappings with DateMappings {
   implicit val format: OFormat[AgreementVerbalForm] = Json.format[AgreementVerbalForm]
 
   private val radioUnselectedError = "agreementVerbal.radio.unselected.error"
@@ -65,7 +63,7 @@ object AgreementVerbalForm extends Mappings with DateMappings{
         case (None, None, None) if isNotOpenEnded => Left(Seq(FormError(key, "agreementVerbal.agreementEndDate.required.error", args)))
         case (Some(day), Some(month), Some(year)) if isNotOpenEnded => isEndDateValid(day, month, year, key, args)
         case (Some(day), Some(month), Some(year)) => Right(Some(NGRDate(day, month, year)))
-        case (None, None, None) => Right(None)
+        case (_, _, _) => Right(None)
       }
 
     override def unbind(key: String, value: Option[NGRDate]): Map[String, String] =
@@ -102,7 +100,7 @@ object AgreementVerbalForm extends Mappings with DateMappings{
       agreementVerbalForm.agreementStartDate.makeString,
       openEnded,
       if (openEnded) None else agreementVerbalForm.agreementEndDate.map(_.makeString))
-    
+
   def form: Form[AgreementVerbalForm] = {
     Form(
       mapping(

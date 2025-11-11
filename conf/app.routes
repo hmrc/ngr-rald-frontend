@@ -82,11 +82,11 @@ POST       /provide-details-of-first-rent-period            uk.gov.hmrc.ngrraldf
 GET        /provide-details-of-first-rent-period/change     uk.gov.hmrc.ngrraldfrontend.controllers.ProvideDetailsOfFirstRentPeriodController.show(mode: Mode = CheckMode)
 POST       /provide-details-of-first-rent-period/change     uk.gov.hmrc.ngrraldfrontend.controllers.ProvideDetailsOfFirstRentPeriodController.submit(mode: Mode = CheckMode)
 
-#Provide details of first second rent period
-GET        /provide-details-of-first-second-rent-period            uk.gov.hmrc.ngrraldfrontend.controllers.ProvideDetailsOfFirstSecondRentPeriodController.show(mode: Mode = NormalMode)
-POST       /provide-details-of-first-second-rent-period            uk.gov.hmrc.ngrraldfrontend.controllers.ProvideDetailsOfFirstSecondRentPeriodController.submit(mode: Mode = NormalMode)
-GET        /provide-details-of-first-second-rent-period/change     uk.gov.hmrc.ngrraldfrontend.controllers.ProvideDetailsOfFirstSecondRentPeriodController.show(mode: Mode = CheckMode)
-POST       /provide-details-of-first-second-rent-period/change     uk.gov.hmrc.ngrraldfrontend.controllers.ProvideDetailsOfFirstSecondRentPeriodController.submit(mode: Mode = CheckMode)
+#Provide details of first rent period
+GET        /provide-details-of-second-rent-period            uk.gov.hmrc.ngrraldfrontend.controllers.ProvideDetailsOfSecondRentPeriodController.show(mode: Mode = NormalMode)
+POST       /provide-details-of-second-rent-period            uk.gov.hmrc.ngrraldfrontend.controllers.ProvideDetailsOfSecondRentPeriodController.submit(mode: Mode = NormalMode)
+GET        /provide-details-of-second-rent-period/change     uk.gov.hmrc.ngrraldfrontend.controllers.ProvideDetailsOfSecondRentPeriodController.show(mode: Mode = CheckMode)
+POST       /provide-details-of-second-rent-period/change     uk.gov.hmrc.ngrraldfrontend.controllers.ProvideDetailsOfSecondRentPeriodController.submit(mode: Mode = CheckMode)
 
 #Rent Periods
 GET        /rent-periods                                    uk.gov.hmrc.ngrraldfrontend.controllers.RentPeriodsController.show(mode: Mode = NormalMode)

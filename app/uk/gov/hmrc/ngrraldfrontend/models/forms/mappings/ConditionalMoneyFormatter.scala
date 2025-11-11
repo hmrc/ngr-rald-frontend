@@ -18,15 +18,16 @@ package uk.gov.hmrc.ngrraldfrontend.models.forms.mappings
 
 import play.api.data.FormError
 import play.api.data.format.Formatter
+import uk.gov.hmrc.ngrraldfrontend.models.forms.CommonFormValidators
 
 import scala.math.BigDecimal.RoundingMode.HALF_UP
 import scala.util.Try
 import scala.util.matching.Regex
 
 class ConditionalMoneyFormatter(errorKeyPrefix: String, requiredOnCondition: Map[String, String] => Boolean)
-  extends Formatter[Option[BigDecimal]]:
+  extends Formatter[Option[BigDecimal]] with CommonFormValidators{
 
-  private val amountRegex: Regex = """^\d+\.?\d{0,4}$""".r
+  //  private val amountRegex: Regex = """^\d+\.?\d{0,4}$""".r
   private val maxAmount: BigDecimal = BigDecimal("9999999.99")
 
   override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[BigDecimal]] =
@@ -46,10 +47,11 @@ class ConditionalMoneyFormatter(errorKeyPrefix: String, requiredOnCondition: Map
   private def validateMoney(key: String, amount: String): Either[Seq[FormError], Option[BigDecimal]] =
     if amount.isEmpty then
       oneError(key, "required.error")
-    else if !amountRegex.matches(amount) then
+    else if !amount.matches(amountRegex.pattern()) then
       oneError(key, "invalid.error")
     else
       Try(BigDecimal(amount).setScale(2, HALF_UP)).map { bigDecimal =>
         if bigDecimal > maxAmount then oneError(key, "max.error")
         else Right(Some(bigDecimal))
       }.getOrElse(oneError(key, "invalid.error"))
+}
