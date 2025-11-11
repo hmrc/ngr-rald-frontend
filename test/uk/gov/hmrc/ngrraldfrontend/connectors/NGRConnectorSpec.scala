@@ -16,8 +16,6 @@
 
 package uk.gov.hmrc.ngrraldfrontend.connectors
 
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import uk.gov.hmrc.http.{HttpResponse, NotFoundException}
 import uk.gov.hmrc.ngrraldfrontend.helpers.TestData
