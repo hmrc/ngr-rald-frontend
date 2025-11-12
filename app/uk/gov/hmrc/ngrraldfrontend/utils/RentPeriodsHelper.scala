@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.ngrraldfrontend.pages
+package uk.gov.hmrc.ngrraldfrontend.utils
 
-import play.api.libs.json.JsPath
-import uk.gov.hmrc.ngrraldfrontend.models.ProvideDetailsOfRentPeriod
+import uk.gov.hmrc.ngrraldfrontend.models.{NGRDate, ProvideDetailsOfRentPeriod}
 
-case object ProvideDetailsOfSecondRentPeriodPage extends QuestionPage[Seq[ProvideDetailsOfRentPeriod]] {
+object RentPeriodsHelper {
 
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "rentPeriodsDetails"
+  def hasCurrentRentPeriodEndDateChanged(periods: Seq[ProvideDetailsOfRentPeriod], enteredEndDate: NGRDate, index: Int): Seq[ProvideDetailsOfRentPeriod] = {
+    if (periods.size > index && periods(index).endDate != enteredEndDate.makeString)
+      periods.dropRight(periods.size - index)
+    else
+      periods
+  }
+  
 }

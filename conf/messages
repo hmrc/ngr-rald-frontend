@@ -224,12 +224,12 @@ provideDetailsOfFirstRentPeriod.firstPeriod.amount.invalid.error = Rent for the 
 provideDetailsOfFirstRentPeriod.firstPeriod.amount.max.error = Rent for the first rent period must be £9,999,999.99 or less
 
 # ProvideDetailsOfSecondRentPeriod
-provideDetailsOfSecondRentPeriod.title = Second rent period
+provideDetailsOfSecondRentPeriod.title = rent period
 
-provideDetailsOfSecondRentPeriod.startDate.label = Second rent period start date
-provideDetailsOfSecondRentPeriod.startDate.hint = This is the day after the first rent period ended
+provideDetailsOfSecondRentPeriod.startDate.label = {0} rent period start date
+provideDetailsOfSecondRentPeriod.startDate.hint = This is the day after the {0} rent period ended
 
-provideDetailsOfSecondRentPeriod.endDate.label = When does the second rent period end?
+provideDetailsOfSecondRentPeriod.endDate.label = When does the {0} rent period end?
 provideDetailsOfSecondRentPeriod.endDate.required.error = Enter the end date of the second rent period
 provideDetailsOfSecondRentPeriod.endDate.day.required.error = End date of the second rent period must include a day
 provideDetailsOfSecondRentPeriod.endDate.month.required.error = End date of the second rent period must include a month
@@ -247,6 +247,16 @@ provideDetailsOfSecondRentPeriod.rentPeriodAmount.required.error = Enter the ren
 provideDetailsOfSecondRentPeriod.rentPeriodAmount.invalid.error = Rent for the second rent period must be a number, like 30,000
 provideDetailsOfSecondRentPeriod.rentPeriodAmount.max.error = Rent for the second rent period must be £9,999,999.99 or less
 
+rentPeriod.2.title = Second
+rentPeriod.3.title = Third
+rentPeriod.4.title = Fourth
+rentPeriod.5.title = Fifth
+rentPeriod.6.title = Sixth
+rentPeriod.7.title = Seventh
+rentPeriod.8.title = Eighth
+rentPeriod.9.title = Ninth
+rentPeriod.10.title = Tenth
+
 #RentPeriods
 rentPeriods.title = Rent periods
 rentPeriods.first.subheading = First rent period
@@ -254,7 +264,7 @@ rentPeriods.first.startDate = Start date
 rentPeriods.first.endDate = End date
 rentPeriods.first.rentValue = Rent for this period (excluding VAT)
 rentPeriods.first.doYouPay = Do you pay rent in this period?
-rentPeriods.second.subheading = Second rent period
+rentPeriods.second.subheading = {0} rent period
 rentPeriods.second.startDate = Start date
 rentPeriods.second.endDate = End date
 rentPeriods.second.rentValue = Rent for this period (excluding VAT)

@@ -74,11 +74,11 @@ class SessionRepository @Inject()(
       .map(_ => true)
   }
 
-  def get(id: String): Future[Option[UserAnswers]] = Mdc.preservingMdc {
-    keepAlive(id).flatMap {
+  def get(credId: String): Future[Option[UserAnswers]] = Mdc.preservingMdc {
+    keepAlive(credId).flatMap {
       _ =>
         collection
-          .find(filterByCredId(id))
+          .find(filterByCredId(credId))
           .headOption()
     }
   }

@@ -39,7 +39,7 @@ object ProvideDetailsOfSecondRentPeriodForm extends CommonFormValidators with NG
   def unapply(provideDetailsOfSecondRentPeriodForm: ProvideDetailsOfSecondRentPeriodForm): Option[(NGRDate, BigDecimal)] =
     Some(provideDetailsOfSecondRentPeriodForm.endDate, provideDetailsOfSecondRentPeriodForm.rentPeriodAmount)
 
-  def answerToForm(provideDetailsOfSecondRentPeriod: ProvideDetailsOfSecondRentPeriod, previousEndDate: LocalDate): Form[ProvideDetailsOfSecondRentPeriodForm] =
+  def answerToForm(provideDetailsOfSecondRentPeriod: ProvideDetailsOfRentPeriod, previousEndDate: LocalDate): Form[ProvideDetailsOfSecondRentPeriodForm] =
     form(previousEndDate).fill(
       ProvideDetailsOfSecondRentPeriodForm(
         endDate = NGRDate.fromString(provideDetailsOfSecondRentPeriod.endDate),
@@ -47,14 +47,24 @@ object ProvideDetailsOfSecondRentPeriodForm extends CommonFormValidators with NG
       )
     )
 
-  def formToAnswers(provideDetailsOfSecondRentPeriodForm: ProvideDetailsOfSecondRentPeriodForm): ProvideDetailsOfSecondRentPeriod =
-    ProvideDetailsOfSecondRentPeriod(
+  def formToAnswers(provideDetailsOfSecondRentPeriodForm: ProvideDetailsOfSecondRentPeriodForm, rentPeriods: Seq[ProvideDetailsOfRentPeriod], index: Int): Seq[ProvideDetailsOfRentPeriod] = {
+    val element = ProvideDetailsOfRentPeriod(
       provideDetailsOfSecondRentPeriodForm.endDate.makeString,
       provideDetailsOfSecondRentPeriodForm.rentPeriodAmount
     )
+    println(Console.BLUE_B + rentPeriods + "============" + (rentPeriods.nonEmpty && rentPeriods.size > index) + "=======" + index + Console.RESET)
+    if (rentPeriods.nonEmpty && rentPeriods.size > index)
+      val newSeq = rentPeriods.updated(index, element)
+      println(Console.GREEN_B + newSeq + Console.RESET)
+      newSeq
+    else
+      val newSeq = rentPeriods :+ element
+      println(Console.RED_B + newSeq + Console.RESET)
+      newSeq
+  }
 
-  def endDateInput(using messages: Messages): DateInput =
-    dateInput(endDate, "provideDetailsOfSecondRentPeriod.endDate.label")
+  def endDateInput(index: Int)(using messages: Messages): DateInput =
+    dateInput(endDate, "provideDetailsOfSecondRentPeriod.endDate.label", Some(s"rentPeriod.${index + 2}.title"))
 
 
   def form(previousEndDate: LocalDate): Form[ProvideDetailsOfSecondRentPeriodForm] = {

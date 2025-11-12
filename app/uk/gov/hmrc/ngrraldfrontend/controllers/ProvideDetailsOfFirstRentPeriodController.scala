@@ -26,9 +26,10 @@ import uk.gov.hmrc.ngrraldfrontend.models.forms.ProvideDetailsOfFirstRentPeriodF
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{Mode, NormalMode, ProvideDetailsOfFirstRentPeriod, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
-import uk.gov.hmrc.ngrraldfrontend.pages.ProvideDetailsOfFirstRentPeriodPage
+import uk.gov.hmrc.ngrraldfrontend.pages.{ProvideDetailsOfFirstRentPeriodPage, ProvideDetailsOfSecondRentPeriodPage}
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.utils.DateKeyFinder
+import uk.gov.hmrc.ngrraldfrontend.utils.RentPeriodsHelper.hasCurrentRentPeriodEndDateChanged
 import uk.gov.hmrc.ngrraldfrontend.views.html.ProvideDetailsOfFirstRentPeriodView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -77,7 +78,13 @@ class ProvideDetailsOfFirstRentPeriodController @Inject()(view: ProvideDetailsOf
             ))),
           provideDetailsOfFirstRentPeriod =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).set(ProvideDetailsOfFirstRentPeriodPage, provideDetailsOfFirstRentPeriod))
+              userAnswers <- Future(request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))))
+              rentPeriodsUserAnswers <- Future(userAnswers.get(ProvideDetailsOfFirstRentPeriodPage)).map {
+                case Some(firstPeriods) if !firstPeriods.endDate.isEqual(provideDetailsOfFirstRentPeriod.endDate) =>
+                  userAnswers.remove(ProvideDetailsOfSecondRentPeriodPage).get
+                case _ => userAnswers
+              }
+              updatedAnswers <- Future.fromTry(rentPeriodsUserAnswers.set(ProvideDetailsOfFirstRentPeriodPage, provideDetailsOfFirstRentPeriod))
               _ <- sessionRepository.set(updatedAnswers)
             } yield Redirect(navigator.nextPage(ProvideDetailsOfFirstRentPeriodPage, NormalMode, updatedAnswers))
         )

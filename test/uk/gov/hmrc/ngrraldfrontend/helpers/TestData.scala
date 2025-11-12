@@ -70,7 +70,7 @@ trait TestData {
     isRentPayablePeriod = false
   )
 
- val secondRentPeriod: ProvideDetailsOfSecondRentPeriod = ProvideDetailsOfSecondRentPeriod(
+ val secondRentPeriod: ProvideDetailsOfRentPeriod = ProvideDetailsOfRentPeriod(
   endDate = "2025-03-31",
   rentPeriodAmount = BigDecimal(1350)
  )

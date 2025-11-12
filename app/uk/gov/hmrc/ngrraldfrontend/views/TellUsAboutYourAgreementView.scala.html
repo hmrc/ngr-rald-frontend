@@ -67,7 +67,14 @@
     }
 }
 
-@layout(pageTitle = Some(messages("tellUsAboutYourNewAgreement.title")), showBackLink = true, fullWidth = true) {
+@layout(pageTitle = Some(
+    if(agreement == AgreementType.NewAgreement){
+        messages("tellUsAboutYourNewAgreement.title")
+    }else if(agreement == AgreementType.RenewedAgreement){
+        messages("tellUsAboutYourRenewedAgreement.title")
+    }else{
+        messages("tellUsAboutRent.title")
+    }), showBackLink = true, fullWidth = true) {
 
  @formHelper(action =
     if(agreement == AgreementType.NewAgreement){
