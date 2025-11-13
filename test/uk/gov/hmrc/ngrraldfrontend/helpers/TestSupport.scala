@@ -86,9 +86,6 @@ trait TestSupport extends PlaySpec
     AuthenticatedUserRequest(fakeRequest, None, None, Some(testEmail), None, credId = Some("1234"), None, None, nino = Nino(true, Some("")))
   }
 
-//  lazy val authenticatedFakeRequestWithEmail: AuthenticatedUserRequest[AnyContentAsEmpty.type] =
-//    AuthenticatedUserRequest(fakeRequest, None, None, Some("testEmail@emailProvider.com"), None, None, None, nino = Nino(true, Some("")))
-
   def authenticatedFakePostRequest[A](fakeRequest: FakeRequest[A]): AuthenticatedUserRequest[A] = {
     AuthenticatedUserRequest[A](
       fakeRequest,

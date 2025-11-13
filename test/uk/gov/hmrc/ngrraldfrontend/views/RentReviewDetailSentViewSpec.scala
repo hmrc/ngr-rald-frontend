@@ -48,9 +48,9 @@ class RentReviewDetailSentViewSpec extends ViewBaseSpec {
 
     object Strings {
       val title: String = "Renewed agreement details sent"
-      val yourRef: String = "Your reference is 1234"
+      val yourRef: String = s"Your reference is $reference"
       val print: String = "Print this page"
-      val emailText: String = "We have sent a confirmation email to test@testUser.com"
+      val emailText: String = s"We have sent a confirmation email to $email"
       val whatNext: String = "What happens next?"
       val goBack: String = "Go to your account home"
     }
@@ -86,12 +86,27 @@ class RentReviewDetailSentViewSpec extends ViewBaseSpec {
         htmlRender must not be empty
       }
 
-      "display correct content" in {
+      "display title" in {
         elementText(Selectors.title) mustBe Strings.title
+      }
+
+      "display reference" in {
         elementText(Selectors.yourRef) must include(Strings.yourRef)
+      }
+
+      "display print link" in {
         elementText(Selectors.print) mustBe Strings.print
+      }
+
+      "display email" in {
         elementText(Selectors.emailText) mustBe Strings.emailText
+      }
+
+      "display whats left" in {
         elementText(Selectors.whatNext) mustBe Strings.whatNext
+      }
+
+      "display go back" in {
         elementText(Selectors.goBack) mustBe Strings.goBack
       }
     }

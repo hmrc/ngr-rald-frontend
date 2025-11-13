@@ -26,19 +26,17 @@ import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.connectors.NGRConnector
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
-import uk.gov.hmrc.ngrraldfrontend.models.NGRSummaryListRow.summarise
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{buildRadios, simpleNgrRadio}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.ConfirmBreakClauseForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.ConfirmBreakClauseForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.{CredId, RatepayerRegistration}
 import uk.gov.hmrc.ngrraldfrontend.models.vmvProperty.VMVProperty
-import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, Mode, NGRSummaryListRow, PropertyLinkingUserAnswers, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, Mode, PropertyLinkingUserAnswers, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.{ConfirmBreakClausePage, DeclarationPage}
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.views.html.{ConfirmBreakClauseView, RentReviewDetailsSentView}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.ngrraldfrontend.models.components.{TableData, TableHeader, TableRowIsActive, TableRowLink, TableRowText}
 import uk.gov.hmrc.ngrraldfrontend.utils.UniqueIdGenerator
 
 import javax.inject.Inject
@@ -56,7 +54,8 @@ class RentReviewDetailsSentController @Inject()(view: RentReviewDetailsSentView,
       rows = Seq(
         Seq(
           TableRow(
-            content = HtmlContent(messages("rentReviewDetailsSent.p3"))
+            content = Text(messages("rentReviewDetailsSent.p3")),
+            classes = "govuk-!-font-weight-bold"
           ),
           TableRow(
             content = Text(property.addressFull),
@@ -65,7 +64,8 @@ class RentReviewDetailsSentController @Inject()(view: RentReviewDetailsSentView,
         ),
         Seq(
           TableRow(
-            content = HtmlContent(messages("rentReviewDetailsSent.p4"))
+            content = Text(messages("rentReviewDetailsSent.p4")),
+            classes = "govuk-!-font-weight-bold"
           ),
           TableRow(
             content = Text(property.localAuthorityReference),
@@ -73,7 +73,7 @@ class RentReviewDetailsSentController @Inject()(view: RentReviewDetailsSentView,
           ))))
 
 
-  def confirmation(): Action[AnyContent] =
+  def confirmation: Action[AnyContent] =
     (authenticate andThen getData).async { implicit request =>
       ngrConnector.getRaldUserAnswers(CredId(request.credId)).flatMap {
         case Some(raldUserAnswers) => Future.successful(Ok(view(

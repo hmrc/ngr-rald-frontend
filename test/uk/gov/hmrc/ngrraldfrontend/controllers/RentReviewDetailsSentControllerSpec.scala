@@ -22,7 +22,7 @@ import org.scalatest.matchers.should.Matchers.shouldBe
 import play.api.http.Status.{CREATED, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.{await, contentAsString, contentType, redirectLocation, status}
-import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.http.{HttpResponse, NotFoundException}
 import uk.gov.hmrc.ngrraldfrontend.config.{AppConfig, FrontendAppConfig}
 import uk.gov.hmrc.ngrraldfrontend.helpers.{ControllerSpecSupport, TestData}
 import uk.gov.hmrc.ngrraldfrontend.models.{PropertyLinkingUserAnswers, UserAnswers}
@@ -36,6 +36,7 @@ class  RentReviewDetailsSentControllerSpec extends ControllerSpecSupport with De
   val pageTitle = "Renewed agreement details sent"
   val view: RentReviewDetailsSentView = inject[RentReviewDetailsSentView]
   val controller: RentReviewDetailsSentController = new RentReviewDetailsSentController(view, fakeAuth, mcc, fakeDataProperty(Some(property), Some(userAnswersWithoutData)), mockNGRConnector)
+  val controllerNoProperty: RentReviewDetailsSentController = new RentReviewDetailsSentController(view, fakeAuth, mcc, fakeData(None), mockNGRConnector)
 
   "RentReviewDetailsSent Controller" must {
     "method show" must {
@@ -49,6 +50,14 @@ class  RentReviewDetailsSentControllerSpec extends ControllerSpecSupport with De
         val content = contentAsString(result)
         content must include(pageTitle)
       }
+    }
+
+    "Return NotFoundException when property is not found in the mongo" in {
+      when(mockNGRConnector.getRaldUserAnswers(any[CredId])(any())).thenReturn(Future.successful(None))
+      val exception = intercept[NotFoundException] {
+        await(controllerNoProperty.confirmation(authenticatedFakeRequest))
+      }
+      exception.getMessage contains "Could not find answers in backend mongo" mustBe true
     }
   }
 }
