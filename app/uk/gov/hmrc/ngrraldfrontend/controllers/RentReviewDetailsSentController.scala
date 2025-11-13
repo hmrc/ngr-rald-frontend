@@ -18,26 +18,18 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.govukfrontend.views.Aliases.{SummaryListRow, Text}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{Table, TableRow}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.connectors.NGRConnector
-import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
-import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{buildRadios, simpleNgrRadio}
-import uk.gov.hmrc.ngrraldfrontend.models.forms.ConfirmBreakClauseForm
-import uk.gov.hmrc.ngrraldfrontend.models.forms.ConfirmBreakClauseForm.form
-import uk.gov.hmrc.ngrraldfrontend.models.registration.{CredId, RatepayerRegistration}
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.vmvProperty.VMVProperty
-import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, Mode, PropertyLinkingUserAnswers, UserAnswers}
-import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
-import uk.gov.hmrc.ngrraldfrontend.pages.{ConfirmBreakClausePage, DeclarationPage}
-import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
-import uk.gov.hmrc.ngrraldfrontend.views.html.{ConfirmBreakClauseView, RentReviewDetailsSentView}
+import uk.gov.hmrc.ngrraldfrontend.models.UserAnswers
+import uk.gov.hmrc.ngrraldfrontend.pages.DeclarationPage
+import uk.gov.hmrc.ngrraldfrontend.views.html.RentReviewDetailsSentView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.ngrraldfrontend.utils.UniqueIdGenerator
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
