@@ -72,9 +72,9 @@ class HasAnythingElseAffectedTheRentControllerSpec extends ControllerSpecSupport
             "hasAnythingElseAffectedTheRent" -> "false"
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
-        headers(result) mustBe TreeMap("Location" -> "/ngr-rald-frontend/money-you-paid-in-advance-to-landlord")
+        headers(result) mustBe TreeMap("Location" -> "/ngr-rald-frontend/check-answers")
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.MoneyYouPaidInAdvanceToLandlordController.show(NormalMode).url)
+        redirectLocation(result) mustBe Some(routes.CheckAnswersController.show().url)
       }
       "Return SEE_OTHER and the correct view  when radio button selected yes and reason has been entered" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
@@ -84,9 +84,9 @@ class HasAnythingElseAffectedTheRentControllerSpec extends ControllerSpecSupport
             "reason" -> "The area has gone up in value"
           )
           .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
-        headers(result) mustBe TreeMap("Location" -> "/ngr-rald-frontend/money-you-paid-in-advance-to-landlord")
+        headers(result) mustBe TreeMap("Location" -> "/ngr-rald-frontend/check-answers")
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.MoneyYouPaidInAdvanceToLandlordController.show(NormalMode).url)
+        redirectLocation(result) mustBe Some(routes.CheckAnswersController.show().url)
       }
       "Return Form with Errors when no radio button is selected" in {
         val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.WhatIsYourRentBasedOnController.submit(NormalMode))

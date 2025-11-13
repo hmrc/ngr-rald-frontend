@@ -36,14 +36,15 @@
     rentSummary: SummaryList,
     firstRentPeriod: Option[SummaryList],
     whatYourRentIncludesSummary: SummaryList,
-    parkingSummary: SummaryList,
     repairsAndInsurance: SummaryList,
     rentReview: SummaryList,
+    repairsAndFittingOutSummary: Option[SummaryList],
     payments: Option[SummaryList],
-    breakClause: Option[SummaryList]
+    breakClause: Option[SummaryList],
+    otherDetailsSummary: SummaryList
 )(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 @heading = @{messages("checkAnswers.title")}
-@layout(pageTitle = Some(messages("checkAnswers.title")), showBackLink = true, fullWidth = true) {
+@layout(pageTitle = Some(messages("checkAnswers.title")), showBackLink = true, fullWidth = false) {
 
     <h1 class="govuk-heading-l">@messages("checkAnswers.title")</h1>
     @if(leaseRenewalsSummary.nonEmpty){
@@ -54,7 +55,7 @@
     <h2 class="govuk-heading-m">@messages("checkAnswers.landlord.label")</h2>
     @govukSummaryList(landlordSummary)
 
-    @if(firstRentPeriod.nonEmpty){
+    @if(agreementDetailsSummary.nonEmpty){
         <h2 class="govuk-heading-m">@messages("checkAnswers.agreement.label")</h2>
         @govukSummaryList(agreementDetailsSummary.get)
     }
@@ -70,14 +71,16 @@
     <h2 class="govuk-heading-m">@messages("checkAnswers.whatYourRentIncludes.label")</h2>
     @govukSummaryList(whatYourRentIncludesSummary)
 
-    <h2 class="govuk-heading-m">@messages("checkAnswers.parking.label")</h2>
-    @govukSummaryList(parkingSummary)
-
     <h2 class="govuk-heading-m">@messages("checkAnswers.repairsAndInsurance.label")</h2>
     @govukSummaryList(repairsAndInsurance)
 
     <h2 class="govuk-heading-m">@messages("checkAnswers.rentReview.label")</h2>
     @govukSummaryList(rentReview)
+
+    @if(repairsAndFittingOutSummary.nonEmpty){
+        <h2 class="govuk-heading-m">@messages("checkAnswers.repairsAndFittingOut.label")</h2>
+        @govukSummaryList(repairsAndFittingOutSummary.get)
+    }
 
     @if(payments.nonEmpty){
         <h2 class="govuk-heading-m">@messages("checkAnswers.payments.label")</h2>
@@ -88,6 +91,10 @@
         <h2 class="govuk-heading-m">@messages("checkAnswers.breakClause.label")</h2>
         @govukSummaryList(breakClause.get)
     }
+
+    <h2 class="govuk-heading-m">@messages("checkAnswers.Otherdetails.label")</h2>
+    @govukSummaryList(otherDetailsSummary)
+    
     <div class="govuk-button-group">
         @saveAndContinueButton(msg =  messages("Continue"), isStartButton = false, href = Some("temphref"))
     </div>
