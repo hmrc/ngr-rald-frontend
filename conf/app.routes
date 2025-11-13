@@ -234,3 +234,6 @@ POST       /has-anything-else-affected-the-rent/change         uk.gov.hmrc.ngrra
 #Declaration
 GET        /declaration                uk.gov.hmrc.ngrraldfrontend.controllers.DeclarationController.show
 POST       /declaration                uk.gov.hmrc.ngrraldfrontend.controllers.DeclarationController.submit
+
+#check answers
+GET        /check-answers                                uk.gov.hmrc.ngrraldfrontend.controllers.CheckAnswersController.show(mode: Mode = NormalMode)

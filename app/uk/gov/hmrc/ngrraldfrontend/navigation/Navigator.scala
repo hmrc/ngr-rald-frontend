@@ -216,7 +216,7 @@ class Navigator @Inject()() {
     case DidYouPayAnyMoneyToLandlordPage => answers =>
       answers.get(DidYouPayAnyMoneyToLandlordPage) match {
         case Some(value) => value match {
-          case true => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouPayAnyMoneyToLandlordController.show(NormalMode) //TODO Needs to go to money you got from landlord or previous tenant when this is made
+          case true => uk.gov.hmrc.ngrraldfrontend.controllers.routes.MoneyYouPaidInAdvanceToLandlordController.show(NormalMode)
           case _    => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HasAnythingElseAffectedTheRentController.show(NormalMode)
         }
         case None => throw new NotFoundException("Failed to find answers - DidYouPayAnyMoneyToLandlordPage")
@@ -229,14 +229,14 @@ class Navigator @Inject()() {
       }
 
     case MoneyYouPaidInAdvanceToLandlordPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HasAnythingElseAffectedTheRentController.show(NormalMode)
-    case HasAnythingElseAffectedTheRentPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.MoneyYouPaidInAdvanceToLandlordController.show(NormalMode) //TODO check your answers page
+    case HasAnythingElseAffectedTheRentPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show() //TODO check your answers page
     //TODO need to connect to next page
     case DeclarationPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DeclarationController.show
   }
 
   //TODO change to check your answers page
   private val checkRouteMap: Page => UserAnswers => Call = {
-    case _ => _ => ???
+    case _ => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show()
   }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {

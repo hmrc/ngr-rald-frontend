@@ -28,11 +28,12 @@ import play.api.inject.Injector
 import play.api.mvc.{AnyContentAsEmpty, MessagesControllerComponents, RequestHeader}
 import play.api.test.{FakeRequest, Injecting}
 import play.twirl.api.Html
+import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.ngrraldfrontend.actions.{FakeAuthenticatedRequest, FakeDataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.mocks.MockAppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.UserAnswers
-import uk.gov.hmrc.ngrraldfrontend.models.registration.Email
+import uk.gov.hmrc.ngrraldfrontend.models.registration.{CredId, Email}
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.NGRCharacterCountComponent
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
@@ -80,5 +81,6 @@ trait ViewBaseSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting with
   
   lazy implicit val mockConfig: MockAppConfig = new MockAppConfig(app.configuration)
   val testEmail: String = Email("test@test.co.uk").toString
+  val testCredId: CredId = CredId("1234")
 
 }
