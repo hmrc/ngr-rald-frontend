@@ -17,9 +17,9 @@
 package uk.gov.hmrc.ngrraldfrontend.pages
 
 import play.api.libs.json.JsPath
-import uk.gov.hmrc.ngrraldfrontend.models.ProvideDetailsOfRentPeriod
+import uk.gov.hmrc.ngrraldfrontend.models.DetailsOfRentPeriod
 
-case object ProvideDetailsOfSecondRentPeriodPage extends QuestionPage[Seq[ProvideDetailsOfRentPeriod]] {
+case object ProvideDetailsOfSecondRentPeriodPage extends QuestionPage[Seq[DetailsOfRentPeriod]] {
 
   override def path: JsPath = JsPath \ toString
 

@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.ngrraldfrontend.controllers
 
-import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.*
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -26,18 +25,16 @@ import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.forms.ProvideDetailsOfSecondRentPeriodForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.ProvideDetailsOfSecondRentPeriodForm.*
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.models.{Mode, NGRDate, NormalMode, ProvideDetailsOfRentPeriod, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{Mode, NGRDate, DetailsOfRentPeriod, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
-import uk.gov.hmrc.ngrraldfrontend.pages.{ProvideDetailsOfFirstRentPeriodPage, ProvideDetailsOfSecondRentPeriodPage, RentPeriodsPage}
+import uk.gov.hmrc.ngrraldfrontend.pages.{ProvideDetailsOfSecondRentPeriodPage, RentPeriodsPage}
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.utils.DateKeyFinder
-import uk.gov.hmrc.ngrraldfrontend.utils.RentPeriodsHelper.hasCurrentRentPeriodEndDateChanged
+import uk.gov.hmrc.ngrraldfrontend.utils.RentPeriodsHelper.updateRentPeriodsIfEndDateIsChanged
 import uk.gov.hmrc.ngrraldfrontend.views.html.ProvideDetailsOfSecondRentPeriodView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -48,12 +45,12 @@ class AdditionalRentPeriodController @Inject()(view: ProvideDetailsOfSecondRentP
                                                getData: DataRetrievalAction,
                                                sessionRepository: SessionRepository,
                                                navigator: Navigator,
-                                                         )(implicit appConfig: AppConfig, ec: ExecutionContext)
+                                              )(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with DateKeyFinder:
 
   private def getPreviousEndDate(userAnswers: UserAnswers, index: Int): Option[LocalDate] =
     userAnswers.get(ProvideDetailsOfSecondRentPeriodPage) match {
-      case Some(rentPeriods) if rentPeriods.size >= index => Some(LocalDate.parse(rentPeriods(index -1).endDate).plusDays(1))
+      case Some(rentPeriods) if rentPeriods.size >= index => Some(LocalDate.parse(rentPeriods(index - 1).endDate).plusDays(1))
       case _ => None
     }
 
@@ -67,8 +64,8 @@ class AdditionalRentPeriodController @Inject()(view: ProvideDetailsOfSecondRentP
         case None => Future.successful(Redirect(routes.ProvideDetailsOfSecondRentPeriodController.show(mode)))
         case Some(previousEndDate) =>
           val preparedForm = userAnswers.get(ProvideDetailsOfSecondRentPeriodPage) match {
-            case Some(rentPeriods) if rentPeriods.size >= index + 1 => answerToForm(rentPeriods(index), previousEndDate)
-            case _ => form(previousEndDate)
+            case Some(rentPeriods) if rentPeriods.size >= index + 1 => answerToForm(rentPeriods(index), previousEndDate, index)
+            case _ => form(previousEndDate, index)
           }
           Future.successful(Ok(view(
             request.property.addressFull,
@@ -85,7 +82,7 @@ class AdditionalRentPeriodController @Inject()(view: ProvideDetailsOfSecondRentP
     (authenticate andThen getData).async { implicit request =>
       val previousEndDate: LocalDate = getPreviousEndDate(request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))), index)
         .getOrElse(throw new NotFoundException("Can't find previous end date"))
-      form(previousEndDate)
+      form(previousEndDate, index)
         .bindFromRequest()
         .fold(
           formWithErrors =>
@@ -109,11 +106,8 @@ class AdditionalRentPeriodController @Inject()(view: ProvideDetailsOfSecondRentP
           rentPeriodDetailsForm =>
             for {
               userAnswers <- Future(request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))))
-              rentPeriods <- Future(userAnswers.get(ProvideDetailsOfSecondRentPeriodPage)).map {
-                case Some(periods: Seq[ProvideDetailsOfRentPeriod]) =>
-                  hasCurrentRentPeriodEndDateChanged(periods, rentPeriodDetailsForm.endDate, index)
-                case _ => Seq.empty
-              }
+              //Checking if end date has been changed. If yes, remove the details of rent periods from this period.
+              rentPeriods <- Future(updateRentPeriodsIfEndDateIsChanged(userAnswers, rentPeriodDetailsForm.endDate, index))
               updatedAnswers <- Future.fromTry(userAnswers
                 .set(ProvideDetailsOfSecondRentPeriodPage, formToAnswers(rentPeriodDetailsForm, rentPeriods, index)))
               removeRentPeriodPageAnswer <- Future.fromTry(updatedAnswers.remove(RentPeriodsPage))

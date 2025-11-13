@@ -39,7 +39,7 @@ class RentPeriodsControllerSpec extends ControllerSpecSupport {
   val controllerProperty: Option[UserAnswers] => RentPeriodsController = answers => new RentPeriodsController(view, fakeAuth, fakeDataProperty(Some(property), answers), mcc, mockSessionRepository, mockNavigator)(mockConfig, ec)
 
   lazy val firstSecondRentPeriodAnswers: Option[UserAnswers] = userAnswersWithoutData.set(ProvideDetailsOfFirstRentPeriodPage, firstRentPeriod)
-    .flatMap(_.set(ProvideDetailsOfSecondRentPeriodPage, secondRentPeriod)).toOption
+    .flatMap(_.set(ProvideDetailsOfSecondRentPeriodPage, detailsOfRentPeriod)).toOption
 
   "method show" must {
     "Return OK and the correct view when the user has said yes to having paid rent for the first period" in {
@@ -60,6 +60,13 @@ class RentPeriodsControllerSpec extends ControllerSpecSupport {
       document.select("td[id=first-period-has-pay-id]").text() mustBe "Yes"
       document.select("td[id=second-period-start-date-id]").text() mustBe "1 February 2025"
       document.select("td[id=second-period-end-date-id]").text() mustBe "31 March 2025"
+      document.select("td[id=second-period-rent-value-id]").text() mustBe "£1,350"
+      document.select("td[id=third-period-start-date-id]").text() mustBe "1 April 2025"
+      document.select("td[id=third-period-end-date-id]").text() mustBe "31 May 2025"
+      document.select("td[id=third-period-rent-value-id]").text() mustBe "£1,550"
+      document.select("td[id=fourth-period-start-date-id]").text() mustBe "1 June 2025"
+      document.select("td[id=fourth-period-end-date-id]").text() mustBe "31 August 2025"
+      document.select("td[id=fourth-period-rent-value-id]").text() mustBe "£2,550"
       document.select("input[type=radio][name=rent-periods-radio][value=true]").hasAttr("checked") mustBe true
       document.select("input[type=radio][name=rent-periods-radio][value=false]").hasAttr("checked") mustBe false
     }
@@ -73,17 +80,15 @@ class RentPeriodsControllerSpec extends ControllerSpecSupport {
   }
   "method submit" must {
     "Return SEE_OTHER and the correct view after submitting yes" in {
+      val answers = firstSecondRentPeriodAnswers.get.set(RentPeriodsPage, true).toOption
       when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-      val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentPeriodsController.submit(NormalMode))
+      val result = controllerProperty(answers).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentPeriodsController.submit(NormalMode))
         .withFormUrlEncodedBody(
           "rent-periods-radio" -> "true"
         )
         .withHeaders(HeaderNames.authorisation -> "Bearer 1"), None, None, None, Some(property), credId = Some(credId.value), None, None, nino = Nino(true, Some(""))))
-      result.map(result => {
-        result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/landlord")
-      })
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(routes.ProvideDetailsOfFirstRentPeriodController.show(NormalMode).url)
+      redirectLocation(result) mustBe Some(routes.AdditionalRentPeriodController.show(NormalMode, detailsOfRentPeriod.size).url)
     }
     "Return SEE_OTHER and the correct view after submitting no" in {
       when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))

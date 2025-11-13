@@ -35,12 +35,12 @@ trait CommonFormValidators {
         .getOrElse(Valid)
     }
 
-  protected def regexp(regex: String, errorKey: String): Constraint[String] =
+  protected def regexp(regex: String, errorKey: String, errorMessageArg: Option[String] = None): Constraint[String] =
     Constraint {
       case str if str.matches(regex) =>
         Valid
       case _ =>
-        Invalid(errorKey, regex)
+        errorMessageArg.map(Invalid(errorKey, _, regex)).getOrElse(Invalid(errorKey, regex))
     }
 
   protected def maxLength(maximum: Int, errorKey: String): Constraint[String] =
@@ -59,12 +59,12 @@ trait CommonFormValidators {
         Invalid(errorKey)
     }
 
-  protected def isNotEmpty(value: String, errorKey: String): Constraint[String] =
+  protected def isNotEmpty(value: String, errorKey: String, errorMessageArg: Option[String] = None): Constraint[String] =
     Constraint {
       case str if str.trim.nonEmpty =>
         Valid
       case _ =>
-        Invalid(errorKey, value)
+        errorMessageArg.map(Invalid(errorKey, _, value)).getOrElse(Invalid(errorKey, value))
     }
 
   protected def isLargerThanInt(maximum: Int, errorKey: String): Constraint[String] =
@@ -75,14 +75,14 @@ trait CommonFormValidators {
         Invalid(errorKey, maximum)
     }
 
-  protected def maximumValue[A](maximum: A, errorKey: String)(implicit ev: Ordering[A]): Constraint[A] =
+  protected def maximumValue[A](maximum: A, errorKey: String, errorMessageArg: Option[String] = None)(implicit ev: Ordering[A]): Constraint[A] =
     Constraint { input =>
       import ev.*
 
       if (input <= maximum) {
         Valid
       } else {
-        Invalid(errorKey, maximum)
+        errorMessageArg.map(Invalid(errorKey, _, maximum)).getOrElse(Invalid(errorKey, maximum))
       }
     }
 
@@ -114,21 +114,21 @@ trait CommonFormValidators {
       monthYearAfter1900Validation(date, errorKey)
     )
 
-  protected def isDateEmpty[A](errorKeys: Map[DateErrorKeys, String]): Constraint[A] =
+  protected def isDateEmpty[A](errorKeys: Map[DateErrorKeys, String], errorMessageArg: Option[String] = None): Constraint[A] =
     Constraint((input: A) =>
-      dateEmptyValidation(input.asInstanceOf[NGRDate], errorKeys)
+      dateEmptyValidation(input.asInstanceOf[NGRDate], errorKeys, errorMessageArg)
     )
 
-  protected def isDateValid[A](errorKey: String): Constraint[A] =
+  protected def isDateValid[A](errorKey: String, errorMessageArg: Option[String] = None): Constraint[A] =
     Constraint((input: A) =>
       val date = input.asInstanceOf[NGRDate]
-      dateValidation(date, errorKey)
+      dateValidation(date, errorKey, errorMessageArg)
     )
 
-  protected def isDateAfter1900[A](errorKey: String): Constraint[A] =
+  protected def isDateAfter1900[A](errorKey: String, errorMessageArg: Option[String] = None): Constraint[A] =
     Constraint((input: A) =>
       val date = input.asInstanceOf[NGRDate]
-      dateAfter1900Validation(date, errorKey)
+      dateAfter1900Validation(date, errorKey, errorMessageArg)
     )
 
   protected def isDateBeforeStartDate[A](errorKey: String, startDate: NGRDate): Constraint[A] =
@@ -140,12 +140,12 @@ trait CommonFormValidators {
         Valid
     )  
 
-  protected def dateEmptyValidation(date: NGRDate, errorKeys: Map[DateErrorKeys, String]): ValidationResult =
+  protected def dateEmptyValidation(date: NGRDate, errorKeys: Map[DateErrorKeys, String], errorMessageArg: Option[String]): ValidationResult =
     val errorKey = getDateErrorKey(date, errorKeys)
     if (errorKey.isEmpty)
       Valid
     else
-      Invalid(errorKey)
+      errorMessageArg.map(Invalid(errorKey, _)).getOrElse(Invalid(errorKey))
 
   protected def getDateErrorKey(date: NGRDate, errorKeys: Map[DateErrorKeys, String]): String =
     (date.day.isEmpty, date.month.isEmpty, date.year.isEmpty) match
@@ -165,9 +165,9 @@ trait CommonFormValidators {
       case (false, true) => Invalid(errorKeys.get(Year).getOrElse(""))
       case (_, _) => Valid
 
-  protected def dateValidation(date: NGRDate, errorKey: String) =
+  protected def dateValidation(date: NGRDate, errorKey: String, errorMessageArg: Option[String]) =
     if (isDateInvalid(date))
-      Invalid(errorKey)
+      errorMessageArg.map(Invalid(errorKey, _)).getOrElse(Invalid(errorKey))
     else
       Valid
 
@@ -185,9 +185,9 @@ trait CommonFormValidators {
       case None => Invalid(errorKey)
     }
 
-  private def dateAfter1900Validation(date: NGRDate, errorKey: String) =
+  private def dateAfter1900Validation(date: NGRDate, errorKey: String, errorMessageArg: Option[String]) =
     if (isDateBefore1900(date))
-      Invalid(errorKey)
+      errorMessageArg.map(Invalid(errorKey, _)).getOrElse(Invalid(errorKey))
     else
       Valid
       

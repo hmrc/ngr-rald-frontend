@@ -39,43 +39,40 @@ object ProvideDetailsOfSecondRentPeriodForm extends CommonFormValidators with NG
   def unapply(provideDetailsOfSecondRentPeriodForm: ProvideDetailsOfSecondRentPeriodForm): Option[(NGRDate, BigDecimal)] =
     Some(provideDetailsOfSecondRentPeriodForm.endDate, provideDetailsOfSecondRentPeriodForm.rentPeriodAmount)
 
-  def answerToForm(provideDetailsOfSecondRentPeriod: ProvideDetailsOfRentPeriod, previousEndDate: LocalDate): Form[ProvideDetailsOfSecondRentPeriodForm] =
-    form(previousEndDate).fill(
+  def answerToForm(provideDetailsOfSecondRentPeriod: DetailsOfRentPeriod, previousEndDate: LocalDate, index: Int)(implicit messages: Messages): Form[ProvideDetailsOfSecondRentPeriodForm] =
+    form(previousEndDate, index).fill(
       ProvideDetailsOfSecondRentPeriodForm(
         endDate = NGRDate.fromString(provideDetailsOfSecondRentPeriod.endDate),
         rentPeriodAmount = provideDetailsOfSecondRentPeriod.rentPeriodAmount,
       )
     )
 
-  def formToAnswers(provideDetailsOfSecondRentPeriodForm: ProvideDetailsOfSecondRentPeriodForm, rentPeriods: Seq[ProvideDetailsOfRentPeriod], index: Int): Seq[ProvideDetailsOfRentPeriod] = {
-    val element = ProvideDetailsOfRentPeriod(
+  def formToAnswers(provideDetailsOfSecondRentPeriodForm: ProvideDetailsOfSecondRentPeriodForm, rentPeriods: Seq[DetailsOfRentPeriod], index: Int): Seq[DetailsOfRentPeriod] = {
+    val element = DetailsOfRentPeriod(
       provideDetailsOfSecondRentPeriodForm.endDate.makeString,
       provideDetailsOfSecondRentPeriodForm.rentPeriodAmount
     )
-    println(Console.BLUE_B + rentPeriods + "============" + (rentPeriods.nonEmpty && rentPeriods.size > index) + "=======" + index + Console.RESET)
+    
     if (rentPeriods.nonEmpty && rentPeriods.size > index)
-      val newSeq = rentPeriods.updated(index, element)
-      println(Console.GREEN_B + newSeq + Console.RESET)
-      newSeq
+      rentPeriods.updated(index, element)
     else
-      val newSeq = rentPeriods :+ element
-      println(Console.RED_B + newSeq + Console.RESET)
-      newSeq
+      rentPeriods :+ element
   }
 
-  def endDateInput(index: Int)(using messages: Messages): DateInput =
-    dateInput(endDate, "provideDetailsOfSecondRentPeriod.endDate.label", Some(s"rentPeriod.${index + 2}.title"))
+  def endDateInput(index: Int)(implicit messages: Messages): DateInput =
+    dateInput(endDate, "provideDetailsOfSecondRentPeriod.endDate.label", Some(s"rentPeriod.${index + 2}.sequence"))
 
 
-  def form(previousEndDate: LocalDate): Form[ProvideDetailsOfSecondRentPeriodForm] = {
+  def form(previousEndDate: LocalDate, index: Int)(implicit messages: Messages): Form[ProvideDetailsOfSecondRentPeriodForm] = {
+    val periodSequence: Option[String] = Some(messages(s"rentPeriod.${index + 2}.sequence").toLowerCase)
     Form(
       mapping(
         endDate -> dateMapping
           .verifying(
             firstError(
-              isDateEmpty(errorKeys("provideDetailsOfSecondRentPeriod", "endDate")),
-              isDateValid("provideDetailsOfSecondRentPeriod.endDate.invalid.error"),
-              isDateAfter1900("provideDetailsOfSecondRentPeriod.endDate.before.1900.error"),
+              isDateEmpty(errorKeys("provideDetailsOfSecondRentPeriod", "endDate"), periodSequence),
+              isDateValid("provideDetailsOfSecondRentPeriod.endDate.invalid.error", periodSequence),
+              isDateAfter1900("provideDetailsOfSecondRentPeriod.endDate.before.1900.error", periodSequence),
               isDateBeforeStartDate("provideDetailsOfSecondRentPeriod.endDate.before.startDate.error", NGRDate.fromLocalDate(previousEndDate))
             )
           ),
@@ -83,13 +80,13 @@ object ProvideDetailsOfSecondRentPeriodForm extends CommonFormValidators with NG
           .transform[String](_.strip().replaceAll("[£|,|\\s]", ""), identity)
           .verifying(
             firstError(
-              isNotEmpty(rentPeriodAmount, "provideDetailsOfSecondRentPeriod.rentPeriodAmount.required.error"),
-              regexp(amountRegex.pattern(), "provideDetailsOfSecondRentPeriod.rentPeriodAmount.invalid.error")
+              isNotEmpty(rentPeriodAmount, "provideDetailsOfSecondRentPeriod.rentPeriodAmount.required.error", periodSequence),
+              regexp(amountRegex.pattern(), "provideDetailsOfSecondRentPeriod.rentPeriodAmount.invalid.error", periodSequence)
             )
           )
           .transform[BigDecimal](BigDecimal(_).setScale(2, RoundingMode.HALF_UP), _.toString)
           .verifying(
-            maximumValue[BigDecimal](BigDecimal("9999999.99"), "provideDetailsOfSecondRentPeriod.rentPeriodAmount.max.error")
+            maximumValue[BigDecimal](BigDecimal("9999999.99"), "provideDetailsOfSecondRentPeriod.rentPeriodAmount.max.error", periodSequence)
           )
       )(ProvideDetailsOfSecondRentPeriodForm.apply)(ProvideDetailsOfSecondRentPeriodForm.unapply)
     )

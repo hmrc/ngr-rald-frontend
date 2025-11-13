@@ -16,15 +16,29 @@
 
 package uk.gov.hmrc.ngrraldfrontend.utils
 
-import uk.gov.hmrc.ngrraldfrontend.models.{NGRDate, ProvideDetailsOfRentPeriod}
+import uk.gov.hmrc.ngrraldfrontend.models.{DetailsOfRentPeriod, NGRDate, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.pages.{ProvideDetailsOfFirstRentPeriodPage, ProvideDetailsOfSecondRentPeriodPage}
+
+import java.time.LocalDate
 
 object RentPeriodsHelper {
 
-  def hasCurrentRentPeriodEndDateChanged(periods: Seq[ProvideDetailsOfRentPeriod], enteredEndDate: NGRDate, index: Int): Seq[ProvideDetailsOfRentPeriod] = {
-    if (periods.size > index && periods(index).endDate != enteredEndDate.makeString)
-      periods.dropRight(periods.size - index)
-    else
-      periods
+  def updateRentPeriodsIfEndDateIsChanged(userAnswers: UserAnswers, enteredEndDate: NGRDate, index: Int): Seq[DetailsOfRentPeriod] = {
+    userAnswers.get(ProvideDetailsOfSecondRentPeriodPage) match {
+      case Some(periods) if periods.size > index && periods(index).endDate != enteredEndDate.makeString =>
+        periods.dropRight(periods.size - index)
+      case Some(periods) => periods
+      case None => Seq.empty
+    }
+  }
+
+  def updateRentPeriodsIfFirstRentPeriodEndDateIsChanged(userAnswers: UserAnswers, enteredEndDate: LocalDate): UserAnswers = {
+    userAnswers.get(ProvideDetailsOfFirstRentPeriodPage) match {
+      case Some(firstPeriods) if !firstPeriods.endDate.isEqual(enteredEndDate) =>
+        userAnswers.remove(ProvideDetailsOfSecondRentPeriodPage).get
+      case _ =>
+        userAnswers
+    }
   }
   
 }

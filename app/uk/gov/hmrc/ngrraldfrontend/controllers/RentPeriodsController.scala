@@ -29,7 +29,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentPeriodsForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentPeriodsForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.models.{Mode, NGRDate, NormalMode, ProvideDetailsOfFirstRentPeriod, ProvideDetailsOfRentPeriod, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{Mode, NGRDate, NormalMode, ProvideDetailsOfFirstRentPeriod, DetailsOfRentPeriod, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.{ProvideDetailsOfFirstRentPeriodPage, ProvideDetailsOfSecondRentPeriodPage, RentPeriodsPage}
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
@@ -113,52 +113,56 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
       firstCellIsHeader = true
     )
 
-  def rentPeriodTable(startDate: String, rentPeriod: ProvideDetailsOfRentPeriod, index: Int)(implicit messages: Messages): Table = Table(
-    rows = Seq(
-      Seq(
-        TableRow(
-          content = Text(messages("rentPeriods.second.startDate"))
+  def rentPeriodTable(startDate: String, rentPeriod: DetailsOfRentPeriod, index: Int)(implicit messages: Messages): Table = {
+    val periodSequence = messages(s"rentPeriod.${index + 2}.sequence")
+    val periodSequenceLowerCase = periodSequence.toLowerCase
+    Table(
+      rows = Seq(
+        Seq(
+          TableRow(
+            content = Text(messages("rentPeriods.second.startDate"))
+          ),
+          TableRow(
+            content = Text(NGRDate.formatDate(startDate)),
+            attributes = Map(
+              "id" -> s"$periodSequenceLowerCase-period-start-date-id"
+            )
+          )
         ),
-        TableRow(
-          content = Text(NGRDate.formatDate(startDate)),
-          attributes = Map(
-            "id" -> "second-period-start-date-id"
+        Seq(
+          TableRow(
+            content = Text(messages("rentPeriods.second.endDate"))
+          ),
+          TableRow(
+            content = Text(NGRDate.formatDate(rentPeriod.endDate)),
+            attributes = Map(
+              "id" -> s"$periodSequenceLowerCase-period-end-date-id"
+            )
+          )
+        ),
+        Seq(
+          TableRow(
+            content = Text(messages("rentPeriods.second.rentValue"))
+          ),
+          TableRow(
+            content = Text(formatRentValue(rentPeriod.rentPeriodAmount.toDouble)),
+            attributes = Map(
+              "id" -> s"$periodSequenceLowerCase-period-rent-value-id"
+            )
           )
         )
       ),
-      Seq(
-        TableRow(
-          content = Text(messages("rentPeriods.second.endDate"))
-        ),
-        TableRow(
-          content = Text(NGRDate.formatDate(rentPeriod.endDate)),
-          attributes = Map(
-            "id" -> "second-period-end-date-id"
-          )
-        )
-      ),
-      Seq(
-        TableRow(
-          content = Text(messages("rentPeriods.second.rentValue"))
-        ),
-        TableRow(
-          content = Text(formatRentValue(rentPeriod.rentPeriodAmount.toDouble)),
-          attributes = Map(
-            "id" -> "second-period-rent-value-id"
-          )
-        )
-      )
-    ),
-    head = None,
-    caption = Some(messages("rentPeriods.second.subheading", messages(s"rentPeriod.${index + 2}.title"))),
-    captionClasses = "govuk-table__caption--m",
-    firstCellIsHeader = true
-  )
+      head = None,
+      caption = Some(messages("rentPeriods.second.subheading", periodSequence)),
+      captionClasses = "govuk-table__caption--m",
+      firstCellIsHeader = true
+    )
+  }
 
-  private def createRentPeriodsDetailsTables(firstRentPeriods: ProvideDetailsOfFirstRentPeriod, rentPeriods: Seq[ProvideDetailsOfRentPeriod])(implicit messages: Messages): Seq[Table] = {
-    val secondRentPeriodStartDate: String = firstRentPeriods.endDate.plusDays(1).toString
+  def createRentPeriodsDetailsTables(firstRentPeriod: ProvideDetailsOfFirstRentPeriod, rentPeriods: Seq[DetailsOfRentPeriod])(implicit messages: Messages): Seq[Table] = {
+    val secondRentPeriodStartDate: String = firstRentPeriod.endDate.plusDays(1).toString
     val rentPeriodsStartDates: Seq[String] = rentPeriods.map(_.endDate).map(LocalDate.parse(_).plusDays(1).toString).dropRight(1)
-    val rentPeriodsWithStartDates: Seq[((ProvideDetailsOfRentPeriod, String), Int)] = rentPeriods.zip(secondRentPeriodStartDate +: rentPeriodsStartDates).zipWithIndex
+    val rentPeriodsWithStartDates: Seq[((DetailsOfRentPeriod, String), Int)] = rentPeriods.zip(secondRentPeriodStartDate +: rentPeriodsStartDates).zipWithIndex
     rentPeriodsWithStartDates.map(details => rentPeriodTable(details._1._2, details._1._1, details._2))
   }
 

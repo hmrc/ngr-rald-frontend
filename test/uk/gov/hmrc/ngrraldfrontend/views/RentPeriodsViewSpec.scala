@@ -60,7 +60,7 @@ class RentPeriodsViewSpec extends ViewBaseSpec with TestData {
   val noRadio = "No"
   val saveButton = "Continue"
   val firstTable = rentPeriodsController.firstTable(firstRentPeriod)
-  val secondTable = rentPeriodsController.secondTable(firstRentPeriod, secondRentPeriod)
+  val rentPeriodsTables = rentPeriodsController.createRentPeriodsDetailsTables(firstRentPeriod, detailsOfRentPeriod)
   private val form: Form[RentPeriodsForm] = RentPeriodsForm.form.fillAndValidate(RentPeriodsForm("false"))
   val radio = buildRadios(form, RentPeriodsForm.rentPeriodsRadio(form))
 
@@ -71,9 +71,12 @@ class RentPeriodsViewSpec extends ViewBaseSpec with TestData {
     val firstPeriodEndDate = "#first-period-end-date-id"
     val secondPeriodStartDate = "#second-period-start-date-id"
     val secondPeriodEndDate = "#second-period-end-date-id"
+    val thirdPeriodStartDate = "#third-period-start-date-id"
+    val thirdPeriodEndDate = "#third-period-end-date-id"
     val firstPeriodRentQuestion = "#first-period-has-pay-id"
     val firstRentAmount = "#first-period-rent-value-id"
     val secondRentAmount = "#second-period-rent-value-id"
+    val thirdRentAmount = "#third-period-rent-value-id"
     val additionPeriodQuestion = "#main-content > div > div.govuk-grid-column-two-thirds > form > div > fieldset > legend > h1"
     val yesRadio = "#main-content > div > div.govuk-grid-column-two-thirds > form > div > fieldset > div > div:nth-child(1) > label"
     val noRadio = "#main-content > div > div.govuk-grid-column-two-thirds > form > div > fieldset > div > div:nth-child(2) > label"
@@ -81,11 +84,11 @@ class RentPeriodsViewSpec extends ViewBaseSpec with TestData {
   }
 
   "RentPeriodsView" must {
-    val rentPeriodsView = view(address, form, firstTable, secondTable, radio, NormalMode)
+    val rentPeriodsView = view(address, form, firstTable, rentPeriodsTables, radio, NormalMode)
     lazy implicit val document: Document = Jsoup.parse(rentPeriodsView.body)
-    val htmlApply = view.apply(address, form, firstTable, secondTable, radio, NormalMode).body
-    val htmlRender = view.render(address, form, firstTable, secondTable, radio, NormalMode, request, messages, mockConfig).body
-    lazy val htmlF = view.f(address, form, firstTable, secondTable, radio, NormalMode)
+    val htmlApply = view.apply(address, form, firstTable, rentPeriodsTables, radio, NormalMode).body
+    val htmlRender = view.render(address, form, firstTable, rentPeriodsTables, radio, NormalMode, request, messages, mockConfig).body
+    lazy val htmlF = view.f(address, form, firstTable, rentPeriodsTables, radio, NormalMode)
 
     "htmlF is not empty" in {
       htmlF.toString() must not be empty
