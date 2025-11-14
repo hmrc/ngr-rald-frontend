@@ -51,7 +51,10 @@ class RentReviewDetailsSentController @Inject()(view: RentReviewDetailsSentView,
           ),
           TableRow(
             content = Text(property.addressFull),
-            classes = "govuk-table__caption--s, govuk-!-width-two-thirds"
+            classes = "govuk-table__caption--s, govuk-!-width-two-thirds",
+            attributes = Map(
+              "id" -> "full-address-id"
+            )
           ),
         ),
         Seq(
@@ -61,7 +64,10 @@ class RentReviewDetailsSentController @Inject()(view: RentReviewDetailsSentView,
           ),
           TableRow(
             content = Text(property.localAuthorityReference),
-            classes = "govuk-table__caption--s, govuk-!-width-two-thirds"
+            classes = "govuk-table__caption--s, govuk-!-width-two-thirds",
+            attributes = Map(
+              "id" -> "local-authority-reference-id"
+            )
           ))))
 
 

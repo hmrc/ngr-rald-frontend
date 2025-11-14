@@ -94,13 +94,13 @@ class NGRConnectorSpec extends MockHttpV2 with TestData {
   }
 
   "get Rald user answers" when {
-    "Successfully return a Property" in {
+    "Successfully return rald user answers" in {
       val raldUserAnswers = UserAnswers(CredId("1234"))
       setupMockHttpV2Get(s"${mockConfig.nextGenerationRatesHost}/next-generation-rates/get-rald-user-answers")(Some(raldUserAnswers))
       val result: Future[Option[UserAnswers]] = ngrConnector.getRaldUserAnswers(credId)
       result.futureValue.get.credId mustBe credId
     }
-    "Property not found" in {
+    "Rald user answers not found" in {
       setupMockHttpV2Get(s"${mockConfig.nextGenerationRatesHost}/next-generation-rates/get-rald-user-answers")(None)
       val result = ngrConnector.getRaldUserAnswers(credId)
       result.futureValue mustBe None
