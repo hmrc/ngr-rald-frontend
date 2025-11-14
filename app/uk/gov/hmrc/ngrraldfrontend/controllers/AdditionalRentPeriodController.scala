@@ -25,12 +25,12 @@ import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.forms.ProvideDetailsOfSecondRentPeriodForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.ProvideDetailsOfSecondRentPeriodForm.*
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.models.{Mode, NGRDate, DetailsOfRentPeriod, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{DetailsOfRentPeriod, Mode, NGRDate, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.{ProvideDetailsOfSecondRentPeriodPage, RentPeriodsPage}
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.utils.DateKeyFinder
-import uk.gov.hmrc.ngrraldfrontend.utils.RentPeriodsHelper.updateRentPeriodsIfEndDateIsChanged
+import uk.gov.hmrc.ngrraldfrontend.utils.RentPeriodsHelper.{setRentPeriodsValueToFalseIf10thPeriodHasBeenAdded, updateRentPeriodsIfEndDateIsChanged}
 import uk.gov.hmrc.ngrraldfrontend.views.html.ProvideDetailsOfSecondRentPeriodView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -94,7 +94,6 @@ class AdditionalRentPeriodController @Inject()(view: ProvideDetailsOfSecondRentP
                   formError
             }
             val formWithCorrectedErrors = formWithErrors.copy(errors = correctedFormErrors)
-
             Future.successful(BadRequest(view(
               request.property.addressFull,
               formWithCorrectedErrors,
@@ -110,8 +109,8 @@ class AdditionalRentPeriodController @Inject()(view: ProvideDetailsOfSecondRentP
               rentPeriods <- Future(updateRentPeriodsIfEndDateIsChanged(userAnswers, rentPeriodDetailsForm.endDate, index))
               updatedAnswers <- Future.fromTry(userAnswers
                 .set(ProvideDetailsOfSecondRentPeriodPage, formToAnswers(rentPeriodDetailsForm, rentPeriods, index)))
-              removeRentPeriodPageAnswer <- Future.fromTry(updatedAnswers.remove(RentPeriodsPage))
-              _ <- sessionRepository.set(removeRentPeriodPageAnswer)
-            } yield Redirect(navigator.nextPage(ProvideDetailsOfSecondRentPeriodPage, mode, removeRentPeriodPageAnswer))
+              updateRentPeriodsPageUserAnswers <- Future.fromTry(setRentPeriodsValueToFalseIf10thPeriodHasBeenAdded(updatedAnswers))
+              _ <- sessionRepository.set(updateRentPeriodsPageUserAnswers)
+            } yield Redirect(navigator.nextPage(ProvideDetailsOfSecondRentPeriodPage, mode, updateRentPeriodsPageUserAnswers))
         )
     }

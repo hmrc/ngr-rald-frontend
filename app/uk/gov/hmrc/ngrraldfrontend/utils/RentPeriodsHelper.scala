@@ -17,9 +17,10 @@
 package uk.gov.hmrc.ngrraldfrontend.utils
 
 import uk.gov.hmrc.ngrraldfrontend.models.{DetailsOfRentPeriod, NGRDate, UserAnswers}
-import uk.gov.hmrc.ngrraldfrontend.pages.{ProvideDetailsOfFirstRentPeriodPage, ProvideDetailsOfSecondRentPeriodPage}
+import uk.gov.hmrc.ngrraldfrontend.pages.{ProvideDetailsOfFirstRentPeriodPage, ProvideDetailsOfSecondRentPeriodPage, RentPeriodsPage}
 
 import java.time.LocalDate
+import scala.util.Try
 
 object RentPeriodsHelper {
 
@@ -38,6 +39,13 @@ object RentPeriodsHelper {
         userAnswers.remove(ProvideDetailsOfSecondRentPeriodPage).get
       case _ =>
         userAnswers
+    }
+  }
+  
+  def setRentPeriodsValueToFalseIf10thPeriodHasBeenAdded(userAnswers: UserAnswers): Try[UserAnswers] = {
+    userAnswers.get(ProvideDetailsOfSecondRentPeriodPage) match {
+      case Some(periods) if periods.size == 9 => userAnswers.set(RentPeriodsPage, false)
+      case _ => userAnswers.remove(RentPeriodsPage)
     }
   }
   

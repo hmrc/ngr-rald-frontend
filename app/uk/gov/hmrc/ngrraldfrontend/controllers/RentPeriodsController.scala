@@ -20,6 +20,8 @@ import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.*
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Card, CardTitle, Key, SummaryList, SummaryListRow, Value}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{Table, TableRow}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
@@ -29,7 +31,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentPeriodsForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentPeriodsForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.models.{Mode, NGRDate, NormalMode, ProvideDetailsOfFirstRentPeriod, DetailsOfRentPeriod, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{DetailsOfRentPeriod, Mode, NGRDate, NormalMode, ProvideDetailsOfFirstRentPeriod, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.{ProvideDetailsOfFirstRentPeriodPage, ProvideDetailsOfSecondRentPeriodPage, RentPeriodsPage}
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
@@ -51,119 +53,44 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
                                      )(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with CurrencyHelper {
 
-  def firstTable(firstRentPeriods: ProvideDetailsOfFirstRentPeriod)(implicit messages: Messages): Table =
-    Table(
-      rows = Seq(
-        Seq(
-          TableRow(
-            content = Text(messages("rentPeriods.first.startDate"))
-          ),
-          TableRow(
-            content = Text(NGRDate.formatDate(firstRentPeriods.startDate.toString)),
-            attributes = Map(
-              "id" -> "first-period-start-date-id"
-            )
-          )
-        ),
-        Seq(
-          TableRow(
-            content = Text(messages("rentPeriods.first.endDate"))
-          ),
-          TableRow(
-            content = Text(NGRDate.formatDate(firstRentPeriods.endDate.toString)),
-            attributes = Map(
-              "id" -> "first-period-end-date-id"
-            )
-          )
-        ),
-        firstRentPeriods.rentPeriodAmount match
-            case Some(answer) => Seq(
-              TableRow(
-                content = Text(messages("rentPeriods.first.rentValue"))
-              ),
-              TableRow(
-                content = Text(formatRentValue(answer.toDouble)),
-                attributes = Map(
-                  "id" -> "first-period-rent-value-id"
-                )
-              )
-            )
-            case None => Seq(),
-        Seq(
-          TableRow(
-            content = Text(messages("rentPeriods.first.doYouPay"))
-          ),
-          TableRow(
-            content = Text(
-              if (firstRentPeriods.isRentPayablePeriod) {
-                "Yes"
-              } else {
-                "No"
-              }
-            ),
-            attributes = Map(
-              "id" -> "first-period-has-pay-id"
-            )
-          )
-        )
-      ),
-      head = None,
-      caption = Some(Messages("rentPeriods.first.subheading")),
-      captionClasses = "govuk-table__caption--m",
-      firstCellIsHeader = true
-    )
+  private def summaryListRow(key: String, valueId: String, value: String)(implicit messages: Messages) =
+    SummaryListRow(key = Key(content = Text(messages(key)), classes = "govuk-summary-list__key_width"),
+      value = Value(HtmlContent(s"""<span id="$valueId">$value</span>""")))
 
-  def rentPeriodTable(startDate: String, rentPeriod: DetailsOfRentPeriod, index: Int)(implicit messages: Messages): Table = {
-    val periodSequence = messages(s"rentPeriod.${index + 2}.sequence")
-    val periodSequenceLowerCase = periodSequence.toLowerCase
-    Table(
-      rows = Seq(
-        Seq(
-          TableRow(
-            content = Text(messages("rentPeriods.second.startDate"))
-          ),
-          TableRow(
-            content = Text(NGRDate.formatDate(startDate)),
-            attributes = Map(
-              "id" -> s"$periodSequenceLowerCase-period-start-date-id"
-            )
-          )
-        ),
-        Seq(
-          TableRow(
-            content = Text(messages("rentPeriods.second.endDate"))
-          ),
-          TableRow(
-            content = Text(NGRDate.formatDate(rentPeriod.endDate)),
-            attributes = Map(
-              "id" -> s"$periodSequenceLowerCase-period-end-date-id"
-            )
-          )
-        ),
-        Seq(
-          TableRow(
-            content = Text(messages("rentPeriods.second.rentValue"))
-          ),
-          TableRow(
-            content = Text(formatRentValue(rentPeriod.rentPeriodAmount.toDouble)),
-            attributes = Map(
-              "id" -> s"$periodSequenceLowerCase-period-rent-value-id"
-            )
-          )
-        )
-      ),
-      head = None,
-      caption = Some(messages("rentPeriods.second.subheading", periodSequence)),
-      captionClasses = "govuk-table__caption--m",
-      firstCellIsHeader = true
+  def firstPeriodSummaryList(firstRentPeriods: ProvideDetailsOfFirstRentPeriod)(implicit messages: Messages): SummaryList = {
+    val isRentPayable = firstRentPeriods.isRentPayablePeriod
+    val rows = Seq(
+      summaryListRow(key = "rentPeriods.first.startDate", valueId = "first-period-start-date-id", value = NGRDate.formatDate(firstRentPeriods.startDate.toString)),
+      summaryListRow(key = "rentPeriods.first.endDate", valueId = "first-period-end-date-id", value = NGRDate.formatDate(firstRentPeriods.endDate.toString)),
+      summaryListRow(key = "rentPeriods.first.doYouPay", valueId = "first-period-has-pay-id", value = if (isRentPayable) "Yes" else "No")
+    )
+    SummaryList(
+      card = Some(Card(title = Some(CardTitle(content = Text(Messages("rentPeriods.first.subheading")))))),
+      rows = if (!isRentPayable)
+        rows
+      else
+        rows :+ summaryListRow(key = "rentPeriods.first.rentValue", valueId = "first-period-rent-value-id", value = firstRentPeriods.rentPeriodAmount.map(amount => formatRentValue(amount.toDouble)).getOrElse("£0"))
     )
   }
 
-  def createRentPeriodsDetailsTables(firstRentPeriod: ProvideDetailsOfFirstRentPeriod, rentPeriods: Seq[DetailsOfRentPeriod])(implicit messages: Messages): Seq[Table] = {
+  def rentPeriodSummaryList(startDate: String, rentPeriod: DetailsOfRentPeriod, index: Int)(implicit messages: Messages): SummaryList = {
+    val periodSequence = messages(s"rentPeriod.${index + 2}.sequence")
+    val periodSequenceLowerCase = periodSequence.toLowerCase
+    SummaryList(
+      card = Some(Card(title = Some(CardTitle(content = Text(messages("rentPeriods.second.subheading", periodSequence)))))),
+      rows = Seq(
+        summaryListRow(key = "rentPeriods.second.startDate", valueId = s"$periodSequenceLowerCase-period-start-date-id", value = NGRDate.formatDate(startDate)),
+        summaryListRow(key = "rentPeriods.second.endDate", valueId = s"$periodSequenceLowerCase-period-end-date-id", value = NGRDate.formatDate(rentPeriod.endDate)),
+        summaryListRow(key = "rentPeriods.second.rentValue", valueId = s"$periodSequenceLowerCase-period-rent-value-id", value = formatRentValue(rentPeriod.rentPeriodAmount.toDouble))
+      )
+    )
+  }
+
+  def createRentPeriodsDetailsSummaryLists(firstRentPeriod: ProvideDetailsOfFirstRentPeriod, rentPeriods: Seq[DetailsOfRentPeriod])(implicit messages: Messages): Seq[SummaryList] = {
     val secondRentPeriodStartDate: String = firstRentPeriod.endDate.plusDays(1).toString
     val rentPeriodsStartDates: Seq[String] = rentPeriods.map(_.endDate).map(LocalDate.parse(_).plusDays(1).toString).dropRight(1)
     val rentPeriodsWithStartDates: Seq[((DetailsOfRentPeriod, String), Int)] = rentPeriods.zip(secondRentPeriodStartDate +: rentPeriodsStartDates).zipWithIndex
-    rentPeriodsWithStartDates.map(details => rentPeriodTable(details._1._2, details._1._1, details._2))
+    rentPeriodsWithStartDates.map(details => rentPeriodSummaryList(details._1._2, details._1._1, details._2))
   }
 
   def show(mode: Mode): Action[AnyContent] = {
@@ -178,9 +105,9 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
           Future.successful(Ok(view(
             selectedPropertyAddress = request.property.addressFull,
             preparedForm,
-            firstTable = firstTable(firstRentPeriod),
-            rentPeriodsTables = createRentPeriodsDetailsTables(firstRentPeriod, rentPeriods),
-            ngrRadio = buildRadios(preparedForm, RentPeriodsForm.rentPeriodsRadio(preparedForm)),
+            firstRentPeriodSummaryList = firstPeriodSummaryList(firstRentPeriod),
+            rentPeriodsSummaryLists = createRentPeriodsDetailsSummaryLists(firstRentPeriod, rentPeriods),
+            ngrRadio = buildRadios(preparedForm, RentPeriodsForm.rentPeriodsRadio(preparedForm, rentPeriods.size)),
             mode = mode)))
         case (_, _) => Future.successful(Redirect(routes.ProvideDetailsOfFirstRentPeriodController.show(mode)))
       }
@@ -198,9 +125,9 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
               case (Some(firstRentPeriod), Some(rentPeriods)) if rentPeriods.nonEmpty => Future.successful(BadRequest(view(
                 selectedPropertyAddress = request.property.addressFull,
                 formWithErrors,
-                firstTable = firstTable(firstRentPeriod),
-                rentPeriodsTables = createRentPeriodsDetailsTables(firstRentPeriod, rentPeriods),
-                buildRadios(formWithErrors, RentPeriodsForm.rentPeriodsRadio(formWithErrors)), mode = mode)))
+                firstRentPeriodSummaryList = firstPeriodSummaryList(firstRentPeriod),
+                rentPeriodsSummaryLists = createRentPeriodsDetailsSummaryLists(firstRentPeriod, rentPeriods),
+                buildRadios(formWithErrors, RentPeriodsForm.rentPeriodsRadio(formWithErrors, rentPeriods.size)), mode = mode)))
               case (_, _) => throw new NotFoundException("Couldn't find user Answers")
             },
           rentPeriodsForm =>

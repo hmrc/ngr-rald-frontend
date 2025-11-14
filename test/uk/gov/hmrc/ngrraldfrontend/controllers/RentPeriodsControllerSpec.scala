@@ -54,19 +54,19 @@ class RentPeriodsControllerSpec extends ControllerSpecSupport {
       status(result) mustBe OK
       val content = contentAsString(result)
       val document = Jsoup.parse(content)
-      document.select("td[id=first-period-start-date-id]").text() mustBe "1 January 2025"
-      document.select("td[id=first-period-end-date-id]").text() mustBe "31 January 2025"
-      document.select("td[id=first-period-rent-value-id]").text() mustBe "£1,000.46"
-      document.select("td[id=first-period-has-pay-id]").text() mustBe "Yes"
-      document.select("td[id=second-period-start-date-id]").text() mustBe "1 February 2025"
-      document.select("td[id=second-period-end-date-id]").text() mustBe "31 March 2025"
-      document.select("td[id=second-period-rent-value-id]").text() mustBe "£1,350"
-      document.select("td[id=third-period-start-date-id]").text() mustBe "1 April 2025"
-      document.select("td[id=third-period-end-date-id]").text() mustBe "31 May 2025"
-      document.select("td[id=third-period-rent-value-id]").text() mustBe "£1,550"
-      document.select("td[id=fourth-period-start-date-id]").text() mustBe "1 June 2025"
-      document.select("td[id=fourth-period-end-date-id]").text() mustBe "31 August 2025"
-      document.select("td[id=fourth-period-rent-value-id]").text() mustBe "£2,550"
+      document.select("span[id=first-period-start-date-id]").text() mustBe "1 January 2025"
+      document.select("span[id=first-period-end-date-id]").text() mustBe "31 January 2025"
+      document.select("span[id=first-period-rent-value-id]").text() mustBe "£1,000.46"
+      document.select("span[id=first-period-has-pay-id]").text() mustBe "Yes"
+      document.select("span[id=second-period-start-date-id]").text() mustBe "1 February 2025"
+      document.select("span[id=second-period-end-date-id]").text() mustBe "31 March 2025"
+      document.select("span[id=second-period-rent-value-id]").text() mustBe "£1,350"
+      document.select("span[id=third-period-start-date-id]").text() mustBe "1 April 2025"
+      document.select("span[id=third-period-end-date-id]").text() mustBe "31 May 2025"
+      document.select("span[id=third-period-rent-value-id]").text() mustBe "£1,550"
+      document.select("span[id=fourth-period-start-date-id]").text() mustBe "1 June 2025"
+      document.select("span[id=fourth-period-end-date-id]").text() mustBe "31 August 2025"
+      document.select("span[id=fourth-period-rent-value-id]").text() mustBe "£2,550"
       document.select("input[type=radio][name=rent-periods-radio][value=true]").hasAttr("checked") mustBe true
       document.select("input[type=radio][name=rent-periods-radio][value=false]").hasAttr("checked") mustBe false
     }

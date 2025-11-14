@@ -22,15 +22,15 @@ import org.scalatest.matchers.should.Matchers.shouldBe
 import uk.gov.hmrc.ngrraldfrontend.helpers.{TestData, TestSupport}
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{DetailsOfRentPeriod, NGRDate, UserAnswers}
-import uk.gov.hmrc.ngrraldfrontend.pages.{ProvideDetailsOfFirstRentPeriodPage, ProvideDetailsOfSecondRentPeriodPage}
-import uk.gov.hmrc.ngrraldfrontend.utils.RentPeriodsHelper.{updateRentPeriodsIfEndDateIsChanged, updateRentPeriodsIfFirstRentPeriodEndDateIsChanged}
+import uk.gov.hmrc.ngrraldfrontend.pages.{ProvideDetailsOfFirstRentPeriodPage, ProvideDetailsOfSecondRentPeriodPage, RentPeriodsPage}
+import uk.gov.hmrc.ngrraldfrontend.utils.RentPeriodsHelper.{setRentPeriodsValueToFalseIf10thPeriodHasBeenAdded, updateRentPeriodsIfEndDateIsChanged, updateRentPeriodsIfFirstRentPeriodEndDateIsChanged}
 import uk.gov.hmrc.ngrraldfrontend.utils.UniqueIdGenerator
 
 import java.time.LocalDate
 
 class RentPeriodHelperSpec extends TestSupport with TestData {
 
-  "RentPeriodHelper updateRentPeriodsIfEndDateIsChanged method" must {
+  "updateRentPeriodsIfEndDateIsChanged method" must {
     val userAnswers = UserAnswers(CredId("id")).set(ProvideDetailsOfFirstRentPeriodPage, firstRentPeriod)
       .flatMap(_.set(ProvideDetailsOfSecondRentPeriodPage, detailsOfRentPeriod)).get
     "Return the DetailsOfRentPeriod Seq without removing any periods when the end date is the same" in {
@@ -43,7 +43,7 @@ class RentPeriodHelperSpec extends TestSupport with TestData {
       actual.contains(secondRentPeriod) shouldBe true
     }
   }
-  "RentPeriodHelper updateRentPeriodsIfFirstRentPeriodEndDateIsChanged method" must {
+  "updateRentPeriodsIfFirstRentPeriodEndDateIsChanged method" must {
     val userAnswers = UserAnswers(CredId("id")).set(ProvideDetailsOfFirstRentPeriodPage, firstRentPeriod)
       .flatMap(_.set(ProvideDetailsOfSecondRentPeriodPage, detailsOfRentPeriod)).get
     "Return UserAnswers without removing any periods when the end date is the same" in {
@@ -53,6 +53,20 @@ class RentPeriodHelperSpec extends TestSupport with TestData {
     "Return UserAnswers without the following periods when the end date has been changed" in {
       val actual = updateRentPeriodsIfFirstRentPeriodEndDateIsChanged(userAnswers, LocalDate.parse("2025-02-28"))
       actual.get(ProvideDetailsOfSecondRentPeriodPage) shouldBe None
+    }
+  }
+  "setRentPeriodsValueToFalseIf10thPeriodHasBeenAdded method" must {
+    "Return UserAnswers with RentPeriodsPage as false when 10th period has been added" in {
+      val userAnswers = UserAnswers(CredId("id")).set(ProvideDetailsOfFirstRentPeriodPage, firstRentPeriod)
+        .flatMap(_.set(ProvideDetailsOfSecondRentPeriodPage, detailsOfRentPeriod ++ detailsOfRentPeriod ++ detailsOfRentPeriod)).get
+      val actual = setRentPeriodsValueToFalseIf10thPeriodHasBeenAdded(userAnswers).get
+      actual.get(RentPeriodsPage) shouldBe Some(false)
+    }
+    "Return UserAnswers without RentPeriodsPage answer when only 4 periods have been added" in {
+      val userAnswers = UserAnswers(CredId("id")).set(ProvideDetailsOfFirstRentPeriodPage, firstRentPeriod)
+        .flatMap(_.set(ProvideDetailsOfSecondRentPeriodPage, detailsOfRentPeriod)).get
+      val actual = setRentPeriodsValueToFalseIf10thPeriodHasBeenAdded(userAnswers).get
+      actual.get(RentPeriodsPage) shouldBe None
     }
   }
 }

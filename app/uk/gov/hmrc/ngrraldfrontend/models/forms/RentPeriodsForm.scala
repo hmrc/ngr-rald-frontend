@@ -58,14 +58,18 @@ object RentPeriodsForm extends Mappings {
     )
   }
 
-  def rentPeriodsRadio(form: Form[RentPeriodsForm])(implicit messages: Messages): NGRRadio =
+  def rentPeriodsRadio(form: Form[RentPeriodsForm], rentPeriodsLength: Int)(implicit messages: Messages): NGRRadio = {
+    val isMaxLength = rentPeriodsLength == 9
     ngrRadio(
       radioName = rentPeriodsRadio,
       radioButtons = Seq(
         yesButton(),
         noButton()
       ),
-      ngrTitle = "rentPeriods.radio.heading"
+      ngrTitle = "rentPeriods.radio.heading",
+      ngrTitleClass = if (isMaxLength) "govuk-visually-hidden" else "govuk-fieldset__legend--m",
+      classes = if(isMaxLength) Some("govuk-visually-hidden") else None
     )
+  }
 }
 

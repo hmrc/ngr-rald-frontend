@@ -24,12 +24,12 @@
  layout: Layout,
  govukErrorSummary: GovukErrorSummary,
  govukRadios : GovukRadios,
+ govukSummaryList: GovukSummaryList,
  saveAndContinueButton: saveAndContinueButton,
- formHelper: FormWithCSRF,
- govukTable : GovukTable
+ formHelper: FormWithCSRF
 )
 
-@(selectedPropertyAddress: String, form: Form[RentPeriodsForm], firstTable: Table, rentPeriodsTables: Seq[Table], ngrRadio: Radios, mode: Mode)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+@(selectedPropertyAddress: String, form: Form[RentPeriodsForm], firstRentPeriodSummaryList: SummaryList, rentPeriodsSummaryLists: Seq[SummaryList], ngrRadio: Radios, mode: Mode)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
 @layout(pageTitle = Some(messages("rentPeriods.title")), showBackLink = true, fullWidth = false) {
 
@@ -40,9 +40,9 @@
   <span class="govuk-caption-m">@selectedPropertyAddress</span>
   <h1 class="govuk-heading-l">@messages("rentPeriods.title")</h1>
 
-   @govukTable(firstTable)
-   @rentPeriodsTables.map(govukTable(_))
+   @govukSummaryList(firstRentPeriodSummaryList)
+   @rentPeriodsSummaryLists.map(govukSummaryList(_))
    @govukRadios(ngrRadio)
-  @saveAndContinueButton(msg = messages("service.continue"), isStartButton = false)
+   @saveAndContinueButton(msg = messages("service.continue"), isStartButton = false)
  }
 }

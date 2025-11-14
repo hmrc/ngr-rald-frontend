@@ -25,12 +25,12 @@ import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.forms.ProvideDetailsOfSecondRentPeriodForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.ProvideDetailsOfSecondRentPeriodForm.*
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.models.{Mode, NGRDate, DetailsOfRentPeriod, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{DetailsOfRentPeriod, Mode, NGRDate, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.{ProvideDetailsOfFirstRentPeriodPage, ProvideDetailsOfSecondRentPeriodPage}
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.utils.DateKeyFinder
-import uk.gov.hmrc.ngrraldfrontend.utils.RentPeriodsHelper.updateRentPeriodsIfEndDateIsChanged
+import uk.gov.hmrc.ngrraldfrontend.utils.RentPeriodsHelper.{setRentPeriodsValueToFalseIf10thPeriodHasBeenAdded, updateRentPeriodsIfEndDateIsChanged}
 import uk.gov.hmrc.ngrraldfrontend.views.html.ProvideDetailsOfSecondRentPeriodView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -109,7 +109,8 @@ class ProvideDetailsOfSecondRentPeriodController @Inject()(view: ProvideDetailsO
               rentPeriods <- Future(updateRentPeriodsIfEndDateIsChanged(userAnswers, provideDetailsOfSecondRentPeriodForm.endDate, secondPeriodIndex))
               updatedAnswers <- Future.fromTry(userAnswers
                 .set(ProvideDetailsOfSecondRentPeriodPage, formToAnswers(provideDetailsOfSecondRentPeriodForm, rentPeriods, secondPeriodIndex)))
-              _ <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(ProvideDetailsOfSecondRentPeriodPage, mode, updatedAnswers))
+              updateRentPeriodsPageUserAnswers <- Future.fromTry(setRentPeriodsValueToFalseIf10thPeriodHasBeenAdded(updatedAnswers))
+              _ <- sessionRepository.set(updateRentPeriodsPageUserAnswers)
+            } yield Redirect(navigator.nextPage(ProvideDetailsOfSecondRentPeriodPage, mode, updateRentPeriodsPageUserAnswers))
         )
     }
