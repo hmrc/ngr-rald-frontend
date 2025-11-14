@@ -20,11 +20,11 @@ import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDate
 
-case class ProvideDetailsOfSecondRentPeriod(
+case class DetailsOfRentPeriod(
                                             endDate: String,
                                             rentPeriodAmount: BigDecimal
                                           )
 
-object ProvideDetailsOfSecondRentPeriod:
+object DetailsOfRentPeriod:
 
-  implicit val format: OFormat[ProvideDetailsOfSecondRentPeriod] = Json.format[ProvideDetailsOfSecondRentPeriod]
+  implicit val format: OFormat[DetailsOfRentPeriod] = Json.format[DetailsOfRentPeriod]

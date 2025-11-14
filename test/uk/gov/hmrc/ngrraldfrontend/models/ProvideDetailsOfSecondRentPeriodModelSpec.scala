@@ -23,7 +23,7 @@ import play.api.libs.json.*
 class ProvideDetailsOfSecondRentPeriodModelSpec extends AnyFlatSpec with Matchers:
 
   "ProvideDetailsOfSecondRentPeriod" should "serialize to JSON correctly" in {
-    val rentDetails = ProvideDetailsOfSecondRentPeriod(
+    val rentDetails = DetailsOfRentPeriod(
       endDate = "2025-01-31",
       rentPeriodAmount = BigDecimal(1000)
     )
@@ -42,7 +42,7 @@ class ProvideDetailsOfSecondRentPeriodModelSpec extends AnyFlatSpec with Matcher
         |}
         |""".stripMargin)
 
-    val result = json.as[ProvideDetailsOfSecondRentPeriod]
+    val result = json.as[DetailsOfRentPeriod]
     result.endDate shouldBe "2025-01-31"
     result.rentPeriodAmount shouldBe BigDecimal(111000)
   }

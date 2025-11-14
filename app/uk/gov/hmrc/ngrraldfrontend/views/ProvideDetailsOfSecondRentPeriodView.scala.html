@@ -35,21 +35,31 @@
         form: Form[ProvideDetailsOfSecondRentPeriodForm],
         firstRentPeriodEnd: String,
         endDateInput: DateInput,
-        mode: Mode
+        mode: Mode,
+        index: Int
 )(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
-@layout(pageTitle = Some(messages("provideDetailsOfSecondRentPeriod.title")), showBackLink = true, fullWidth = false) {
+@heading = {
+    @messages(s"rentPeriod.${index + 2}.sequence") @messages("provideDetailsOfSecondRentPeriod.title")
+}
 
-    @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfSecondRentPeriodController.submit(mode), Symbol("autoComplete") -> "off") {
+@layout(pageTitle = Some(messages(s"rentPeriod.${index + 2}.sequence") + " " + messages("provideDetailsOfSecondRentPeriod.title")), showBackLink = true, fullWidth = false) {
+
+    @formHelper(action =
+        if(index == 0){
+            uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfSecondRentPeriodController.submit(mode)
+        }else{
+            uk.gov.hmrc.ngrraldfrontend.controllers.routes.AdditionalRentPeriodController.submit(mode, index)
+        }, Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, Some("provideDetailsOfSecondRentPeriod"), Some(Seq("endDate"))))
         }
 
         <span class="govuk-caption-m">@propertyAddress</span>
-        <h1 class="govuk-heading-l">@messages("provideDetailsOfSecondRentPeriod.title")</h1>
-        <h2 class="govuk-heading-s">@messages("provideDetailsOfSecondRentPeriod.startDate.label")</h2>
-        <p class="govuk-hint">@messages("provideDetailsOfSecondRentPeriod.startDate.hint")</p>
+        <h1 class="govuk-heading-l">@heading</h1>
+        <h2 class="govuk-heading-s">@messages("provideDetailsOfSecondRentPeriod.startDate.label", messages(s"rentPeriod.${index + 2}.sequence"))</h2>
+        <p class="govuk-hint">@messages("provideDetailsOfSecondRentPeriod.startDate.hint", messages(s"rentPeriod.${index + 1}.sequence").toLowerCase)</p>
         <p class="govuk-body">@firstRentPeriodEnd</p>
 
         @dateInputField(form, endDateInput)

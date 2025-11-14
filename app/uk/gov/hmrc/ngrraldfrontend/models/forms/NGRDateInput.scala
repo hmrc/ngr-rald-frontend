@@ -22,18 +22,15 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.dateinput.DateInput
 import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.{Fieldset, Legend}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.hint.Hint
 
-/**
- * @author Yuriy Tumakha
- */
 trait NGRDateInput:
 
-  def dateInput(dateInputName: String, label: String, isPageHeading: Boolean = false)(using messages: Messages): DateInput =
+  def dateInput(dateInputName: String, label: String, labelParameter: Option[String] = None, isPageHeading: Boolean = false)(using messages: Messages): DateInput =
     DateInput(
       id = dateInputName,
       namePrefix = Some(dateInputName),
       fieldset = Some(Fieldset(
         legend = Some(Legend(
-          content = Text(messages(label)),
+          content = if (labelParameter.isEmpty) Text(messages(label)) else Text(messages(label, messages(labelParameter.get).toLowerCase)),
           classes = "govuk-fieldset__legend--s",
           isPageHeading = isPageHeading
         ))

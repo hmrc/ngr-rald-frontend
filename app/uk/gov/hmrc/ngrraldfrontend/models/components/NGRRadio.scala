@@ -69,7 +69,8 @@ case class NGRRadioButtons(radioContent: String,
 case class NGRRadio(radioGroupName: NGRRadioName,
                     NGRRadioButtons: Seq[NGRRadioButtons],
                     ngrTitle: Option[Legend] = None,
-                    hint: Option[String] = None)
+                    hint: Option[String] = None,
+                    classes: Option[String] = None)
 
 object NGRRadio {
 
@@ -88,36 +89,37 @@ object NGRRadio {
 
   def ngrRadio(radioName: String, radioButtons: Seq[NGRRadioButtons], ngrTitle: String,
                ngrTitleClass: String = "govuk-fieldset__legend--m", hint: Option[String] = None,
-               isPageHeading: Boolean = true)(implicit messages: Messages): NGRRadio =
+               isPageHeading: Boolean = true, classes: Option[String] = None)(implicit messages: Messages): NGRRadio =
     NGRRadio(
       radioGroupName = NGRRadioName(radioName),
       NGRRadioButtons = radioButtons,
       ngrTitle = Some(Legend(content = Text(messages(ngrTitle)), classes = ngrTitleClass, isPageHeading = isPageHeading)),
-      hint = hint
+      hint = hint,
+      classes = classes
     )  
 
   def buildRadios[A](
                       form: Form[A],
-                      NGRRadios: NGRRadio
+                      ngrRadio: NGRRadio
                     )(implicit messages: Messages): Radios = {
     Radios(
-      fieldset = NGRRadios.ngrTitle.map(header => Fieldset(legend = NGRRadios.ngrTitle)),
-      hint = NGRRadios.hint.map { hint =>
+      fieldset = ngrRadio.ngrTitle.map(header => Fieldset(legend = ngrRadio.ngrTitle)),
+      hint = ngrRadio.hint.map { hint =>
         Hint(content = Text(messages(hint)))
       },
-      idPrefix = Some(NGRRadios.radioGroupName.key),
-      name = NGRRadios.radioGroupName.key,
-      items = NGRRadios.NGRRadioButtons.map { item =>
+      idPrefix = Some(ngrRadio.radioGroupName.key),
+      name = ngrRadio.radioGroupName.key,
+      items = ngrRadio.NGRRadioButtons.map { item =>
         RadioItem(
           content = Text(messages(item.radioContent)),
           value = Some(item.radioValue.toString),
           hint = Some(Hint(content = Text(messages(item.buttonHint.getOrElse(""))))),
-          checked = form.data.get(NGRRadios.radioGroupName.key).exists(value => value.equals(item.radioValue.toString)),
+          checked = form.data.get(ngrRadio.radioGroupName.key).exists(value => value.equals(item.radioValue.toString)),
           conditionalHtml = item.conditionalHtml
         )
       },
-      classes = "govuk-radios",
-      errorMessage = form(NGRRadios.radioGroupName.key).error.map(err => ErrorMessage(content = Text(messages(err.message)))),
+      classes = ngrRadio.classes.map(classes => s"govuk-radios $classes").getOrElse("govuk-radios"),
+      errorMessage = form(ngrRadio.radioGroupName.key).error.map(err => ErrorMessage(content = Text(messages(err.message)))),
     )
   }
 }

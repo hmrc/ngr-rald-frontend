@@ -70,9 +70,15 @@ trait TestData {
     isRentPayablePeriod = false
   )
 
- val secondRentPeriod: ProvideDetailsOfSecondRentPeriod = ProvideDetailsOfSecondRentPeriod(
+ val secondRentPeriod: DetailsOfRentPeriod = DetailsOfRentPeriod(
   endDate = "2025-03-31",
   rentPeriodAmount = BigDecimal(1350)
+ )
+ 
+ val detailsOfRentPeriod: Seq[DetailsOfRentPeriod] = Seq(
+  secondRentPeriod,
+  DetailsOfRentPeriod(endDate = "2025-05-31", rentPeriodAmount = BigDecimal(1550)),
+  DetailsOfRentPeriod(endDate = "2025-08-31", rentPeriodAmount = BigDecimal(2550))
  )
 
  val testRegistrationModel: RatepayerRegistration = RatepayerRegistration(

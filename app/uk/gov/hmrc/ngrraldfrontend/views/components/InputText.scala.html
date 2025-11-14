@@ -52,7 +52,7 @@
   value = if(populateField) form(name).value else None,
   errorMessage = form.errors(name) match {
   case Nil => None
-  case errors => Some(ErrorMessage(content = HtmlContent(errors.map(err => messages(err.message)).mkString("<br>"))))
+  case errors => Some(ErrorMessage(content = HtmlContent(errors.map(err => messages(err.message, err.args: _*)).mkString("<br>"))))
   },
   autocomplete = Some(autoComplete)
 ))
