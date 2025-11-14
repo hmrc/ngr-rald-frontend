@@ -49,7 +49,7 @@ class DeclaratioinControllerSpec extends ControllerSpecSupport {
         when(mockNGRConnector.upsertRaldUserAnswers(any())(any())).thenReturn(Future.successful(HttpResponse(CREATED, "Created Successfully")))
         val result = controllerProperty(None).submit(authenticatedFakeRequest)
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.DeclarationController.show.url)
+        redirectLocation(result) shouldBe Some(routes.RentReviewDetailsSentController.confirmation().url)
       }
       "Return Exception when fail to store send request reference user answers" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(false))

@@ -16,8 +16,6 @@
 
 package uk.gov.hmrc.ngrraldfrontend.connectors
 
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import uk.gov.hmrc.http.{HttpResponse, NotFoundException}
 import uk.gov.hmrc.ngrraldfrontend.helpers.TestData
@@ -92,6 +90,20 @@ class NGRConnectorSpec extends MockHttpV2 with TestData {
         ngrConnector.upsertRaldUserAnswers(raldUserAnswers).futureValue
       }
       exception.getMessage must include("Request Failed")
+    }
+  }
+
+  "get Rald user answers" when {
+    "Successfully return rald user answers" in {
+      val raldUserAnswers = UserAnswers(CredId("1234"))
+      setupMockHttpV2Get(s"${mockConfig.nextGenerationRatesHost}/next-generation-rates/get-rald-user-answers")(Some(raldUserAnswers))
+      val result: Future[Option[UserAnswers]] = ngrConnector.getRaldUserAnswers(credId)
+      result.futureValue.get.credId mustBe credId
+    }
+    "Rald user answers not found" in {
+      setupMockHttpV2Get(s"${mockConfig.nextGenerationRatesHost}/next-generation-rates/get-rald-user-answers")(None)
+      val result = ngrConnector.getRaldUserAnswers(credId)
+      result.futureValue mustBe None
     }
   }
 }
