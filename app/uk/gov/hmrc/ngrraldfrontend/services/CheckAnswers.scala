@@ -396,33 +396,36 @@ object CheckAnswers {
   }
 
 
-  def createRentPeriodsSummaryLists(rentPeriodsDetails: Seq[RentPeriodDetail])
-                                   (implicit messages: Messages): Seq[SummaryListAndTitle] = {
-    val link = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfFirstRentPeriodController.show(CheckMode)
+  def createRentPeriodsSummaryLists(credId: String, userAnswers: Option[UserAnswers])
+                                   (implicit messages: Messages): Option[Seq[SummaryList]] = {
+    val answers = userAnswers.getOrElse(UserAnswers(CredId(credId)))
+    val rentPeriodsDetailsOpt = answers.get(ProvideDetailsOfSecondRentPeriodPage)
+    val link = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfSecondRentPeriodController.show(CheckMode)
     val formatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)
 
-    rentPeriodsDetails.zipWithIndex.map { case (period, index) =>
-      val rows = Seq(
-        buildRow(
-          labelKey = "checkAnswers.rentPeriod.endDate",
-          value = period.endDate.format(formatter),
-          linkId = s"rent-period-${index + 1}-end",
-          href = link,
-          hiddenKey = s"rent-period-${index + 1}-end"
-        ),
-        buildRow(
-          labelKey = "checkAnswers.rentPeriod.amount",
-          value = s"£${period.rentPeriodAmount}",
-          linkId = s"rent-period-${index + 1}-amount",
-          href = link,
-          hiddenKey = s"rent-period-${index + 1}-amount"
-        )
-      )
+    rentPeriodsDetailsOpt match {
+      case Some(rentPeriodsDetails) =>
+        Some(rentPeriodsDetails.zipWithIndex.map { case (period, index) =>
+          val rows = Seq(
+            buildRow(
+              labelKey = "checkAnswers.rentPeriod.provideDetailsOfFirstRentPeriod.end",
+              value = NGRDate.formatDate(period.endDate),
+              linkId = s"rent-period-${index + 1}-end",
+              href = link,
+              hiddenKey = s"rent-period-${index + 1}-end"
+            ),
+            buildRow(
+              labelKey = "checkAnswers.rentPeriod.provideDetailsOfFirstSecondRentPeriod.amount",
+              value = s"£${period.rentPeriodAmount}",
+              linkId = s"rent-period-${index + 1}-amount",
+              href = link,
+              hiddenKey = s"rent-period-${index + 1}-amount"
+            )
+          )
+          SummaryList(rows.map(summarise), classes = "govuk-!-margin-bottom-9")
+        })
 
-      SummaryListAndTitle(
-        title = s"Rent Period ${index + 1}",
-        summaryList = SummaryList(rows.map(summarise), classes = "govuk-!-margin-bottom-9")
-      )
+      case None => None
     }
   }
 

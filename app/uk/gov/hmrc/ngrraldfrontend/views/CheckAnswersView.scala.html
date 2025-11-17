@@ -18,7 +18,6 @@
 @import uk.gov.hmrc.ngrraldfrontend.viewmodels.govuk.all._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.ngrraldfrontend.views.html.components._
-@import uk.gov.hmrc.ngrraldfrontend.models.SummaryListAndTitle
 
 
 @this(
@@ -37,7 +36,7 @@
     agreementDetailsSummary: Option[SummaryList],
     rentSummary: SummaryList,
     firstRentPeriod: Option[SummaryList],
-    rentPeriods: Option[Seq[SummaryListAndTitle]],
+    rentPeriods: Option[Seq[SummaryList]],
     whatYourRentIncludesSummary: SummaryList,
     repairsAndInsurance: SummaryList,
     rentReview: SummaryList,
@@ -71,9 +70,14 @@
         @govukSummaryList(firstRentPeriod.get)
     }
 
-    @if(rentPeriods.nonEmpty){
-        <h2 class="govuk-heading-m">@messages("checkAnswers.rentPeriod.provideDetailsOfFirstSecondRentPeriod.label")</h2>
-        @govukSummaryList(firstRentPeriod.get)
+
+    @rentPeriods.map { rentPeriods =>
+        @for((period, idx) <- rentPeriods.zipWithIndex) {
+            <h2 class="govuk-heading-m">
+                @messages(s"checkAnswers.rentPeriod.ordinal.${idx + 1}")
+            </h2>
+            @govukSummaryList(period)
+        }
     }
 
     <h2 class="govuk-heading-m">@messages("checkAnswers.whatYourRentIncludes.label")</h2>
