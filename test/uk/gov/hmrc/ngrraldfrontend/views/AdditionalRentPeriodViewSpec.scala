@@ -27,17 +27,17 @@ import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 
 import java.time.LocalDate
 
-class ProvideDetailsOfSecondRentPeriodViewSpec extends ViewBaseSpec:
+class AdditionalRentPeriodViewSpec extends ViewBaseSpec:
 
   private val view: ProvideDetailsOfSecondRentPeriodView = inject[ProvideDetailsOfSecondRentPeriodView]
   private val inputText: InputText = inject[InputText]
 
   object Strings:
     val address = "2A, RODLEY LANE, RODLEY, LEEDS, BH1 1HU"
-    val heading = "Second rent period"
-    val startDateLabel = "Second rent period start date"
-    val startDateHint = "This is the day after the first rent period ended"
-    val endDateLabel = "When does the second rent period end?"
+    val heading = "Third rent period"
+    val startDateLabel = "Third rent period start date"
+    val startDateHint = "This is the day after the second rent period ended"
+    val endDateLabel = "When does the third rent period end?"
     val endDateHint = "For example, 27 6 2026"
     val endDateDayLabel = "Day"
     val endDateMonthLabel = "Month"
@@ -73,22 +73,22 @@ class ProvideDetailsOfSecondRentPeriodViewSpec extends ViewBaseSpec:
     val continue = "#continue"
   }
 
-  private val secondPeriodIndex: Int = 0
-  private val form = ProvideDetailsOfSecondRentPeriodForm.form(LocalDate.parse("2025-10-01"), secondPeriodIndex).fillAndValidate(
+  private val thirdPeriodIndex: Int = 1
+  private val form = ProvideDetailsOfSecondRentPeriodForm.form(LocalDate.parse("2025-10-01"), thirdPeriodIndex).fillAndValidate(
     ProvideDetailsOfSecondRentPeriodForm(
       NGRDate("31", "12", "2025"),
       BigDecimal(1999000)
     )
   )
 
-  private val endDateInput: DateInput = ProvideDetailsOfSecondRentPeriodForm.endDateInput(secondPeriodIndex)
+  private val endDateInput: DateInput = ProvideDetailsOfSecondRentPeriodForm.endDateInput(thirdPeriodIndex)
 
   "ProvideDetailsOfSecondRentPeriodView" must {
-    val secondRentPeriodView = view(Strings.address, form, Strings.formatDate, endDateInput, NormalMode, secondPeriodIndex)
+    val secondRentPeriodView = view(Strings.address, form, Strings.formatDate, endDateInput, NormalMode, thirdPeriodIndex)
     implicit val document: Document = Jsoup.parse(secondRentPeriodView.body)
-    val htmlApply = view.apply(Strings.address, form, Strings.formatDate, endDateInput, NormalMode, secondPeriodIndex).body
-    val htmlRender = view.render(Strings.address, form, Strings.formatDate, endDateInput, NormalMode, secondPeriodIndex, request, messages, mockConfig).body
-    val htmlF = view.f(Strings.address, form, Strings.formatDate, endDateInput, NormalMode, secondPeriodIndex)
+    val htmlApply = view.apply(Strings.address, form, Strings.formatDate, endDateInput, NormalMode, thirdPeriodIndex).body
+    val htmlRender = view.render(Strings.address, form, Strings.formatDate, endDateInput, NormalMode, thirdPeriodIndex, request, messages, mockConfig).body
+    val htmlF = view.f(Strings.address, form, Strings.formatDate, endDateInput, NormalMode, thirdPeriodIndex)
 
     "htmlF is not empty" in {
       htmlF.toString() must not be empty

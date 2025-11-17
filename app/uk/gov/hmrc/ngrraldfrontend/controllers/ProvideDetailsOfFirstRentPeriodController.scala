@@ -26,9 +26,10 @@ import uk.gov.hmrc.ngrraldfrontend.models.forms.ProvideDetailsOfFirstRentPeriodF
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{Mode, NormalMode, ProvideDetailsOfFirstRentPeriod, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
-import uk.gov.hmrc.ngrraldfrontend.pages.ProvideDetailsOfFirstRentPeriodPage
+import uk.gov.hmrc.ngrraldfrontend.pages.{ProvideDetailsOfFirstRentPeriodPage, ProvideDetailsOfSecondRentPeriodPage}
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.utils.DateKeyFinder
+import uk.gov.hmrc.ngrraldfrontend.utils.RentPeriodsHelper.updateRentPeriodsIfFirstRentPeriodEndDateIsChanged
 import uk.gov.hmrc.ngrraldfrontend.views.html.ProvideDetailsOfFirstRentPeriodView
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.InputText
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -77,7 +78,10 @@ class ProvideDetailsOfFirstRentPeriodController @Inject()(view: ProvideDetailsOf
             ))),
           provideDetailsOfFirstRentPeriod =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).set(ProvideDetailsOfFirstRentPeriodPage, provideDetailsOfFirstRentPeriod))
+              userAnswers <- Future(request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))))
+              //Checking if end date has been changed. If yes, remove the details of rent periods after this period.
+              rentPeriodsUserAnswers <- Future(updateRentPeriodsIfFirstRentPeriodEndDateIsChanged(userAnswers, provideDetailsOfFirstRentPeriod.endDate))
+              updatedAnswers <- Future.fromTry(rentPeriodsUserAnswers.set(ProvideDetailsOfFirstRentPeriodPage, provideDetailsOfFirstRentPeriod))
               _ <- sessionRepository.set(updatedAnswers)
             } yield Redirect(navigator.nextPage(ProvideDetailsOfFirstRentPeriodPage, NormalMode, updatedAnswers))
         )

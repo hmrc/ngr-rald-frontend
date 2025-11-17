@@ -88,6 +88,12 @@ POST       /provide-details-of-second-rent-period            uk.gov.hmrc.ngrrald
 GET        /provide-details-of-second-rent-period/change     uk.gov.hmrc.ngrraldfrontend.controllers.ProvideDetailsOfSecondRentPeriodController.show(mode: Mode = CheckMode)
 POST       /provide-details-of-second-rent-period/change     uk.gov.hmrc.ngrraldfrontend.controllers.ProvideDetailsOfSecondRentPeriodController.submit(mode: Mode = CheckMode)
 
+#Additional rent period
+GET        /additional-rent-period/:index            uk.gov.hmrc.ngrraldfrontend.controllers.AdditionalRentPeriodController.show(mode: Mode = NormalMode, index: Int)
+POST       /additional-rent-period/:index            uk.gov.hmrc.ngrraldfrontend.controllers.AdditionalRentPeriodController.submit(mode: Mode = NormalMode, index: Int)
+GET        /additional-rent-period/change/:index     uk.gov.hmrc.ngrraldfrontend.controllers.AdditionalRentPeriodController.show(mode: Mode = CheckMode, index: Int)
+POST       /additional-rent-period/change/:index     uk.gov.hmrc.ngrraldfrontend.controllers.AdditionalRentPeriodController.submit(mode: Mode = CheckMode, index: Int)
+
 #Rent Periods
 GET        /rent-periods                                    uk.gov.hmrc.ngrraldfrontend.controllers.RentPeriodsController.show(mode: Mode = NormalMode)
 POST       /rent-periods                                    uk.gov.hmrc.ngrraldfrontend.controllers.RentPeriodsController.submit(mode: Mode = NormalMode)
