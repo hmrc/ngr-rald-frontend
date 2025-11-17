@@ -240,7 +240,7 @@ class Navigator @Inject()() {
 
   //TODO change to check your answers page
   private val checkRouteMap: Page => UserAnswers => Call = {
-    case _ => _ => ???
+    case _ => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show()
   }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {

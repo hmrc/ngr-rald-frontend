@@ -8,6 +8,7 @@ service.saveAndContinue = Save and continue
 service.yes = Yes
 service.no = No
 service.or = or
+service.change = Change
 
 #Common
 common.pound = £
@@ -588,3 +589,52 @@ rentReviewDetailsSent.p5 = We have sent a confirmation email to {0}
 rentReviewDetailsSent.h1 = What happens next?
 rentReviewDetailsSent.p6 = We will review the information you sent to us. If we need to clarify anything or need more details, we will contact you by email
 rentReviewDetailsSent.goHome = Go to your account home
+
+#Check Answers
+checkAnswers.title = Check your answers
+checkAnswers.leaseRenewal.label = Lease renewal details
+checkAnswers.leaseRenewal.typeOfLeaseRenewal = What type of lease renewal is it?
+
+checkAnswers.landlord.label = Landlord details
+checkAnswers.landlord.fullName = What is the landlord''s full name?
+checkAnswers.landlord.relationship = Do you have a relationship with the landlord other than as a tenant?
+checkAnswers.landlord.relationship.reason = Can you tell us what your relationship with the landlord is?
+
+checkAnswers.agreement.label = Agreement details
+checkAnswers.agreement.whatTypeOfAgreement = What type of agreement do you have?
+
+checkAnswers.rent.label = Rent details
+checkAnswers.rent.whatIsYourRentBasedOn = What is your rent based on?
+checkAnswers.rent.agreedRentChange = Have you agreed in advance with the landlord when and by how much rent goes up?
+checkAnswers.rent.didYouAgreeRentWithLandlord = Did you agree the rent with your landlord or their agent?
+checkAnswers.rent.rentInterim = Did the court also set an interim rent?
+checkAnswers.rent.checkRentPeriod = Do you have a rent-free period at the start of your agreement?
+
+checkAnswers.rentPeriod.provideDetailsOfFirstSecondRentPeriod.label = First rent period
+checkAnswers.rentPeriod.provideDetailsOfFirstSecondRentPeriod.start = Start date
+checkAnswers.rentPeriod.provideDetailsOfFirstSecondRentPeriod.end = End date
+
+checkAnswers.whatYourRentIncludes.label = What your rent includes
+checkAnswers.whatYourRentIncludes.livingAccommodation = Does your rent include any living accommodation?
+checkAnswers.whatYourRentIncludes.bedroomNumbers = How many bedrooms does the living accommodation have?
+checkAnswers.whatYourRentIncludes.rentPartAddress = Is the rent you pay only for part of this address?
+checkAnswers.whatYourRentIncludes.rentIncBusinessRates = Does your rent include business rates?
+checkAnswers.whatYourRentIncludes.rentIncWaterCharges = Does your rent include water charges?
+checkAnswers.whatYourRentIncludes.rentIncService = Does your rent include service charges?
+
+checkAnswers.repairsAndInsurance.label = Repairs and insurance
+checkAnswers.repairsAndInsurance.internalRepairs = Who pays for internal repairs?
+checkAnswers.repairsAndInsurance.externalRepairs = Who pays for external repairs?
+checkAnswers.repairsAndInsurance.buildingInsurance = Who pays for building insurance repairs?
+
+checkAnswers.rentReview.label = Rent review
+checkAnswers.rentReview.hasIncludeRentReview = Does your agreement include a rent review?
+checkAnswers.rentReview.howOftenReviewed = How often is your rent reviewed?
+checkAnswers.rentReview.canRentGoDown = Can the rent go down when it is reviewed?
+
+checkAnswers.payments.label = Payments
+checkAnswers.payments.didYouGetMoneyFromLandlord = Did you get any money from the landlord or previous tenant to take on the lease?
+checkAnswers.payments.didYouPayAnyMoneyToLandlord = Did you pay any money in advance to the landlord?
+
+checkAnswers.alteration.label = Alterations and improvements
+checkAnswers. = Alterations and improvements

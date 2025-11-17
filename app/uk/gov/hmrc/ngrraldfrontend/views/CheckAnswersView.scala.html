@@ -1,0 +1,83 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
+@import uk.gov.hmrc.ngrraldfrontend.viewmodels.govuk.all._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.ngrraldfrontend.views.html.components._
+
+@this(
+    layout: Layout,
+    govukSummaryList : GovukSummaryList,
+    formHelper: FormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    inputText: components.InputText,
+    saveAndContinueButton: saveAndContinueButton,
+)
+
+@(
+    selectedPropertyAddress: String,
+    leaseRenewalsSummary: Option[SummaryList],
+    landlordSummary: SummaryList,
+    agreementDetailsSummary: Option[SummaryList],
+    rentSummary: SummaryList,
+    firstRentPeriod: Option[SummaryList],
+    whatYourRentIncludesSummary: SummaryList,
+    repairsAndInsurance: SummaryList,
+    rentReview: SummaryList,
+    payments: SummaryList,
+)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+@heading = @{messages("checkAnswers.title")}
+@layout(pageTitle = Some(messages("checkAnswers.title")), showBackLink = true, fullWidth = true) {
+
+    <h1 class="govuk-heading-l">@messages("checkAnswers.title")</h1>
+    @if(leaseRenewalsSummary.nonEmpty){
+        <h2 class="govuk-heading-m">@messages("checkAnswers.leaseRenewal.label")</h2>
+        @govukSummaryList(leaseRenewalsSummary.get)
+    }
+
+    <h2 class="govuk-heading-m">@messages("checkAnswers.landlord.label")</h2>
+    @govukSummaryList(landlordSummary)
+
+    @if(firstRentPeriod.nonEmpty){
+        <h2 class="govuk-heading-m">@messages("checkAnswers.agreement.label")</h2>
+        @govukSummaryList(agreementDetailsSummary.get)
+    }
+
+    <h2 class="govuk-heading-m">@messages("checkAnswers.rent.label")</h2>
+    @govukSummaryList(rentSummary)
+
+    @if(firstRentPeriod.nonEmpty){
+        <h2 class="govuk-heading-m">@messages("checkAnswers.rentPeriod.provideDetailsOfFirstSecondRentPeriod.label")</h2>
+        @govukSummaryList(firstRentPeriod.get)
+    }
+
+    <h2 class="govuk-heading-m">@messages("checkAnswers.whatYourRentIncludes.label")</h2>
+    @govukSummaryList(whatYourRentIncludesSummary)
+
+    <h2 class="govuk-heading-m">@messages("checkAnswers.repairsAndInsurance.label")</h2>
+    @govukSummaryList(repairsAndInsurance)
+
+    <h2 class="govuk-heading-m">@messages("checkAnswers.rentReview.label")</h2>
+    @govukSummaryList(rentReview)
+
+    <h2 class="govuk-heading-m">@messages("checkAnswers.payments.label")</h2>
+    @govukSummaryList(payments)
+
+    <div class="govuk-button-group">
+        @saveAndContinueButton(msg =  messages("Continue"), isStartButton = false, href = Some("temphref"))
+    </div>
+}
