@@ -230,8 +230,7 @@ class Navigator @Inject()() {
 
     case MoneyYouPaidInAdvanceToLandlordPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HasAnythingElseAffectedTheRentController.show(NormalMode)
     case HasAnythingElseAffectedTheRentPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.MoneyYouPaidInAdvanceToLandlordController.show(NormalMode) //TODO check your answers page
-    //TODO need to connect to next page
-    case DeclarationPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DeclarationController.show
+    case DeclarationPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentReviewDetailsSentController.confirmation()
   }
 
   //TODO change to check your answers page

@@ -33,7 +33,7 @@ class FakeDataRetrievalAction(answers: Option[UserAnswers], propertyOpt: Option[
   override protected def transform[A](request: AuthenticatedUserRequest[A]): Future[OptionalDataRequest[A]] = {
     propertyOpt match {
       case Some(value) =>  Future.successful(
-        OptionalDataRequest(request.request, request.credId.getOrElse(""), answers, property)
+        OptionalDataRequest(request.request, request.credId.getOrElse(""), answers, property, request.email)
       )
       case None => throw new NotFoundException("Could not find answers in backend mongo")
     }
