@@ -387,9 +387,9 @@ object CheckAnswers {
     val livingAccommodationRow = buildRow(
       labelKey = "checkAnswers.whatYourRentIncludes.livingAccommodation",
       value = whatYourRentIncludesOpt.map(value => yesNo(value.livingAccommodation)).getOrElse(messages("service.notProvided")),
-      linkId = "what-you-rent-includes",
+      linkId = "living-accommodation",
       href = link,
-      hiddenKey = "what-you-rent-includes"
+      hiddenKey = "living-accommodation"
     )
 
     val bedroomNumbersRow = whatYourRentIncludesOpt.flatMap(_.bedroomNumbers).map { value =>
@@ -442,9 +442,9 @@ object CheckAnswers {
       buildRow(
         labelKey = "checkAnswers.whatYourRentIncludes.rentIncService",
         value = yesNo(value),
-        linkId = "rent-in-service",
+        linkId = "rent-inc-service",
         href = link,
-        hiddenKey = "rent-in-service"
+        hiddenKey = "rent-inc-service"
       )
     }
 
@@ -452,9 +452,9 @@ object CheckAnswers {
       buildRow(
         labelKey = "checkAnswers.whatYourRentIncludes.doesYourRentIncludeParking",
         value = yesNo(value),
-        linkId = "landlord-full-name",
+        linkId = "rent-inc-parking",
         href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.DoesYourRentIncludeParkingController.show(CheckMode),
-        hiddenKey = "landlord-full-name"
+        hiddenKey = "rent-inc-parking"
       )
     }
 
@@ -463,9 +463,9 @@ object CheckAnswers {
         buildRow(
           labelKey = "checkAnswers.whatYourRentIncludes.howManyUncoveredSpacesIncludedInRent",
           value = value.uncoveredSpaces.toString,
-          linkId = "landlord-relationship-reason",
+          linkId = "how-many-uncovered-spaces-included-in-rent",
           href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowManyParkingSpacesOrGaragesIncludedInRentController.show(CheckMode),
-          hiddenKey = "landlord-relationship-reason"
+          hiddenKey = "how-many-uncovered-spaces-included-in-rent"
         )
     }
 
@@ -474,9 +474,9 @@ object CheckAnswers {
         buildRow(
           labelKey = "checkAnswers.whatYourRentIncludes.howManyCoveredSpacesIncludedInRent",
           value = value.coveredSpaces.toString,
-          linkId = "landlord-relationship-reason",
+          linkId = "how-many-covered-spaces-included-in-rent",
           href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowManyParkingSpacesOrGaragesIncludedInRentController.show(CheckMode),
-          hiddenKey = "landlord-relationship-reason"
+          hiddenKey = "how-many-covered-spaces-included-in-rent"
         )
     }
 
@@ -485,9 +485,9 @@ object CheckAnswers {
         buildRow(
           labelKey = "checkAnswers.whatYourRentIncludes.howManyGaragesIncludedInRent",
           value = value.garages.toString,
-          linkId = "landlord-relationship-reason",
+          linkId = "how-many-covered-spaces-included-in-rent",
           href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowManyParkingSpacesOrGaragesIncludedInRentController.show(CheckMode),
-          hiddenKey = "landlord-relationship-reason"
+          hiddenKey = "how-many-covered-spaces-included-in-rent"
         )
     }
 
@@ -496,27 +496,9 @@ object CheckAnswers {
         buildRow(
           labelKey = "checkAnswers.whatYourRentIncludes.doYouPayExtraForParkingSpaces",
           value = yesNo(value),
-          linkId = "landlord-full-name",
+          linkId = "do-you-pay-extra-for-parking-spaces",
           href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.DoYouPayExtraForParkingSpacesController.show(CheckMode),
-          hiddenKey = "landlord-full-name"
-        )
-    }
-
-
-
-    val parkingSpacesOrGaragesNotIncludedInYourRent = parkingSpacesOrGaragesNotIncludedInYourRentPageValue.map {
-      value =>
-        buildRow(
-          labelKey = "checkAnswers.whatYourRentIncludes.parkingSpacesOrGaragesNotIncludedInYourRent",
-          value =
-            s"""
-              ${messages("parkingSpacesOrGaragesNotIncludedInYourRent.uncoveredSpaces.label")} ${value.uncoveredSpaces}
-              ${messages("parkingSpacesOrGaragesNotIncludedInYourRent.coveredSpaces.label")} ${value.coveredSpaces}
-              ${messages("parkingSpacesOrGaragesNotIncludedInYourRent.garages.label")} ${value.garages}
-              """,
-          linkId = "landlord-relationship-reason",
-          href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.show(CheckMode),
-          hiddenKey = "landlord-relationship-reason"
+          hiddenKey = "do-you-pay-extra-for-parking-spaces"
         )
     }
 
@@ -525,9 +507,9 @@ object CheckAnswers {
         buildRow(
           labelKey = "checkAnswers.whatYourRentIncludes.howManyUncoveredSpacesNotIncludedInRent",
           value = value.uncoveredSpaces.toString,
-          linkId = "landlord-relationship-reason",
+          linkId = "how-many-uncovered-spaces-not-included-in-rent",
           href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.show(CheckMode),
-          hiddenKey = "landlord-relationship-reason"
+          hiddenKey = "how-many-uncovered-spaces-not-included-in-rent"
         )
     }
 
@@ -536,9 +518,9 @@ object CheckAnswers {
         buildRow(
           labelKey = "checkAnswers.whatYourRentIncludes.howManyCoveredSpacesNotIncludedInRent",
           value = value.coveredSpaces.toString,
-          linkId = "landlord-relationship-reason",
+          linkId = "how-many-covered-spaces-not-included-in-rent",
           href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.show(CheckMode),
-          hiddenKey = "landlord-relationship-reason"
+          hiddenKey = "how-many-covered-spaces-not-included-in-rent"
         )
     }
 
@@ -547,9 +529,9 @@ object CheckAnswers {
         buildRow(
           labelKey = "checkAnswers.whatYourRentIncludes.howManyGaragesNotIncludedInRent",
           value = value.garages.toString,
-          linkId = "landlord-relationship-reason",
+          linkId = "how-many-garages-not-included-in-rent",
           href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.show(CheckMode),
-          hiddenKey = "landlord-relationship-reason"
+          hiddenKey = "how-many-garages-not-included-in-rent"
         )
     }
 
@@ -558,9 +540,9 @@ object CheckAnswers {
         buildRow(
           labelKey = "checkAnswers.whatYourRentIncludes.parkingSpacesOrGaragesNotIncludedInYourRent.totalCost",
           value = s"£${value.totalCost.toString()}",
-          linkId = "landlord-relationship-reason",
+          linkId = "parking-spaces-or-garages-not-included-in-your-rent-value",
           href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.show(CheckMode),
-          hiddenKey = "landlord-relationship-reason"
+          hiddenKey = "parking-spaces-or-garages-not-included-in-your-rent-value"
         )
     }
 
@@ -569,9 +551,9 @@ object CheckAnswers {
         buildRow(
           labelKey = "checkAnswers.whatYourRentIncludes.parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate",
           value = NGRDate.formatDate(value.agreementDate),
-          linkId = "landlord-relationship-reason",
+          linkId = "parking-spaces-or-garages-not-included-in-your-rent-value",
           href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.show(CheckMode),
-          hiddenKey = "landlord-relationship-reason"
+          hiddenKey = "parking-spaces-or-garages-not-included-in-your-rent-value"
         )
     }
 
@@ -748,9 +730,9 @@ object CheckAnswers {
       buildRow(
         labelKey = "checkAnswers.repairsAndFittingOut.repairsAndFittingOut",
         value = yesNo(value),
-        linkId = "did-you-get-money-from-landlord",
+        linkId = "repairs-and-fitting-out",
         href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.RepairsAndFittingOutController.show(CheckMode),
-        hiddenKey = "did-you-get-money-from-landlord"
+        hiddenKey = "repairs-and-fitting-out"
       )
     }
 
@@ -758,9 +740,9 @@ object CheckAnswers {
       buildRow(
         labelKey = "checkAnswers.repairsAndFittingOut.date",
         value = NGRMonthYear.formatYearMonth(value.date),
-        linkId = "did-you-pay-money-to-landlord",
+        linkId = "repairs-and-fitting-out-date",
         href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.AboutRepairsAndFittingOutController.show(CheckMode),
-        hiddenKey = "did-you-pay-money-to-landlord"
+        hiddenKey = "repairs-and-fitting-out-date"
       )
     }
 
@@ -768,9 +750,9 @@ object CheckAnswers {
       buildRow(
         labelKey = "checkAnswers.repairsAndFittingOut.cost",
         value = s"£${value.cost}",
-        linkId = "did-you-pay-money-to-landlord",
+        linkId = "repairs-and-fitting-out-cost",
         href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.AboutRepairsAndFittingOutController.show(CheckMode),
-        hiddenKey = "did-you-pay-money-to-landlord"
+        hiddenKey = "repairs-and-fitting-out-cost"
       )
     }
 
@@ -857,9 +839,9 @@ object CheckAnswers {
       buildRow(
         labelKey = "checkAnswers.Otherdetails.hasAnyAffectedRent",
         value =  yesNo(value.radio),
-        linkId = "landlord-full-name",
+        linkId = "other-details",
         href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.HasAnythingElseAffectedTheRentController.show(CheckMode),
-        hiddenKey = "landlord-full-name"
+        hiddenKey = "other-details"
       )
     }.toSeq
 
