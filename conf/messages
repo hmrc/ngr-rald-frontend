@@ -625,6 +625,7 @@ checkAnswers.rentPeriod.provideDetailsOfFirstSecondRentPeriod.label = First rent
 checkAnswers.rentPeriod.provideDetailsOfFirstRentPeriod.start = Start date
 checkAnswers.rentPeriod.provideDetailsOfFirstRentPeriod.end = End date
 checkAnswers.rentPeriod.provideDetailsOfFirstSecondRentPeriod.isRentPayablePeriod = Do you pay rent in this period?
+checkAnswers.rentPeriod.provideDetailsOfFirstSecondRentPeriod.amount = Rent for this period (excluding VAT)
 
 checkAnswers.whatYourRentIncludes.label = What your rent includes details
 checkAnswers.whatYourRentIncludes.livingAccommodation = Does your rent include any living accommodation?

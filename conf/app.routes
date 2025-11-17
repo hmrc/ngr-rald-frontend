@@ -238,10 +238,10 @@ GET        /has-anything-else-affected-the-rent/change         uk.gov.hmrc.ngrra
 POST       /has-anything-else-affected-the-rent/change         uk.gov.hmrc.ngrraldfrontend.controllers.HasAnythingElseAffectedTheRentController.submit(mode: Mode = CheckMode)
 
 #Declaration
-GET        /declaration                uk.gov.hmrc.ngrraldfrontend.controllers.DeclarationController.show
-POST       /declaration                uk.gov.hmrc.ngrraldfrontend.controllers.DeclarationController.submit
+GET        /declaration                            uk.gov.hmrc.ngrraldfrontend.controllers.DeclarationController.show
+POST       /declaration                            uk.gov.hmrc.ngrraldfrontend.controllers.DeclarationController.submit
 
 GET        /rent-review-details-sent               uk.gov.hmrc.ngrraldfrontend.controllers.RentReviewDetailsSentController.confirmation()
 
 #check answers
-GET        /check-answers                                uk.gov.hmrc.ngrraldfrontend.controllers.CheckAnswersController.show(mode: Mode = NormalMode)
+GET        /check-answers                          uk.gov.hmrc.ngrraldfrontend.controllers.CheckAnswersController.show(mode: Mode = NormalMode)

@@ -339,14 +339,14 @@ object CheckAnswers {
     SummaryList(rows, classes = "govuk-!-margin-bottom-9")
   }
 
-  def createRentPeriodRow(credId: String, userAnswers: Option[UserAnswers])
+  def createFirstRentPeriodRow(credId: String, userAnswers: Option[UserAnswers])
                          (implicit messages: Messages): Option[SummaryList] = {
     val answers = userAnswers.getOrElse(UserAnswers(CredId(credId)))
     val rentPeriod = answers.get(ProvideDetailsOfFirstRentPeriodPage)
-    val link = uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatTypeOfAgreementController.show(CheckMode)
+    val link = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfFirstRentPeriodController.show(CheckMode)
     val formatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)
 
-    rentPeriod.map { value =>
+    val rentPeriodRows = rentPeriod.map { value =>
       val startRow = buildRow(
         labelKey = "checkAnswers.rentPeriod.provideDetailsOfFirstRentPeriod.start",
         value = value.startDate.format(formatter),
@@ -369,10 +369,63 @@ object CheckAnswers {
         linkId = "provide-details-of-first-period-payable",
         href = link,
         hiddenKey = "provide-details-of-first-period-payable"
-      ) 
-      SummaryList(Seq(startRow, endRow, isRentPayablePeriod).map(summarise), classes = "govuk-!-margin-bottom-9")
+      )
+
+      Seq(startRow, endRow, isRentPayablePeriod)
+    }.getOrElse(Seq.empty)
+
+    val firstPeriodAmountRow = rentPeriod.flatMap { value =>
+      value.rentPeriodAmount.map { amount =>
+        buildRow(
+          labelKey = "checkAnswers.rentPeriod.provideDetailsOfFirstSecondRentPeriod.amount",
+          value = s"£${amount.toString}",
+          linkId = "provide-details-of-first-period-amount",
+          href = link,
+          hiddenKey = "provide-details-of-first-period-amount"
+        )
+      }
+    }.toSeq
+
+    val allRows = rentPeriodRows ++ firstPeriodAmountRow
+
+    if (allRows.nonEmpty) {
+      Some(SummaryList(allRows.map(summarise), classes = "govuk-!-margin-bottom-9"))
+    } else {
+      None
     }
   }
+
+
+  def createRentPeriodsSummaryLists(rentPeriodsDetails: Seq[RentPeriodDetail])
+                                   (implicit messages: Messages): Seq[SummaryListAndTitle] = {
+    val link = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfFirstRentPeriodController.show(CheckMode)
+    val formatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)
+
+    rentPeriodsDetails.zipWithIndex.map { case (period, index) =>
+      val rows = Seq(
+        buildRow(
+          labelKey = "checkAnswers.rentPeriod.endDate",
+          value = period.endDate.format(formatter),
+          linkId = s"rent-period-${index + 1}-end",
+          href = link,
+          hiddenKey = s"rent-period-${index + 1}-end"
+        ),
+        buildRow(
+          labelKey = "checkAnswers.rentPeriod.amount",
+          value = s"£${period.rentPeriodAmount}",
+          linkId = s"rent-period-${index + 1}-amount",
+          href = link,
+          hiddenKey = s"rent-period-${index + 1}-amount"
+        )
+      )
+
+      SummaryListAndTitle(
+        title = s"Rent Period ${index + 1}",
+        summaryList = SummaryList(rows.map(summarise), classes = "govuk-!-margin-bottom-9")
+      )
+    }
+  }
+
 
   def createWhatYourRentIncludesRows(credId: String, userAnswers: Option[UserAnswers])(implicit messages: Messages): SummaryList = {
     val answers = userAnswers.getOrElse(UserAnswers(CredId(credId)))

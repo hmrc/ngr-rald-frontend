@@ -933,7 +933,6 @@ class CheckAnswersViewSpec extends ViewBaseSpec {
       elementText(Selectors.otherDetailsReasonChangeButton) mustBe "Change other-details-reason"
     }
 
-
     "show the correct save button" in {
       elementText(Selectors.saveButton) mustBe saveButton
     }

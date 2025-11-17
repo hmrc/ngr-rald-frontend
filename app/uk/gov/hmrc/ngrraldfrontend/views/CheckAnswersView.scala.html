@@ -18,6 +18,8 @@
 @import uk.gov.hmrc.ngrraldfrontend.viewmodels.govuk.all._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.ngrraldfrontend.views.html.components._
+@import uk.gov.hmrc.ngrraldfrontend.models.SummaryListAndTitle
+
 
 @this(
     layout: Layout,
@@ -35,6 +37,7 @@
     agreementDetailsSummary: Option[SummaryList],
     rentSummary: SummaryList,
     firstRentPeriod: Option[SummaryList],
+    rentPeriods: Option[Seq[SummaryListAndTitle]],
     whatYourRentIncludesSummary: SummaryList,
     repairsAndInsurance: SummaryList,
     rentReview: SummaryList,
@@ -68,6 +71,11 @@
         @govukSummaryList(firstRentPeriod.get)
     }
 
+    @if(rentPeriods.nonEmpty){
+        <h2 class="govuk-heading-m">@messages("checkAnswers.rentPeriod.provideDetailsOfFirstSecondRentPeriod.label")</h2>
+        @govukSummaryList(firstRentPeriod.get)
+    }
+
     <h2 class="govuk-heading-m">@messages("checkAnswers.whatYourRentIncludes.label")</h2>
     @govukSummaryList(whatYourRentIncludesSummary)
 
@@ -91,6 +99,8 @@
         <h2 class="govuk-heading-m">@messages("checkAnswers.breakClause.label")</h2>
         @govukSummaryList(breakClause.get)
     }
+
+
 
     <h2 class="govuk-heading-m">@messages("checkAnswers.Otherdetails.label")</h2>
     @govukSummaryList(otherDetailsSummary)
