@@ -78,7 +78,7 @@ class DidYouPayAnyMoneyToLandlordControllerSpec extends ControllerSpecSupport {
           result.header.headers.get("Location") mustBe Some("/ngr-rald-frontend/did-you-pay-any-money-to-landlord")
         })
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.DidYouPayAnyMoneyToLandlordController.show(NormalMode).url)
+        redirectLocation(result) mustBe Some(routes.MoneyYouPaidInAdvanceToLandlordController.show(NormalMode).url)
       }
       "Return See_Other and the correct view after submitting no" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))

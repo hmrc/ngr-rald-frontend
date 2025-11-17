@@ -17,12 +17,15 @@
 package uk.gov.hmrc.ngrraldfrontend.services
 
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryListRow
+import play.api.mvc.Call
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.ngrraldfrontend.models.*
 import uk.gov.hmrc.ngrraldfrontend.models.NGRSummaryListRow.summarise
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.pages.*
-import play.api.mvc.Call
+
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 object CheckAnswers {
 
@@ -39,32 +42,11 @@ object CheckAnswers {
       ))
     )
 
-  def createLeaseRenewalsSummaryRows(credId: String, userAnswers: Option[UserAnswers])
-                                    (implicit messages: Messages): Option[SummaryList] = {
-    val answers = userAnswers.getOrElse(UserAnswers(credId))
-    val leaseRenewal = answers.get(WhatTypeOfLeaseRenewalPage)
-
-    leaseRenewal.map { value =>
-      val displayValue = value match {
-        case "RenewedAgreement" => messages("typeOfLeaseRenewal.option1")
-        case "SurrenderAndRenewal" => messages("typeOfLeaseRenewal.option2")
-        case _ => messages("service.notProvided")
-      }
-
-      val row = buildRow(
-        labelKey = "checkAnswers.leaseRenewal.typeOfLeaseRenewal",
-        value = displayValue,
-        linkId = "property-address",
-        href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatTypeOfLeaseRenewalController.show(CheckMode),
-        hiddenKey = "property-address"
-      )
-      SummaryList(Seq(summarise(row)))
-    }
-  }
+  def yesNo(value: Boolean)(implicit messages: Messages): String = if (value) messages("service.yes") else messages("service.no")
 
   def createLandlordSummaryRows(credId: String, userAnswers: Option[UserAnswers])
                                (implicit messages: Messages): SummaryList = {
-    val answers = userAnswers.getOrElse(UserAnswers(credId))
+    val answers = userAnswers.getOrElse(UserAnswers(CredId(credId)))
     val landlord = answers.get(LandlordPage)
 
     val nameRow = buildRow(
@@ -77,7 +59,7 @@ object CheckAnswers {
 
     val relationshipRow = buildRow(
       labelKey = "checkAnswers.landlord.relationship",
-      value = landlord.map(l => if (l.hasRelationship) messages("service.yes") else messages("service.no"))
+      value = landlord.map(value => yesNo(value.hasRelationship))
         .getOrElse(messages("service.notProvided")),
       linkId = "landlord-relationship",
       href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.LandlordController.show(CheckMode),
@@ -95,111 +77,14 @@ object CheckAnswers {
     }
 
     val rows = Seq(nameRow, relationshipRow) ++ relationshipReasonRow.toSeq
-
-    SummaryList(rows.map(summarise))
-  }
-
-  def createGarageOrParkingRows(credId: String, userAnswers: Option[UserAnswers])
-                               (implicit messages: Messages): SummaryList = {
-    val answers = userAnswers.getOrElse(UserAnswers(credId))
-    val doesYourRentIncludeParkingValue = answers.get(DoesYourRentIncludeParkingPage)
-    val howManyParkingSpacesOrGaragesIncludedInRentValue = answers.get(HowManyParkingSpacesOrGaragesIncludedInRentPage)
-    val doYouPayExtraForParkingSpacesValue = answers.get(DoYouPayExtraForParkingSpacesPage)
-    val parkingSpacesOrGaragesNotIncludedInYourRentPageValue = answers.get(ParkingSpacesOrGaragesNotIncludedInYourRentPage)
-
-    val doesYourRentIncludeParking = buildRow(
-      labelKey = "checkAnswers.parking.doesYourRentIncludeParking",
-      value = doesYourRentIncludeParkingValue.map(value => if (value) {
-        messages("service.yes")
-      } else {
-        messages("service.no")
-      }).getOrElse(messages("service.notProvided")),
-      linkId = "landlord-full-name",
-      href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.DoesYourRentIncludeParkingController.show(CheckMode),
-      hiddenKey = "landlord-full-name"
-    )
-
-    val howManyParkingSpacesOrGaragesIncludedInRent = howManyParkingSpacesOrGaragesIncludedInRentValue.map {
-      value =>
-        buildRow(
-          labelKey = "checkAnswers.parking.howManyParkingSpacesOrGaragesIncludedInRent",
-          value =
-            s"""
-              ${messages("parkingSpacesOrGaragesNotIncludedInYourRent.uncoveredSpaces.label")} ${value.uncoveredSpaces}
-              ${messages("parkingSpacesOrGaragesNotIncludedInYourRent.coveredSpaces.label")} ${value.coveredSpaces}
-              ${messages("parkingSpacesOrGaragesNotIncludedInYourRent.garages.label")} ${value.garages}
-              """,
-          linkId = "landlord-relationship-reason",
-          href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowManyParkingSpacesOrGaragesIncludedInRentController.show(CheckMode),
-          hiddenKey = "landlord-relationship-reason"
-        )
-    }
-
-    val doYouPayExtraForParkingSpaces = buildRow(
-      labelKey = "checkAnswers.parking.doYouPayExtraForParkingSpaces",
-      value = doYouPayExtraForParkingSpacesValue.map(value => if (value) {
-        messages("service.yes")
-      } else {
-        messages("service.no")
-      }).getOrElse(messages("service.notProvided")),
-      linkId = "landlord-full-name",
-      href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.DoYouPayExtraForParkingSpacesController.show(CheckMode),
-      hiddenKey = "landlord-full-name"
-    )
-
-    val parkingSpacesOrGaragesNotIncludedInYourRent = parkingSpacesOrGaragesNotIncludedInYourRentPageValue.map {
-      value =>
-        buildRow(
-          labelKey = "checkAnswers.parking.parkingSpacesOrGaragesNotIncludedInYourRent",
-          value =
-            s"""
-              ${messages("parkingSpacesOrGaragesNotIncludedInYourRent.uncoveredSpaces.label")} ${value.uncoveredSpaces}
-              ${messages("parkingSpacesOrGaragesNotIncludedInYourRent.coveredSpaces.label")} ${value.coveredSpaces}
-              ${messages("parkingSpacesOrGaragesNotIncludedInYourRent.garages.label")} ${value.garages}
-              """,
-          linkId = "landlord-relationship-reason",
-          href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.show(CheckMode),
-          hiddenKey = "landlord-relationship-reason"
-        )
-    }
-
-    val totalCost = parkingSpacesOrGaragesNotIncludedInYourRentPageValue.map {
-      value =>
-        buildRow(
-          labelKey = "checkAnswers.parking.parkingSpacesOrGaragesNotIncludedInYourRent.totalCost",
-          value = value.totalCost.toString(),
-          linkId = "landlord-relationship-reason",
-          href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.show(CheckMode),
-          hiddenKey = "landlord-relationship-reason"
-        )
-    }
-
-    val agreementDate = parkingSpacesOrGaragesNotIncludedInYourRentPageValue.map {
-      value =>
-        buildRow(
-          labelKey = "checkAnswers.parking.parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate",
-          value = value.agreementDate.makeString,
-          linkId = "landlord-relationship-reason",
-          href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.show(CheckMode),
-          hiddenKey = "landlord-relationship-reason"
-        )
-    }
-
-    val rows =
-      Seq(doesYourRentIncludeParking) ++
-        howManyParkingSpacesOrGaragesIncludedInRent.toSeq ++
-        Seq(doYouPayExtraForParkingSpaces) ++
-        parkingSpacesOrGaragesNotIncludedInYourRent.toSeq ++
-        totalCost.toSeq ++ agreementDate
-
-
-    SummaryList(rows.map(summarise))
+    SummaryList(rows.map(summarise), classes = "govuk-!-margin-bottom-9")
   }
 
   def createAgreementDetailsRows(credId: String, userAnswers: Option[UserAnswers])
                                 (implicit messages: Messages): Option[SummaryList] = {
-    val answers = userAnswers.getOrElse(UserAnswers(credId))
+    val answers = userAnswers.getOrElse(UserAnswers(CredId(credId)))
     val agreementTypeOpt = answers.get(WhatTypeOfAgreementPage)
+    val agreement = answers.get(AgreementPage)
 
     agreementTypeOpt.map { agreementType =>
       val displayValue = agreementType match {
@@ -209,7 +94,7 @@ object CheckAnswers {
         case _ => messages("service.notProvided")
       }
 
-      val row = buildRow(
+      val agreementTypeRow = buildRow(
         labelKey = "checkAnswers.agreement.whatTypeOfAgreement",
         value = displayValue,
         linkId = "what-type-of-agreement",
@@ -217,14 +102,92 @@ object CheckAnswers {
         hiddenKey = "what-type-of-agreement"
       )
 
-      SummaryList(Seq(summarise(row)))
+      val agreementStartDate = agreement.map { value =>
+        buildRow(
+          labelKey = "checkAnswers.agreement.startDate",
+          value = NGRDate.formatDate(value.agreementStart),
+          linkId = "agreement-start-date",
+          href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.AgreementController.show(CheckMode),
+          hiddenKey = "agreement-start-date"
+        )
+      }.toSeq
+
+      val agreementOpenEnded = agreement.map { value =>
+        buildRow(
+          labelKey = "checkAnswers.agreement.isOpenEnded",
+          value = value.isOpenEnded match
+            case true => Messages("agreementVerbal.yes")
+            case false => Messages("agreementVerbal.no"),
+          linkId = "is-open-ended",
+          href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.AgreementController.show(CheckMode),
+          hiddenKey = "is-open-ended"
+        )
+      }.toSeq
+
+      val agreementEndDate = agreement.flatMap { value =>
+        value.openEndedDate.map { date =>
+          buildRow(
+            labelKey = "checkAnswers.agreement.endDate",
+            value = NGRDate.formatDate(date),
+            linkId = "is-open-ended",
+            href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.AgreementController.show(CheckMode),
+            hiddenKey = "is-open-ended"
+          )
+        }
+      }
+
+      val breakClause = agreement.map { value =>
+        buildRow(
+          labelKey = "checkAnswers.agreement.breakClause",
+          value = yesNo(value.haveBreakClause),
+          linkId = "break-clause",
+          href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.AgreementController.show(CheckMode),
+          hiddenKey = "break-clause"
+        )
+      }.toSeq
+
+      val breakClauseDetails = agreement.flatMap { value =>
+        value.breakClauseInfo.map { info =>
+          buildRow(
+            labelKey = "checkAnswers.agreement.breakClauseDetails",
+            value = info,
+            linkId = "break-clause-details",
+            href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.AgreementController.show(CheckMode),
+            hiddenKey = "break-clause-details"
+          )
+        }
+      }
+      val rows = Seq(agreementTypeRow) ++ agreementStartDate ++ agreementOpenEnded ++ agreementEndDate ++ breakClause ++ breakClauseDetails
+      SummaryList(rows.map(summarise), classes = "govuk-!-margin-bottom-9")
     }
   }
 
+  def createLeaseRenewalsSummaryRows(credId: String, userAnswers: Option[UserAnswers])
+                                    (implicit messages: Messages): Option[SummaryList] = {
+    val answers = userAnswers.getOrElse(UserAnswers(CredId(credId)))
+    val leaseRenewal = answers.get(WhatTypeOfLeaseRenewalPage)
+
+    leaseRenewal.map { value =>
+      val displayValue = value match {
+        case "RenewedAgreement" => messages("typeOfLeaseRenewal.option1")
+        case "SurrenderAndRenewal" => messages("typeOfLeaseRenewal.option2")
+        case _ => messages("service.notProvided")
+      }
+
+      val row = buildRow(
+        labelKey = "checkAnswers.leaseRenewal.typeOfLeaseRenewal",
+        value = displayValue,
+        linkId = "property-address",
+        href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatTypeOfLeaseRenewalController.show(CheckMode),
+        hiddenKey = "property-address"
+      )
+      SummaryList(rows = Seq(summarise(row)), classes = "govuk-!-margin-bottom-9")
+    }
+  }
 
   def createRentRows(credId: String, userAnswers: Option[UserAnswers])
                     (implicit messages: Messages): SummaryList = {
-    val answers = userAnswers.getOrElse(UserAnswers(credId))
+    val answers = userAnswers.getOrElse(UserAnswers(CredId(credId)))
 
     val rentBasedOn = answers.get(WhatIsYourRentBasedOnPage).map { value =>
       val rentType = value.rentBased match {
@@ -260,17 +223,38 @@ object CheckAnswers {
     val agreedRentChange = answers.get(AgreedRentChangePage).map { value =>
       buildRow(
         labelKey = "checkAnswers.rent.agreedRentChange",
-        value = if (value) messages("service.yes") else messages("service.no"),
+        value = yesNo(value),
         linkId = "agreed-rent-change",
         href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.AgreedRentChangeController.show(CheckMode),
         hiddenKey = "agreed-rent-change"
       )
     }
 
+    val rentDatesAgreeRow = answers.get(RentDatesAgreePage).map { value =>
+      buildRow(
+        labelKey = "checkAnswers.rents.whenDidYouAgree",
+        value = NGRDate.formatDate(value),
+        linkId = "when-did-you-agree",
+        href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeController.show(CheckMode),
+        hiddenKey = "when-did-you-agree"
+      )
+    }
+
+    val rentDatesAgreeStartRow = answers.get(RentDatesAgreeStartPage).map { value =>
+      buildRow(
+        labelKey = "checkAnswers.rents.whenDidYouAgree",
+        value = NGRDate.formatDate(value.agreedDate),
+        linkId = "when-did-you-agree",
+        href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeStartController.show(CheckMode),
+        hiddenKey = "when-did-you-agree"
+      )
+    }
+
+
     val didYouAgreeRentWithLandlord = answers.get(DidYouAgreeRentWithLandlordPage).map { value =>
       buildRow(
         labelKey = "checkAnswers.rent.didYouAgreeRentWithLandlord",
-        value = if (value) messages("service.yes") else messages("service.no"),
+        value = yesNo(value),
         linkId = "did-you-agree-rent-with-landlord",
         href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouAgreeRentWithLandlordController.show(CheckMode),
         hiddenKey = "did-you-agree-rent-with-landlord"
@@ -280,20 +264,60 @@ object CheckAnswers {
     val rentInterim = answers.get(RentInterimPage).map { value =>
       buildRow(
         labelKey = "checkAnswers.rent.rentInterim",
-        value = if (value) messages("service.yes") else messages("service.no"),
+        value = yesNo(value),
         linkId = "rent-interim",
         href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentInterimController.show(CheckMode),
         hiddenKey = "rent-interim"
       )
     }
 
+    val totalAnualRent = answers.get(HowMuchIsTotalAnnualRentPage).map { value =>
+      buildRow(
+        labelKey = "checkAnswers.rent.totalAnnualRent",
+        value = s"£$value",
+        linkId = "how-much-is-total-annual-rent",
+        href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchIsTotalAnnualRentController.show(CheckMode),
+        hiddenKey = "how-much-is-total-annual-rent"
+      )
+    }
+
     val checkRentPeriod = answers.get(CheckRentFreePeriodPage).map { value =>
       buildRow(
         labelKey = "checkAnswers.rent.checkRentPeriod",
-        value = if (value) messages("service.yes") else messages("service.no"),
+        value = yesNo(value),
         linkId = "check-rent-free-period",
         href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(CheckMode),
         hiddenKey = "check-rent-free-period"
+      )
+    }
+
+    val rentFreePeriodMonths = answers.get(RentFreePeriodPage).map { value =>
+      buildRow(
+        labelKey = "checkAnswers.rents.rentFreePeriod",
+        value = s"${value.months.toString} months",
+        linkId = "rent-free-period-months",
+        href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentFreePeriodController.show(CheckMode),
+        hiddenKey = "rent-free-period-months"
+      )
+    }
+
+    val rentFreePeriodReason = answers.get(RentFreePeriodPage).map { value =>
+      buildRow(
+        labelKey = "checkAnswers.rents.rentFreePeriodReason",
+        value = value.reasons,
+        linkId = "rent-free-period-reason",
+        href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentFreePeriodController.show(CheckMode),
+        hiddenKey = "rent-free-period-reason"
+      )
+    }
+
+    val rentDatesPaymentStartRow = answers.get(RentDatesAgreeStartPage).map { value =>
+      buildRow(
+        labelKey = "checkAnswers.rents.startPayingDate",
+        value = NGRDate.formatDate(value.startPayingDate),
+        linkId = "start-paying-date",
+        href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeStartController.show(CheckMode),
+        hiddenKey = "start-paying-date"
       )
     }
 
@@ -301,51 +325,68 @@ object CheckAnswers {
       rentBasedOn,
       otherReason,
       agreedRentChange,
+      rentDatesAgreeRow,
+      rentDatesAgreeStartRow,
       didYouAgreeRentWithLandlord,
       rentInterim,
-      checkRentPeriod
+      totalAnualRent,
+      checkRentPeriod,
+      rentFreePeriodMonths,
+      rentFreePeriodReason,
+      rentDatesPaymentStartRow
     ).flatten.map(summarise)
 
-    SummaryList(rows)
+    SummaryList(rows, classes = "govuk-!-margin-bottom-9")
   }
 
   def createRentPeriodRow(credId: String, userAnswers: Option[UserAnswers])
                          (implicit messages: Messages): Option[SummaryList] = {
-    val answers = userAnswers.getOrElse(UserAnswers(credId))
-    val rentPeriod = answers.get(ProvideDetailsOfFirstSecondRentPeriodPage)
+    val answers = userAnswers.getOrElse(UserAnswers(CredId(credId)))
+    val rentPeriod = answers.get(ProvideDetailsOfFirstRentPeriodPage)
     val link = uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatTypeOfAgreementController.show(CheckMode)
+    val formatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)
 
     rentPeriod.map { value =>
       val startRow = buildRow(
-        labelKey = "checkAnswers.rentPeriod.provideDetailsOfFirstSecondRentPeriod.start",
-        value = value.firstDateStart,
+        labelKey = "checkAnswers.rentPeriod.provideDetailsOfFirstRentPeriod.start",
+        value = value.startDate.format(formatter),
         linkId = "provide-details-of-first-period-start",
         href = link,
         hiddenKey = "provide-details-of-first-period-start"
       )
 
       val endRow = buildRow(
-        labelKey = "checkAnswers.rentPeriod.provideDetailsOfFirstSecondRentPeriod.end",
-        value = value.firstDateEnd,
+        labelKey = "checkAnswers.rentPeriod.provideDetailsOfFirstRentPeriod.end",
+        value = value.endDate.format(formatter),
         linkId = "provide-details-of-first-period-end",
         href = link,
         hiddenKey = "provide-details-of-first-period-end"
       )
 
-      SummaryList(Seq(startRow, endRow).map(summarise))
+      val isRentPayablePeriod = buildRow(
+        labelKey = "checkAnswers.rentPeriod.provideDetailsOfFirstSecondRentPeriod.isRentPayablePeriod",
+        value = yesNo(value.isRentPayablePeriod),
+        linkId = "provide-details-of-first-period-payable",
+        href = link,
+        hiddenKey = "provide-details-of-first-period-payable"
+      ) 
+      SummaryList(Seq(startRow, endRow, isRentPayablePeriod).map(summarise), classes = "govuk-!-margin-bottom-9")
     }
   }
 
   def createWhatYourRentIncludesRows(credId: String, userAnswers: Option[UserAnswers])(implicit messages: Messages): SummaryList = {
-    val answers = userAnswers.getOrElse(UserAnswers(credId))
+    val answers = userAnswers.getOrElse(UserAnswers(CredId(credId)))
     val whatYourRentIncludesOpt = answers.get(WhatYourRentIncludesPage)
     val link = uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatYourRentIncludesController.show(CheckMode)
 
-    def yesNo(value: Boolean): String = if (value) messages("service.yes") else messages("service.no")
+    val doesYourRentIncludeParkingValue = answers.get(DoesYourRentIncludeParkingPage)
+    val howManyParkingSpacesOrGaragesIncludedInRentValue = answers.get(HowManyParkingSpacesOrGaragesIncludedInRentPage)
+    val doYouPayExtraForParkingSpacesValue = answers.get(DoYouPayExtraForParkingSpacesPage)
+    val parkingSpacesOrGaragesNotIncludedInYourRentPageValue = answers.get(ParkingSpacesOrGaragesNotIncludedInYourRentPage)
 
     val livingAccommodationRow = buildRow(
       labelKey = "checkAnswers.whatYourRentIncludes.livingAccommodation",
-      value = whatYourRentIncludesOpt.map(v => yesNo(v.livingAccommodation)).getOrElse(messages("service.notProvided")),
+      value = whatYourRentIncludesOpt.map(value => yesNo(value.livingAccommodation)).getOrElse(messages("service.notProvided")),
       linkId = "what-you-rent-includes",
       href = link,
       hiddenKey = "what-you-rent-includes"
@@ -363,7 +404,7 @@ object CheckAnswers {
 
     val rentPartAddressRow = buildRow(
       labelKey = "checkAnswers.whatYourRentIncludes.rentPartAddress",
-      value = whatYourRentIncludesOpt.map(v => yesNo(v.rentPartAddress)).getOrElse(messages("service.notProvided")),
+      value = whatYourRentIncludesOpt.map(value => yesNo(value.rentPartAddress)).getOrElse(messages("service.notProvided")),
       linkId = "rent-part-address",
       href = link,
       hiddenKey = "rent-part-address"
@@ -371,7 +412,7 @@ object CheckAnswers {
 
     val rentEmptyShellRow = buildRow(
       labelKey = "checkAnswers.whatYourRentIncludes.rentEmptyShell",
-      value = whatYourRentIncludesOpt.map(v => yesNo(v.rentEmptyShell)).getOrElse(messages("service.notProvided")),
+      value = whatYourRentIncludesOpt.map(value => yesNo(value.rentEmptyShell)).getOrElse(messages("service.notProvided")),
       linkId = "rent-empty-shell",
       href = link,
       hiddenKey = "rent-empty-shell"
@@ -407,6 +448,133 @@ object CheckAnswers {
       )
     }
 
+    val doesYourRentIncludeParking = doesYourRentIncludeParkingValue.map { value =>
+      buildRow(
+        labelKey = "checkAnswers.whatYourRentIncludes.doesYourRentIncludeParking",
+        value = yesNo(value),
+        linkId = "landlord-full-name",
+        href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.DoesYourRentIncludeParkingController.show(CheckMode),
+        hiddenKey = "landlord-full-name"
+      )
+    }
+
+    val howManyUncoveredSpacesIncludedInRent = howManyParkingSpacesOrGaragesIncludedInRentValue.map {
+      value =>
+        buildRow(
+          labelKey = "checkAnswers.whatYourRentIncludes.howManyUncoveredSpacesIncludedInRent",
+          value = value.uncoveredSpaces.toString,
+          linkId = "landlord-relationship-reason",
+          href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowManyParkingSpacesOrGaragesIncludedInRentController.show(CheckMode),
+          hiddenKey = "landlord-relationship-reason"
+        )
+    }
+
+    val howManyCoveredSpacesIncludedInRent = howManyParkingSpacesOrGaragesIncludedInRentValue.map {
+      value =>
+        buildRow(
+          labelKey = "checkAnswers.whatYourRentIncludes.howManyCoveredSpacesIncludedInRent",
+          value = value.coveredSpaces.toString,
+          linkId = "landlord-relationship-reason",
+          href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowManyParkingSpacesOrGaragesIncludedInRentController.show(CheckMode),
+          hiddenKey = "landlord-relationship-reason"
+        )
+    }
+
+    val howManyGaragesIncludedInRent = howManyParkingSpacesOrGaragesIncludedInRentValue.map {
+      value =>
+        buildRow(
+          labelKey = "checkAnswers.whatYourRentIncludes.howManyGaragesIncludedInRent",
+          value = value.garages.toString,
+          linkId = "landlord-relationship-reason",
+          href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowManyParkingSpacesOrGaragesIncludedInRentController.show(CheckMode),
+          hiddenKey = "landlord-relationship-reason"
+        )
+    }
+
+    val doYouPayExtraForParkingSpaces = doYouPayExtraForParkingSpacesValue.map{
+      value =>
+        buildRow(
+          labelKey = "checkAnswers.whatYourRentIncludes.doYouPayExtraForParkingSpaces",
+          value = yesNo(value),
+          linkId = "landlord-full-name",
+          href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.DoYouPayExtraForParkingSpacesController.show(CheckMode),
+          hiddenKey = "landlord-full-name"
+        )
+    }
+
+
+
+    val parkingSpacesOrGaragesNotIncludedInYourRent = parkingSpacesOrGaragesNotIncludedInYourRentPageValue.map {
+      value =>
+        buildRow(
+          labelKey = "checkAnswers.whatYourRentIncludes.parkingSpacesOrGaragesNotIncludedInYourRent",
+          value =
+            s"""
+              ${messages("parkingSpacesOrGaragesNotIncludedInYourRent.uncoveredSpaces.label")} ${value.uncoveredSpaces}
+              ${messages("parkingSpacesOrGaragesNotIncludedInYourRent.coveredSpaces.label")} ${value.coveredSpaces}
+              ${messages("parkingSpacesOrGaragesNotIncludedInYourRent.garages.label")} ${value.garages}
+              """,
+          linkId = "landlord-relationship-reason",
+          href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.show(CheckMode),
+          hiddenKey = "landlord-relationship-reason"
+        )
+    }
+
+    val howManyUncoveredSpacesNotIncludedInRent = parkingSpacesOrGaragesNotIncludedInYourRentPageValue.map {
+      value =>
+        buildRow(
+          labelKey = "checkAnswers.whatYourRentIncludes.howManyUncoveredSpacesNotIncludedInRent",
+          value = value.uncoveredSpaces.toString,
+          linkId = "landlord-relationship-reason",
+          href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.show(CheckMode),
+          hiddenKey = "landlord-relationship-reason"
+        )
+    }
+
+    val howManyCoveredSpacesNotIncludedInRent = parkingSpacesOrGaragesNotIncludedInYourRentPageValue.map {
+      value =>
+        buildRow(
+          labelKey = "checkAnswers.whatYourRentIncludes.howManyCoveredSpacesNotIncludedInRent",
+          value = value.coveredSpaces.toString,
+          linkId = "landlord-relationship-reason",
+          href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.show(CheckMode),
+          hiddenKey = "landlord-relationship-reason"
+        )
+    }
+
+    val howManyGaragesNotIncludedInRent = parkingSpacesOrGaragesNotIncludedInYourRentPageValue.map {
+      value =>
+        buildRow(
+          labelKey = "checkAnswers.whatYourRentIncludes.howManyGaragesNotIncludedInRent",
+          value = value.garages.toString,
+          linkId = "landlord-relationship-reason",
+          href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.show(CheckMode),
+          hiddenKey = "landlord-relationship-reason"
+        )
+    }
+
+    val totalCost = parkingSpacesOrGaragesNotIncludedInYourRentPageValue.map {
+      value =>
+        buildRow(
+          labelKey = "checkAnswers.whatYourRentIncludes.parkingSpacesOrGaragesNotIncludedInYourRent.totalCost",
+          value = s"£${value.totalCost.toString()}",
+          linkId = "landlord-relationship-reason",
+          href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.show(CheckMode),
+          hiddenKey = "landlord-relationship-reason"
+        )
+    }
+
+    val agreementDate = parkingSpacesOrGaragesNotIncludedInYourRentPageValue.map {
+      value =>
+        buildRow(
+          labelKey = "checkAnswers.whatYourRentIncludes.parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate",
+          value = NGRDate.formatDate(value.agreementDate),
+          linkId = "landlord-relationship-reason",
+          href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.show(CheckMode),
+          hiddenKey = "landlord-relationship-reason"
+        )
+    }
+
     val rows = Seq(
       Some(livingAccommodationRow),
       bedroomNumbersRow,
@@ -414,14 +582,24 @@ object CheckAnswers {
       Some(rentEmptyShellRow),
       rentIncBusinessRatesRow,
       rentIncWaterChargesRow,
-      rentIncServiceRow
+      rentIncServiceRow,
+      doesYourRentIncludeParking,
+      howManyUncoveredSpacesIncludedInRent,
+      howManyCoveredSpacesIncludedInRent,
+      howManyGaragesIncludedInRent,
+      doYouPayExtraForParkingSpaces,
+      howManyUncoveredSpacesNotIncludedInRent,
+      howManyCoveredSpacesNotIncludedInRent,
+      howManyGaragesNotIncludedInRent,
+      totalCost,
+      agreementDate
     ).flatten.map(summarise)
 
-    SummaryList(rows)
+    SummaryList(rows, classes = "govuk-!-margin-bottom-9")
   }
 
   def createRepairsAndInsurance(credId: String, userAnswers: Option[UserAnswers])(implicit messages: Messages): SummaryList = {
-    val answers = userAnswers.getOrElse(UserAnswers(credId))
+    val answers = userAnswers.getOrElse(UserAnswers(CredId(credId)))
     val valueOpt = answers.get(RepairsAndInsurancePage)
     val link = uk.gov.hmrc.ngrraldfrontend.controllers.routes.RepairsAndInsuranceController.show(CheckMode)
 
@@ -456,12 +634,12 @@ object CheckAnswers {
       hiddenKey = "building-insurance"
     )
 
-    SummaryList(Seq(internalRepairs, externalRepairs, buildingInsurance).map(summarise))
+    SummaryList(Seq(internalRepairs, externalRepairs, buildingInsurance).map(summarise), classes = "govuk-!-margin-bottom-9")
   }
 
 
   def createRentReviewRows(credId: String, userAnswers: Option[UserAnswers])(implicit messages: Messages): SummaryList = {
-    val answers = userAnswers.getOrElse(UserAnswers(credId))
+    val answers = userAnswers.getOrElse(UserAnswers(CredId(credId)))
     val rentReview = answers.get(RentReviewPage)
     val rentDetails = answers.get(RentReviewDetailsPage)
     val rentReviewLink = uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentReviewController.show(CheckMode)
@@ -477,8 +655,8 @@ object CheckAnswers {
 
     val howOftenReviewed = rentReview.map { value =>
       buildRow(
-        labelKey = "checkAnswers.whatYourRentIncludes.rentIncService",
-        value = s"${value.rentReviewYears.getOrElse(0)} years ${value.rentReviewMonths.getOrElse(0)} months",
+        labelKey = "checkAnswers.rentReview.howOftenReviewed",
+        value = s"Every ${value.rentReviewYears.getOrElse(0)} years and ${value.rentReviewMonths.getOrElse(0)} months",
         linkId = "how-often-reviewed",
         href = rentReviewLink,
         hiddenKey = "how-often-reviewed"
@@ -488,7 +666,7 @@ object CheckAnswers {
     val canRentGoDown = rentReview.map { r =>
       buildRow(
         labelKey = "checkAnswers.whatYourRentIncludes.rentIncService",
-        value = if (r.canRentGoDown) messages("service.yes") else messages("service.no"),
+        value = yesNo(r.canRentGoDown),
         linkId = "can-rent-go-down",
         href = rentReviewLink,
         hiddenKey = "can-rent-go-down"
@@ -524,7 +702,7 @@ object CheckAnswers {
 
     val hasAgreedNewRent = buildRow(
       labelKey = "checkAnswers.rentReviewDetails.hasAgreedNewRent",
-      value = rentDetails.map(d => if (d.hasAgreedNewRent) messages("service.yes") else messages("service.no")).getOrElse(messages("service.notProvided")),
+      value = rentDetails.map(d => yesNo(d.hasAgreedNewRent)).getOrElse(messages("service.notProvided")),
       linkId = "has-agreed-new-rent",
       href = rentDetailsLink,
       hiddenKey = "has-agreed-new-rent"
@@ -544,30 +722,73 @@ object CheckAnswers {
     )
 
     val rows = (rentReview, rentDetails) match {
-      case (Some(rentReview), None) if !rentReview.hasIncludeRentReview =>
+      case (Some(review), Some(details)) =>
+        Seq(hasIncludeRentReview) ++ howOftenReviewed ++ canRentGoDown ++
+          Seq(annualAmount, whatHappensAtRentReview, startDate, hasAgreedNewRent, whoAgreedRow)
+      case (Some(review), None) if !review.hasIncludeRentReview =>
         Seq(hasIncludeRentReview) ++ canRentGoDown
       case (Some(_), None) =>
         Seq(hasIncludeRentReview) ++ howOftenReviewed ++ canRentGoDown
-      case (None, Some(rentDetails)) if rentDetails.whoAgreed.nonEmpty =>
+      case (None, Some(details)) if details.whoAgreed.nonEmpty =>
         Seq(annualAmount, whatHappensAtRentReview, startDate, hasAgreedNewRent, whoAgreedRow)
       case (None, Some(_)) =>
         Seq(annualAmount, whatHappensAtRentReview, startDate, hasAgreedNewRent)
       case (None, None) =>
         Seq.empty
     }
+    SummaryList(rows.map(summarise), classes = "govuk-!-margin-bottom-9")
+  }
 
-    SummaryList(rows.map(summarise))
+  def createRepairsAndFittingOut(credId: String, userAnswers: Option[UserAnswers])(implicit messages: Messages): Option[SummaryList] = {
+    val answers = userAnswers.getOrElse(UserAnswers(CredId(credId)))
+    val repairsAndFittingOut = answers.get(RepairsAndFittingOutPage)
+    val aboutRepairsAndFittingOut = answers.get(AboutRepairsAndFittingOutPage)
+
+    val repairsAndFittingOutRow = repairsAndFittingOut.map { value =>
+      buildRow(
+        labelKey = "checkAnswers.repairsAndFittingOut.repairsAndFittingOut",
+        value = yesNo(value),
+        linkId = "did-you-get-money-from-landlord",
+        href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.RepairsAndFittingOutController.show(CheckMode),
+        hiddenKey = "did-you-get-money-from-landlord"
+      )
+    }
+
+    val aboutRepairsAndFittingOutRow = aboutRepairsAndFittingOut.map { value =>
+      buildRow(
+        labelKey = "checkAnswers.repairsAndFittingOut.date",
+        value = NGRMonthYear.formatYearMonth(value.date),
+        linkId = "did-you-pay-money-to-landlord",
+        href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.AboutRepairsAndFittingOutController.show(CheckMode),
+        hiddenKey = "did-you-pay-money-to-landlord"
+      )
+    }
+
+    val aboutRepairsAndFittingOutCostRow = aboutRepairsAndFittingOut.map { value =>
+      buildRow(
+        labelKey = "checkAnswers.repairsAndFittingOut.cost",
+        value = s"£${value.cost}",
+        linkId = "did-you-pay-money-to-landlord",
+        href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.AboutRepairsAndFittingOutController.show(CheckMode),
+        hiddenKey = "did-you-pay-money-to-landlord"
+      )
+    }
+
+    val rows = repairsAndFittingOutRow.toSeq ++ aboutRepairsAndFittingOutRow.toSeq ++ aboutRepairsAndFittingOutCostRow.toSeq
+
+    if (rows.nonEmpty) Some(SummaryList(rows.map(summarise), classes = "govuk-!-margin-bottom-9")) else None
   }
 
   def createPaymentRows(credId: String, userAnswers: Option[UserAnswers])(implicit messages: Messages): Option[SummaryList] = {
-    val answers = userAnswers.getOrElse(UserAnswers(credId))
+    val answers = userAnswers.getOrElse(UserAnswers(CredId(credId)))
     val gotMoney = answers.get(DidYouGetMoneyFromLandlordPage)
     val paidMoney = answers.get(DidYouPayAnyMoneyToLandlordPage)
+    val moneyYouPaidInAdvanceToLandlord = answers.get(MoneyYouPaidInAdvanceToLandlordPage)
 
     val gotMoneyRow = gotMoney.map { value =>
       buildRow(
         labelKey = "checkAnswers.payments.didYouGetMoneyFromLandlord",
-        value = if (value) messages("service.yes") else messages("service.no"),
+        value = yesNo(value),
         linkId = "did-you-get-money-from-landlord",
         href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouGetMoneyFromLandlordController.show(CheckMode),
         hiddenKey = "did-you-get-money-from-landlord"
@@ -577,43 +798,82 @@ object CheckAnswers {
     val paidMoneyRow = paidMoney.map { value =>
       buildRow(
         labelKey = "checkAnswers.payments.didYouPayAnyMoneyToLandlord",
-        value = if (value) messages("service.yes") else messages("service.no"),
+        value = yesNo(value),
         linkId = "did-you-pay-money-to-landlord",
         href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouPayAnyMoneyToLandlordController.show(CheckMode),
         hiddenKey = "did-you-pay-money-to-landlord"
       )
     }
 
-    val rows = gotMoneyRow.toSeq ++ paidMoneyRow.toSeq
+    val moneyYouPaidInAdvanceToLandlordAmountRow = moneyYouPaidInAdvanceToLandlord.map { value =>
+      buildRow(
+        labelKey = "checkAnswers.payments.moneyYouPaidInAdvanceToLandlord.amount",
+        value = s"£${value.amount.toString()}",
+        linkId = "money-you-paid-in-advance-to-landlord-amount",
+        href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.MoneyYouPaidInAdvanceToLandlordController.show(CheckMode),
+        hiddenKey = "money-you-paid-in-advance-to-landlord-amount"
+      )
+    }
 
-    if (rows.nonEmpty) Some(SummaryList(rows.map(summarise))) else None
+    val moneyYouPaidInAdvanceToLandlordDateRow = moneyYouPaidInAdvanceToLandlord.map { value =>
+      buildRow(
+        labelKey = "checkAnswers.payments.moneyYouPaidInAdvanceToLandlord.date",
+        value = NGRDate.formatDate(value.date),
+        linkId = "money-you-paid-in-advance-to-landlord-amount",
+        href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.MoneyYouPaidInAdvanceToLandlordController.show(CheckMode),
+        hiddenKey = "money-you-paid-in-advance-to-landlord-amount"
+      )
+    }
+
+
+    val rows = gotMoneyRow.toSeq ++ paidMoneyRow.toSeq ++ moneyYouPaidInAdvanceToLandlordAmountRow.toSeq ++ moneyYouPaidInAdvanceToLandlordDateRow.toSeq
+
+    if (rows.nonEmpty) Some(SummaryList(rows.map(summarise), classes = "govuk-!-margin-bottom-9")) else None
   }
 
   def createBreakClauseRows(credId: String, userAnswers: Option[UserAnswers])
                            (implicit messages: Messages): Option[SummaryList] = {
-
-    val answers = userAnswers.getOrElse(UserAnswers(credId))
+    val answers = userAnswers.getOrElse(UserAnswers(CredId(credId)))
     val confirmBreakClause = answers.get(ConfirmBreakClausePage)
-    
+
     confirmBreakClause.map { value =>
-      val displayValue = if (value) {
-        messages("service.yes")
-      } else {
-        messages("service.no")
-      }
-      
       val confirmBreakClause = buildRow(
         labelKey = "checkAnswers.breakClause.confirmBreakClause",
-        value = displayValue,
+        value = yesNo(value),
         linkId = "property-address",
         href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ConfirmBreakClauseController.show(CheckMode),
         hiddenKey = "property-address"
       )
-      
-      val 
-      
-      SummaryList(Seq(summarise(confirmBreakClause)))
+      SummaryList(Seq(summarise(confirmBreakClause)), classes = "govuk-!-margin-bottom-9")
     }
   }
-  
+
+  def createOtherDetailsRow(credId: String, userAnswers: Option[UserAnswers])
+                           (implicit messages: Messages): SummaryList = {
+    val answers = userAnswers.getOrElse(UserAnswers(CredId(credId)))
+    val hasAnythingElseAffectedTheRent = answers.get(HasAnythingElseAffectedTheRentPage)
+
+    val hasAnyAffectedRent = hasAnythingElseAffectedTheRent.map{value =>
+      buildRow(
+        labelKey = "checkAnswers.Otherdetails.hasAnyAffectedRent",
+        value =  yesNo(value.radio),
+        linkId = "landlord-full-name",
+        href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.HasAnythingElseAffectedTheRentController.show(CheckMode),
+        hiddenKey = "landlord-full-name"
+      )
+    }.toSeq
+
+    val reason = hasAnythingElseAffectedTheRent.flatMap(_.reason).map { reason =>
+      buildRow(
+        labelKey = "checkAnswers.Otherdetails.reason",
+        value = reason,
+        linkId = "other-details-reason",
+        href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.HasAnythingElseAffectedTheRentController.show(CheckMode),
+        hiddenKey = "other-details-reason"
+      )
+    }.toSeq
+
+    val rows = hasAnyAffectedRent ++ reason
+    SummaryList(rows.map(summarise), classes = "govuk-!-margin-bottom-9")
+  }
 }

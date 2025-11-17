@@ -18,12 +18,10 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.*
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
-import uk.gov.hmrc.ngrraldfrontend.pages.*
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.services.CheckAnswers.*
 import uk.gov.hmrc.ngrraldfrontend.views.html.CheckAnswersView
@@ -34,10 +32,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class CheckAnswersController @Inject()(view: CheckAnswersView,
                                        authenticate: AuthRetrievals,
-                                       mcc: MessagesControllerComponents,
                                        getData: DataRetrievalAction,
                                        sessionRepository: SessionRepository,
-                                       navigator: Navigator
+                                       navigator: Navigator,
+                                       mcc: MessagesControllerComponents,
                                       )(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
   def show(mode: Mode): Action[AnyContent] = {
@@ -50,11 +48,12 @@ class CheckAnswersController @Inject()(view: CheckAnswersView,
         rentSummary = createRentRows(credId = request.credId, userAnswers = request.userAnswers),
         firstRentPeriod = createRentPeriodRow(credId = request.credId, userAnswers = request.userAnswers),
         whatYourRentIncludesSummary = createWhatYourRentIncludesRows(credId = request.credId, userAnswers = request.userAnswers),
-        parkingSummary = createGarageOrParkingRows(credId = request.credId, userAnswers = request.userAnswers),
         repairsAndInsurance = createRepairsAndInsurance(credId = request.credId, userAnswers = request.userAnswers),
         rentReview = createRentReviewRows(credId = request.credId, userAnswers = request.userAnswers),
+        repairsAndFittingOutSummary = createRepairsAndFittingOut(credId = request.credId, userAnswers = request.userAnswers),
         payments = createPaymentRows(credId = request.credId, userAnswers = request.userAnswers),
-        breakClause = createBreakClauseRows(credId = request.credId, userAnswers = request.userAnswers)
+        breakClause = createBreakClauseRows(credId = request.credId, userAnswers = request.userAnswers),
+        otherDetailsSummary = createOtherDetailsRow(credId = request.credId, userAnswers = request.userAnswers)
       )))
     }
   }

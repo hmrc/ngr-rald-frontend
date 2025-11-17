@@ -596,47 +596,64 @@ checkAnswers.leaseRenewal.label = Lease renewal details
 checkAnswers.leaseRenewal.typeOfLeaseRenewal = What type of lease renewal is it?
 
 checkAnswers.landlord.label = Landlord details
-checkAnswers.landlord.fullName = What is the landlord''s full name?
+checkAnswers.landlord.fullName = Landlord's full name
 checkAnswers.landlord.relationship = Do you have a relationship with the landlord other than as a tenant?
-checkAnswers.landlord.relationship.reason = Can you tell us what your relationship with the landlord is?
+checkAnswers.landlord.relationship.reason = Relationship with the landlord
 
 checkAnswers.agreement.label = Agreement details
 checkAnswers.agreement.whatTypeOfAgreement = What type of agreement do you have?
+checkAnswers.agreement.startDate = Agreement start date
+checkAnswers.agreement.isOpenEnded = Is your agreement open-ended?
+checkAnswers.agreement.endDate = Agreement end date
+checkAnswers.agreement.breakClause = Does your agreement have a break clause?
+checkAnswers.agreement.breakClauseDetails = Break clause details
 
 checkAnswers.rent.label = Rent details
 checkAnswers.rent.whatIsYourRentBasedOn = What is your rent based on?
 checkAnswers.rent.otherReason = Can you tell us how your rent was agreed?
-checkAnswers.rent.agreedRentChange = Have you agreed in advance with the landlord when and by how much rent goes up?
+checkAnswers.rent.agreedRentChange = Do you have a stepped rent?
 checkAnswers.rent.didYouAgreeRentWithLandlord = Did you agree the rent with your landlord or their agent?
 checkAnswers.rent.rentInterim = Did the court also set an interim rent?
+checkAnswers.rents.whenDidYouAgree = When did you agree your rent?
+checkAnswers.rent.totalAnnualRent = Total annual rent
 checkAnswers.rent.checkRentPeriod = Do you have a rent-free period at the start of your agreement?
+checkAnswers.rents.rentFreePeriod = How many months is your rent-free period?
+checkAnswers.rents.rentFreePeriodReason = Why do you have a rent-free period?
+checkAnswers.rents.startPayingDate = When will you start paying rent?
 
 checkAnswers.rentPeriod.provideDetailsOfFirstSecondRentPeriod.label = First rent period
-checkAnswers.rentPeriod.provideDetailsOfFirstSecondRentPeriod.start = Start date
-checkAnswers.rentPeriod.provideDetailsOfFirstSecondRentPeriod.end = End date
+checkAnswers.rentPeriod.provideDetailsOfFirstRentPeriod.start = Start date
+checkAnswers.rentPeriod.provideDetailsOfFirstRentPeriod.end = End date
+checkAnswers.rentPeriod.provideDetailsOfFirstSecondRentPeriod.isRentPayablePeriod = Do you pay rent in this period?
 
-checkAnswers.whatYourRentIncludes.label = What your rent includes
+checkAnswers.whatYourRentIncludes.label = What your rent includes details
 checkAnswers.whatYourRentIncludes.livingAccommodation = Does your rent include any living accommodation?
 checkAnswers.whatYourRentIncludes.bedroomNumbers = How many bedrooms does the living accommodation have?
-checkAnswers.whatYourRentIncludes.rentPartAddress = Is the rent you pay only for part of this address?
+checkAnswers.whatYourRentIncludes.rentPartAddress = Is the rent you pay for all of this property?
+checkAnswers.whatYourRentIncludes.rentEmptyShell = Is your rent for an empty shell building?
+checkAnswers.whatYourRentIncludes.checkRentPeriod = Do you have a rent-free period at the start of your agreement?
 checkAnswers.whatYourRentIncludes.rentIncBusinessRates = Does your rent include business rates?
 checkAnswers.whatYourRentIncludes.rentIncWaterCharges = Does your rent include water charges?
 checkAnswers.whatYourRentIncludes.rentIncService = Does your rent include service charges?
 
-checkAnswers.parking.label = Parking spaces or garages
-checkAnswers.parking.doesYourRentIncludeParking = Does your rent include parking spaces or garages?
-checkAnswers.parking.howManyParkingSpacesOrGaragesIncludedInRent = How many parking spaces or garages are included in your rent?
-checkAnswers.parking.doYouPayExtraForParkingSpaces = Do you pay extra for parking spaces or garages that are not included in your rent?
-checkAnswers.parking.parkingSpacesOrGaragesNotIncludedInYourRent = How many parking spaces or garages do you pay extra for?
-checkAnswers.parking.parkingSpacesOrGaragesNotIncludedInYourRent.totalCost = How much extra do you pay each year for parking and garages (excluding VAT)?
-checkAnswers.parking.parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate = When was this payment agreed for parking and garages?
+checkAnswers.whatYourRentIncludes.doesYourRentIncludeParking = Does your rent include parking spaces or garages?
+checkAnswers.whatYourRentIncludes.howManyUncoveredSpacesIncludedInRent = Uncovered spaces included in you rent
+checkAnswers.whatYourRentIncludes.howManyCoveredSpacesIncludedInRent = Covered spaces included in you rent
+checkAnswers.whatYourRentIncludes.howManyGaragesIncludedInRent = Garages included in you rent
+checkAnswers.whatYourRentIncludes.howManyUncoveredSpacesNotIncludedInRent = Uncovered spaces not included in your rent
+checkAnswers.whatYourRentIncludes.howManyCoveredSpacesNotIncludedInRent = Covered spaces not included in your rent
+checkAnswers.whatYourRentIncludes.howManyGaragesNotIncludedInRent = Garages not included in your rent
+checkAnswers.whatYourRentIncludes.doYouPayExtraForParkingSpaces = Do you pay extra for parking spaces or garages that are not included in your rent?
+checkAnswers.whatYourRentIncludes.parkingSpacesOrGaragesNotIncludedInYourRent = How many parking spaces or garages do you pay extra for?
+checkAnswers.whatYourRentIncludes.parkingSpacesOrGaragesNotIncludedInYourRent.totalCost = How much extra do you pay each year for parking and garages (excluding VAT)?
+checkAnswers.whatYourRentIncludes.parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate = When was this payment agreed for parking and garages?
 
-checkAnswers.repairsAndInsurance.label = Repairs and insurance
+checkAnswers.repairsAndInsurance.label = Repairs and insurance details
 checkAnswers.repairsAndInsurance.internalRepairs = Who pays for internal repairs?
 checkAnswers.repairsAndInsurance.externalRepairs = Who pays for external repairs?
 checkAnswers.repairsAndInsurance.buildingInsurance = Who pays for building insurance repairs?
 
-checkAnswers.rentReview.label = Rent review
+checkAnswers.rentReview.label = Rent review details
 checkAnswers.rentReview.hasIncludeRentReview = Does your agreement include a rent review?
 checkAnswers.rentReview.howOftenReviewed = How often is your rent reviewed?
 checkAnswers.rentReview.canRentGoDown = Can the rent go down when it is reviewed?
@@ -646,9 +663,21 @@ checkAnswers.rentReviewDetails.startDate = When will you start paying rent?
 checkAnswers.rentReviewDetails.hasAgreedNewRent = Did you and the landlord (or their agent) agree the new rent?
 checkAnswers.rentReviewDetails.whoAgreed = Who agreed the new rent?
 
+checkAnswers.repairsAndFittingOut.label = Repairs and fitting out
+checkAnswers.repairsAndFittingOut.repairsAndFittingOut = Have you done any repairs or fitting out in the property?
+checkAnswers.repairsAndFittingOut.date = When did you do the repairs or fitting out?
+checkAnswers.repairsAndFittingOut.cost = How much did the repairs or fitting out cost (excluding VAT)?
+
 checkAnswers.payments.label = Payments
 checkAnswers.payments.didYouGetMoneyFromLandlord = Did you get any money from the landlord or previous tenant to take on the lease?
 checkAnswers.payments.didYouPayAnyMoneyToLandlord = Did you pay any money in advance to the landlord?
+checkAnswers.payments.moneyYouPaidInAdvanceToLandlord.amount = How much money did you pay in advance to the landlord (excluding VAT)?
+checkAnswers.payments.moneyYouPaidInAdvanceToLandlord.date = When did you pay the money?
 
 checkAnswers.breakClause.label = Break clause
 checkAnswers.breakClause.confirmBreakClause = Did your agreement allow you to trigger a break clause?
+checkAnswers.breakClause.didYouGetIncentiveForNotTriggeringBreakClause = Did you get incentive for not triggering the break clause?
+
+checkAnswers.Otherdetails.label = Other details
+checkAnswers.Otherdetails.hasAnyAffectedRent = Has anything else affected the rent?
+checkAnswers.Otherdetails.reason = Can you tell us what else has affected the rent?

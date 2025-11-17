@@ -21,6 +21,7 @@ import play.api.data.Mapping
 import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDate
+import java.time.YearMonth
 import java.time.format.{DateTimeFormatter, TextStyle}
 import java.util.Locale
 
@@ -34,10 +35,10 @@ final case class NGRMonthYear(month: String, year: String) {
 object NGRMonthYear {
   implicit val format: OFormat[NGRMonthYear] = Json.format[NGRMonthYear]
   
-  def formatDate(dateString: String): String = {
-    val date = LocalDate.parse(dateString)
-    val outputFormatter = DateTimeFormatter.ofPattern("MMMM yyyy", Locale.UK)
-    date.format(outputFormatter)
+  def formatYearMonth(input: String): String = {
+    val yearMonth = YearMonth.parse(input)
+    val formatter = DateTimeFormatter.ofPattern("MMMM yyyy", Locale.ENGLISH)
+    yearMonth.format(formatter)
   }
 
   def fromString(dateString: String): NGRMonthYear = {
