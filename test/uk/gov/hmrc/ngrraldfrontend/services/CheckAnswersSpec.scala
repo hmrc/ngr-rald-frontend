@@ -23,9 +23,10 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.*
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Content
 import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
 import uk.gov.hmrc.ngrraldfrontend.models.*
+import uk.gov.hmrc.ngrraldfrontend.models.Incentive.{YesLumpSum, YesRentFreePeriod}
 import uk.gov.hmrc.ngrraldfrontend.models.registration.*
 import uk.gov.hmrc.ngrraldfrontend.pages.*
-import uk.gov.hmrc.ngrraldfrontend.services.CheckAnswers.{createFirstRentPeriodRow, createRentPeriodsSummaryLists}
+import uk.gov.hmrc.ngrraldfrontend.services.CheckAnswers.{createBreakClauseRows, createFirstRentPeriodRow, createRentPeriodsSummaryLists}
 
 import java.time.LocalDate
 
@@ -460,23 +461,60 @@ class CheckAnswersSpec extends ViewBaseSpec {
     summaryListOpt mustBe None
   }
 
-  "createBreakClauseRows" should {
-    "return a row with break clause details when data is present" in {
-      val userAnswers = UserAnswers(CredId("cred-123")).set(ConfirmBreakClausePage, true).get
 
-      val summaryListOpt = CheckAnswers.createBreakClauseRows("cred-123", Some(userAnswers))
+  "createBreakClauseRows" must {
 
-      summaryListOpt mustBe defined
-      val summaryList = summaryListOpt.get
-
-      summaryList.rows.size mustBe 1
-      extractText(summaryList.rows.head.key.content) mustBe messages("checkAnswers.breakClause.confirmBreakClause")
-      extractText(summaryList.rows.head.value.content) mustBe messages("service.yes")
+    "return None when no break clause data exists" in {
+      val result = createBreakClauseRows("credId", Some(UserAnswers(CredId("credId"))))
+      result mustBe None
     }
-  }
-  "createBreakClauseRows return None when no break clause data is provided" in {
-    val summaryListOpt = CheckAnswers.createBreakClauseRows("cred-123", None)
-    summaryListOpt mustBe None
+
+    "return Some SummaryList with correct rows when all data exists" in {
+      val confirmBreakClause = true
+      val incentiveDetails = DidYouGetIncentiveForNotTriggeringBreakClause(checkBox = Set(YesRentFreePeriod, YesLumpSum))
+      val rentFreePeriod = AboutTheRentFreePeriod(months = 2, date = NGRDate("01","01","2025").makeString)
+
+      val userAnswers = UserAnswers(CredId("credId"))
+        .set(ConfirmBreakClausePage, confirmBreakClause).success.value
+        .set(DidYouGetIncentiveForNotTriggeringBreakClausePage, incentiveDetails).success.value
+        .set(AboutTheRentFreePeriodPage, rentFreePeriod).success.value
+
+      val result = createBreakClauseRows("credId", Some(userAnswers))
+
+      result mustBe defined
+      val summaryList = result.get
+
+      summaryList.rows.size mustBe 4
+
+      summaryList.rows.head.value.content.asHtml.toString must include("Yes")
+      summaryList.rows(1).value.content.asHtml.toString must include(messages("didYouGetIncentiveForNotTriggeringBreakClause.checkbox"))
+      summaryList.rows(2).value.content.asHtml.toString must include("2 months")
+      summaryList.rows(3).value.content.asHtml.toString must include("1 January 2025")
+    }
+
+    "handle single checkbox selection correctly" in {
+      val incentiveDetails = DidYouGetIncentiveForNotTriggeringBreakClause(checkBox = Set(YesRentFreePeriod))
+      val userAnswers = UserAnswers(CredId("credId"))
+        .set(DidYouGetIncentiveForNotTriggeringBreakClausePage, incentiveDetails).success.value
+
+      val result = createBreakClauseRows("credId", Some(userAnswers))
+
+      result mustBe defined
+      val summaryList = result.get
+      summaryList.rows.head.value.content.asHtml.toString must include(messages("didYouGetIncentiveForNotTriggeringBreakClause.checkbox1"))
+    }
+
+    "format months correctly for singular value" in {
+      val rentFreePeriod = AboutTheRentFreePeriod(months = 1, date = NGRDate("01","01","2025").makeString)
+      val userAnswers = UserAnswers(CredId("credId"))
+        .set(AboutTheRentFreePeriodPage, rentFreePeriod).success.value
+
+      val result = createBreakClauseRows("credId", Some(userAnswers))
+
+      result mustBe defined
+      val summaryList = result.get
+      summaryList.rows.head.value.content.asHtml.toString must include("1 month")
+    }
   }
 
   "createOtherDetailsRow" should {

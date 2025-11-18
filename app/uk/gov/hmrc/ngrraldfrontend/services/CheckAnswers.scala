@@ -20,6 +20,7 @@ import play.api.i18n.Messages
 import play.api.mvc.Call
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.ngrraldfrontend.models.*
+import uk.gov.hmrc.ngrraldfrontend.models.Incentive.{No, YesLumpSum, YesRentFreePeriod}
 import uk.gov.hmrc.ngrraldfrontend.models.NGRSummaryListRow.summarise
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.pages.*
@@ -873,17 +874,66 @@ object CheckAnswers {
                            (implicit messages: Messages): Option[SummaryList] = {
     val answers = userAnswers.getOrElse(UserAnswers(CredId(credId)))
     val confirmBreakClause = answers.get(ConfirmBreakClausePage)
+    val didYouGetIncentiveForNotTriggeringBreakClause = answers.get(DidYouGetIncentiveForNotTriggeringBreakClausePage)
+    val aboutTheRentFreePeriod = answers.get(AboutTheRentFreePeriodPage)
 
-    confirmBreakClause.map { value =>
-      val confirmBreakClause = buildRow(
+    val confirmBreakClauseRow = confirmBreakClause.map { value =>
+      buildRow(
         labelKey = "checkAnswers.breakClause.confirmBreakClause",
         value = yesNo(value),
-        linkId = "property-address",
+        linkId = "confirm-break-clause",
         href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ConfirmBreakClauseController.show(CheckMode),
-        hiddenKey = "property-address"
+        hiddenKey = "confirm-break-clause"
       )
-      SummaryList(Seq(summarise(confirmBreakClause)), classes = "govuk-!-margin-bottom-9")
     }
+
+    val didYouGetIncentiveForNotTriggeringBreakClauseRow = didYouGetIncentiveForNotTriggeringBreakClause.map { value =>
+      buildRow(
+        labelKey = "checkAnswers.breakClause.didYouGetIncentiveForNotTriggeringBreakClause",
+        value = value.checkBox.match{
+          case value if value.contains(YesRentFreePeriod) && value.contains(YesLumpSum) =>
+            s"${messages("didYouGetIncentiveForNotTriggeringBreakClause.checkbox")}, ${messages("didYouGetIncentiveForNotTriggeringBreakClause.checkbox1")}"
+          case value if value.contains(YesRentFreePeriod) =>
+            messages("didYouGetIncentiveForNotTriggeringBreakClause.checkbox1")
+          case value if value.contains(YesLumpSum) =>
+            messages("didYouGetIncentiveForNotTriggeringBreakClause.checkbox")
+          case value if value.contains(No) =>
+            "Yes, I got a rent-free period"
+        },
+        linkId = "did-you-get-incentive-for-not-triggering-break-clause",
+        href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouGetIncentiveForNotTriggeringBreakClauseController.show(CheckMode),
+        hiddenKey = "did-you-get-incentive-for-not-triggering-break-clause"
+      )
+    }
+
+    val rentFreeMonths = aboutTheRentFreePeriod.map { value =>
+      buildRow(
+        labelKey = "checkAnswers.breakClause.rentFreeMonths",
+        value = s"${value.months.toString} ${if(value.months > 1){"months"} else {"month"}}",
+        linkId = "about-the-rent-free-period",
+        href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.AboutTheRentFreePeriodController.show(CheckMode),
+        hiddenKey = "about-the-rent-free-period"
+      )
+    }
+
+    val rentFreeStartDate = aboutTheRentFreePeriod.map { value =>
+      buildRow(
+        labelKey = "checkAnswers.breakClause.rentFreeStartDate",
+        value = NGRDate.formatDate(value.date),
+        linkId = "about-the-rent-free-period",
+        href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.AboutTheRentFreePeriodController.show(CheckMode),
+        hiddenKey = "about-the-rent-free-period"
+      )
+    }
+
+    val rows =
+      confirmBreakClauseRow.toSeq ++
+      didYouGetIncentiveForNotTriggeringBreakClauseRow.toSeq ++
+      rentFreeMonths.toSeq ++
+      rentFreeStartDate.toSeq
+
+    if (rows.nonEmpty) Some(SummaryList(rows.map(summarise), classes = "govuk-!-margin-bottom-9")) else None
+
   }
 
   def createOtherDetailsRow(credId: String, userAnswers: Option[UserAnswers])
