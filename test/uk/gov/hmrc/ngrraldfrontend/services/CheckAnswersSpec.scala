@@ -25,6 +25,9 @@ import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
 import uk.gov.hmrc.ngrraldfrontend.models.*
 import uk.gov.hmrc.ngrraldfrontend.models.registration.*
 import uk.gov.hmrc.ngrraldfrontend.pages.*
+import uk.gov.hmrc.ngrraldfrontend.services.CheckAnswers.{createFirstRentPeriodRow, createRentPeriodsSummaryLists}
+
+import java.time.LocalDate
 
 class CheckAnswersSpec extends ViewBaseSpec {
 
@@ -513,7 +516,96 @@ class CheckAnswersSpec extends ViewBaseSpec {
   }
 
 
-  "createLeaseRenewalsSummaryRows" should {
+  "createFirstRentPeriodRow" must {
+
+    "return None when ProvideDetailsOfFirstRentPeriodPage is missing" in {
+      val result = createFirstRentPeriodRow("credId", Some(UserAnswers(CredId("credId"))))
+      result mustBe None
+    }
+
+    "return Some SummaryList with correct rows when rent period exists" in {
+      val rentPeriodDetail = ProvideDetailsOfFirstRentPeriod(
+        startDate = LocalDate.parse("2020-01-01"),
+        endDate = LocalDate.parse("2020-06-30"),
+        isRentPayablePeriod = true,
+        rentPeriodAmount = Some(BigDecimal(1200.0))
+      )
+
+      val userAnswers = UserAnswers(CredId("credId"))
+        .set(ProvideDetailsOfFirstRentPeriodPage, rentPeriodDetail).success.value
+
+      val result = createFirstRentPeriodRow("credId", Some(userAnswers))
+
+      result mustBe defined
+      val summaryList = result.get
+
+      summaryList.rows.size mustBe 4 // start, end, isRentPayablePeriod, amount
+
+      summaryList.rows.head.value.content.asHtml.toString must include("1 January 2020")
+      summaryList.rows(1).value.content.asHtml.toString must include("30 June 2020")
+      summaryList.rows(2).value.content.asHtml.toString must include("Yes")
+      summaryList.rows(3).value.content.asHtml.toString must include("£1200.0")
+    }
+
+    "exclude amount row when rentPeriodAmount is None" in {
+      val rentPeriodDetail = ProvideDetailsOfFirstRentPeriod(
+        startDate = LocalDate.parse("2020-01-01"),
+        endDate = LocalDate.parse("2020-06-30"),
+        isRentPayablePeriod = false,
+        rentPeriodAmount = None
+      )
+
+      val userAnswers = UserAnswers(CredId("credId"))
+        .set(ProvideDetailsOfFirstRentPeriodPage, rentPeriodDetail).success.value
+
+      val result = createFirstRentPeriodRow("credId", Some(userAnswers))
+
+      result mustBe defined
+      val summaryList = result.get
+
+      summaryList.rows.size mustBe 3 // amount row excluded
+      summaryList.rows(2).value.content.asHtml.toString must include("No")
+    }
+  }
+
+
+  "createRentPeriodsSummaryLists" should {
+
+    "return None when rent periods details are missing" in {
+      val result = createRentPeriodsSummaryLists("credId", Some(UserAnswers(CredId("credId"))))
+      result mustBe None
+    }
+
+    "return Some with correct SummaryLists when rent periods details exist" in {
+      val rentPeriodsDetails = Seq(
+        DetailsOfRentPeriod(NGRDate("12", "12", "2020").makeString, BigDecimal(800.0)),
+        DetailsOfRentPeriod(NGRDate("13", "5", "2021").makeString, BigDecimal(500.0))
+      )
+
+      val userAnswers: UserAnswers = UserAnswers(CredId("credId")).set(ProvideDetailsOfSecondRentPeriodPage, rentPeriodsDetails).success.value
+
+      val result = createRentPeriodsSummaryLists("credId", Some(userAnswers))
+
+      result mustBe defined
+      val summaryLists = result.get
+      summaryLists.size mustBe 2
+
+      val firstSummaryList = summaryLists.head
+      firstSummaryList.rows.head.key.content.asHtml.toString must include("End date")
+      firstSummaryList.rows.head.value.content.asHtml.toString must include("12 December 2020")
+      firstSummaryList.rows(1).key.content.asHtml.toString must include("Rent for this period (excluding VAT)")
+      firstSummaryList.rows(1).value.content.asHtml.toString must include("£800.0")
+
+      val lastSummaryList = summaryLists.last
+      lastSummaryList.rows.head.key.content.asHtml.toString must include("End date")
+      lastSummaryList.rows.head.value.content.asHtml.toString must include("13 May 2021")
+      lastSummaryList.rows(1).key.content.asHtml.toString must include("Rent for this period (excluding VAT)")
+      lastSummaryList.rows(1).value.content.asHtml.toString must include("£500.0")
+    }
+  }
+
+
+    "createLeaseRenewalsSummaryRows" should {
     "return a row with lease renewal details when data is present" in {
       val userAnswers = UserAnswers(CredId("cred-123"))
         .set(WhatTypeOfLeaseRenewalPage, "RenewedAgreement")

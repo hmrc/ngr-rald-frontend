@@ -114,6 +114,8 @@ class CheckAnswersViewSpec extends ViewBaseSpec {
     val navTitle = "head > title"
     val heading = "#main-content > div > div.govuk-grid-column-two-thirds > h1"
     val landlordLabel = "#main-content > div > div.govuk-grid-column-two-thirds > h2:nth-child(2)"
+    val leaseRenewalDetailsLabel = "#main-content > div > div.govuk-grid-column-two-thirds > h2:nth-child(2)"
+    val whatLeaseRenewal = "#main-content > div > div.govuk-grid-column-two-thirds > dl:nth-child(3) > div:nth-child(1) > dt"
     val landlordFullName = "#main-content > div > div.govuk-grid-column-two-thirds > dl:nth-child(3) > div:nth-child(1) > dt"
     val landlordRelationship = "#main-content > div > div.govuk-grid-column-two-thirds > dl:nth-child(3) > div:nth-child(2) > dt"
     val landlordRelationshipReason = "#main-content > div > div.govuk-grid-column-two-thirds > dl:nth-child(3) > div:nth-child(3) > dt"
@@ -189,9 +191,9 @@ class CheckAnswersViewSpec extends ViewBaseSpec {
     val landlordRelationshipReasonAnswer = "#checkanswers\\.landlord\\.relationship\\.reason-id"
     val landlordRelationshipReasonChangeButton = "#landlord-relationship-reason"
     val whatTypeOfAgreementAnswer = "#checkanswers\\.agreement\\.whattypeofagreement-id"
-    val whatTypeOfAgreementChangeButton= "#what-type-of-agreement"
+    val whatTypeOfAgreementChangeButton = "#what-type-of-agreement"
     val agreementStartDateAnswer = "#checkanswers\\.agreement\\.startdate-id"
-    val agreementStartDateChangeButton= "#agreement-start-date"
+    val agreementStartDateChangeButton = "#agreement-start-date"
     val agreementIsOpenEndedAnswer = "#checkanswers\\.agreement\\.isopenended-id"
     val agreementIsOpenChangeButton = "#is-open-ended"
     val agreementBreakClauseAnswer = "#checkanswers\\.agreement\\.breakclause-id"
@@ -223,7 +225,7 @@ class CheckAnswersViewSpec extends ViewBaseSpec {
     val rentPartAddressAnswer = "#checkanswers\\.whatyourrentincludes\\.rentpartaddress-id"
     val rentPartAddressChangeButton = "#rent-part-address"
     val rentEmptyShellAnswer = "#checkanswers\\.whatyourrentincludes\\.rentemptyshell-id"
-    val rentEmptyShellChangeButton= "#rent-empty-shell"
+    val rentEmptyShellChangeButton = "#rent-empty-shell"
     val rentIncBusinessRatesAnswer = "#checkanswers\\.whatyourrentincludes\\.rentincbusinessrates-id"
     val rentIncBusinessRatesChangeButton = "#rent-inc-business-rates"
     val rentIncWaterChargesAnswer = "#checkanswers\\.whatyourrentincludes\\.rentincwatercharges-id"
@@ -277,6 +279,20 @@ class CheckAnswersViewSpec extends ViewBaseSpec {
     val otherDetailsReasonAnswer = "#checkanswers\\.otherdetails\\.reason-id"
     val otherDetailsReasonChangeButton = "#other-details-reason"
 
+    val firstRentPeriodLabel = "#main-content > div > div.govuk-grid-column-two-thirds > h2:nth-child(10)"
+    val firstPeriodStartDate = "#main-content > div > div.govuk-grid-column-two-thirds > dl:nth-child(11) > div:nth-child(1) > dt"
+    val firstPeriodEndDate = "#main-content > div > div.govuk-grid-column-two-thirds > dl:nth-child(11) > div:nth-child(2) > dt"
+    val firstPeriodDoYouPay = "#main-content > div > div.govuk-grid-column-two-thirds > dl:nth-child(11) > div:nth-child(3) > dt"
+    val firstPeriodPayAmount = "#main-content > div > div.govuk-grid-column-two-thirds > dl:nth-child(11) > div:nth-child(4) > dt"
+
+    val secondRentPeriodLabel = "#main-content > div > div.govuk-grid-column-two-thirds > h2:nth-child(12)"
+    val secondPeriodEndDate = "#main-content > div > div.govuk-grid-column-two-thirds > dl:nth-child(13) > div:nth-child(1) > dt"
+    val secondPeriodAmount = "#main-content > div > div.govuk-grid-column-two-thirds > dl:nth-child(13) > div:nth-child(2) > dt"
+
+    val thirdRentPeriodLabel = "#main-content > div > div.govuk-grid-column-two-thirds > h2:nth-child(14)"
+    val thirdPeriodEndDate = "#main-content > div > div.govuk-grid-column-two-thirds > dl:nth-child(15) > div:nth-child(1) > dt"
+    val thirdPeriodAmount = "#main-content > div > div.govuk-grid-column-two-thirds > dl:nth-child(15) > div:nth-child(2) > dt"
+
     val saveButton = "#continue"
   }
 
@@ -285,88 +301,88 @@ class CheckAnswersViewSpec extends ViewBaseSpec {
   val fullNewAgreementUserAnswers: UserAnswers = UserAnswers(
     testCredId,
     data = Json.obj(
-        "tellUsAboutYourNewAgreement" -> "NewAgreement",
-        "landlord" -> Json.obj(
-          "landlordName" -> "Jake",
-          "hasRelationship" -> true,
-          "landlordRelationship" -> "Parent"
-        ),
-        "whatTypeOfAgreement" -> "LeaseOrTenancy",
-        "agreement" -> Json.obj(
-          "agreementStart" -> "2020-12-12",
-          "isOpenEnded" -> true,
-          "haveBreakClause" -> true,
-          "breakClauseInfo" -> "break clause reason"
-        ),
-        "whatIsYourRentBasedOn" -> Json.obj(
-          "rentBased" -> "Other",
-          "otherDesc" -> "Other reason"
-        ),
-        "agreedRentChange" -> false,
-        "howMuchIsTotalAnnualRentPage" -> 12.0,
-        "checkRentFreePeriod" -> true,
-        "rentFreePeriod" -> Json.obj(
-          "months" -> 1,
-          "reasons" -> "rent-free period reason"
-        ),
-        "rentDatesAgreeStart" -> Json.obj(
-          "agreedDate" -> "2020-12-12",
-          "startPayingDate" -> "2020-12-13"
-        ),
-        "whatYourRentIncludes" -> Json.obj(
-          "livingAccommodation" -> true,
-          "rentPartAddress" -> false,
-          "rentEmptyShell" -> true,
-          "rentIncBusinessRates" -> false,
-          "rentIncWaterCharges" -> true,
-          "rentIncService" -> false,
-          "bedroomNumbers" -> 1
-        ),
-        "doesYourRentIncludeParking" -> true,
-        "howManyParkingSpacesOrGaragesIncludedInRent" -> Json.obj(
-          "uncoveredSpaces" -> 1,
-          "coveredSpaces" -> 2,
-          "garages" -> 3
-        ),
-        "doYouPayExtraForParkingSpacesNotIncludedInRent" -> true,
-        "parkingSpacesOrGaragesNotIncludedInYourRent" -> Json.obj(
-          "uncoveredSpaces" -> 1,
-          "coveredSpaces" -> 2,
-          "garages" -> 3,
-          "totalCost" -> 12.0,
-          "agreementDate" -> "2020-12-12"
-        ),
-        "repairsAndInsurance" -> Json.obj(
-          "internalRepairs" -> "You",
-          "externalRepairs" -> "Landlord",
-          "buildingInsurance" -> "YouAndLandlord"
-        ),
-        "rentReview" -> Json.obj(
-          "hasIncludeRentReview" -> true,
-          "rentReviewMonths" -> 2,
-          "rentReviewYears" -> 1,
-          "canRentGoDown" -> true
-        ),
-        "repairsAndFittingOutPage" -> true,
-        "aboutRepairsAndFittingOutPage" -> Json.obj(
-          "cost" -> 12.0,
-          "date" -> "2020-01"
-        ),
-        "didYouGetMoneyFromLandlord" -> false,
-        "didYouPayAnyMoneyToLandlord" -> true,
-        "moneyYouPaidInAdvanceToLandlord" -> Json.obj(
-          "amount" -> 12.0,
-          "date" -> "2020-12-12"
-        ),
-        "hasAnythingElseAffectedTheRent" -> Json.obj(
-          "radio" -> true,
-          "reason" -> "something else"
-        )
+      "tellUsAboutYourNewAgreement" -> "NewAgreement",
+      "landlord" -> Json.obj(
+        "landlordName" -> "Jake",
+        "hasRelationship" -> true,
+        "landlordRelationship" -> "Parent"
+      ),
+      "whatTypeOfAgreement" -> "LeaseOrTenancy",
+      "agreement" -> Json.obj(
+        "agreementStart" -> "2020-12-12",
+        "isOpenEnded" -> true,
+        "haveBreakClause" -> true,
+        "breakClauseInfo" -> "break clause reason"
+      ),
+      "whatIsYourRentBasedOn" -> Json.obj(
+        "rentBased" -> "Other",
+        "otherDesc" -> "Other reason"
+      ),
+      "agreedRentChange" -> false,
+      "howMuchIsTotalAnnualRentPage" -> 12.0,
+      "checkRentFreePeriod" -> true,
+      "rentFreePeriod" -> Json.obj(
+        "months" -> 1,
+        "reasons" -> "rent-free period reason"
+      ),
+      "rentDatesAgreeStart" -> Json.obj(
+        "agreedDate" -> "2020-12-12",
+        "startPayingDate" -> "2020-12-13"
+      ),
+      "whatYourRentIncludes" -> Json.obj(
+        "livingAccommodation" -> true,
+        "rentPartAddress" -> false,
+        "rentEmptyShell" -> true,
+        "rentIncBusinessRates" -> false,
+        "rentIncWaterCharges" -> true,
+        "rentIncService" -> false,
+        "bedroomNumbers" -> 1
+      ),
+      "doesYourRentIncludeParking" -> true,
+      "howManyParkingSpacesOrGaragesIncludedInRent" -> Json.obj(
+        "uncoveredSpaces" -> 1,
+        "coveredSpaces" -> 2,
+        "garages" -> 3
+      ),
+      "doYouPayExtraForParkingSpacesNotIncludedInRent" -> true,
+      "parkingSpacesOrGaragesNotIncludedInYourRent" -> Json.obj(
+        "uncoveredSpaces" -> 1,
+        "coveredSpaces" -> 2,
+        "garages" -> 3,
+        "totalCost" -> 12.0,
+        "agreementDate" -> "2020-12-12"
+      ),
+      "repairsAndInsurance" -> Json.obj(
+        "internalRepairs" -> "You",
+        "externalRepairs" -> "Landlord",
+        "buildingInsurance" -> "YouAndLandlord"
+      ),
+      "rentReview" -> Json.obj(
+        "hasIncludeRentReview" -> true,
+        "rentReviewMonths" -> 2,
+        "rentReviewYears" -> 1,
+        "canRentGoDown" -> true
+      ),
+      "repairsAndFittingOutPage" -> true,
+      "aboutRepairsAndFittingOutPage" -> Json.obj(
+        "cost" -> 12.0,
+        "date" -> "2020-01"
+      ),
+      "didYouGetMoneyFromLandlord" -> false,
+      "didYouPayAnyMoneyToLandlord" -> true,
+      "moneyYouPaidInAdvanceToLandlord" -> Json.obj(
+        "amount" -> 12.0,
+        "date" -> "2020-12-12"
+      ),
+      "hasAnythingElseAffectedTheRent" -> Json.obj(
+        "radio" -> true,
+        "reason" -> "something else"
       )
     )
+  )
 
 
-  "CheckAnswersView" must {
+  "CheckAnswersView new agreement" must {
     val checkAnswersView = view(
       selectedPropertyAddress = address,
       leaseRenewalsSummary = createLeaseRenewalsSummaryRows(credId = testCredId.value, userAnswers = Some(fullNewAgreementUserAnswers)),
@@ -939,5 +955,230 @@ class CheckAnswersViewSpec extends ViewBaseSpec {
     "show the correct save button" in {
       elementText(Selectors.saveButton) mustBe saveButton
     }
+  }
+
+  val fullRenewedAgreementUserAnswers: UserAnswers = UserAnswers(
+    testCredId,
+    data = Json.obj(
+      "tellUsAboutRenewedAgreement" -> "RenewedAgreement",
+      "whatTypeOfLeaseRenewal" -> "RenewedAgreement",
+      "landlord" -> Json.obj(
+        "landlordName" -> "Jake",
+        "hasRelationship" -> true,
+        "landlordRelationship" -> "Parent"
+      ),
+      "whatTypeOfAgreement" -> "LeaseOrTenancy",
+      "agreement" -> Json.obj(
+        "agreementStart" -> "2020-12-12",
+        "isOpenEnded" -> true,
+        "haveBreakClause" -> true,
+        "breakClauseInfo" -> "break clause reason"
+      ),
+      "whatIsYourRentBasedOn" -> Json.obj(
+        "rentBased" -> "Other",
+        "otherDesc" -> "Other reason"
+      ),
+      "agreedRentChange" -> true,
+      "firstRentPeriod" -> Json.obj(
+        "startDate" -> "2020-12-12",
+        "endDate" -> "2021-01-01",
+        "isRentPayablePeriod" -> true,
+        "rentPeriodAmount" -> 12.0
+      ),
+      "rentPeriodsDetails" -> Json.arr(
+        Json.obj("endDate" -> "2022-03-03", "rentPeriodAmount" -> 12.0),
+        Json.obj("endDate" -> "2023-05-05", "rentPeriodAmount" -> 12.0)
+      ),
+      "rentPeriods" -> false,
+      "didYouAgreeRentWithLandlordPage" -> true,
+      "rentDatesAgree" -> "2020-12-12",
+      "whatYourRentIncludes" -> Json.obj(
+        "livingAccommodation" -> true,
+        "rentPartAddress" -> false,
+        "rentEmptyShell" -> true,
+        "rentIncBusinessRates" -> false,
+        "rentIncWaterCharges" -> true,
+        "rentIncService" -> false,
+        "bedroomNumbers" -> 1
+      ),
+      "doesYourRentIncludeParking" -> true,
+      "howManyParkingSpacesOrGaragesIncludedInRent" -> Json.obj(
+        "uncoveredSpaces" -> 1,
+        "coveredSpaces" -> 2,
+        "garages" -> 3
+      ),
+      "doYouPayExtraForParkingSpacesNotIncludedInRent" -> true,
+      "parkingSpacesOrGaragesNotIncludedInYourRent" -> Json.obj(
+        "uncoveredSpaces" -> 1,
+        "coveredSpaces" -> 2,
+        "garages" -> 3,
+        "totalCost" -> 12.0,
+        "agreementDate" -> "2020-12-12"
+      ),
+      "repairsAndInsurance" -> Json.obj(
+        "internalRepairs" -> "You",
+        "externalRepairs" -> "Landlord",
+        "buildingInsurance" -> "YouAndLandlord"
+      ),
+      "rentReview" -> Json.obj(
+        "hasIncludeRentReview" -> true,
+        "rentReviewMonths" -> 2,
+        "rentReviewYears" -> 1,
+        "canRentGoDown" -> true
+      ),
+      "didYouGetMoneyFromLandlord" -> false,
+      "didYouPayAnyMoneyToLandlord" -> true,
+      "moneyYouPaidInAdvanceToLandlord" -> Json.obj(
+        "amount" -> 12.0,
+        "date" -> "2020-12-12"
+      ),
+      "hasAnythingElseAffectedTheRent" -> Json.obj(
+        "radio" -> true,
+        "reason" -> "something else"
+      )
+    )
+  )
+
+
+  "CheckAnswersView renewed agreement" must {
+
+    val leaseRenewalDetailsLabel = "Lease renewal details"
+    val whatLeaseRenewal = "What type of lease renewal is it?"
+    val firstRentPeriodLabel = "First rent period"
+    val firstPeriodStartDate = "Start date"
+    val firstPeriodEndDate = "End date"
+    val firstPeriodDoYouPay = "Do you pay rent in this period?"
+    val firstPeriodPayAmount = "Rent for this period (excluding VAT)"
+    val secondRentPeriodLabel = "Second Rent Period"
+    val secondPeriodEndDate = "End date"
+    val secondPeriodAmount = "Rent for this period (excluding VAT)"
+    val thirdRentPeriodLabel = "Third Rent Period"
+    val thirdPeriodEndDate = "End date"
+    val thirdPeriodAmount = "Rent for this period (excluding VAT)"
+
+    val checkAnswersView = view(
+      selectedPropertyAddress = address,
+      leaseRenewalsSummary = createLeaseRenewalsSummaryRows(credId = testCredId.value, userAnswers = Some(fullRenewedAgreementUserAnswers)),
+      landlordSummary = createLandlordSummaryRows(credId = testCredId.value, userAnswers = Some(fullRenewedAgreementUserAnswers)),
+      agreementDetailsSummary = createAgreementDetailsRows(credId = testCredId.value, userAnswers = Some(fullRenewedAgreementUserAnswers)),
+      rentSummary = createRentRows(credId = testCredId.value, userAnswers = Some(fullRenewedAgreementUserAnswers)),
+      firstRentPeriod = createFirstRentPeriodRow(credId = testCredId.value, userAnswers = Some(fullRenewedAgreementUserAnswers)),
+      rentPeriods = createRentPeriodsSummaryLists(credId = testCredId.value, userAnswers = Some(fullRenewedAgreementUserAnswers)),
+      whatYourRentIncludesSummary = createWhatYourRentIncludesRows(credId = testCredId.value, userAnswers = Some(fullRenewedAgreementUserAnswers)),
+      repairsAndInsurance = createRepairsAndInsurance(credId = testCredId.value, userAnswers = Some(fullRenewedAgreementUserAnswers)),
+      rentReview = createRentReviewRows(credId = testCredId.value, userAnswers = Some(fullRenewedAgreementUserAnswers)),
+      repairsAndFittingOutSummary = createRepairsAndFittingOut(credId = testCredId.value, userAnswers = Some(fullRenewedAgreementUserAnswers)),
+      payments = createPaymentRows(credId = testCredId.value, userAnswers = Some(fullRenewedAgreementUserAnswers)),
+      breakClause = createBreakClauseRows(credId = testCredId.value, userAnswers = Some(fullRenewedAgreementUserAnswers)),
+      otherDetailsSummary = createOtherDetailsRow(credId = testCredId.value, userAnswers = Some(fullRenewedAgreementUserAnswers))
+    )
+
+    lazy implicit val document: Document = Jsoup.parse(checkAnswersView.body)
+    val htmlApply = view.apply(
+      address,
+      leaseRenewalsSummary = createLeaseRenewalsSummaryRows(credId = testCredId.value, userAnswers = Some(fullRenewedAgreementUserAnswers)),
+      landlordSummary = createLandlordSummaryRows(credId = testCredId.value, userAnswers = Some(fullRenewedAgreementUserAnswers)),
+      agreementDetailsSummary = createAgreementDetailsRows(credId = testCredId.value, userAnswers = Some(fullRenewedAgreementUserAnswers)),
+      rentSummary = createRentRows(credId = testCredId.value, userAnswers = Some(fullRenewedAgreementUserAnswers)),
+      firstRentPeriod = createFirstRentPeriodRow(credId = testCredId.value, userAnswers = Some(fullRenewedAgreementUserAnswers)),
+      rentPeriods = createRentPeriodsSummaryLists(credId = testCredId.value, userAnswers = Some(fullRenewedAgreementUserAnswers)),
+      whatYourRentIncludesSummary = createWhatYourRentIncludesRows(credId = testCredId.value, userAnswers = Some(fullRenewedAgreementUserAnswers)),
+      repairsAndInsurance = createRepairsAndInsurance(credId = testCredId.value, userAnswers = Some(fullRenewedAgreementUserAnswers)),
+      rentReview = createRentReviewRows(credId = testCredId.value, userAnswers = Some(fullRenewedAgreementUserAnswers)),
+      repairsAndFittingOutSummary = createRepairsAndFittingOut(credId = testCredId.value, userAnswers = Some(fullRenewedAgreementUserAnswers)),
+      payments = createPaymentRows(credId = testCredId.value, userAnswers = Some(fullRenewedAgreementUserAnswers)),
+      breakClause = createBreakClauseRows(credId = testCredId.value, userAnswers = Some(fullRenewedAgreementUserAnswers)),
+      otherDetailsSummary = createOtherDetailsRow(credId = testCredId.value, userAnswers = Some(fullRenewedAgreementUserAnswers))
+    ).body
+
+    val htmlRender = view.render(
+      address,
+      leaseRenewalsSummary = createLeaseRenewalsSummaryRows(credId = testCredId.value, userAnswers = Some(fullRenewedAgreementUserAnswers)),
+      landlordSummary = createLandlordSummaryRows(credId = testCredId.value, userAnswers = Some(fullRenewedAgreementUserAnswers)),
+      agreementDetailsSummary = createAgreementDetailsRows(credId = testCredId.value, userAnswers = Some(fullRenewedAgreementUserAnswers)),
+      rentSummary = createRentRows(credId = testCredId.value, userAnswers = Some(fullRenewedAgreementUserAnswers)),
+      firstRentPeriod = createFirstRentPeriodRow(credId = testCredId.value, userAnswers = Some(fullRenewedAgreementUserAnswers)),
+      rentPeriods = createRentPeriodsSummaryLists(credId = testCredId.value, userAnswers = Some(fullRenewedAgreementUserAnswers)),
+      whatYourRentIncludesSummary = createWhatYourRentIncludesRows(credId = testCredId.value, userAnswers = Some(fullRenewedAgreementUserAnswers)),
+      repairsAndInsurance = createRepairsAndInsurance(credId = testCredId.value, userAnswers = Some(fullRenewedAgreementUserAnswers)),
+      rentReview = createRentReviewRows(credId = testCredId.value, userAnswers = Some(fullRenewedAgreementUserAnswers)),
+      repairsAndFittingOutSummary = createRepairsAndFittingOut(credId = testCredId.value, userAnswers = Some(fullRenewedAgreementUserAnswers)),
+      payments = createPaymentRows(credId = testCredId.value, userAnswers = Some(fullRenewedAgreementUserAnswers)),
+      breakClause = createBreakClauseRows(credId = testCredId.value, userAnswers = Some(fullRenewedAgreementUserAnswers)),
+      otherDetailsSummary = createOtherDetailsRow(credId = testCredId.value, userAnswers = Some(fullRenewedAgreementUserAnswers)),
+      request, messages, mockConfig).body
+
+    "apply must nit be the same as render" in {
+      htmlApply mustBe htmlRender
+    }
+
+    "render is not empty" in {
+      htmlRender must not be empty
+    }
+
+    "show the correct title" in {
+      elementText(Selectors.navTitle) mustBe title
+    }
+
+    "show the correct heading" in {
+      elementText(Selectors.heading) mustBe heading
+    }
+
+    //Lease Renewal table
+    "show the correct label for lease renewal table" in {
+      elementText(Selectors.leaseRenewalDetailsLabel) mustBe leaseRenewalDetailsLabel
+    }
+    //what lease renewal
+    "show the correct message for what lease renewal in the renewal table" in {
+      elementText(Selectors.whatLeaseRenewal) mustBe whatLeaseRenewal
+    }
+
+    //first rent period table
+    "show the correct label for first rent period table" in {
+      elementText(Selectors.firstRentPeriodLabel) mustBe firstRentPeriodLabel
+    }
+    //first rent period start date
+    "show the correct message for first period start date in the first rent period table" in {
+      elementText(Selectors.firstPeriodStartDate) mustBe firstPeriodStartDate
+    }
+    //first rent period end date
+    "show the correct message for first period end date in the first rent period table" in {
+      elementText(Selectors.firstPeriodEndDate) mustBe firstPeriodEndDate
+    }
+    //first rent period do you pay
+    "show the correct message for first period do you pay in the first rent period table" in {
+      elementText(Selectors.firstPeriodDoYouPay) mustBe firstPeriodDoYouPay
+    }
+    //first rent period pay amount
+    "show the correct message for first period pay amount in the first rent period table" in {
+      elementText(Selectors.firstPeriodPayAmount) mustBe firstPeriodPayAmount
+    }
+
+    //second rent period table
+    "show the correct label for second rent period table" in {
+      elementText(Selectors.secondRentPeriodLabel) mustBe secondRentPeriodLabel
+    }
+    //second rent period start date
+    "show the correct message for second period end date in the second rent period table" in {
+      elementText(Selectors.secondPeriodEndDate) mustBe secondPeriodEndDate
+    }
+    //second rent period amount
+    "show the correct message for second period amount in the second rent period table" in {
+      elementText(Selectors.secondPeriodAmount) mustBe secondPeriodAmount
+    }
+
+    //third rent period table
+    "show the correct label for third rent period table" in {
+      elementText(Selectors.thirdRentPeriodLabel) mustBe thirdRentPeriodLabel
+    }
+    //third rent period start date
+    "show the correct message for third period end date in the third rent period table" in {
+      elementText(Selectors.thirdPeriodEndDate) mustBe thirdPeriodEndDate
+    }
+    //third rent period amount
+    "show the correct message for third period amount in the third rent period table" in {
+      elementText(Selectors.thirdPeriodAmount) mustBe thirdPeriodAmount
+    }
+
   }
 }
