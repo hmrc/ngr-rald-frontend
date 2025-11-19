@@ -1,0 +1,77 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.Aliases._
+@import uk.gov.hmrc.ngrraldfrontend.views.html.components._
+@import uk.gov.hmrc.ngrraldfrontend.viewmodels.govuk.all._
+@import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
+@import uk.gov.hmrc.ngrraldfrontend.models.forms.MoneyToTakeOnTheLeaseForm
+
+@this(
+        layout: Layout,
+        formHelper: FormWithCSRF,
+        dateInputField: DateTextFields,
+        govukErrorSummary: GovukErrorSummary,
+        saveAndContinueButton: saveAndContinueButton,
+        inputText: InputText
+)
+@(form:Form[MoneyToTakeOnTheLeaseForm], propertyAddress: String, mode: Mode)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+
+
+@layout(pageTitle = Some(messages("moneyToTakeOnTheLease.title")), showBackLink = true, fullWidth = false) {
+    @formHelper(
+        action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.MoneyToTakeOnTheLeaseController.submit(mode),
+        Symbol("autoComplete") -> "off"
+    ) {
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form, Some("moneyToTakeOnTheLease"), Some(Seq("date"))))
+        }
+
+        <span class="govuk-caption-m">@propertyAddress</span>
+        <h1 class="govuk-heading-l">@messages("moneyToTakeOnTheLease.title")</h1>
+
+        @inputText(
+            form = form,
+            id = "amount",
+            name = "amount",
+            label = messages("moneyToTakeOnTheLease.amount.label"),
+            labelClasses = Some("govuk-fieldset__legend govuk-fieldset__legend--s"),
+            isPageHeading = true,
+            isVisible = true,
+            classes = Some("govuk-input govuk-input--width-10"),
+            prefix = Some(PrefixOrSuffix(content = Text(messages("common.pound"))))
+        )
+
+        @dateInputField(form, DateInput(
+            id = "date",
+            namePrefix = Some("moneyToTakeOnTheLease"),
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text(messages("moneyToTakeOnTheLease.date.label")),
+                    classes = "govuk-fieldset__legend--s",
+                    isPageHeading = false
+                ))
+            )),
+            hint = Some(Hint(
+                id = Some("moneyToTakeOnTheLease.date.hint.2"),
+                content = Text(messages("moneyToTakeOnTheLease.date.hint"))
+            ))
+        ))
+
+        @saveAndContinueButton(msg = messages("service.continue"), isStartButton = false)
+    }
+}

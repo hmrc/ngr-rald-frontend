@@ -411,6 +411,24 @@ repairsAndInsurance.buildingInsurance.radio.required.error = Select who pays for
 didYouGetMoneyFromLandlord.title = Did you get any money from the landlord or previous tenant to take on the lease?
 didYouGetMoneyFromLandlord.empty.error = Select yes if you got any money from the landlord or previous tenant to take on the lease
 
+#Money you got from the landlord or previous tenant to take on the lease
+moneyToTakeOnTheLease.title = Money you got from the landlord or previous tenant to take on the lease
+moneyToTakeOnTheLease.amount.label = How much money did you get to take on the lease (excluding VAT)?
+moneyToTakeOnTheLease.amount.required.error = Enter how much money you got to take on the lease (excluding VAT), in pounds
+moneyToTakeOnTheLease.amount.tooLarge.error = Money you got to take on the lease (excluding VAT) must be £9,999,999.99 or less
+moneyToTakeOnTheLease.amount.format.error = Money you got to take on the lease (excluding VAT) must be a number, like 30,000
+moneyToTakeOnTheLease.date.label = When did you get the money?
+moneyToTakeOnTheLease.date.hint = For example, 27 6 2026
+moneyToTakeOnTheLease.date.day.required.error = Date you got the money must include a day
+moneyToTakeOnTheLease.date.dayAndMonth.required.error = Date you got the money must include a day and month
+moneyToTakeOnTheLease.date.dayAndYear.required.error = Date you got the money must include a day and year
+moneyToTakeOnTheLease.date.month.required.error = Date you got the money must include a month
+moneyToTakeOnTheLease.date.monthAndYear.required.error = Date you got the money must include a month and year
+moneyToTakeOnTheLease.date.year.required.error = Date you got the money must include a year
+moneyToTakeOnTheLease.date.invalid.error = Date you got the money must be a real date
+moneyToTakeOnTheLease.date.before.1900.error = Year you got the money must be 1900 or after
+moneyToTakeOnTheLease.date.required.error = Enter the date you got the money
+
 #Rent review
 rentReview.months = Months
 rentReview.years = Years

@@ -34,6 +34,14 @@ POST       /did-you-get-money-from-landlord             uk.gov.hmrc.ngrraldfront
 GET        /did-you-get-money-from-landlord/change      uk.gov.hmrc.ngrraldfrontend.controllers.DidYouGetMoneyFromLandlordController.show(mode: Mode = CheckMode)
 POST       /did-you-get-money-from-landlord/change      uk.gov.hmrc.ngrraldfrontend.controllers.DidYouGetMoneyFromLandlordController.submit(mode: Mode = CheckMode)
 
+
+#Money you got from the landlord or previous tenant to take on the lease
+GET        /money-from-landlord-or-previous-tenant-to-take-on-lease            uk.gov.hmrc.ngrraldfrontend.controllers.MoneyToTakeOnTheLeaseController.show(mode: Mode = NormalMode)
+POST       /money-from-landlord-or-previous-tenant-to-take-on-lease            uk.gov.hmrc.ngrraldfrontend.controllers.MoneyToTakeOnTheLeaseController.submit(mode: Mode = NormalMode)
+GET        /money-from-landlord-or-previous-tenant-to-take-on-lease/change     uk.gov.hmrc.ngrraldfrontend.controllers.MoneyToTakeOnTheLeaseController.show(mode: Mode = CheckMode)
+POST       /money-from-landlord-or-previous-tenant-to-take-on-lease/change     uk.gov.hmrc.ngrraldfrontend.controllers.MoneyToTakeOnTheLeaseController.submit(mode: Mode = CheckMode)
+
+
 #What is your rent based on
 GET        /what-is-your-rent-based-on                  uk.gov.hmrc.ngrraldfrontend.controllers.WhatIsYourRentBasedOnController.show(mode: Mode = NormalMode)
 POST       /what-is-your-rent-based-on                  uk.gov.hmrc.ngrraldfrontend.controllers.WhatIsYourRentBasedOnController.submit(mode: Mode = NormalMode)
