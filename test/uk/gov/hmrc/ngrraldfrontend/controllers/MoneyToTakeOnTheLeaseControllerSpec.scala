@@ -88,7 +88,7 @@ class MoneyToTakeOnTheLeaseControllerSpec extends ControllerSpecSupport {
     }
 
     "method submit" must {
-      "Return OK and the correct view" in {
+      "Return SEE_OTHER and the correct view" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val fakePostRequest =  FakeRequest(routes.MoneyToTakeOnTheLeaseController.submit(NormalMode))
           .withFormUrlEncodedBody(
@@ -133,7 +133,7 @@ class MoneyToTakeOnTheLeaseControllerSpec extends ControllerSpecSupport {
         contentAsString(result) must include("Money you got to take on the lease (excluding VAT) must be a number, like 30,000")
       }
 
-      "Return BAD_REQUEST for future date" in {
+      "Return BAD_REQUEST for past date" in {
         val fakePostRequest = FakeRequest(routes.MoneyToTakeOnTheLeaseController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "amount" -> "10000",
