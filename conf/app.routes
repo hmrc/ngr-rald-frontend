@@ -244,4 +244,4 @@ POST       /declaration                            uk.gov.hmrc.ngrraldfrontend.c
 GET        /rent-review-details-sent               uk.gov.hmrc.ngrraldfrontend.controllers.RentReviewDetailsSentController.confirmation()
 
 #check answers
-GET        /check-answers                          uk.gov.hmrc.ngrraldfrontend.controllers.CheckAnswersController.show(mode: Mode = NormalMode)
+GET        /check-answers                          uk.gov.hmrc.ngrraldfrontend.controllers.CheckAnswersController.show

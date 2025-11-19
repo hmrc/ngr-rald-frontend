@@ -20,7 +20,6 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-import uk.gov.hmrc.ngrraldfrontend.models.*
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.services.CheckAnswers.*
@@ -38,7 +37,7 @@ class CheckAnswersController @Inject()(view: CheckAnswersView,
                                        mcc: MessagesControllerComponents,
                                       )(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
-  def show(mode: Mode): Action[AnyContent] = {
+  def show: Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
       Future.successful(Ok(view(
         selectedPropertyAddress = request.property.addressFull,
