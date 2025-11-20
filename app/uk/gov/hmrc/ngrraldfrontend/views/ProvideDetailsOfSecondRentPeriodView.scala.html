@@ -27,6 +27,7 @@
         govukErrorSummary: GovukErrorSummary,
         dateInputField: DateTextFields,
         inputText: components.InputText,
+        fieldset: GovukFieldset,
         saveAndContinueButton: saveAndContinueButton
 )
 
@@ -41,6 +42,13 @@
 
 @heading = {
     @messages(s"rentPeriod.${index + 2}.sequence") @messages("provideDetailsOfSecondRentPeriod.title")
+}
+
+@html = {
+    <div class="govuk-hint">
+        @messages("provideDetailsOfSecondRentPeriod.startDate.hint", messages(s"rentPeriod.${index + 1}.sequence").toLowerCase)
+    </div>
+    <p class="govuk-body">@firstRentPeriodEnd</p>
 }
 
 @layout(pageTitle = Some(messages(s"rentPeriod.${index + 2}.sequence") + " " + messages("provideDetailsOfSecondRentPeriod.title")), showBackLink = true, fullWidth = false) {
@@ -58,10 +66,12 @@
 
         <span class="govuk-caption-m">@propertyAddress</span>
         <h1 class="govuk-heading-l">@heading</h1>
-        <h2 class="govuk-heading-s">@messages("provideDetailsOfSecondRentPeriod.startDate.label", messages(s"rentPeriod.${index + 2}.sequence"))</h2>
-        <p class="govuk-hint">@messages("provideDetailsOfSecondRentPeriod.startDate.hint", messages(s"rentPeriod.${index + 1}.sequence").toLowerCase)</p>
-        <p class="govuk-body">@firstRentPeriodEnd</p>
-
+        @fieldset(Fieldset(legend = Some(Legend(
+                    content = Text(messages("provideDetailsOfSecondRentPeriod.startDate.label", messages(s"rentPeriod.${index + 2}.sequence"))),
+                    classes = "govuk-fieldset__legend--s"
+                )),
+                html = html
+        ))
         @dateInputField(form, endDateInput)
         @inputText(
             form  =   form,
