@@ -19,7 +19,7 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, CheckRequestSentReferenceAction, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.forms.DidYouGetIncentiveForNotTriggeringBreakClauseForm
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
@@ -37,6 +37,7 @@ class DidYouGetIncentiveForNotTriggeringBreakClauseController @Inject()(
                                                                          view: DidYouGetIncentiveForNotTriggeringBreakClauseView,
                                                                          authenticate: AuthRetrievals,
                                                                          getData: DataRetrievalAction,
+                                                                         checkRequestSentReference: CheckRequestSentReferenceAction,
                                                                          formProvider: DidYouGetIncentiveForNotTriggeringBreakClauseForm,
                                                                          sessionRepository: SessionRepository,
                                                                          navigator: Navigator,
@@ -46,7 +47,7 @@ class DidYouGetIncentiveForNotTriggeringBreakClauseController @Inject()(
   val form: Form[DidYouGetIncentiveForNotTriggeringBreakClause] = formProvider()
 
     def show(mode: Mode): Action[AnyContent] = {
-      (authenticate andThen getData).async { implicit request =>
+      (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
         val preparedForm = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).get(DidYouGetIncentiveForNotTriggeringBreakClausePage) match {
           case None => form
           case Some(value) => form.fill(value)
@@ -60,7 +61,7 @@ class DidYouGetIncentiveForNotTriggeringBreakClauseController @Inject()(
     }
 
   def submit(mode: Mode): Action[AnyContent] =
-    (authenticate andThen getData).async { implicit request =>
+    (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
           Future.successful(BadRequest(view(

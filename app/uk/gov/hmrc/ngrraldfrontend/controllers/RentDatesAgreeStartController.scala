@@ -18,7 +18,7 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, CheckRequestSentReferenceAction, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentDatesAgreeStartForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentDatesAgreeStartForm.form
@@ -38,6 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class RentDatesAgreeStartController @Inject()(view: RentDatesAgreeStartView,
                                               authenticate: AuthRetrievals,
                                               getData: DataRetrievalAction,
+                                              checkRequestSentReference: CheckRequestSentReferenceAction,
                                               sessionRepository: SessionRepository,
                                               navigator: Navigator,
                                               mcc: MessagesControllerComponents
@@ -45,7 +46,7 @@ class RentDatesAgreeStartController @Inject()(view: RentDatesAgreeStartView,
   extends FrontendController(mcc) with I18nSupport with DateKeyFinder {
 
   def show(mode: Mode): Action[AnyContent] = {
-    (authenticate andThen getData).async { implicit request =>
+    (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
       val preparedFrom = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).get(RentDatesAgreeStartPage) match {
         case None => form
         case Some(value) => form.fill(RentDatesAgreeStartForm(NGRDate.fromString(value.agreedDate), NGRDate.fromString(value.startPayingDate)))
@@ -55,7 +56,7 @@ class RentDatesAgreeStartController @Inject()(view: RentDatesAgreeStartView,
   }
 
   def submit(mode: Mode): Action[AnyContent] = {
-    (authenticate andThen getData).async { implicit request =>
+    (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
       form
         .bindFromRequest()
         .fold(

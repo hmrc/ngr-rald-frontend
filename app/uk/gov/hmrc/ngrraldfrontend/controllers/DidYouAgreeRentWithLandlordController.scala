@@ -18,7 +18,7 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, CheckRequestSentReferenceAction, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
@@ -39,6 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class DidYouAgreeRentWithLandlordController @Inject()(didYouAgreeRentWithLandlordView: DidYouAgreeRentWithLandlordView,
                                                       authenticate: AuthRetrievals,
                                                       getData: DataRetrievalAction,
+                                                      checkRequestSentReference: CheckRequestSentReferenceAction,
                                                       sessionRepository: SessionRepository,
                                                       navigator: Navigator,
                                                       mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
@@ -46,10 +47,10 @@ class DidYouAgreeRentWithLandlordController @Inject()(didYouAgreeRentWithLandlor
 
 
   def show(mode: Mode): Action[AnyContent] = {
-    (authenticate andThen getData).async { implicit request =>
+    (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).get(DidYouAgreeRentWithLandlordPage) match {
         case None => form
-        case Some(value) => form.fill(DidYouAgreeRentWithLandlordForm(value.toString))
+        case Some (value) => form.fill(DidYouAgreeRentWithLandlordForm(value.toString))
       }
         Future.successful(Ok(didYouAgreeRentWithLandlordView(
           selectedPropertyAddress = request.property.addressFull,
@@ -61,7 +62,7 @@ class DidYouAgreeRentWithLandlordController @Inject()(didYouAgreeRentWithLandlor
   }
 
   def submit(mode: Mode): Action[AnyContent] =
-    (authenticate andThen getData).async { implicit request =>
+    (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
             Future.successful(BadRequest(didYouAgreeRentWithLandlordView(

@@ -37,9 +37,9 @@ import scala.concurrent.Future
 class LandlordControllerSpec extends ControllerSpecSupport {
   val pageTitle = "Landlord"
   val view: LandlordView = inject[LandlordView]
-  val controllerNoProperty: LandlordController = new LandlordController(view, fakeAuth, mockNGRCharacterCountComponent, mcc, fakeData(None), mockSessionRepository, mockNavigator)(mockConfig, ec)
-  val controllerProperty: LandlordController = new LandlordController(view, fakeAuth, mockNGRCharacterCountComponent, mcc, fakeDataProperty(Some(property),None), mockSessionRepository, mockNavigator)(mockConfig, ec)
-  lazy val filledController: Option[UserAnswers] => LandlordController = answers => LandlordController(view, fakeAuth, mockNGRCharacterCountComponent, mcc, fakeDataProperty(Some(property), answers), mockSessionRepository, mockNavigator)
+  val controllerNoProperty: LandlordController = new LandlordController(view, mockAuthJourney, mockNGRCharacterCountComponent, mcc, fakeData(None), mockCheckRequestSentReference, mockSessionRepository, mockNavigator)(mockConfig, ec)
+  val controllerProperty: LandlordController = new LandlordController(view, mockAuthJourney, mockNGRCharacterCountComponent, mcc, fakeDataProperty(Some(property),None), mockCheckRequestSentReference, mockSessionRepository, mockNavigator)(mockConfig, ec)
+  lazy val filledController: Option[UserAnswers] => LandlordController = answers => LandlordController(view, mockAuthJourney, mockNGRCharacterCountComponent, mcc, fakeDataProperty(Some(property), answers), mockCheckRequestSentReference, mockSessionRepository, mockNavigator)
   lazy val landlordAnswers: Option[UserAnswers] = userAnswersWithoutData.set(LandlordPage, landlordModel).toOption
 
   "Landlord controller" must {

@@ -18,7 +18,7 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, CheckRequestSentReferenceAction, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.connectors.NGRConnector
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
@@ -37,6 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class DeclarationController @Inject()(declarationView: DeclarationView,
                                       authenticate: AuthRetrievals,
                                       getData: DataRetrievalAction,
+                                      checkRequestSentReference: CheckRequestSentReferenceAction,
                                       navigator: Navigator,
                                       sessionRepository: SessionRepository,
                                       ngrConnector: NGRConnector,
@@ -44,13 +45,13 @@ class DeclarationController @Inject()(declarationView: DeclarationView,
   extends FrontendController(mcc) with I18nSupport {
 
   def show: Action[AnyContent] = {
-    (authenticate andThen getData).async { implicit request =>
+    (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
       Future.successful(Ok(declarationView()))
     }
   }
 
   def submit: Action[AnyContent] =
-    (authenticate andThen getData).async { implicit request =>
+    (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
       for {
         updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(CredId(request.credId)))
           .set(DeclarationPage, UniqueIdGenerator.generateId)

@@ -34,8 +34,8 @@ import scala.concurrent.Future
 class RentInterimControllerSpec extends ControllerSpecSupport {
   val pageTitle = "Did the court also set an interim rent?"
   val view: RentInterimView = inject[RentInterimView]
-  val controllerNoProperty: RentInterimController = new RentInterimController(view, fakeAuth, fakeData(None), mockNavigator, mockSessionRepository, mcc)(mockConfig)
-  val controllerProperty: Option[UserAnswers] => RentInterimController = answers => new RentInterimController(view, fakeAuth, fakeDataProperty(Some(property), answers), mockNavigator, mockSessionRepository, mcc)(mockConfig)
+  val controllerNoProperty: RentInterimController = new RentInterimController(view, mockAuthJourney, fakeData(None), mockCheckRequestSentReference, mockNavigator, mockSessionRepository, mcc)(mockConfig)
+  val controllerProperty: Option[UserAnswers] => RentInterimController = answers => new RentInterimController(view, mockAuthJourney, fakeDataProperty(Some(property), answers), mockCheckRequestSentReference, mockNavigator, mockSessionRepository, mcc)(mockConfig)
   val rentInterimAnswers: Option[UserAnswers] =  userAnswersWithoutData.set(RentInterimPage, true).toOption
 
   "RentInterimController" must {

@@ -20,7 +20,7 @@ import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.govukfrontend.views.Aliases.*
 import uk.gov.hmrc.govukfrontend.views.viewmodels.dateinput.DateInput
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, CheckRequestSentReferenceAction, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentDatesAgreeForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentDatesAgreeForm.form
@@ -42,6 +42,7 @@ class RentDatesAgreeController @Inject()(rentDatesAgreeView: RentDatesAgreeView,
                                          authenticate: AuthRetrievals,
                                          mcc: MessagesControllerComponents,
                                          getData: DataRetrievalAction,
+                                         checkRequestSentReference: CheckRequestSentReferenceAction,
                                          navigator: Navigator,
                                          sessionRepository: SessionRepository
                                         )(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport with DateKeyFinder{
@@ -63,7 +64,7 @@ class RentDatesAgreeController @Inject()(rentDatesAgreeView: RentDatesAgreeView,
   )
 
   def show(mode: Mode): Action[AnyContent] = {
-    (authenticate andThen getData).async { implicit request =>
+    (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).get(RentDatesAgreePage) match {
       case None => form
       case Some(value) => form.fill(RentDatesAgreeForm(NGRDate.fromString(value)))
@@ -78,7 +79,7 @@ class RentDatesAgreeController @Inject()(rentDatesAgreeView: RentDatesAgreeView,
   }
 
   def submit(mode: Mode): Action[AnyContent] =
-    (authenticate andThen getData).async { implicit request =>
+    (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
           val correctedFormErrors = formWithErrors.errors.map { formError =>

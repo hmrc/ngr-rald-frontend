@@ -37,17 +37,19 @@ class MoneyYouPaidInAdvanceToLandlordControllerSpec extends ControllerSpecSuppor
   val view: MoneyYouPaidInAdvanceToLandlordView = inject[MoneyYouPaidInAdvanceToLandlordView]
   val controllerNoProperty: MoneyYouPaidInAdvanceToLandlordController = new MoneyYouPaidInAdvanceToLandlordController(
     moneyYouPaidInAdvanceToLandlordView = view,
-    authenticate = fakeAuth,
+    authenticate = mockAuthJourney,
     inputText = mockInputText,
     getData = fakeData(None),
+    checkRequestSentReference = mockCheckRequestSentReference,
     sessionRepository = mockSessionRepository,
     navigator = mockNavigator,
     mcc = mcc)(mockConfig)
   val controllerProperty: Option[UserAnswers] => MoneyYouPaidInAdvanceToLandlordController = answers => new MoneyYouPaidInAdvanceToLandlordController(
     moneyYouPaidInAdvanceToLandlordView = view,
-    authenticate = fakeAuth,
+    authenticate = mockAuthJourney,
     inputText = mockInputText,
     getData = fakeDataProperty(Some(property),answers),
+    checkRequestSentReference = mockCheckRequestSentReference,
     sessionRepository = mockSessionRepository,
     navigator = mockNavigator,
     mcc = mcc)(mockConfig)
