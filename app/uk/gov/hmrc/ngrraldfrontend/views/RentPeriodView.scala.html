@@ -39,7 +39,10 @@
   }
   <span class="govuk-caption-m">@selectedPropertyAddress</span>
   <h1 class="govuk-heading-l">@messages("rentPeriods.title")</h1>
-
+  @if(rentPeriodsSummaryLists.size >= 9){
+   <p class="govuk-body">You can only tell us about 10 rent periods.</p>
+   <BR/>
+  }
    @govukSummaryList(firstRentPeriodSummaryList)
    @rentPeriodsSummaryLists.map(govukSummaryList(_))
    @govukRadios(ngrRadio)
