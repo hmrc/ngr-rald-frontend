@@ -69,6 +69,7 @@ class RentPeriodsViewSpec extends ViewBaseSpec with TestData {
   val yesRadio = "Yes"
   val noRadio = "No"
   val saveButton = "Continue"
+  val warningMessage = "You can only tell us about 10 rent periods."
   val firstTable = rentPeriodsController.firstPeriodSummaryList(firstRentPeriod)
   val rentPeriodsTables = rentPeriodsController.createRentPeriodsDetailsSummaryLists(firstRentPeriod, detailsOfRentPeriod)
   private val form: Form[RentPeriodsForm] = RentPeriodsForm.form.fillAndValidate(RentPeriodsForm("false"))
@@ -100,6 +101,7 @@ class RentPeriodsViewSpec extends ViewBaseSpec with TestData {
     val yesRadio = "#main-content > div > div.govuk-grid-column-two-thirds > form > div > fieldset > div > div:nth-child(1) > label"
     val noRadio = "#main-content > div > div.govuk-grid-column-two-thirds > form > div > fieldset > div > div:nth-child(2) > label"
     val saveButton = "#continue"
+    val warningMessage = "#main-content > div > div.govuk-grid-column-two-thirds > form > p"
   }
 
   "RentPeriodsView" must {
@@ -241,6 +243,10 @@ class RentPeriodsViewSpec extends ViewBaseSpec with TestData {
 
     "show the correct heading" in {
       elementText(Selectors.heading) mustBe heading
+    }
+
+    "show the correct warning message" in {
+      elementText(Selectors.warningMessage) mustBe warningMessage
     }
 
     "hide the addition period question" in {
