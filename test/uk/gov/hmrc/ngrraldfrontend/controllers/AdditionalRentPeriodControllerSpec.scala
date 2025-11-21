@@ -82,12 +82,6 @@ class AdditionalRentPeriodControllerSpec extends ControllerSpecSupport:
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.ProvideDetailsOfSecondRentPeriodController.show(NormalMode).url)
       }
-
-      "return SEE_OTHER and redirect to check your details when declaration has been sent" in {
-        val result = controllerWithAnswers(userAnswersWithoutData.set(DeclarationPage, "CTTW-DSWP-H9G2").toOption).show(NormalMode, 1)(authenticatedFakeRequest)
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(mockConfig.ngrCheckYourDetailsUrl)
-      }
     }
 
     "method submit" must {

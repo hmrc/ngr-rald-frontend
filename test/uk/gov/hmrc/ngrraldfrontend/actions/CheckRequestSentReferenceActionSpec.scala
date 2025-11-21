@@ -22,7 +22,7 @@ import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Results.Ok
 import play.api.mvc.{AnyContent, Request, Result}
-import play.api.test.Helpers.{OK, SEE_OTHER, defaultAwaitTimeout, redirectLocation, status}
+import play.api.test.Helpers.{OK, SEE_OTHER, contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.ngrraldfrontend.controllers.routes
@@ -73,8 +73,9 @@ class CheckRequestSentReferenceActionSpec extends TestSupport with TestData {
 
   "CheckRequestSentReferenceAction" when {
 
-    "rald user answers found in the mongoDB" must {
+    "Rald user answers found in the mongoDB" must {
       "redirect to check your details page when there is request sent reference" in {
+        when(mockAuthConnector.authorise[mockAuthAction.RetrievalsType](any(), any())(any(), any())).thenReturn(retrievalResult)
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(testRaldUserAnswers))
 
         val result = action.invokeBlock(fakeRequest, stubs.successBlock)
@@ -82,17 +83,22 @@ class CheckRequestSentReferenceActionSpec extends TestSupport with TestData {
         redirectLocation(result) mustBe Some(mockConfig.ngrCheckYourDetailsUrl)
       }
 
-//      "redirect to the Add Property Request Sent page when only find propertyLinkingUserAnswers in backend mongoDB" in {
-//        when(mockAuthConnector.authorise[mockAuthAction.RetrievalsType](any(), any())(any(), any())).thenReturn(retrievalResult)
-//        when(mockNGRConnector.getRatepayer(any())(any()))
-//          .thenReturn(Future.successful(Some(RatepayerRegistrationValuation(credId, Some(testRegistrationModel.copy(isRegistered = Some(true)))))))
-//        when(mockPropertyLinkingRepo.findByCredId(any())).thenReturn(Future.successful(None))
-//        when(mockNGRConnector.getPropertyLinkingUserAnswers(any())(any())).thenReturn(Future.successful(Some(testPropertyLinkingUserAnswers.copy(requestSentReference = Some("ABC123")))))
-//
-//        val result = action.invokeBlock(fakeRequest, stubs.successBlock)
-//        status(result) mustBe SEE_OTHER
-//        redirectLocation(result) mustBe Some(mockConfig.ngrCheckYourDetailsUrl)
-//      }
+      "Return OK when there is no request sent reference" in {
+        when(mockAuthConnector.authorise[mockAuthAction.RetrievalsType](any(), any())(any(), any())).thenReturn(retrievalResult)
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(UserAnswers(credId))))
+
+        val result = action.invokeBlock(fakeRequest, stubs.successBlock)
+        status(result) mustBe OK
+      }
+    }
+    "rald user answers is not found in the mongoDB" must {
+      "Return OK" in {
+        when(mockAuthConnector.authorise[mockAuthAction.RetrievalsType](any(), any())(any(), any())).thenReturn(retrievalResult)
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
+
+        val result = action.invokeBlock(fakeRequest, stubs.successBlock)
+        status(result) mustBe OK
+      }
     }
   }
 }

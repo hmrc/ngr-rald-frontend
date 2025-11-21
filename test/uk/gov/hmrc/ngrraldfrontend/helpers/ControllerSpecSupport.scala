@@ -18,10 +18,12 @@ package uk.gov.hmrc.ngrraldfrontend.helpers
 
 import org.mockito.Mockito.when
 import play.api.mvc.*
+import play.api.mvc.Results.Redirect
 import uk.gov.hmrc.auth.core.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, CheckRequestSentReferenceAction, DataRetrievalActionSpec, FakeAuthenticatedRequest, FakeDataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.connectors.NGRConnector
+import uk.gov.hmrc.ngrraldfrontend.mocks.MockAppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.{NewAgreement, RenewedAgreement, RentAgreement}
 import uk.gov.hmrc.ngrraldfrontend.models.AuthenticatedUserRequest
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
@@ -30,7 +32,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.requests.OptionalDataRequest
 import uk.gov.hmrc.ngrraldfrontend.models.vmvProperty.VMVProperty
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
-import uk.gov.hmrc.ngrraldfrontend.pages.{TellUsAboutRentPage, TellUsAboutYourNewAgreementPage, TellUsAboutYourRenewedAgreementPage}
+import uk.gov.hmrc.ngrraldfrontend.pages.{DeclarationPage, TellUsAboutRentPage, TellUsAboutYourNewAgreementPage, TellUsAboutYourRenewedAgreementPage}
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.{InputText, NGRCharacterCountComponent}
 
 import scala.concurrent.{ExecutionContext, Future}
