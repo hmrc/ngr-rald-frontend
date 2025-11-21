@@ -164,4 +164,7 @@ trait TestData {
 
  val aboutRepairsAndFittingOutModel: AboutRepairsAndFittingOut = AboutRepairsAndFittingOut(cost = BigDecimal("1234.56"), date = "01/2025")
 
+ val parkingSpacesIncluded = HowManyParkingSpacesOrGarages(uncoveredSpaces = 5, coveredSpaces = 6, garages = 0)
+
+ val parkingSpacesNotIncluded = ParkingSpacesOrGaragesNotIncludedInYourRent(uncoveredSpaces = 100, coveredSpaces = 0, garages = 20, totalCost = BigDecimal(12.0), agreementDate = NGRDate("12", "12", "2020").makeString)
 }
