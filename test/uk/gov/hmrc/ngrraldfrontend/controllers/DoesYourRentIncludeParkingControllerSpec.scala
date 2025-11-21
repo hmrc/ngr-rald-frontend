@@ -36,8 +36,8 @@ import scala.concurrent.Future
 class DoesYourRentIncludeParkingControllerSpec extends ControllerSpecSupport {
   val pageTitle = "Does your rent include parking spaces or garages?"
   val view: DoesYourRentIncludeParkingView = inject[DoesYourRentIncludeParkingView]
-  val controllerNoProperty: DoesYourRentIncludeParkingController = new DoesYourRentIncludeParkingController(view, fakeAuth, fakeData(None), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
-  val controllerProperty: Option[UserAnswers] => DoesYourRentIncludeParkingController = answers => new DoesYourRentIncludeParkingController(view, fakeAuth, fakeDataProperty(Some(property),answers), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
+  val controllerNoProperty: DoesYourRentIncludeParkingController = new DoesYourRentIncludeParkingController(view, mockAuthJourney, fakeData(None), mockCheckRequestSentReference, mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
+  val controllerProperty: Option[UserAnswers] => DoesYourRentIncludeParkingController = answers => new DoesYourRentIncludeParkingController(view, mockAuthJourney, fakeDataProperty(Some(property),answers), mockCheckRequestSentReference, mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
   val doesYourRentIncludeParkingAnswers: Option[UserAnswers] =  userAnswersWithoutData.set(DoesYourRentIncludeParkingPage, true).toOption
 
 

@@ -37,17 +37,19 @@ class RepairsAndInsuranceControllerSpec extends ControllerSpecSupport {
   val view: RepairsAndInsuranceView = inject[RepairsAndInsuranceView]
   val controller: RepairsAndInsuranceController = new RepairsAndInsuranceController(
     repairsAndInsuranceView = view,
-    authenticate = fakeAuth,
+    authenticate = mockAuthJourney,
     navigator = mockNavigator,
     getData = fakeData(None),
+    checkRequestSentReference = mockCheckRequestSentReference,
     sessionRepository = mockSessionRepository,
     mcc = mcc)(mockConfig)
 
   val controllerProperty: Option[UserAnswers] => RepairsAndInsuranceController = answers => new RepairsAndInsuranceController(
     repairsAndInsuranceView = view,
-    authenticate = fakeAuth,
+    authenticate = mockAuthJourney,
     navigator = mockNavigator,
     getData = fakeDataProperty(Some(property), answers),
+    checkRequestSentReference = mockCheckRequestSentReference,
     sessionRepository = mockSessionRepository,
     mcc = mcc)(mockConfig)
 

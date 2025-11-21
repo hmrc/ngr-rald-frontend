@@ -29,10 +29,10 @@ class CheckAnswersControllerSpec extends ControllerSpecSupport {
   val view: CheckAnswersView = inject[CheckAnswersView]
 
   val controllerNoProperty: CheckAnswersController =
-    new CheckAnswersController(view, fakeAuth, fakeData(None), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
+    new CheckAnswersController(view, mockAuthJourney, fakeData(None), mockCheckRequestSentReference, mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
 
   val controllerProperty: Option[UserAnswers] => CheckAnswersController = answers =>
-    new CheckAnswersController(view, fakeAuth, fakeDataProperty(Some(property), answers), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
+    new CheckAnswersController(view, mockAuthJourney, fakeDataProperty(Some(property), answers), mockCheckRequestSentReference, mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
 
   val didYouPayAnyMoneyToLandlordAnswers: Option[UserAnswers] =
     userAnswersWithoutData.set(DidYouPayAnyMoneyToLandlordPage, true).toOption

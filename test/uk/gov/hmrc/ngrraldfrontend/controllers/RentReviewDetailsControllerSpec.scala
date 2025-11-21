@@ -42,9 +42,9 @@ class RentReviewDetailsControllerSpec extends ControllerSpecSupport {
   val view: RentReviewDetailsView = inject[RentReviewDetailsView]
   val govukRadios: GovukRadios = inject[GovukRadios]
   val controllerNoProperty: RentReviewDetailsController = new RentReviewDetailsController(
-    view, fakeAuth, fakeData(None), govukRadios, mockNavigator, mockSessionRepository, mcc)(mockConfig, ec)
+    view, mockAuthJourney, fakeData(None), mockCheckRequestSentReference, govukRadios, mockNavigator, mockSessionRepository, mcc)(mockConfig, ec)
   val controllerProperty: Option[UserAnswers] => RentReviewDetailsController = answers => new RentReviewDetailsController(
-    view, fakeAuth, fakeDataProperty(Some(property), answers), govukRadios, mockNavigator, mockSessionRepository, mcc)(mockConfig, ec)
+    view, mockAuthJourney, fakeDataProperty(Some(property), answers), mockCheckRequestSentReference, govukRadios, mockNavigator, mockSessionRepository, mcc)(mockConfig, ec)
   val rentReviewDetailsAnswers: Option[UserAnswers] = userAnswersWithoutData.set(RentReviewDetailsPage, RentReviewDetails(BigDecimal("3000"), "OnlyGoUp", "2020-10-30", false, Some("IndependentExpert"))).toOption
 
   "Rent review details controller" must {

@@ -25,6 +25,7 @@ class MockAppConfig(val runModeConfiguration: Configuration) extends AppConfig {
   override val nextGenerationRatesHost: String = "https://localhost:1500"
   override val ngrLoginRegistrationHost: String = "https://localhost:1502"
   override val ngrDashboardUrl: String = "http://localhost:1503/ngr-dashboard-frontend/dashboard"
+  override val ngrCheckYourDetailsUrl: String = "http://localhost:1503/ngr-dashboard-frontend/check-details"
   override val ngrLogoutUrl: String = "http://localhost:1503/ngr-dashboard-frontend/signout"
   override def getString(key: String): String = ""
   override val cacheTtl: Long = 8

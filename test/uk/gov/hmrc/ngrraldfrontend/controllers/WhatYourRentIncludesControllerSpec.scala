@@ -39,17 +39,19 @@ class WhatYourRentIncludesControllerSpec  extends ControllerSpecSupport {
   val view:  WhatYourRentIncludesView = inject[ WhatYourRentIncludesView]
   val controllerNoProperty :WhatYourRentIncludesController = new WhatYourRentIncludesController(
     view,
-    fakeAuth,
+    mockAuthJourney,
     mockInputText,
     fakeData(None),
+    mockCheckRequestSentReference,
     mockSessionRepository,
     mockNavigator,
     mcc)(mockConfig, ec)
   val controllerProperty: Option[UserAnswers] => WhatYourRentIncludesController = answers => new WhatYourRentIncludesController(
     view,
-    fakeAuth,
+    mockAuthJourney,
     mockInputText,
     fakeDataProperty(Some(property), answers),
+    mockCheckRequestSentReference,
     mockSessionRepository,
     mockNavigator,
     mcc)(mockConfig, ec)

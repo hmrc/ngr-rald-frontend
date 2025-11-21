@@ -34,8 +34,8 @@ import scala.concurrent.Future
 class DoYouPayExtraForParkingSpacesControllerSpec extends ControllerSpecSupport{
   val pageTitle = "Do you pay extra for parking spaces or garages that are not included in your rent?"
   val view: DoYouPayExtraForParkingSpacesView = inject[DoYouPayExtraForParkingSpacesView]
-  val controllerNoProperty : DoYouPayExtraForParkingSpacesController = new DoYouPayExtraForParkingSpacesController(view,fakeAuth, fakeData(None), mockNavigator, mockSessionRepository, mcc)(mockConfig)
-  val controllerProperty : Option[UserAnswers] => DoYouPayExtraForParkingSpacesController = answers => new DoYouPayExtraForParkingSpacesController(view,fakeAuth, fakeDataProperty(Some(property), answers), mockNavigator, mockSessionRepository, mcc)(mockConfig)
+  val controllerNoProperty : DoYouPayExtraForParkingSpacesController = new DoYouPayExtraForParkingSpacesController(view, mockAuthJourney, fakeData(None), mockCheckRequestSentReference, mockNavigator, mockSessionRepository, mcc)(mockConfig)
+  val controllerProperty : Option[UserAnswers] => DoYouPayExtraForParkingSpacesController = answers => new DoYouPayExtraForParkingSpacesController(view, mockAuthJourney, fakeDataProperty(Some(property), answers), mockCheckRequestSentReference, mockNavigator, mockSessionRepository, mcc)(mockConfig)
   val doYouPayExtraForParkingSpacesAnswers: Option[UserAnswers] = userAnswersWithoutData.set(DoYouPayExtraForParkingSpacesPage, true).toOption
 
   "DoYouPayExtraForParkingSpacesController" when {

@@ -31,8 +31,7 @@ import scala.concurrent.Future
 class DeclaratioinControllerSpec extends ControllerSpecSupport {
   val pageTitle = "Declaration"
   val view: DeclarationView = inject[DeclarationView]
-  val controllerNoProperty: DeclarationController = new DeclarationController(view, fakeAuth, fakeData(None), mockNavigator, mockSessionRepository, mockNGRConnector, mcc)
-  val controllerProperty: Option[UserAnswers] => DeclarationController = answers => new DeclarationController(view, fakeAuth, fakeDataProperty(Some(property), answers), mockNavigator, mockSessionRepository, mockNGRConnector, mcc)
+  val controllerProperty: Option[UserAnswers] => DeclarationController = answers => new DeclarationController(view, mockAuthJourney, fakeDataProperty(Some(property), answers), mockCheckRequestSentReference, mockNavigator, mockSessionRepository, mockNGRConnector, mcc)
 
   "Declaration controller" must {
     "method show" must {

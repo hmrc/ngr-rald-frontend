@@ -36,8 +36,8 @@ import scala.concurrent.Future
 class WhatTypeOfLeaseRenewalControllerSpec extends ControllerSpecSupport {
   val pageTitle = "What type of lease renewal is it?"
   val view: WhatTypeOfLeaseRenewalView = inject[WhatTypeOfLeaseRenewalView]
-  val controllerNoProperty: WhatTypeOfLeaseRenewalController = new WhatTypeOfLeaseRenewalController(view, fakeAuth, fakeData(None),mockSessionRepository,mockNavigator, mcc)(mockConfig)
-  val controllerProperty: Option[UserAnswers] => WhatTypeOfLeaseRenewalController = answers => new WhatTypeOfLeaseRenewalController(view, fakeAuth, fakeDataProperty(Some(property),answers),mockSessionRepository,mockNavigator, mcc)(mockConfig)
+  val controllerNoProperty: WhatTypeOfLeaseRenewalController = new WhatTypeOfLeaseRenewalController(view, mockAuthJourney, fakeData(None), mockCheckRequestSentReference, mockSessionRepository, mockNavigator, mcc)(mockConfig)
+  val controllerProperty: Option[UserAnswers] => WhatTypeOfLeaseRenewalController = answers => new WhatTypeOfLeaseRenewalController(view, mockAuthJourney, fakeDataProperty(Some(property),answers), mockCheckRequestSentReference, mockSessionRepository, mockNavigator, mcc)(mockConfig)
   val renewedAgreementLeaseAnswers: Option[UserAnswers] = userAnswersWithoutData.set(WhatTypeOfLeaseRenewalPage, Constants.renewedAgreement).toOption
   val surrenderAndRenewalAnswers: Option[UserAnswers] = userAnswersWithoutData.set(WhatTypeOfLeaseRenewalPage, Constants.surrenderAndRenewal).toOption
 

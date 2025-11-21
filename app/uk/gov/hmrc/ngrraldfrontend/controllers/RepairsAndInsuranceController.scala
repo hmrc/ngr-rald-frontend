@@ -18,7 +18,7 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, CheckRequestSentReferenceAction, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
@@ -40,12 +40,13 @@ class RepairsAndInsuranceController @Inject()(repairsAndInsuranceView: RepairsAn
                                               authenticate: AuthRetrievals,
                                               navigator: Navigator,
                                               getData: DataRetrievalAction,
+                                              checkRequestSentReference: CheckRequestSentReferenceAction,
                                               sessionRepository: SessionRepository,
                                               mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport {
 
   def show(mode: Mode): Action[AnyContent] = {
-    (authenticate andThen getData).async { implicit request =>
+    (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).get(RepairsAndInsurancePage) match {
         case None => form
         case Some(value) => form.fill(RepairsAndInsuranceForm(value.internalRepairs, value.externalRepairs, value.buildingInsurance))
@@ -62,7 +63,7 @@ class RepairsAndInsuranceController @Inject()(repairsAndInsuranceView: RepairsAn
   }
 
   def submit(mode: Mode): Action[AnyContent] =
-    (authenticate andThen getData).async { implicit request =>
+    (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
             Future.successful(BadRequest(repairsAndInsuranceView(

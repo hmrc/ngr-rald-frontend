@@ -18,7 +18,7 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, CheckRequestSentReferenceAction, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{buildRadios, simpleNgrRadio}
 import uk.gov.hmrc.ngrraldfrontend.models.forms.ConfirmBreakClauseForm
@@ -37,6 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ConfirmBreakClauseController  @Inject()(confirmBreakClauseView: ConfirmBreakClauseView,
                                               authenticate: AuthRetrievals,
                                               getData: DataRetrievalAction,
+                                              checkRequestSentReference: CheckRequestSentReferenceAction,
                                               sessionRepository: SessionRepository,
                                               navigator: Navigator,
                                               mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
@@ -44,7 +45,7 @@ class ConfirmBreakClauseController  @Inject()(confirmBreakClauseView: ConfirmBre
 
 
   def show(mode: Mode): Action[AnyContent] = {
-    (authenticate andThen getData).async { implicit request =>
+    (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).get(ConfirmBreakClausePage) match {
         case None => form
         case Some(value) => form.fill(ConfirmBreakClauseForm(value.toString))
@@ -59,7 +60,7 @@ class ConfirmBreakClauseController  @Inject()(confirmBreakClauseView: ConfirmBre
   }
 
   def submit(mode: Mode): Action[AnyContent] =
-    (authenticate andThen getData).async { implicit request =>
+    (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
             Future.successful(BadRequest(confirmBreakClauseView(

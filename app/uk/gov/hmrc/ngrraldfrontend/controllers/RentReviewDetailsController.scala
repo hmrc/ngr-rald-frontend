@@ -19,7 +19,7 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.govukfrontend.views.html.components.GovukRadios
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, CheckRequestSentReferenceAction, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentReviewDetailsForm
@@ -40,6 +40,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class RentReviewDetailsController @Inject()(rentReviewDetailsView: RentReviewDetailsView,
                                             authenticate: AuthRetrievals,
                                             getData: DataRetrievalAction,
+                                            checkRequestSentReference: CheckRequestSentReferenceAction,
                                             govukRadios: GovukRadios,
                                             navigator: Navigator,
                                             sessionRepository: SessionRepository,
@@ -47,7 +48,7 @@ class RentReviewDetailsController @Inject()(rentReviewDetailsView: RentReviewDet
   extends FrontendController(mcc) with I18nSupport with DateKeyFinder {
 
   def show(mode: Mode): Action[AnyContent] = {
-    (authenticate andThen getData).async { implicit request =>
+    (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).get(RentReviewDetailsPage) match {
         case None => form
         case Some(value) => answerToForm(value)
@@ -63,7 +64,7 @@ class RentReviewDetailsController @Inject()(rentReviewDetailsView: RentReviewDet
   }
 
   def submit(mode: Mode): Action[AnyContent] =
-    (authenticate andThen getData).async { implicit request =>
+    (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
           val correctedFormErrors = formWithErrors.errors.map { formError =>

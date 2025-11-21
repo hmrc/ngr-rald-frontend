@@ -18,7 +18,7 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, CheckRequestSentReferenceAction, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.*
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
@@ -33,13 +33,14 @@ import scala.concurrent.{ExecutionContext, Future}
 class CheckAnswersController @Inject()(view: CheckAnswersView,
                                        authenticate: AuthRetrievals,
                                        getData: DataRetrievalAction,
+                                       checkRequestSentReference: CheckRequestSentReferenceAction,
                                        sessionRepository: SessionRepository,
                                        navigator: Navigator,
                                        mcc: MessagesControllerComponents,
                                       )(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
   def show(mode: Mode): Action[AnyContent] = {
-    (authenticate andThen getData).async { implicit request =>
+    (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
       Future.successful(Ok(view(
         selectedPropertyAddress = request.property.addressFull,
         leaseRenewalsSummary = createLeaseRenewalsSummaryRows(credId = request.credId, userAnswers = request.userAnswers),

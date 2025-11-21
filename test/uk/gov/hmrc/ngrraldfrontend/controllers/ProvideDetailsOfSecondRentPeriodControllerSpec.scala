@@ -37,9 +37,10 @@ class ProvideDetailsOfSecondRentPeriodControllerSpec extends ControllerSpecSuppo
 
   val controllerWithAnswers: Option[UserAnswers] => ProvideDetailsOfSecondRentPeriodController = answers => new ProvideDetailsOfSecondRentPeriodController(
     view,
-    fakeAuth,
+    mockAuthJourney,
     mcc,
     fakeDataProperty(Some(property), answers),
+    mockCheckRequestSentReference,
     mockSessionRepository,
     mockNavigator
   )(mockConfig, ec)

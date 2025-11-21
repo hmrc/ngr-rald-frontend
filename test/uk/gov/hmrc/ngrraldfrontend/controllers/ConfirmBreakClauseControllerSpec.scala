@@ -35,8 +35,8 @@ import scala.concurrent.Future
 class ConfirmBreakClauseControllerSpec extends ControllerSpecSupport {
   val pageTitle = "Did your agreement allow you to trigger a break clause?"
   val view: ConfirmBreakClauseView = inject[ConfirmBreakClauseView]
-  val controllerNoProperty: ConfirmBreakClauseController = new ConfirmBreakClauseController(view, fakeAuth, fakeData(None), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
-  val controllerProperty: Option[UserAnswers] => ConfirmBreakClauseController = answers => new ConfirmBreakClauseController(view, fakeAuth, fakeDataProperty(Some(property),answers), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
+  val controllerNoProperty: ConfirmBreakClauseController = new ConfirmBreakClauseController(view, mockAuthJourney, fakeData(None), mockCheckRequestSentReference, mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
+  val controllerProperty: Option[UserAnswers] => ConfirmBreakClauseController = answers => new ConfirmBreakClauseController(view, mockAuthJourney, fakeDataProperty(Some(property),answers), mockCheckRequestSentReference, mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
   val confirmBreakClauseAnswers: Option[UserAnswers] =  userAnswersWithoutData.set(ConfirmBreakClausePage, true).toOption
 
 

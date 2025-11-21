@@ -23,7 +23,7 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.{Legend, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.dateinput.DateInput
 import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.Fieldset
 import uk.gov.hmrc.govukfrontend.views.viewmodels.hint.Hint
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, CheckRequestSentReferenceAction, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
@@ -48,13 +48,14 @@ class AgreementVerbalController @Inject()(view: AgreementVerbalView,
                                           dateTextFields: DateTextFields,
                                           mcc: MessagesControllerComponents,
                                           getData: DataRetrievalAction,
+                                          checkRequestSentReference: CheckRequestSentReferenceAction,
                                           sessionRepository: SessionRepository,
                                           navigator: Navigator
                                          )(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with DateKeyFinder {
 
   def show(mode: Mode): Action[AnyContent] = {
-    (authenticate andThen getData).async { implicit request =>
+    (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).get(AgreementVerbalPage) match {
         case None => form
         case Some(value) => answerToForm(value)
@@ -69,7 +70,7 @@ class AgreementVerbalController @Inject()(view: AgreementVerbalView,
   }
 
   def submit(mode: Mode): Action[AnyContent] = {
-    (authenticate andThen getData).async { implicit request =>
+    (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
       form
         .bindFromRequest()
         .fold(

@@ -22,6 +22,7 @@ import play.api.i18n.*
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.dateinput.DateInput
 import uk.gov.hmrc.ngrraldfrontend.models.*
+import uk.gov.hmrc.ngrraldfrontend.models.components.NGRDateInput
 
 import java.time.LocalDate
 import scala.math.BigDecimal.RoundingMode

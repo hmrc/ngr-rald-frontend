@@ -27,6 +27,7 @@ trait AppConfig {
   val nextGenerationRatesHost: String
   val ngrLoginRegistrationHost: String
   val ngrDashboardUrl: String
+  val ngrCheckYourDetailsUrl: String
   val ngrLogoutUrl: String
   def getString(key: String): String
   val cacheTtl: Long
@@ -38,6 +39,7 @@ class FrontendAppConfig @Inject()(config: Configuration, servicesConfig: Service
   override val nextGenerationRatesHost: String = servicesConfig.baseUrl("next-generation-rates")
   override val ngrLoginRegistrationHost: String = servicesConfig.baseUrl("ngr-login-register-frontend")
   override val ngrDashboardUrl: String = s"$dashboardHost/ngr-dashboard-frontend/dashboard"
+  override val ngrCheckYourDetailsUrl: String = s"$dashboardHost/ngr-dashboard-frontend/check-your-details"
   override val ngrLogoutUrl: String = s"$dashboardHost/ngr-dashboard-frontend/signout"
   override val cacheTtl: Long = config.get[Int]("mongodb.timeToLiveInSeconds")
 

@@ -36,11 +36,11 @@ import scala.concurrent.Future
 class HowMuchIsTotalAnnualRentControllerSpec extends ControllerSpecSupport {
   val pageTitle = "How much is your total annual rent?"
   val view: HowMuchIsTotalAnnualRentView = inject[HowMuchIsTotalAnnualRentView]
-  val controllerNoProperty: HowMuchIsTotalAnnualRentController = new HowMuchIsTotalAnnualRentController(view, fakeAuth, fakeData(None), mockSessionRepository, mockNavigator, mcc)(mockConfig)
-  val controllerProperty: HowMuchIsTotalAnnualRentController = new HowMuchIsTotalAnnualRentController(view, fakeAuth, fakeDataProperty(Some(property),None), mockSessionRepository, mockNavigator, mcc)(mockConfig)
+  val controllerNoProperty: HowMuchIsTotalAnnualRentController = new HowMuchIsTotalAnnualRentController(view, mockAuthJourney, fakeData(None), mockCheckRequestSentReference, mockSessionRepository, mockNavigator, mcc)(mockConfig)
+  val controllerProperty: HowMuchIsTotalAnnualRentController = new HowMuchIsTotalAnnualRentController(view, mockAuthJourney, fakeDataProperty(Some(property),None), mockCheckRequestSentReference, mockSessionRepository, mockNavigator, mcc)(mockConfig)
   lazy val howMuchIsTotalAnnualRentAnswers: Option[UserAnswers] = userAnswersWithoutData.set(HowMuchIsTotalAnnualRentPage, BigDecimal(1234.67)).toOption
   lazy val filledController: Option[UserAnswers] => HowMuchIsTotalAnnualRentController = answers => HowMuchIsTotalAnnualRentController(
-    view, fakeAuth, fakeDataProperty(Some(property), answers), mockSessionRepository, mockNavigator, mcc
+    view, mockAuthJourney, fakeDataProperty(Some(property), answers), mockCheckRequestSentReference, mockSessionRepository, mockNavigator, mcc
   )
 
   "TypeOfLeaseRenewalController" must {

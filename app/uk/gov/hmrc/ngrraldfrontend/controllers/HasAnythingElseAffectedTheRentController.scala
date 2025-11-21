@@ -22,7 +22,7 @@ import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Label, Text}
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, CheckRequestSentReferenceAction, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRCharacterCount
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.{buildRadios, simpleNgrRadio}
@@ -42,12 +42,13 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class HasAnythingElseAffectedTheRentController @Inject()(hasAnythingElseAffectedTheRentView: HasAnythingElseAffectedTheRentView,
-                                                        authenticate : AuthRetrievals,
-                                                        ngrCharacterCountComponent: NGRCharacterCountComponent,
-                                                        getData: DataRetrievalAction,
-                                                        navigator: Navigator,
-                                                        sessionRepository: SessionRepository,
-                                                        mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
+                                                         authenticate: AuthRetrievals,
+                                                         ngrCharacterCountComponent: NGRCharacterCountComponent,
+                                                         getData: DataRetrievalAction,
+                                                         checkRequestSentReference: CheckRequestSentReferenceAction,
+                                                         navigator: Navigator,
+                                                         sessionRepository: SessionRepository,
+                                                         mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
 
   private def reasonConditionalHtml(form: Form[HasAnythingElseAffectedTheRentForm])(implicit messages: Messages): Option[Html] =
@@ -63,27 +64,27 @@ class HasAnythingElseAffectedTheRentController @Inject()(hasAnythingElseAffected
       )))
 
   def show(mode: Mode): Action[AnyContent] = {
-    (authenticate andThen getData).async { implicit request =>
+    (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).get(HasAnythingElseAffectedTheRentPage) match {
         case None => form
         case Some(value) => form.fill(HasAnythingElseAffectedTheRentForm(value.radio.toString, value.reason))
       }
       Future.successful(Ok(hasAnythingElseAffectedTheRentView(
         form = preparedForm,
-        radios = buildRadios(preparedForm, simpleNgrRadio(HasAnythingElseAffectedTheRentForm.hasAnythingElseAffectedTheRentRadio,  yesConditionalHtml = reasonConditionalHtml(preparedForm))),
+        radios = buildRadios(preparedForm, simpleNgrRadio(HasAnythingElseAffectedTheRentForm.hasAnythingElseAffectedTheRentRadio, yesConditionalHtml = reasonConditionalHtml(preparedForm))),
         propertyAddress = request.property.addressFull,
         mode = mode
       )))
     }
   }
-  
+
   def submit(mode: Mode): Action[AnyContent] =
-    (authenticate andThen getData).async { implicit request =>
+    (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
           Future.successful(BadRequest(hasAnythingElseAffectedTheRentView(
             form = formWithErrors,
-            radios = buildRadios(formWithErrors, simpleNgrRadio(HasAnythingElseAffectedTheRentForm.hasAnythingElseAffectedTheRentRadio,  yesConditionalHtml = reasonConditionalHtml(formWithErrors))),
+            radios = buildRadios(formWithErrors, simpleNgrRadio(HasAnythingElseAffectedTheRentForm.hasAnythingElseAffectedTheRentRadio, yesConditionalHtml = reasonConditionalHtml(formWithErrors))),
             propertyAddress = request.property.addressFull,
             mode = mode
           )))

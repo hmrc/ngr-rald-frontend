@@ -39,8 +39,8 @@ class RentDatesAgreeStartControllerSpec extends ControllerSpecSupport {
   val pageTitle = "Rent dates"
   val view: RentDatesAgreeStartView = inject[RentDatesAgreeStartView]
   val mockDateTextFields: DateTextFields = inject[DateTextFields]
-  val controllerNoProperty: RentDatesAgreeStartController = new RentDatesAgreeStartController(view, fakeAuth, fakeData(None), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
-  val controllerProperty: Option[UserAnswers] => RentDatesAgreeStartController = answers => new RentDatesAgreeStartController(view, fakeAuth, fakeDataProperty(Some(property), answers), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
+  val controllerNoProperty: RentDatesAgreeStartController = new RentDatesAgreeStartController(view, mockAuthJourney, fakeData(None), mockCheckRequestSentReference, mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
+  val controllerProperty: Option[UserAnswers] => RentDatesAgreeStartController = answers => new RentDatesAgreeStartController(view, mockAuthJourney, fakeDataProperty(Some(property), answers), mockCheckRequestSentReference, mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
   val rentDatesAgreeStartAnswers: Option[UserAnswers] = userAnswersWithoutData.set(RentDatesAgreeStartPage, rentDatesAgreeStartModel).toOption
 
   "Rent Dates Agree Start controller" must {

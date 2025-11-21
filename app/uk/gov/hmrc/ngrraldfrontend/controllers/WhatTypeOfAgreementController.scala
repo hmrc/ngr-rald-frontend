@@ -18,7 +18,7 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, CheckRequestSentReferenceAction, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
@@ -41,13 +41,14 @@ class WhatTypeOfAgreementController @Inject()(view: WhatTypeOfAgreementView,
                                               authenticate: AuthRetrievals,
                                               mcc: MessagesControllerComponents,
                                               getData: DataRetrievalAction,
+                                              checkRequestSentReference: CheckRequestSentReferenceAction,
                                               navigator: Navigator,
                                               sessionRepository: SessionRepository)
                                              (implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport {
 
   def show(mode: Mode): Action[AnyContent] = {
-    (authenticate andThen getData).async { implicit request =>
+    (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).get(WhatTypeOfAgreementPage) match {
         case None => form
         case Some(value) => form.fill(WhatTypeOfAgreementForm(value))
@@ -64,7 +65,7 @@ class WhatTypeOfAgreementController @Inject()(view: WhatTypeOfAgreementView,
   }
 
   def submit(mode: Mode): Action[AnyContent] = {
-    (authenticate andThen getData).async { implicit request =>
+    (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
       form
         .bindFromRequest()
         .fold(

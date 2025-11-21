@@ -20,8 +20,8 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.Aliases.{DateInput, Fieldset, Hint, Legend, PrefixOrSuffix, Text}
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
+import uk.gov.hmrc.govukfrontend.views.Aliases.*
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, CheckRequestSentReferenceAction, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AboutTheRentFreePeriodForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AboutTheRentFreePeriodForm.form
@@ -40,12 +40,13 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AboutTheRentFreePeriodController @Inject()(aboutTheRentFreePeriodView: AboutTheRentFreePeriodView,
-                                                          authenticate: AuthRetrievals,
-                                                          inputText: InputText,
-                                                          getData: DataRetrievalAction,
-                                                          sessionRepository: SessionRepository,
-                                                          navigator: Navigator,
-                                                          mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
+                                                 authenticate: AuthRetrievals,
+                                                 inputText: InputText,
+                                                 getData: DataRetrievalAction,
+                                                 checkRequestSentReference: CheckRequestSentReferenceAction,
+                                                 sessionRepository: SessionRepository,
+                                                 navigator: Navigator,
+                                                 mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with DateKeyFinder {
 
   def dateInput()(implicit messages: Messages): DateInput = DateInput(
@@ -65,7 +66,7 @@ class AboutTheRentFreePeriodController @Inject()(aboutTheRentFreePeriodView: Abo
   )
 
   def show(mode: Mode): Action[AnyContent] = {
-    (authenticate andThen getData).async { implicit request =>
+    (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).get(AboutTheRentFreePeriodPage) match {
         case None => form
         case Some(value) => form.fill(AboutTheRentFreePeriodForm(value.months, NGRDate.fromString(value.date)))
@@ -80,7 +81,7 @@ class AboutTheRentFreePeriodController @Inject()(aboutTheRentFreePeriodView: Abo
   }
 
   def submit(mode: Mode): Action[AnyContent] =
-    (authenticate andThen getData).async { implicit request =>
+    (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
           val correctedFormErrors = formWithErrors.errors.map { formError =>

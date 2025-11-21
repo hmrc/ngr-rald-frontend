@@ -21,17 +21,16 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.*
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Card, CardTitle, Key, SummaryList, SummaryListRow, Value}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{Table, TableRow}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.*
 import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, CheckRequestSentReferenceAction, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentPeriodsForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentPeriodsForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.models.{DetailsOfRentPeriod, Mode, NGRDate, NormalMode, ProvideDetailsOfFirstRentPeriod, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{DetailsOfRentPeriod, Mode, NGRDate, ProvideDetailsOfFirstRentPeriod, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.{ProvideDetailsOfFirstRentPeriodPage, ProvideDetailsOfSecondRentPeriodPage, RentPeriodsPage}
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
@@ -47,6 +46,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class RentPeriodsController @Inject()(view: RentPeriodView,
                                       authenticate: AuthRetrievals,
                                       getData: DataRetrievalAction,
+                                      checkRequestSentReference: CheckRequestSentReferenceAction,
                                       mcc: MessagesControllerComponents,
                                       sessionRepository: SessionRepository,
                                       navigator: Navigator,
@@ -94,10 +94,10 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
   }
 
   def show(mode: Mode): Action[AnyContent] = {
-    (authenticate andThen getData).async { implicit request =>
+    (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
       val userAnswers = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId)))
       (userAnswers.get(ProvideDetailsOfFirstRentPeriodPage), userAnswers.get(ProvideDetailsOfSecondRentPeriodPage)) match {
-        case (Some(firstRentPeriod), Some(rentPeriods)) if rentPeriods.nonEmpty=>
+        case (Some(firstRentPeriod), Some(rentPeriods)) if rentPeriods.nonEmpty =>
           val preparedForm = userAnswers.get(RentPeriodsPage) match {
             case Some(value) => form.fill(RentPeriodsForm(value.toString))
             case None => form
@@ -114,8 +114,8 @@ class RentPeriodsController @Inject()(view: RentPeriodView,
     }
   }
 
-  def submit(mode: Mode): Action[AnyContent]   = {
-    (authenticate andThen getData).async { implicit request =>
+  def submit(mode: Mode): Action[AnyContent] = {
+    (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
       form
         .bindFromRequest()
         .fold(

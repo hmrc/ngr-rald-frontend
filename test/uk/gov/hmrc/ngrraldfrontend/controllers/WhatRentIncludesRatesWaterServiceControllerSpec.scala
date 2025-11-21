@@ -39,17 +39,19 @@ class WhatRentIncludesRatesWaterServiceControllerSpec  extends ControllerSpecSup
   val view: WhatYourRentIncludesView = inject[WhatYourRentIncludesView]
   val controllerNoProperty: WhatRentIncludesRatesWaterServiceController = new WhatRentIncludesRatesWaterServiceController(
     view,
-    fakeAuth,
+    mockAuthJourney,
     mockInputText,
     fakeData(None),
+    mockCheckRequestSentReference,
     mockSessionRepository,
     mockNavigator,
     mcc)(mockConfig, ec)
   val controllerProperty: Option[UserAnswers] => WhatRentIncludesRatesWaterServiceController = answers => new WhatRentIncludesRatesWaterServiceController(
     view,
-    fakeAuth,
+    mockAuthJourney,
     mockInputText,
     fakeDataProperty(Some(property), answers),
+    mockCheckRequestSentReference,
     mockSessionRepository,
     mockNavigator,
     mcc)(mockConfig, ec)

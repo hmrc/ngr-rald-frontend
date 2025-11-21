@@ -35,8 +35,8 @@ import scala.concurrent.Future
 class CheckRentFreePeriodControllerSpec extends ControllerSpecSupport{
   val pageTitle = "Do you have a rent-free period at the start of your agreement?"
   val view: CheckRentFreePeriodView = inject[CheckRentFreePeriodView]
-  val controllerNoProperty : CheckRentFreePeriodController = new CheckRentFreePeriodController(view,fakeAuth, fakeData(None), mockNavigator, mockSessionRepository, mcc)(mockConfig)
-  val controllerProperty : Option[UserAnswers] => CheckRentFreePeriodController = answers => new CheckRentFreePeriodController(view,fakeAuth, fakeDataProperty(Some(property), answers), mockNavigator, mockSessionRepository, mcc)(mockConfig)
+  val controllerNoProperty : CheckRentFreePeriodController = new CheckRentFreePeriodController(view, mockAuthJourney, fakeData(None), mockCheckRequestSentReference, mockNavigator, mockSessionRepository, mcc)(mockConfig)
+  val controllerProperty : Option[UserAnswers] => CheckRentFreePeriodController = answers => new CheckRentFreePeriodController(view, mockAuthJourney, fakeDataProperty(Some(property), answers), mockCheckRequestSentReference, mockNavigator, mockSessionRepository, mcc)(mockConfig)
   val checkRentFreePeriodAnswers: Option[UserAnswers] = userAnswersWithoutData.set(CheckRentFreePeriodPage, true).toOption
 
   "CheckRentFreePeriodController" when {

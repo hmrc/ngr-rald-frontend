@@ -35,8 +35,8 @@ import scala.concurrent.Future
 class RentPeriodsControllerSpec extends ControllerSpecSupport {
   val pageTitle = "Rent periods"
   val view: RentPeriodView = inject[RentPeriodView]
-  val controllerNoProperty: RentPeriodsController = new RentPeriodsController(view, fakeAuth, fakeData(None), mcc, mockSessionRepository, mockNavigator)(mockConfig, ec)
-  val controllerProperty: Option[UserAnswers] => RentPeriodsController = answers => new RentPeriodsController(view, fakeAuth, fakeDataProperty(Some(property), answers), mcc, mockSessionRepository, mockNavigator)(mockConfig, ec)
+  val controllerNoProperty: RentPeriodsController = new RentPeriodsController(view, mockAuthJourney, fakeData(None), mockCheckRequestSentReference, mcc, mockSessionRepository, mockNavigator)(mockConfig, ec)
+  val controllerProperty: Option[UserAnswers] => RentPeriodsController = answers => new RentPeriodsController(view, mockAuthJourney, fakeDataProperty(Some(property), answers), mockCheckRequestSentReference, mcc, mockSessionRepository, mockNavigator)(mockConfig, ec)
 
   lazy val firstSecondRentPeriodAnswers: Option[UserAnswers] = userAnswersWithoutData.set(ProvideDetailsOfFirstRentPeriodPage, firstRentPeriod)
     .flatMap(_.set(ProvideDetailsOfSecondRentPeriodPage, detailsOfRentPeriod)).toOption

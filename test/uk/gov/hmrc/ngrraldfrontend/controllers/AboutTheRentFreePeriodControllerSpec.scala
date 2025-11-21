@@ -55,17 +55,19 @@ class AboutTheRentFreePeriodControllerSpec extends ControllerSpecSupport {
   val view: AboutTheRentFreePeriodView = inject[AboutTheRentFreePeriodView]
   val controllerNoProperty: AboutTheRentFreePeriodController = new AboutTheRentFreePeriodController(
     aboutTheRentFreePeriodView = view,
-    authenticate = fakeAuth,
+    authenticate = mockAuthJourney,
     inputText = mockInputText,
     getData = fakeData(None),
+    checkRequestSentReference = mockCheckRequestSentReference,
     sessionRepository = mockSessionRepository,
     navigator = mockNavigator,
     mcc = mcc)(mockConfig)
   val controllerProperty: Option[UserAnswers] => AboutTheRentFreePeriodController = answers => new AboutTheRentFreePeriodController(
     aboutTheRentFreePeriodView = view,
-    authenticate = fakeAuth,
+    authenticate = mockAuthJourney,
     inputText = mockInputText,
     getData = fakeDataProperty(Some(property),answers),
+    checkRequestSentReference = mockCheckRequestSentReference,
     sessionRepository = mockSessionRepository,
     navigator = mockNavigator,
     mcc = mcc)(mockConfig)

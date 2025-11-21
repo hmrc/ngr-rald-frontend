@@ -21,6 +21,7 @@ import play.api.mvc.Call
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.ngrraldfrontend.models.*
 import uk.gov.hmrc.ngrraldfrontend.models.Incentive.{No, YesLumpSum, YesRentFreePeriod}
+import uk.gov.hmrc.ngrraldfrontend.models.NGRDate.formatDate
 import uk.gov.hmrc.ngrraldfrontend.models.NGRSummaryListRow.summarise
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.pages.*
@@ -345,12 +346,11 @@ object CheckAnswers {
     val answers = userAnswers.getOrElse(UserAnswers(CredId(credId)))
     val rentPeriod = answers.get(ProvideDetailsOfFirstRentPeriodPage)
     val link = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfFirstRentPeriodController.show(CheckMode)
-    val formatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)
 
     val rentPeriodRows = rentPeriod.map { value =>
       val startRow = buildRow(
         labelKey = "checkAnswers.rentPeriod.provideDetailsOfFirstRentPeriod.start",
-        value = value.startDate.format(formatter),
+        value = formatDate(value.startDate.toString),
         linkId = "provide-details-of-first-period-start",
         href = link,
         hiddenKey = "provide-details-of-first-period-start"
@@ -358,7 +358,7 @@ object CheckAnswers {
 
       val endRow = buildRow(
         labelKey = "checkAnswers.rentPeriod.provideDetailsOfFirstRentPeriod.end",
-        value = value.endDate.format(formatter),
+        value = formatDate(value.endDate.toString),
         linkId = "provide-details-of-first-period-end",
         href = link,
         hiddenKey = "provide-details-of-first-period-end"
@@ -402,7 +402,6 @@ object CheckAnswers {
     val answers = userAnswers.getOrElse(UserAnswers(CredId(credId)))
     val rentPeriodsDetailsOpt = answers.get(ProvideDetailsOfSecondRentPeriodPage)
     val link = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfSecondRentPeriodController.show(CheckMode)
-    val formatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)
 
     rentPeriodsDetailsOpt match {
       case Some(rentPeriodsDetails) =>
@@ -410,7 +409,7 @@ object CheckAnswers {
           val rows = Seq(
             buildRow(
               labelKey = "checkAnswers.rentPeriod.provideDetailsOfFirstRentPeriod.end",
-              value = NGRDate.formatDate(period.endDate),
+              value = formatDate(period.endDate),
               linkId = s"rent-period-${index + 1}-end",
               href = link,
               hiddenKey = s"rent-period-${index + 1}-end"

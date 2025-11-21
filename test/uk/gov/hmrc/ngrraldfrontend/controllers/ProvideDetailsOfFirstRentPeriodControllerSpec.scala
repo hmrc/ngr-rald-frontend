@@ -38,20 +38,22 @@ class ProvideDetailsOfFirstRentPeriodControllerSpec extends ControllerSpecSuppor
 
   val controllerNoProperty: ProvideDetailsOfFirstRentPeriodController = new ProvideDetailsOfFirstRentPeriodController(
     view,
-    fakeAuth,
+    mockAuthJourney,
     mockInputText,
     mcc,
     fakeData(None),
+    mockCheckRequestSentReference,
     mockSessionRepository,
     mockNavigator
   )(mockConfig, ec)
 
   val controllerWithAnswers: Option[UserAnswers] => ProvideDetailsOfFirstRentPeriodController = answers => new ProvideDetailsOfFirstRentPeriodController(
     view,
-    fakeAuth,
+    mockAuthJourney,
     mockInputText,
     mcc,
     fakeDataProperty(Some(property), answers),
+    mockCheckRequestSentReference,
     mockSessionRepository,
     mockNavigator
   )(mockConfig, ec)
