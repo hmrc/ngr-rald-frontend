@@ -55,10 +55,10 @@ class ProvideDetailsOfSecondRentPeriodViewSpec extends ViewBaseSpec:
   object Selectors {
     val address = "#main-content > div > div.govuk-grid-column-two-thirds > form > span"
     val heading = "#main-content > div > div.govuk-grid-column-two-thirds > form > h1"
-    val startDateLabel = "#main-content > div > div.govuk-grid-column-two-thirds > form > h2"
-    val startDateHint = "#main-content > div > div.govuk-grid-column-two-thirds > form > p.govuk-hint"
-    val startDate = "#main-content > div > div.govuk-grid-column-two-thirds > form > p.govuk-body"
-    val endDateLabel = "#main-content > div > div.govuk-grid-column-two-thirds > form > div:nth-child(6) > fieldset > legend"
+    val startDateLabel = "#main-content > div > div.govuk-grid-column-two-thirds > form > fieldset > legend"
+    val startDateHint = "#main-content > div > div.govuk-grid-column-two-thirds > form > fieldset > div"
+    val startDate = "#main-content > div > div.govuk-grid-column-two-thirds > form > fieldset > p"
+    val endDateLabel = "#main-content > div > div.govuk-grid-column-two-thirds > form > div:nth-child(4) > fieldset > legend"
     val endDateHint = "#endDate-hint"
     val endDateDayLabel = "#endDate > div:nth-child(1) > div > label"
     val endDateMonthLabel = "#endDate > div:nth-child(2) > div > label"
@@ -67,7 +67,7 @@ class ProvideDetailsOfSecondRentPeriodViewSpec extends ViewBaseSpec:
     val endDateMonth = "#endDate\\.month"
     val endDateYear = "#endDate\\.year"
 
-    val rentAmountLabel = "#main-content > div > div.govuk-grid-column-two-thirds > form > div:nth-child(7) > label"
+    val rentAmountLabel = "#main-content > div > div.govuk-grid-column-two-thirds > form > div:nth-child(5) > label"
     val rentAmountHint = "#rentPeriodAmount-hint"
     val rentAmount = "#rentPeriodAmount"
     val continue = "#continue"
