@@ -18,10 +18,13 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, CheckRequestSentReferenceAction, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.*
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
+import uk.gov.hmrc.ngrraldfrontend.pages.CheckAnswersPage
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.services.CheckAnswers.*
 import uk.gov.hmrc.ngrraldfrontend.views.html.CheckAnswersView
@@ -57,6 +60,13 @@ class CheckAnswersController @Inject()(view: CheckAnswersView,
         breakClause = createBreakClauseRows(credId = request.credId, userAnswers = request.userAnswers),
         otherDetailsSummary = createOtherDetailsRow(credId = request.credId, userAnswers = request.userAnswers)
       )))
+    }
+  }
+
+  def submit: Action[AnyContent] = {
+    (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
+      Future.successful(Redirect(navigator.nextPage(CheckAnswersPage, NormalMode,
+        request.userAnswers.getOrElse(throw new NotFoundException(s"Failed to find answers for credId: ${request.credId}")))))
     }
   }
 }

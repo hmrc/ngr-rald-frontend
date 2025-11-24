@@ -253,3 +253,4 @@ GET        /rent-review-details-sent               uk.gov.hmrc.ngrraldfrontend.c
 
 #check answers
 GET        /check-answers                          uk.gov.hmrc.ngrraldfrontend.controllers.CheckAnswersController.show(mode: Mode = NormalMode)
+POST       /check-answers                          uk.gov.hmrc.ngrraldfrontend.controllers.CheckAnswersController.submit

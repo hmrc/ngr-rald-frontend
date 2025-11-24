@@ -84,6 +84,6 @@ class ProvideDetailsOfFirstRentPeriodController @Inject()(view: ProvideDetailsOf
               rentPeriodsUserAnswers <- Future(updateRentPeriodsIfFirstRentPeriodEndDateIsChanged(userAnswers, provideDetailsOfFirstRentPeriod.endDate))
               updatedAnswers <- Future.fromTry(rentPeriodsUserAnswers.set(ProvideDetailsOfFirstRentPeriodPage, provideDetailsOfFirstRentPeriod))
               _ <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(ProvideDetailsOfFirstRentPeriodPage, NormalMode, updatedAnswers))
+            } yield Redirect(navigator.nextPage(ProvideDetailsOfFirstRentPeriodPage, mode, updatedAnswers))
         )
     }
