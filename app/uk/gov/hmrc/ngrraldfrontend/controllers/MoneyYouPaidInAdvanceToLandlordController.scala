@@ -55,7 +55,6 @@ class MoneyYouPaidInAdvanceToLandlordController @Inject()(moneyYouPaidInAdvanceT
       name = inputFieldName,
       label = messages("moneyYouPaidInAdvanceToLandlord.label.1"),
       labelClasses = Some("govuk-fieldset__legend govuk-fieldset__legend--s"),
-      isPageHeading = true,
       isVisible = true,
       classes = Some("govuk-input govuk-input--width-10"),
       prefix = Some(PrefixOrSuffix(content = Text("£")))

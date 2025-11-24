@@ -74,7 +74,8 @@ object WhatYourRentIncludesForm extends CommonFormValidators with Mappings {
         noButton()
       ),
       ngrTitle = "whatYourRentIncludes.radio.1.title",
-      hint = Some("whatYourRentIncludes.radio.1.hint")
+      hint = Some("whatYourRentIncludes.radio.1.hint"),
+      isPageHeading = false
     )
 
   def ngrRadio2(implicit messages: Messages): NGRRadio =
@@ -85,21 +86,24 @@ object WhatYourRentIncludesForm extends CommonFormValidators with Mappings {
       radioName = rentEmptyShellRadio,
       radioButtons = Seq(yesButton(), noButton()),
       ngrTitle = "whatYourRentIncludes.radio.3.title",
-      hint = Some("whatYourRentIncludes.radio.3.hint")
+      hint = Some("whatYourRentIncludes.radio.3.hint"),
+      isPageHeading = false
     )
 
   def ngrRadio4(implicit messages: Messages): NGRRadio =
     ngrRadio(
       radioName = rentIncBusinessRatesRadio,
       radioButtons = Seq(yesButton(), noButton()),
-      ngrTitle = "whatYourRentIncludes.radio.4.title"
+      ngrTitle = "whatYourRentIncludes.radio.4.title",
+      isPageHeading = false
     )
 
   def ngrRadio5(implicit messages: Messages): NGRRadio =
     ngrRadio(
       radioName = rentIncWaterChargesRadio,
       radioButtons = Seq(yesButton(), noButton()),
-      ngrTitle = "whatYourRentIncludes.radio.5.title"
+      ngrTitle = "whatYourRentIncludes.radio.5.title",
+      isPageHeading = false
     )
 
   def ngrRadio6(implicit messages: Messages): NGRRadio =
@@ -107,7 +111,8 @@ object WhatYourRentIncludesForm extends CommonFormValidators with Mappings {
       radioName = rentIncServiceRadio,
       radioButtons = Seq(yesButton(), noButton()),
       ngrTitle = "whatYourRentIncludes.radio.6.title",
-      hint = Some("whatYourRentIncludes.radio.6.hint")
+      hint = Some("whatYourRentIncludes.radio.6.hint"),
+      isPageHeading = false
     )
 
   def unapply(whatYourRentIncludesForm: WhatYourRentIncludesForm): Option[(String, String, String, String, String, String, Option[String])] =

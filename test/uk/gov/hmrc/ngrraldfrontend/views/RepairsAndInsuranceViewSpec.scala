@@ -39,9 +39,9 @@ class RepairsAndInsuranceViewSpec extends ViewBaseSpec {
 
   object Selectors {
     val heading = "#main-content > div > div.govuk-grid-column-two-thirds > form > h1"
-    val internalRepairslabel = "#main-content > div > div.govuk-grid-column-two-thirds > form > div:nth-child(3) > fieldset > legend > h1"
-    val externalRepairslabel = "#main-content > div > div.govuk-grid-column-two-thirds > form > div:nth-child(4) > fieldset > legend > h1"
-    val buildingInsurancelabel = "#main-content > div > div.govuk-grid-column-two-thirds > form > div:nth-child(5) > fieldset > legend > h1"
+    val internalRepairslabel = "#main-content > div > div.govuk-grid-column-two-thirds > form > div:nth-child(3) > fieldset > legend"
+    val externalRepairslabel = "#main-content > div > div.govuk-grid-column-two-thirds > form > div:nth-child(4) > fieldset > legend"
+    val buildingInsurancelabel = "#main-content > div > div.govuk-grid-column-two-thirds > form > div:nth-child(5) > fieldset > legend"
     val continue = "#continue"
   }
 
