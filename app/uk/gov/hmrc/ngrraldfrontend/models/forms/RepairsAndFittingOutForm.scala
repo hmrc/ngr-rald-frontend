@@ -46,7 +46,8 @@ object RepairsAndFittingOutForm extends CommonFormValidators with Mappings {
         yesButton(),
         noButton()
       ),
-      ngrTitle = "repairsAndFittingOut.header"
+      ngrTitle = "repairsAndFittingOut.header",
+      isPageHeading = false
     )
 
   def form: Form[RepairsAndFittingOutForm] = {

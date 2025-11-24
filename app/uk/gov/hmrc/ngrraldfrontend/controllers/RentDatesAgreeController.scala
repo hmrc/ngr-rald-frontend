@@ -54,7 +54,7 @@ class RentDatesAgreeController @Inject()(rentDatesAgreeView: RentDatesAgreeView,
       legend = Some(Legend(
         content = Text(messages("rentDatesAgree.subheading")),
         classes = "govuk-fieldset__legend--s",
-        isPageHeading = true
+        isPageHeading = false
       ))
     )),
     hint = Some(Hint(

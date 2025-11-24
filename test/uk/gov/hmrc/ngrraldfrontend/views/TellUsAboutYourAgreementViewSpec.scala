@@ -51,7 +51,7 @@ class TellUsAboutYourAgreementViewSpec extends ViewBaseSpec {
   object Selectors {
     val heading = "#main-content > div > div > form > div > div > h1.govuk-heading-l"
     val p1 = "#main-content > div > div > form > div > div > p:nth-child(3)"
-    val subheading = "#main-content > div > div > form > div > div > h2"
+    val subheading = "#main-content > div > div > form > div > div > h2:nth-child(4)"
     val p2 = "#main-content > div > div > form > div > div > p:nth-child(5)"
     val rentp2 = "#main-content > div > div > form > div > div > p:nth-child(6)"
     val p3 = "#main-content > div > div > form > div > div > p:nth-child(6)"

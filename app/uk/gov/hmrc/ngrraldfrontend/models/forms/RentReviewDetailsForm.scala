@@ -118,13 +118,15 @@ object RentReviewDetailsForm extends CommonFormValidators with Mappings with Dat
         NGRRadioButtons(radioContent = "rentReviewDetails.whatHappensAtRentReview.radio1.text", radioValue = GoUpOrDown),
         NGRRadioButtons(radioContent = "rentReviewDetails.whatHappensAtRentReview.radio2.text", radioValue = OnlyGoUp),
       ),
-      ngrTitle = "rentReviewDetails.whatHappensAtRentReview.label"
+      ngrTitle = "rentReviewDetails.whatHappensAtRentReview.label",
+      isPageHeading = false
     )
 
   def createHasAgreedNewRentRadio(form: Form[RentReviewDetailsForm], govukRadios: GovukRadios)(implicit messages: Messages): NGRRadio =
     ngrRadio(radioName = hasAgreedNewRentRadio,
       radioButtons = Seq(yesButton(), noButton(conditionalHtml = Some(govukRadios(buildRadios(form, createWhoAgreedRadio))))),
-      ngrTitle = "rentReviewDetails.hasAgreedNewRent.label"
+      ngrTitle = "rentReviewDetails.hasAgreedNewRent.label",
+      isPageHeading = false
     )
 
   private def createWhoAgreedRadio(implicit messages: Messages): NGRRadio =
@@ -134,6 +136,7 @@ object RentReviewDetailsForm extends CommonFormValidators with Mappings with Dat
         NGRRadioButtons(radioContent = "rentReviewDetails.whoAgreed.radio2.text", radioValue = IndependentExpert),
       ),
       ngrTitle = "rentReviewDetails.whoAgreed.label",
-      ngrTitleClass = "govuk-fieldset__legend--s"
+      ngrTitleClass = "govuk-fieldset__legend--s",
+      isPageHeading = false
     )
 }

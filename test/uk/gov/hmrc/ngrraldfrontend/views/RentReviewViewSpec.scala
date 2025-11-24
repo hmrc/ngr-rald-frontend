@@ -46,7 +46,7 @@ class RentReviewViewSpec extends ViewBaseSpec {
 
   object Selectors {
     val heading = "#main-content > div > div.govuk-grid-column-two-thirds > form > h1"
-    val hasIncludedRentReviewRadioTitle = "#main-content > div > div.govuk-grid-column-two-thirds > form > div:nth-child(3) > fieldset > legend > h1"
+    val hasIncludedRentReviewRadioTitle = "#main-content > div > div.govuk-grid-column-two-thirds > form > div:nth-child(3) > fieldset > legend"
     val hasIncludedRentReviewRadioHint = "#has-include-rent-review-radio-hint"
     val reviewYearsMonthsTitle = "#conditional-has-include-rent-review-radio > div > fieldset > legend"
     val years = "#date > div:nth-child(1) > div > label"

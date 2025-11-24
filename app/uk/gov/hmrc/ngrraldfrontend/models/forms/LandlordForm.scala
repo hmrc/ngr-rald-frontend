@@ -76,7 +76,8 @@ object LandlordForm extends Mappings{
         ),
         noButton()
       ),
-      ngrTitle = "landlord.p2"
+      ngrTitle = "landlord.p2",
+      isPageHeading = false
     )
     
   def unapply(landlordForm: LandlordForm): Option[(String, String, Option[String])] =
