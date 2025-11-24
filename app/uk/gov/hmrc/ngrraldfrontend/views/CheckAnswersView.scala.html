@@ -47,6 +47,7 @@
 )(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 @heading = @{messages("checkAnswers.title")}
 @layout(pageTitle = Some(messages("checkAnswers.title")), showBackLink = true, fullWidth = false) {
+  @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.submit, Symbol("autoComplete") -> "off") {
 
     <h1 class="govuk-heading-l">@messages("checkAnswers.title")</h1>
     @if(leaseRenewalsSummary.nonEmpty){
@@ -108,8 +109,6 @@
 
     <h2 class="govuk-heading-m">@messages("checkAnswers.Otherdetails.label")</h2>
     @govukSummaryList(otherDetailsSummary)
-    
-    <div class="govuk-button-group">
-        @saveAndContinueButton(msg =  messages("Continue"), isStartButton = false, href = Some("temphref"))
-    </div>
+    @saveAndContinueButton(msg = messages("service.continue"), isStartButton = false)
+  }
 }

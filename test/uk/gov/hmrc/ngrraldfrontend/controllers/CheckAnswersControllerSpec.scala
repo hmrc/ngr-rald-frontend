@@ -16,8 +16,10 @@
 
 package uk.gov.hmrc.ngrraldfrontend.controllers
 
+import org.scalatest.matchers.should.Matchers.shouldBe
 import play.api.http.Status.*
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
+import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redirectLocation, status}
+import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
 import uk.gov.hmrc.ngrraldfrontend.models.{CheckMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.pages.DidYouPayAnyMoneyToLandlordPage
@@ -44,6 +46,19 @@ class CheckAnswersControllerSpec extends ControllerSpecSupport {
 
       status(result) mustBe OK
       contentAsString(result) must include(pageTitle)
+    }
+  }
+  "method submit" must {
+    "Return SEE_OTHER and the correct view" in {
+      val result = controllerProperty(didYouPayAnyMoneyToLandlordAnswers).submit(authenticatedFakeRequest)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.DeclarationController.show.url)
+    }
+    "Return NotFoundException when can't find userAnswers from request" in {
+      val exception = intercept[NotFoundException] {
+        await(controllerProperty(None).submit(authenticatedFakeRequest))
+      }
+      exception.getMessage contains "Failed to find answers for credId: 1234" mustBe true
     }
   }
 }
