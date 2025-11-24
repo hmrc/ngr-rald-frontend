@@ -21,7 +21,7 @@ import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.*
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, CheckRequestSentReferenceAction, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.forms.ParkingSpacesOrGaragesNotIncludedInYourRentForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.ParkingSpacesOrGaragesNotIncludedInYourRentForm.*
@@ -45,6 +45,7 @@ class ParkingSpacesOrGaragesNotIncludedInYourRentController @Inject()(view: Park
                                                                       ngrCharacterCountComponent: NGRCharacterCountComponent,
                                                                       mcc: MessagesControllerComponents,
                                                                       getData : DataRetrievalAction,
+                                                                      checkRequestSentReference: CheckRequestSentReferenceAction,
                                                                       sessionRepository: SessionRepository,
                                                                       navigator: Navigator
                                                                      )(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport with DateKeyFinder{
@@ -78,7 +79,7 @@ class ParkingSpacesOrGaragesNotIncludedInYourRentController @Inject()(view: Park
   )
   
   def show(mode: Mode):Action[AnyContent] = {
-    (authenticate andThen getData).async { implicit request =>
+    (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).get(ParkingSpacesOrGaragesNotIncludedInYourRentPage) match {
         case None => form
         case Some(value) => answerToForm(value)
@@ -96,7 +97,7 @@ class ParkingSpacesOrGaragesNotIncludedInYourRentController @Inject()(view: Park
   }
 
   def submit(mode: Mode): Action[AnyContent] =
-    (authenticate andThen getData).async { implicit request =>
+    (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
           val correctedFormErrors: Seq[FormError] = formWithErrors.errors.map { formError =>

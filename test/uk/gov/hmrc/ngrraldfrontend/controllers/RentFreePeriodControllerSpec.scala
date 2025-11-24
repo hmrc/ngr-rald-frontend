@@ -35,8 +35,8 @@ import scala.concurrent.Future
 class RentFreePeriodControllerSpec extends ControllerSpecSupport {
   val pageTitle = "Rent-free period"
   val view: RentFreePeriodView = inject[RentFreePeriodView]
-  val controllerNoProperty: RentFreePeriodController = new RentFreePeriodController(view, fakeAuth, fakeData(None), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
-  val controllerProperty: Option[UserAnswers] => RentFreePeriodController = answers => new RentFreePeriodController(view, fakeAuth, fakeDataProperty(Some(property), answers), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
+  val controllerNoProperty: RentFreePeriodController = new RentFreePeriodController(view, mockAuthJourney, fakeData(None), mockCheckRequestSentReference, mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
+  val controllerProperty: Option[UserAnswers] => RentFreePeriodController = answers => new RentFreePeriodController(view, mockAuthJourney, fakeDataProperty(Some(property), answers), mockCheckRequestSentReference, mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
 
   "Rent free period controller" must {
     "method show" must {
@@ -58,7 +58,7 @@ class RentFreePeriodControllerSpec extends ControllerSpecSupport {
     "method submit" must {
       "Return SEE_OTHER and redirect RentDatesAgreeStart view when everything is provided" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeStartController.submit(NormalMode))
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentFreePeriodController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "rentFreePeriodMonths" -> "5",
             "reasons" -> "Any reasons"
@@ -69,7 +69,7 @@ class RentFreePeriodControllerSpec extends ControllerSpecSupport {
         redirectLocation(result) mustBe Some(routes.RentDatesAgreeStartController.show(NormalMode).url)
       }
       "Return Form with Errors when rentFreePeriodMonths is missing" in {
-        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeStartController.submit(NormalMode))
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentFreePeriodController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "rentFreePeriodMonths" -> "",
             "reasons" -> "Any reasons"
@@ -82,7 +82,7 @@ class RentFreePeriodControllerSpec extends ControllerSpecSupport {
         content must include("<a href=\"#rentFreePeriodMonths\">Enter how many months the rent-free period is</a>")
       }
       "Return Form with Errors when rentFreePeriodMonths isn't numeric" in {
-        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeStartController.submit(NormalMode))
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentFreePeriodController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "rentFreePeriodMonths" -> "$A,",
             "reasons" -> "Any reasons"
@@ -94,7 +94,7 @@ class RentFreePeriodControllerSpec extends ControllerSpecSupport {
         content must include("<a href=\"#rentFreePeriodMonths\">Rent-free period must be a number, like 6</a>")
       }
       "Return Form with Errors when rentFreePeriodMonths is over 999" in {
-        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeStartController.submit(NormalMode))
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentFreePeriodController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "rentFreePeriodMonths" -> "1000",
             "reasons" -> "Any reasons"
@@ -106,7 +106,7 @@ class RentFreePeriodControllerSpec extends ControllerSpecSupport {
         content must include("<a href=\"#rentFreePeriodMonths\">Rent-free period must be 99 months or less</a>")
       }
       "Return Form with Errors when rentFreePeriodMonths is less than 1" in {
-        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeStartController.submit(NormalMode))
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentFreePeriodController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "rentFreePeriodMonths" -> "0",
             "reasons" -> "Any reasons"
@@ -118,7 +118,7 @@ class RentFreePeriodControllerSpec extends ControllerSpecSupport {
         content must include("<a href=\"#rentFreePeriodMonths\">Rent-free period must be more more than 0</a>")
       }
       "Return Form with Errors when reasons is missing" in {
-        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeStartController.submit(NormalMode))
+        val result = controllerProperty(None).submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentFreePeriodController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "rentFreePeriodMonths" -> "5",
             "reasons" -> ""
@@ -132,7 +132,7 @@ class RentFreePeriodControllerSpec extends ControllerSpecSupport {
       "Return Exception if no address is in the mongo" in {
         when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(None))
         val exception = intercept[NotFoundException] {
-          await(controllerNoProperty.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentDatesAgreeStartController.submit(NormalMode))
+          await(controllerNoProperty.submit(NormalMode)(AuthenticatedUserRequest(FakeRequest(routes.RentFreePeriodController.submit(NormalMode))
             .withFormUrlEncodedBody(
               "rentFreePeriodMonths" -> "5",
               "reasons" -> ""

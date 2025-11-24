@@ -20,7 +20,7 @@ import play.api.i18n.I18nSupport
 import play.api.libs.json.*
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, CheckRequestSentReferenceAction, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.forms.ProvideDetailsOfSecondRentPeriodForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.ProvideDetailsOfSecondRentPeriodForm.*
@@ -43,18 +43,19 @@ class ProvideDetailsOfSecondRentPeriodController @Inject()(view: ProvideDetailsO
                                                            authenticate: AuthRetrievals,
                                                            mcc: MessagesControllerComponents,
                                                            getData: DataRetrievalAction,
+                                                           checkRequestSentReference: CheckRequestSentReferenceAction,
                                                            sessionRepository: SessionRepository,
                                                            navigator: Navigator,
                                                           )(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with DateKeyFinder:
 
   val secondPeriodIndex: Int = 0
-  
+
   private def getPreviousEndDate(userAnswers: UserAnswers): Option[LocalDate] =
     userAnswers.get(ProvideDetailsOfFirstRentPeriodPage).map(_.endDate.plusDays(1))
 
   def show(mode: Mode): Action[AnyContent] =
-    (authenticate andThen getData).async { implicit request =>
+    (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
       val credId = CredId(request.credId)
       val userAnswers = request.userAnswers.getOrElse(UserAnswers(credId))
       val firstRentPeriodEndDate: Option[LocalDate] = getPreviousEndDate(userAnswers)
@@ -78,7 +79,7 @@ class ProvideDetailsOfSecondRentPeriodController @Inject()(view: ProvideDetailsO
     }
 
   def submit(mode: Mode): Action[AnyContent] =
-    (authenticate andThen getData).async { implicit request =>
+    (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
       val previousEndDate: LocalDate = getPreviousEndDate(request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))))
         .getOrElse(throw new NotFoundException("Can't find previous end date"))
       form(previousEndDate, secondPeriodIndex)

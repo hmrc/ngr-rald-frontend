@@ -37,8 +37,8 @@ import scala.concurrent.Future
 class DidYouAgreeRentWithLandlordControllerSpec  extends ControllerSpecSupport {
   val pageTitle = "Did you agree the rent with your landlord or their agent?"
   val view: DidYouAgreeRentWithLandlordView = inject[DidYouAgreeRentWithLandlordView]
-  val controllerNoProperty: DidYouAgreeRentWithLandlordController = new DidYouAgreeRentWithLandlordController(view, fakeAuth, fakeData(None), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
-  val controllerProperty: Option[UserAnswers] => DidYouAgreeRentWithLandlordController = answers => new DidYouAgreeRentWithLandlordController(view, fakeAuth, fakeDataProperty(Some(property), answers), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
+  val controllerNoProperty: DidYouAgreeRentWithLandlordController = new DidYouAgreeRentWithLandlordController(view, mockAuthJourney, fakeData(None), mockCheckRequestSentReference , mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
+  val controllerProperty: Option[UserAnswers] => DidYouAgreeRentWithLandlordController = answers => new DidYouAgreeRentWithLandlordController(view, mockAuthJourney, fakeDataProperty(Some(property), answers), mockCheckRequestSentReference, mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
   val didYouAgreeWithTheLandlordAnswers: Option[UserAnswers] = userAnswersWithoutData.set(DidYouAgreeRentWithLandlordPage, true).toOption
 
   "Did you agree rent with landlord controller" must {

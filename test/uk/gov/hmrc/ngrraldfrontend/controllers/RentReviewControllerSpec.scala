@@ -39,8 +39,8 @@ class RentReviewControllerSpec extends ControllerSpecSupport {
   val pageTitle = "Rent review"
   val view: RentReviewView = inject[RentReviewView]
   val inputDateForMonthYear: InputDateForMonthYear = inject[InputDateForMonthYear]
-  val controllerNoProperty: RentReviewController = new RentReviewController(view, fakeAuth, fakeData(None), mockNavigator, mockSessionRepository, inputDateForMonthYear, mcc)(mockConfig, ec)
-  val controllerProperty: Option[UserAnswers] => RentReviewController = answers => new RentReviewController(view, fakeAuth, fakeDataProperty(Some(property), answers), mockNavigator, mockSessionRepository, inputDateForMonthYear, mcc)(mockConfig, ec)
+  val controllerNoProperty: RentReviewController = new RentReviewController(view, mockAuthJourney, fakeData(None), mockCheckRequestSentReference, mockNavigator, mockSessionRepository, inputDateForMonthYear, mcc)(mockConfig, ec)
+  val controllerProperty: Option[UserAnswers] => RentReviewController = answers => new RentReviewController(view, mockAuthJourney, fakeDataProperty(Some(property), answers), mockCheckRequestSentReference, mockNavigator, mockSessionRepository, inputDateForMonthYear, mcc)(mockConfig, ec)
   val rentReviewAnswers: Option[UserAnswers] = userAnswersWithoutData.set(RentReviewPage, RentReview(true, Some(11), None, false)).toOption
 
   "Rent review controller" must {

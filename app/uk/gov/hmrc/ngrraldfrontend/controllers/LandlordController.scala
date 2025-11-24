@@ -18,7 +18,7 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, CheckRequestSentReferenceAction, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
@@ -42,12 +42,13 @@ class LandlordController @Inject()(view: LandlordView,
                                    ngrCharacterCountComponent: NGRCharacterCountComponent,
                                    mcc: MessagesControllerComponents,
                                    getData: DataRetrievalAction,
+                                   checkRequestSentReference: CheckRequestSentReferenceAction,
                                    sessionRepository: SessionRepository,
                                    navigator: Navigator
                                   )(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
   def show(mode: Mode): Action[AnyContent] = {
-    (authenticate andThen getData).async { implicit request =>
+    (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).get(LandlordPage) match {
         case None => form
         case Some(value) => answerToForm(value)
@@ -61,7 +62,7 @@ class LandlordController @Inject()(view: LandlordView,
   }
 
   def submit(mode: Mode): Action[AnyContent] = {
-    (authenticate andThen getData).async { implicit request =>
+    (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
       form
         .bindFromRequest()
         .fold(

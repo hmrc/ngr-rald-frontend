@@ -37,8 +37,8 @@ import scala.concurrent.Future
 class WhatTypeOfAgreementControllerSpec extends ControllerSpecSupport {
   val pageTitle = "What type of agreement do you have?"
   val view: WhatTypeOfAgreementView = inject[WhatTypeOfAgreementView]
-  val controllerProperty: Option[UserAnswers] => WhatTypeOfAgreementController = answers => new WhatTypeOfAgreementController(view, fakeAuth, mcc, fakeDataProperty(Some(property),answers), mockNavigator, mockSessionRepository)(mockConfig, ec)
-  val controllerNoProperty: WhatTypeOfAgreementController = new WhatTypeOfAgreementController(view, fakeAuth, mcc, fakeData(None), mockNavigator, mockSessionRepository)(mockConfig, ec)
+  val controllerProperty: Option[UserAnswers] => WhatTypeOfAgreementController = answers => new WhatTypeOfAgreementController(view, mockAuthJourney, mcc, fakeDataProperty(Some(property),answers), mockCheckRequestSentReference, mockNavigator, mockSessionRepository)(mockConfig, ec)
+  val controllerNoProperty: WhatTypeOfAgreementController = new WhatTypeOfAgreementController(view, mockAuthJourney, mcc, fakeData(None), mockCheckRequestSentReference, mockNavigator, mockSessionRepository)(mockConfig, ec)
   val whatTypeOfAgreementAnswers: Option[UserAnswers] = userAnswersWithoutData.set(WhatTypeOfAgreementPage, "Verbal").toOption
 
 

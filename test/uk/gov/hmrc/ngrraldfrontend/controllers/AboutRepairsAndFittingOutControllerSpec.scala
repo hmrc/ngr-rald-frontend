@@ -43,8 +43,9 @@ class AboutRepairsAndFittingOutControllerSpec extends ControllerSpecSupport {
 
   val controllerNoProperty: AboutRepairsAndFittingOutController = new AboutRepairsAndFittingOutController(
     view = view,
-    authenticate = fakeAuth,
+    authenticate = mockAuthJourney,
     getData = fakeData(None),
+    checkRequestSentReference = mockCheckRequestSentReference,
     sessionRepository = mockSessionRepository,
     navigator = mockNavigator,
     mcc = mcc
@@ -53,8 +54,9 @@ class AboutRepairsAndFittingOutControllerSpec extends ControllerSpecSupport {
   val controllerWithProperty: Option[UserAnswers] => AboutRepairsAndFittingOutController = answers =>
     new AboutRepairsAndFittingOutController(
       view = view,
-      authenticate = fakeAuth,
+      authenticate = mockAuthJourney,
       getData = fakeDataProperty(Some(property), answers),
+      checkRequestSentReference = mockCheckRequestSentReference,
       sessionRepository = mockSessionRepository,
       navigator = mockNavigator,
       mcc = mcc

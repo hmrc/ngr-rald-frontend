@@ -36,8 +36,8 @@ import scala.concurrent.Future
 class DidYouGetMoneyFromLandlordControllerSpec extends ControllerSpecSupport {
   val pageTitle = "Did you get any money from the landlord or previous tenant to take on the lease?"
   val view: DidYouGetMoneyFromLandlordView = inject[DidYouGetMoneyFromLandlordView]
-  val controllerNoProperty: DidYouGetMoneyFromLandlordController = new DidYouGetMoneyFromLandlordController(view, fakeAuth, fakeData(None), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
-  val controllerProperty: Option[UserAnswers] => DidYouGetMoneyFromLandlordController = answers => new DidYouGetMoneyFromLandlordController(view, fakeAuth, fakeDataProperty(Some(property),answers), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
+  val controllerNoProperty: DidYouGetMoneyFromLandlordController = new DidYouGetMoneyFromLandlordController(view, mockAuthJourney, fakeData(None), mockCheckRequestSentReference, mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
+  val controllerProperty: Option[UserAnswers] => DidYouGetMoneyFromLandlordController = answers => new DidYouGetMoneyFromLandlordController(view, mockAuthJourney, fakeDataProperty(Some(property),answers), mockCheckRequestSentReference, mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
   val didYouGetMoneyFromLandlordAnswers: Option[UserAnswers] =  userAnswersWithoutData.set(DidYouGetMoneyFromLandlordPage, true).toOption
 
 

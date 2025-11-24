@@ -25,7 +25,7 @@ import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redir
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
 import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, UserAnswers}
-import uk.gov.hmrc.ngrraldfrontend.pages.{ProvideDetailsOfFirstRentPeriodPage, ProvideDetailsOfSecondRentPeriodPage}
+import uk.gov.hmrc.ngrraldfrontend.pages.{DeclarationPage, ProvideDetailsOfFirstRentPeriodPage, ProvideDetailsOfSecondRentPeriodPage}
 import uk.gov.hmrc.ngrraldfrontend.views.html.ProvideDetailsOfSecondRentPeriodView
 
 import scala.concurrent.Future
@@ -37,9 +37,10 @@ class AdditionalRentPeriodControllerSpec extends ControllerSpecSupport:
 
   val controllerWithAnswers: Option[UserAnswers] => AdditionalRentPeriodController = answers => new AdditionalRentPeriodController(
     view,
-    fakeAuth,
+    mockAuthJourney,
     mcc,
     fakeDataProperty(Some(property), answers),
+    mockCheckRequestSentReference,
     mockSessionRepository,
     mockNavigator
   )(mockConfig, ec)

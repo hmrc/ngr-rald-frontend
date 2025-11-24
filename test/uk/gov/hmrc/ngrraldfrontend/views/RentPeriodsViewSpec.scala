@@ -21,9 +21,9 @@ import org.jsoup.nodes.Document
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.data.Form
 import play.api.mvc.MessagesControllerComponents
-import uk.gov.hmrc.ngrraldfrontend.actions.{FakeAuthenticatedRequest, FakeDataRetrievalAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, CheckRequestSentReferenceAction, FakeAuthenticatedRequest, FakeDataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.controllers.RentPeriodsController
-import uk.gov.hmrc.ngrraldfrontend.helpers.{TestData, ViewBaseSpec}
+import uk.gov.hmrc.ngrraldfrontend.helpers.{ControllerSpecSupport, TestData, ViewBaseSpec}
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.RentPeriodsForm
 import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, UserAnswers}
@@ -36,14 +36,15 @@ import scala.concurrent.ExecutionContext
 class RentPeriodsViewSpec extends ViewBaseSpec with TestData {
   implicit lazy val ec: ExecutionContext = inject[ExecutionContext]
   lazy val mcc: MessagesControllerComponents = inject[MessagesControllerComponents]
-  val fakeAuth = new FakeAuthenticatedRequest(mcc.parsers.defaultBodyParser)
+  val mockAuthJourney: AuthRetrievals = mock[AuthRetrievals]
+  val mockCheckRequestSentReference: CheckRequestSentReferenceAction = mock[CheckRequestSentReferenceAction]
   val mockSessionRepository: SessionRepository = mock[SessionRepository]
   val mockNavigator: Navigator = inject[Navigator]
 
   def fakeData(answers: Option[UserAnswers]) = new FakeDataRetrievalAction(answers, None)
 
   lazy val view: RentPeriodView = inject[RentPeriodView]
-  val rentPeriodsController: RentPeriodsController = new RentPeriodsController(view, fakeAuth, fakeData(None), mcc, mockSessionRepository, mockNavigator)(mockConfig, ec)
+  val rentPeriodsController: RentPeriodsController = new RentPeriodsController(view, mockAuthJourney, fakeData(None), mockCheckRequestSentReference, mcc, mockSessionRepository, mockNavigator)(mockConfig, ec)
   val address = "5 Brixham Marina, Berry Head Road, Brixham, Devon, TQ5 9BW"
 
   val heading = "Rent periods"

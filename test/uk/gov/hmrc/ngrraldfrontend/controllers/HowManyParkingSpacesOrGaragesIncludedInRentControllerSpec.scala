@@ -36,18 +36,20 @@ class HowManyParkingSpacesOrGaragesIncludedInRentControllerSpec extends Controll
   val view: HowManyParkingSpacesOrGaragesIncludedInRentView = inject[HowManyParkingSpacesOrGaragesIncludedInRentView]
   val controllerNoProperty: HowManyParkingSpacesOrGaragesIncludedInRentController = new HowManyParkingSpacesOrGaragesIncludedInRentController(
     howManyParkingSpacesOrGaragesIncludedInRentView = view,
-    authenticate = fakeAuth,
+    authenticate = mockAuthJourney,
     inputText = mockInputText,
     getData = fakeData(None),
+    checkRequestSentReference = mockCheckRequestSentReference,
     sessionRepository = mockSessionRepository,
     navigator = mockNavigator,
     mcc = mcc)(mockConfig)
   
   val controllerProperty: Option[UserAnswers] => HowManyParkingSpacesOrGaragesIncludedInRentController = answers => new HowManyParkingSpacesOrGaragesIncludedInRentController(
     howManyParkingSpacesOrGaragesIncludedInRentView = view,
-    authenticate = fakeAuth,
+    authenticate = mockAuthJourney,
     inputText = mockInputText,
     getData = fakeDataProperty(Some(property), answers),
+    checkRequestSentReference = mockCheckRequestSentReference,
     sessionRepository = mockSessionRepository,
     navigator = mockNavigator,
     mcc = mcc)(mockConfig)

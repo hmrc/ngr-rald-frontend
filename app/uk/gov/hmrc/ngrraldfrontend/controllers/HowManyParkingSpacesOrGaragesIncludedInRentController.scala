@@ -20,7 +20,7 @@ import play.api.data.{Form, FormError}
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, CheckRequestSentReferenceAction, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.forms.HowManyParkingSpacesOrGaragesIncludedInRentForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.HowManyParkingSpacesOrGaragesIncludedInRentForm.form
@@ -41,6 +41,7 @@ class HowManyParkingSpacesOrGaragesIncludedInRentController @Inject()(howManyPar
                                                                       authenticate: AuthRetrievals,
                                                                       inputText: InputText,
                                                                       getData: DataRetrievalAction,
+                                                                      checkRequestSentReference: CheckRequestSentReferenceAction,
                                                                       sessionRepository: SessionRepository,
                                                                       navigator: Navigator,
                                                                       mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
@@ -61,7 +62,7 @@ class HowManyParkingSpacesOrGaragesIncludedInRentController @Inject()(howManyPar
   
   
   def show(mode: Mode): Action[AnyContent] = {
-    (authenticate andThen getData).async { implicit request =>
+    (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).get(HowManyParkingSpacesOrGaragesIncludedInRentPage) match {
         case None => form
         case Some(value) => form.fill(HowManyParkingSpacesOrGaragesIncludedInRentForm(
@@ -82,7 +83,7 @@ class HowManyParkingSpacesOrGaragesIncludedInRentController @Inject()(howManyPar
   }
 
   def submit(mode: Mode): Action[AnyContent] =
-    (authenticate andThen getData).async { implicit request =>
+    (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
           val formWithCorrectedErrors = formWithErrors.errors.head match {

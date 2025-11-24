@@ -36,8 +36,8 @@ import scala.concurrent.Future
 class RepairsAndFittingOutControllerSpec extends ControllerSpecSupport {
   val pageTitle = "Repairs and fitting out"
   val view: RepairsAndFittingOutView = inject[RepairsAndFittingOutView]
-  val controllerNoProperty: RepairsAndFittingOutController = new RepairsAndFittingOutController(view, fakeAuth, fakeData(None), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
-  val controllerProperty: Option[UserAnswers] => RepairsAndFittingOutController = answers => new RepairsAndFittingOutController(view, fakeAuth, fakeDataProperty(Some(property),answers), mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
+  val controllerNoProperty: RepairsAndFittingOutController = new RepairsAndFittingOutController(view, mockAuthJourney, fakeData(None), mockCheckRequestSentReference, mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
+  val controllerProperty: Option[UserAnswers] => RepairsAndFittingOutController = answers => new RepairsAndFittingOutController(view, mockAuthJourney, fakeDataProperty(Some(property),answers), mockCheckRequestSentReference, mockSessionRepository, mockNavigator, mcc)(mockConfig, ec)
   val confirmBreakClauseAnswers: Option[UserAnswers] =  userAnswersWithoutData.set(RepairsAndFittingOutPage, true).toOption
 
 

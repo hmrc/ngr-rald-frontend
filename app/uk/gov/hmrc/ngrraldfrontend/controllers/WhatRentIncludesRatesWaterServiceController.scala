@@ -18,7 +18,7 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, CheckRequestSentReferenceAction, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatYourRentIncludesForm
@@ -40,13 +40,14 @@ class WhatRentIncludesRatesWaterServiceController @Inject()(whatYourRentIncludes
                                                             authenticate: AuthRetrievals,
                                                             inputText: InputText,
                                                             getData: DataRetrievalAction,
+                                                            checkRequestSentReference: CheckRequestSentReferenceAction,
                                                             sessionRepository: SessionRepository,
                                                             navigator: Navigator,
                                                             mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport {
 
   def show(mode: Mode): Action[AnyContent] = {
-    (authenticate andThen getData).async { implicit request =>
+    (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
       val preparedForm = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId))).get(WhatYourRentIncludesPage) match {
         case Some(value) => answerToForm(value, isOTCLease = true)
         case None => form(isOTCLease = true)
@@ -66,7 +67,7 @@ class WhatRentIncludesRatesWaterServiceController @Inject()(whatYourRentIncludes
   }
 
   def submit(mode: Mode): Action[AnyContent] =
-    (authenticate andThen getData).async { implicit request =>
+    (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
       form(isOTCLease = true).bindFromRequest().fold(
         formWithErrors => {
             Future.successful(BadRequest(whatYourRentIncludesView(

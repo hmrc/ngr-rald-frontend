@@ -19,7 +19,7 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 import play.api.data.FormError
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, CheckRequestSentReferenceAction, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.forms.AboutRepairsAndFittingOutForm
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
@@ -39,6 +39,7 @@ class AboutRepairsAndFittingOutController @Inject()(
                                                      view: AboutRepairsAndFittingOutView,
                                                      authenticate: AuthRetrievals,
                                                      getData: DataRetrievalAction,
+                                                     checkRequestSentReference: CheckRequestSentReferenceAction,
                                                      sessionRepository: SessionRepository,
                                                      navigator: Navigator,
                                                      mcc: MessagesControllerComponents
@@ -47,7 +48,7 @@ class AboutRepairsAndFittingOutController @Inject()(
 
   private val form = AboutRepairsAndFittingOutForm.form
 
-  def show(mode: Mode): Action[AnyContent] = (authenticate andThen getData).async { implicit request =>
+  def show(mode: Mode): Action[AnyContent] = (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
     val preparedForm = request.userAnswers
       .getOrElse(UserAnswers(CredId(request.credId)))
       .get(AboutRepairsAndFittingOutPage) match {
@@ -64,7 +65,7 @@ class AboutRepairsAndFittingOutController @Inject()(
     )
   }
 
-  def submit(mode: Mode): Action[AnyContent] = (authenticate andThen getData).async { implicit request =>
+  def submit(mode: Mode): Action[AnyContent] = (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
     form.bindFromRequest().fold(
       formWithErrors => {val correctedFormErrors = formWithErrors.errors.map { formError =>
         setCorrectKey(formError, "aboutRepairsAndFittingOut", "date")

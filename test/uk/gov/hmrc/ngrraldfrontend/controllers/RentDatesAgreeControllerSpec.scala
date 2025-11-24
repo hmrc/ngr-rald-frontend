@@ -39,18 +39,20 @@ class RentDatesAgreeControllerSpec extends ControllerSpecSupport {
   val view: RentDatesAgreeView = inject[RentDatesAgreeView]
   val controllerNoProperty: RentDatesAgreeController = new RentDatesAgreeController(
     view,
-    fakeAuth,
+    mockAuthJourney,
     mcc,
     fakeData(None),
+    mockCheckRequestSentReference,
     mockNavigator,
     mockSessionRepository
   )(mockConfig, ec)
 
   val controllerProperty: Option[UserAnswers] => RentDatesAgreeController = answers => new RentDatesAgreeController(
     view,
-    fakeAuth,
+    mockAuthJourney,
     mcc,
     fakeDataProperty(Some(property), answers),
+    mockCheckRequestSentReference,
     mockNavigator,
     mockSessionRepository
   )(mockConfig, ec)

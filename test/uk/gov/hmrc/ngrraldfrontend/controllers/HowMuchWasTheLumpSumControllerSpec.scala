@@ -36,11 +36,11 @@ import scala.concurrent.Future
 class HowMuchWasTheLumpSumControllerSpec extends ControllerSpecSupport {
   val pageTitle = "How much was the lump sum?"
   val view: HowMuchWasTheLumpSumView = inject[HowMuchWasTheLumpSumView]
-  val controllerNoProperty: HowMuchWasTheLumpSumController = new HowMuchWasTheLumpSumController(view, fakeAuth, fakeData(None), mockSessionRepository, mockNavigator, mcc)(mockConfig)
-  val controllerProperty: HowMuchWasTheLumpSumController = new HowMuchWasTheLumpSumController(view, fakeAuth, fakeDataProperty(Some(property),None), mockSessionRepository, mockNavigator, mcc)(mockConfig)
+  val controllerNoProperty: HowMuchWasTheLumpSumController = new HowMuchWasTheLumpSumController(view, mockAuthJourney, fakeData(None), mockCheckRequestSentReference, mockSessionRepository, mockNavigator, mcc)(mockConfig)
+  val controllerProperty: HowMuchWasTheLumpSumController = new HowMuchWasTheLumpSumController(view, mockAuthJourney, fakeDataProperty(Some(property),None), mockCheckRequestSentReference, mockSessionRepository, mockNavigator, mcc)(mockConfig)
   lazy val howMuchIsTotalAnnualRentAnswers: Option[UserAnswers] = userAnswersWithoutData.set(HowMuchWasTheLumpSumPage, BigDecimal(1234.67)).toOption
   lazy val filledController: Option[UserAnswers] => HowMuchWasTheLumpSumController = answers => HowMuchWasTheLumpSumController(
-    view, fakeAuth, fakeDataProperty(Some(property), answers), mockSessionRepository, mockNavigator, mcc
+    view, mockAuthJourney, fakeDataProperty(Some(property), answers), mockCheckRequestSentReference, mockSessionRepository, mockNavigator, mcc
   )
 
   "HowMuchWasTheLumpSumControllerSpec" must {

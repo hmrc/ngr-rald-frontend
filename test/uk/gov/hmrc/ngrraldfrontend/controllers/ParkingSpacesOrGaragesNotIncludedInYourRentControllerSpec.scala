@@ -37,22 +37,24 @@ class ParkingSpacesOrGaragesNotIncludedInYourRentControllerSpec extends Controll
   val view: ParkingSpacesOrGaragesNotIncludedInYourRentView = inject[ParkingSpacesOrGaragesNotIncludedInYourRentView]
   val controllerNoProperty: ParkingSpacesOrGaragesNotIncludedInYourRentController = new ParkingSpacesOrGaragesNotIncludedInYourRentController(
     view = view,
-    authenticate = fakeAuth,
+    authenticate = mockAuthJourney,
     inputText = mockInputText,
     ngrCharacterCountComponent = mockNGRCharacterCountComponent,
     mcc = mcc,
     getData = fakeData(None),
+    checkRequestSentReference = mockCheckRequestSentReference,
     sessionRepository = mockSessionRepository,
     navigator = mockNavigator
   )(mockConfig)
 
   val controllerProperty: Option[UserAnswers] => ParkingSpacesOrGaragesNotIncludedInYourRentController = answers => new ParkingSpacesOrGaragesNotIncludedInYourRentController(
     view = view,
-    authenticate = fakeAuth,
+    authenticate = mockAuthJourney,
     inputText = mockInputText,
     ngrCharacterCountComponent = mockNGRCharacterCountComponent,
     mcc = mcc,
     getData = fakeDataProperty(Some(property), answers),
+    checkRequestSentReference = mockCheckRequestSentReference,
     sessionRepository = mockSessionRepository,
     navigator = mockNavigator,
     )(mockConfig)

@@ -19,6 +19,7 @@ package uk.gov.hmrc.ngrraldfrontend.models
 import play.api.libs.json.*
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
+import uk.gov.hmrc.ngrraldfrontend.pages.DeclarationPage
 import uk.gov.hmrc.ngrraldfrontend.queries.{Gettable, Settable}
 
 import java.time.Instant
@@ -70,7 +71,8 @@ final case class UserAnswers(
 
   def getCurrentJourneyUserAnswers[A](page: Gettable[A], userAnswers: UserAnswers, credId: String)(implicit rds: Reads[A]): UserAnswers =
     userAnswers.get(page) match
-      case Some(_) => userAnswers
+      case Some(_) =>
+        if (userAnswers.get(DeclarationPage).isDefined) UserAnswers(CredId(credId)) else userAnswers
       case _ => UserAnswers(CredId(credId))
 }
 

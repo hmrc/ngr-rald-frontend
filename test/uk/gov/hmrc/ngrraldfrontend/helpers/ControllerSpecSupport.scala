@@ -18,10 +18,12 @@ package uk.gov.hmrc.ngrraldfrontend.helpers
 
 import org.mockito.Mockito.when
 import play.api.mvc.*
+import play.api.mvc.Results.Redirect
 import uk.gov.hmrc.auth.core.Nino
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalActionSpec, FakeAuthenticatedRequest, FakeDataRetrievalAction}
+import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, CheckRequestSentReferenceAction, DataRetrievalActionSpec, FakeAuthenticatedRequest, FakeDataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.connectors.NGRConnector
+import uk.gov.hmrc.ngrraldfrontend.mocks.MockAppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.{NewAgreement, RenewedAgreement, RentAgreement}
 import uk.gov.hmrc.ngrraldfrontend.models.AuthenticatedUserRequest
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
@@ -30,7 +32,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.requests.OptionalDataRequest
 import uk.gov.hmrc.ngrraldfrontend.models.vmvProperty.VMVProperty
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
-import uk.gov.hmrc.ngrraldfrontend.pages.{TellUsAboutRentPage, TellUsAboutYourNewAgreementPage, TellUsAboutYourRenewedAgreementPage}
+import uk.gov.hmrc.ngrraldfrontend.pages.{DeclarationPage, TellUsAboutRentPage, TellUsAboutYourNewAgreementPage, TellUsAboutYourRenewedAgreementPage}
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.{InputText, NGRCharacterCountComponent}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,6 +40,7 @@ import scala.concurrent.{ExecutionContext, Future}
 trait ControllerSpecSupport extends TestSupport {
   val mockGetData: DataRetrievalActionSpec = mock[DataRetrievalActionSpec]
   val mockAuthJourney: AuthRetrievals = mock[AuthRetrievals]
+  val mockCheckRequestSentReference: CheckRequestSentReferenceAction = mock[CheckRequestSentReferenceAction]
   val mockSessionRepository: SessionRepository = mock[SessionRepository]
   def fakeData(answers: Option[UserAnswers]) = new FakeDataRetrievalAction(answers, None)
   def fakeDataProperty(property: Option[VMVProperty], answers: Option[UserAnswers]) = new FakeDataRetrievalAction(answers, property)
@@ -50,5 +53,22 @@ trait ControllerSpecSupport extends TestSupport {
   val renewedAgreementAnswers: Option[UserAnswers] = userAnswersWithoutData.set(TellUsAboutYourRenewedAgreementPage, RenewedAgreement).toOption
   val newAgreementAnswers: Option[UserAnswers] = userAnswersWithoutData.set(TellUsAboutYourNewAgreementPage, NewAgreement).toOption
   val rentAgreementAnswers: Option[UserAnswers] = userAnswersWithoutData.set(TellUsAboutRentPage, RentAgreement).toOption
+  mockRequest
+  
+  def mockRequest: Unit = {
+    val finalActionBuilder = new ActionBuilder[AuthenticatedUserRequest, AnyContent] {
+      override def invokeBlock[A](
+                                   request: Request[A],
+                                   block: AuthenticatedUserRequest[A] => Future[Result]
+                                 ): Future[Result] = {
+        val fakeReq = AuthenticatedUserRequest(request, None, None, Some("user@email.com"), None, credId = Some("1234"), None, None, nino = Nino(hasNino = true, Some("AA000003D")))
+        block(fakeReq)
+      }
 
+      override def parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
+
+      override protected def executionContext: ExecutionContext = ec
+    }
+    when(mockAuthJourney.andThen(mockCheckRequestSentReference)).thenReturn(finalActionBuilder)
+  }
 }
