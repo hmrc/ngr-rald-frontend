@@ -1049,10 +1049,10 @@ class CheckAnswersViewSpec extends ViewBaseSpec {
     val firstPeriodEndDate = "End date"
     val firstPeriodDoYouPay = "Do you pay rent in this period?"
     val firstPeriodPayAmount = "Rent for this period (excluding VAT)"
-    val secondRentPeriodLabel = "Second Rent Period"
+    val secondRentPeriodLabel = "Second rent period"
     val secondPeriodEndDate = "End date"
     val secondPeriodAmount = "Rent for this period (excluding VAT)"
-    val thirdRentPeriodLabel = "Third Rent Period"
+    val thirdRentPeriodLabel = "Third rent period"
     val thirdPeriodEndDate = "End date"
     val thirdPeriodAmount = "Rent for this period (excluding VAT)"
 

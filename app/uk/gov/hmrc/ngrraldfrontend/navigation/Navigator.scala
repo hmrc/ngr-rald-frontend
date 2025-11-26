@@ -82,7 +82,7 @@ class Navigator @Inject()() {
       }
     case DidYouAgreeRentWithLandlordPage => answers =>
       answers.get(DidYouAgreeRentWithLandlordPage) match {
-        case Some(value)  =>
+        case Some(value) =>
           value match {
             case true => answers.get(ProvideDetailsOfSecondRentPeriodPage) match {
               case Some(value) => value match {
@@ -105,7 +105,7 @@ class Navigator @Inject()() {
               case _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfSecondRentPeriodController.show(NormalMode)
             }
 
-          case _    => answers.get(TellUsAboutYourNewAgreementPage) match {
+          case _ => answers.get(TellUsAboutYourNewAgreementPage) match {
             case Some(_) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeController.show(NormalMode)
             case None => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouAgreeRentWithLandlordController.show(NormalMode)
           }
@@ -150,7 +150,7 @@ class Navigator @Inject()() {
         }
         case None => throw new NotFoundException("Failed to find answers")
       }
-    case HowManyParkingSpacesOrGaragesIncludedInRentPage => _ =>  uk.gov.hmrc.ngrraldfrontend.controllers.routes.DoYouPayExtraForParkingSpacesController.show(NormalMode)
+    case HowManyParkingSpacesOrGaragesIncludedInRentPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DoYouPayExtraForParkingSpacesController.show(NormalMode)
     case InterimSetByTheCourtPage => answers =>
       answers.get(ProvideDetailsOfSecondRentPeriodPage) match {
         case Some(_) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeController.show(NormalMode)
@@ -161,8 +161,8 @@ class Navigator @Inject()() {
     case ConfirmBreakClausePage => answers =>
       answers.get(ConfirmBreakClausePage) match {
         case Some(value) => value match {
-          case true =>   uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouGetIncentiveForNotTriggeringBreakClauseController.show(NormalMode)
-          case _ =>       uk.gov.hmrc.ngrraldfrontend.controllers.routes.HasAnythingElseAffectedTheRentController.show(NormalMode)
+          case true => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouGetIncentiveForNotTriggeringBreakClauseController.show(NormalMode)
+          case _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HasAnythingElseAffectedTheRentController.show(NormalMode)
         }
         case None => throw new NotFoundException("Failed to find answers -  ConfirmBreakClausePage")
       }
@@ -203,7 +203,7 @@ class Navigator @Inject()() {
     case RepairsAndFittingOutPage => answers =>
       answers.get(RepairsAndFittingOutPage) match {
         case Some(value) => value match {
-          case true => uk.gov.hmrc.ngrraldfrontend.controllers.routes.AboutRepairsAndFittingOutController.show(NormalMode) 
+          case true => uk.gov.hmrc.ngrraldfrontend.controllers.routes.AboutRepairsAndFittingOutController.show(NormalMode)
           case _    => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouGetMoneyFromLandlordController.show(NormalMode)
         }
         case None => throw new NotFoundException("Failed to find answers - RepairsAndFittingOutPage")
@@ -242,14 +242,36 @@ class Navigator @Inject()() {
   }
 
   //TODO change to check your answers page
-  private val checkRouteMap: Page => UserAnswers => Call = {
-    case _ => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show()
+  private val checkRouteMap: Page => Boolean => UserAnswers => Call = {
+    case ProvideDetailsOfFirstRentPeriodPage => shouldGoToSecondRentPeriod => answers =>
+      shouldGoToSecondRentPeriod match {
+        case true => uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfSecondRentPeriodController.show(CheckMode)
+        case _    => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show()
+      }
+
+    case ProvideDetailsOfSecondRentPeriodPage => shouldGoToRentPeriodsPage => answers =>
+        shouldGoToRentPeriodsPage match {
+          case true => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentPeriodsController.show(CheckMode)
+          case _    => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show()
+        }
+
+    case RentPeriodsPage => _ => answers =>
+        answers.get(RentPeriodsPage).getOrElse(false) match
+          case true =>
+            val rentPeriodsSize = answers.get(ProvideDetailsOfSecondRentPeriodPage).map(_.size).getOrElse(0)
+            if (rentPeriodsSize == 0)
+              uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfSecondRentPeriodController.show(CheckMode)
+            else
+              uk.gov.hmrc.ngrraldfrontend.controllers.routes.AdditionalRentPeriodController.show(CheckMode, rentPeriodsSize)
+          case _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show()
+          
+    case _ => _ => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show()
   }
 
-  def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
+  def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers, shouldGoToRentPeriodsPage: Boolean = false): Call = mode match {
     case NormalMode =>
       normalRoutes(page)(userAnswers)
     case CheckMode =>
-      checkRouteMap(page)(userAnswers)
+      checkRouteMap(page)(shouldGoToRentPeriodsPage)(userAnswers)
   }
 }
