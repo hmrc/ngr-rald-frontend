@@ -534,6 +534,72 @@ class NavigatorSpec
       verify(mockSessionRepository, times(1)).set(any[UserAnswers])
     }
 
+
+    "checkRouteMap for DidYouGetIncentiveForNotTriggeringBreakClausePage" should {
+      
+      "return AboutTheRentFreePeriodController when only YesRentFreePeriod selected and AboutTheRentFreePeriodPage is missing" in {
+        val incentive = DidYouGetIncentiveForNotTriggeringBreakClause(Set(YesRentFreePeriod))
+        val answers = UserAnswers(CredId("1234"))
+          .set(DidYouGetIncentiveForNotTriggeringBreakClausePage, incentive)
+          .success
+          .value
+        
+        val result = navigator.checkRouteMap(DidYouGetIncentiveForNotTriggeringBreakClausePage)(answers)
+        result shouldBe routes.AboutTheRentFreePeriodController.show(NormalMode)
+        verify(mockSessionRepository, never()).set(any[UserAnswers])
+      }
+
+
+      "return HowMuchWasTheLumpSumController when YesLumpSum selected and HowMuchWasTheLumpSumPage is missing" in {
+        val incentive = DidYouGetIncentiveForNotTriggeringBreakClause(Set(YesLumpSum))
+        val answers = UserAnswers(CredId("1234"))
+          .set(DidYouGetIncentiveForNotTriggeringBreakClausePage, incentive)
+          .success.value
+
+        val result = navigator.checkRouteMap(DidYouGetIncentiveForNotTriggeringBreakClausePage)(answers)
+
+        result shouldBe routes.HowMuchWasTheLumpSumController.show(NormalMode)
+        verify(mockSessionRepository, never()).set(any[UserAnswers])
+      }
+
+      "return HasAnythingElseAffectedTheRentController when other conditions apply and HasAnythingElseAffectedTheRentPage is missing" in {
+        val incentive = DidYouGetIncentiveForNotTriggeringBreakClause(Set(No))
+        val answers = UserAnswers(CredId("1234"))
+          .set(DidYouGetIncentiveForNotTriggeringBreakClausePage, incentive)
+          .success.value
+
+        val result = navigator.checkRouteMap(DidYouGetIncentiveForNotTriggeringBreakClausePage)(answers)
+
+        result shouldBe routes.HasAnythingElseAffectedTheRentController.show(NormalMode)
+        verify(mockSessionRepository, never()).set(any[UserAnswers])
+      }
+
+      "return CheckAnswersController when all required pages are present" in {
+        val incentive = DidYouGetIncentiveForNotTriggeringBreakClause(Set(YesRentFreePeriod, YesLumpSum))
+        val answers = UserAnswers(CredId("1234"))
+          .set(DidYouGetIncentiveForNotTriggeringBreakClausePage, incentive)
+          .flatMap(_.set(AboutTheRentFreePeriodPage, AboutTheRentFreePeriod(months = 1, date = "2020-1-1")))
+          .flatMap(_.set(HowMuchWasTheLumpSumPage, BigDecimal(7500.00)))
+          .flatMap(_.set(HasAnythingElseAffectedTheRentPage,  HasAnythingElseAffectedTheRent(radio = true, reason = Some("Special discount applied"))))
+          .success.value
+
+        val result = navigator.checkRouteMap(DidYouGetIncentiveForNotTriggeringBreakClausePage)(answers)
+
+        result shouldBe routes.CheckAnswersController.show
+        verify(mockSessionRepository, never()).set(any[UserAnswers])
+      }
+
+      "throw NotFoundException when DidYouGetIncentiveForNotTriggeringBreakClausePage is missing" in {
+        val answers = UserAnswers(CredId("1234"))
+
+        an[NotFoundException] shouldBe thrownBy {
+          navigator.checkRouteMap(DidYouGetIncentiveForNotTriggeringBreakClausePage)(answers)
+        }
+        verify(mockSessionRepository, never()).set(any[UserAnswers])
+      }
+    }
+
+
     "throw NotFoundException when ConfirmBreakClausePage is missing" in {
       val answers = UserAnswers(CredId("1234"))
 
