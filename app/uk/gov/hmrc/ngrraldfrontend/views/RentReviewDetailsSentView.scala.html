@@ -20,6 +20,7 @@
 @import uk.gov.hmrc.ngrraldfrontend.viewmodels.govuk.all._
 @import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 @import uk.gov.hmrc.ngrraldfrontend.models.components.NavigationBarContent
+@import uk.gov.hmrc.ngrraldfrontend.models.*
 
 
 @this(
@@ -29,21 +30,46 @@
         govukTable : GovukTable,
         saveAndContinueButton: saveAndContinueButton)
 
-@(reference: Option[String], table: Table, email: String)(implicit request: RequestHeader, messages: Messages,  appConfig: AppConfig)
+@(reference: Option[String], table: Table, email: String, agreement:AgreementType)(implicit request: RequestHeader, messages: Messages,  appConfig: AppConfig)
 
 @panelContent = {
-@Messages("rentReviewDetailsSent.p1") @reference.getOrElse("TestRecoveryId")
+@Messages("rentReviewDetailsSent.p1") <br> @reference.getOrElse("TestRecoveryId")
 }
 
+ @journey = {
+ @govukPanel(Panel(
+  title = Text(Messages(
+   if(agreement == AgreementType.NewAgreement){
+    messages("rentReviewDetailsSentNew.title")
+   }else if(agreement == AgreementType.RenewedAgreement){
+    messages("rentReviewDetailsSentRenewed.title")
+   }else{
+    messages("rentReviewDetailsSentReview.title")
+   }
+  )),
+  content = HtmlContent(panelContent)
+ ))
+ }
 
-@layout(pageTitle = Some(messages("rentReviewDetailsSent.title")), showBackLink = false) {
+@layout(pageTitle = Some(
+ if(agreement == AgreementType.NewAgreement){
+  messages("rentReviewDetailsSentNew.title")
+ }else if(agreement == AgreementType.RenewedAgreement){
+  messages("rentReviewDetailsSentRenewed.title")
+ }else{
+  messages("rentReviewDetailsSentReview.title")
+ }), showBackLink = true) {
 
- @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentReviewDetailsSentController.confirmation(), Symbol("autoComplete") -> "off") {
-
-  @govukPanel(Panel(
-   title = Text(Messages("rentReviewDetailsSent.title")),
-   content = HtmlContent(panelContent)
-  ))
+ @formHelper(action =
+  if(agreement == AgreementType.NewAgreement){
+  uk.gov.hmrc.ngrraldfrontend.controllers.routes.NewAgreementDetailsSentController.confirmation()
+   }else  if(agreement == AgreementType.RenewedAgreement){
+   uk.gov.hmrc.ngrraldfrontend.controllers.routes.RenewedAgreementDetailsSentController.confirmation()
+ }else{
+   uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentReviewDetailsSentController.confirmation()
+  }, Symbol("autoComplete") -> "off") {
+  
+  @journey
 
   <p id="printPage" class="js-visible govuk-body govuk-!-display-none-print">
    <a href="#" class="govuk-link" data-module="hmrc-print-link">

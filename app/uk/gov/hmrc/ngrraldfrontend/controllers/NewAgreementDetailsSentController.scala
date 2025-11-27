@@ -24,7 +24,7 @@ import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.connectors.NGRConnector
-import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.{NewAgreement, RentAgreement}
+import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.UserAnswers
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.vmvProperty.VMVProperty
@@ -35,11 +35,11 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RentReviewDetailsSentController @Inject()(view: RentReviewDetailsSentView,
-                                                authenticate: AuthRetrievals,
-                                                mcc: MessagesControllerComponents,
-                                                getData: DataRetrievalAction,
-                                                ngrConnector: NGRConnector
+class NewAgreementDetailsSentController @Inject()(view: RentReviewDetailsSentView,
+                                                  authenticate: AuthRetrievals,
+                                                  mcc: MessagesControllerComponents,
+                                                  getData: DataRetrievalAction,
+                                                  ngrConnector: NGRConnector
                                                )(implicit appConfig: AppConfig, executionContext: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
   def firstTable(property: VMVProperty)(implicit messages: Messages): Table =
@@ -79,7 +79,7 @@ class RentReviewDetailsSentController @Inject()(view: RentReviewDetailsSentView,
           raldUserAnswers.get(DeclarationPage),
           firstTable(request.property),
           request.email.getOrElse(""),
-          RentAgreement
+          NewAgreement
         )))
         case None => Future.failed(throw new NotFoundException("Unable to find rald user answers"))
       }

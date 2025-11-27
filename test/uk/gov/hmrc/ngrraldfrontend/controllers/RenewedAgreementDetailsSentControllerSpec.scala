@@ -25,14 +25,14 @@ import play.api.test.Helpers.{await, contentAsString, contentType, redirectLocat
 import uk.gov.hmrc.http.{HttpResponse, NotFoundException}
 import uk.gov.hmrc.ngrraldfrontend.config.{AppConfig, FrontendAppConfig}
 import uk.gov.hmrc.ngrraldfrontend.helpers.{ControllerSpecSupport, TestData}
-import uk.gov.hmrc.ngrraldfrontend.models.registration.{CredId, RatepayerRegistrationValuation}
 import uk.gov.hmrc.ngrraldfrontend.models.{PropertyLinkingUserAnswers, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.registration.{CredId, RatepayerRegistrationValuation}
 import uk.gov.hmrc.ngrraldfrontend.views.html.RentReviewDetailsSentView
 
 import scala.concurrent.Future
 
 
-class  RentReviewDetailsSentControllerSpec extends ControllerSpecSupport with DefaultAwaitTimeout {
+class  RenewedAgreementDetailsSentControllerSpec extends ControllerSpecSupport with DefaultAwaitTimeout {
   val pageTitle = "Renewed agreement details sent"
   val view: RentReviewDetailsSentView = inject[RentReviewDetailsSentView]
   val controller: RenewedAgreementDetailsSentController = new RenewedAgreementDetailsSentController(view, fakeAuth, mcc, fakeDataProperty(Some(property), Some(userAnswersWithoutData)), mockNGRConnector)

@@ -20,12 +20,17 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.shouldBe
 import play.api.http.Status.{CREATED, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
+import play.api.libs.json.Json
+import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.http.{HeaderNames, HttpResponse}
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
-import uk.gov.hmrc.ngrraldfrontend.models.UserAnswers
+import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.views.html.DeclarationView
+import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.{NewAgreement, RenewedAgreement, RentAgreement}
+import uk.gov.hmrc.auth.core.Nino
 
+import java.time.Instant
 import scala.concurrent.Future
 
 class DeclaratioinControllerSpec extends ControllerSpecSupport {
@@ -46,9 +51,21 @@ class DeclaratioinControllerSpec extends ControllerSpecSupport {
       "Return SEE_OTHER and the correct view" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         when(mockNGRConnector.upsertRaldUserAnswers(any())(any())).thenReturn(Future.successful(HttpResponse(CREATED, "Created Successfully")))
-        val result = controllerProperty(None).submit(authenticatedFakeRequest)
+        val result = controllerProperty(rentAgreementAnswers).submit(authenticatedFakeRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) shouldBe Some(routes.RentReviewDetailsSentController.confirmation().url)
+      }
+      "Return SEE_OTHER and the correct view while in the renew agreement journey" in {
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        val result = controllerProperty(renewedAgreementAnswers).submit(authenticatedFakeRequest)
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.RenewedAgreementDetailsSentController.confirmation().url)
+      }
+      "Return SEE_OTHER and the correct view while in the new agreement journey" in {
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        val result = controllerProperty(newAgreementAnswers).submit(authenticatedFakeRequest)
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.NewAgreementDetailsSentController.confirmation().url)
       }
       "Return Exception when fail to store send request reference user answers" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(false))

@@ -44,6 +44,7 @@ class TellUsAboutYourAgreementViewSpec extends ViewBaseSpec {
     val bulletPoint5 = "if you have done any alterations and improvements"
     val rentBulletPoint5 = "if you have a break clause"
     val subheading2 = "Supporting documents"
+    val subheading3 = "Supporting documents"
     val p4 = "You do not need to upload any documents to support what you tell us."
     val continue = "Continue"
   }
@@ -51,7 +52,7 @@ class TellUsAboutYourAgreementViewSpec extends ViewBaseSpec {
   object Selectors {
     val heading = "#main-content > div > div > form > div > div > h1.govuk-heading-l"
     val p1 = "#main-content > div > div > form > div > div > p:nth-child(3)"
-    val subheading = "#main-content > div > div > form > div > div > h1:nth-child(4)"
+    val subheading = "#main-content > div > div > form > div > div > h2"
     val p2 = "#main-content > div > div > form > div > div > p:nth-child(5)"
     val rentp2 = "#main-content > div > div > form > div > div > p:nth-child(6)"
     val p3 = "#main-content > div > div > form > div > div > p:nth-child(6)"
@@ -61,8 +62,9 @@ class TellUsAboutYourAgreementViewSpec extends ViewBaseSpec {
     val bulletPoint3 = "#main-content > div > div > form > div > div > ul > li:nth-child(3)"
     val bulletPoint4 = "#main-content > div > div > form > div > div > ul > li:nth-child(4)"
     val bulletPoint5 = "#main-content > div > div > form > div > div > ul > li:nth-child(5)"
-    val subheading2 = "#main-content > div > div > form > div > div > h1:nth-child(8)"
-    val rentSubheading2 = "#main-content > div > div > form > div > div > h1:nth-child(9)"
+    val subheading2 = "#main-content > div > div > form > div > div > h2:nth-child(8)"
+    val subheading3 = "#main-content > div > div > form > div > div > h2:nth-child(9)"
+    val rentSubheading2 = "#main-content > div > div > form > div > div > h2"
     val p4 = "#main-content > div > div > form > div > div > p:nth-child(9)"
     val rentp4 = "#main-content > div > div > form > div > div > p:nth-child(10)"
     val continue = "#continue"
@@ -273,7 +275,7 @@ class TellUsAboutYourAgreementViewSpec extends ViewBaseSpec {
     }
 
     "show correct subheading2" in {
-      elementText(Selectors.rentSubheading2) mustBe Strings.subheading2
+      elementText(Selectors.subheading3) mustBe Strings.subheading3
     }
 
     "show correct p4" in {

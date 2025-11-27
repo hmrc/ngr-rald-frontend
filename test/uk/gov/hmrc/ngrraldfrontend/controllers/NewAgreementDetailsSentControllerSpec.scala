@@ -32,7 +32,7 @@ import uk.gov.hmrc.ngrraldfrontend.views.html.RentReviewDetailsSentView
 import scala.concurrent.Future
 
 
-class  RentReviewDetailsSentControllerSpec extends ControllerSpecSupport with DefaultAwaitTimeout {
+class  NewAgreementDetailsSentControllerSpec extends ControllerSpecSupport with DefaultAwaitTimeout {
   val pageTitle = "Renewed agreement details sent"
   val view: RentReviewDetailsSentView = inject[RentReviewDetailsSentView]
   val controller: RenewedAgreementDetailsSentController = new RenewedAgreementDetailsSentController(view, fakeAuth, mcc, fakeDataProperty(Some(property), Some(userAnswersWithoutData)), mockNGRConnector)

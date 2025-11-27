@@ -23,6 +23,7 @@ import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
 import uk.gov.hmrc.ngrraldfrontend.views.html.{Layout, RentReviewDetailsSentView}
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Table, TableRow, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import uk.gov.hmrc.ngrraldfrontend.models.AgreementType
 
 class RentReviewDetailSentViewSpec extends ViewBaseSpec {
     lazy val view: RentReviewDetailsSentView = inject[RentReviewDetailsSentView]
@@ -47,11 +48,11 @@ class RentReviewDetailSentViewSpec extends ViewBaseSpec {
     )
 
     object Strings {
-      val title: String = "Renewed agreement details sent"
+      val title: String = "New agreement details sent"
       val yourRef: String = s"Your reference is $reference"
       val print: String = "Print this page"
       val emailText: String = s"We have sent a confirmation email to $email"
-      val whatNext: String = "What happens next?"
+      val whatNext: String = "What happens next"
       val goBack: String = "Go to your account home"
     }
 
@@ -68,11 +69,11 @@ class RentReviewDetailSentViewSpec extends ViewBaseSpec {
     }
 
     "AddPropertyRequestSent" must {
-      val RentReviewDetailSentView = view(Some(reference), table, email)
+      val RentReviewDetailSentView = view(Some(reference), table, email, AgreementType.NewAgreement)
       lazy implicit val document: Document = Jsoup.parse(RentReviewDetailSentView.body)
-      val htmlApply = view.apply(Some(reference), table, email).body
-      val htmlRender = view.render(Some(reference), table, email, request, messages, mockConfig).body
-      lazy val htmlF = view.f(Some(reference), table, email)
+      val htmlApply = view.apply(Some(reference), table, email, AgreementType.NewAgreement).body
+      val htmlRender = view.render(Some(reference), table, email, AgreementType.NewAgreement,  request, messages, mockConfig).body
+      lazy val htmlF = view.f(Some(reference), table, email, AgreementType.NewAgreement)
 
       "htmlF is not empty" in {
         htmlF.toString() must not be empty
