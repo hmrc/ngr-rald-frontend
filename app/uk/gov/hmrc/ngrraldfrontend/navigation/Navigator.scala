@@ -397,15 +397,12 @@ class Navigator @Inject()(sessionRepository: SessionRepository) {
             uk.gov.hmrc.ngrraldfrontend.controllers.routes.AdditionalRentPeriodController.show(CheckMode, rentPeriodsSize)
         case _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show
 
-    case _ => _ => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show
-
-
     case WhatTypeOfAgreementPage => _ => answers =>
       answers.get(WhatTypeOfAgreementPage) match {
         case Some(value) => value match {
           case "Verbal" =>
             genericNavigationSwitchHandler(
-              mode = NormalMode,
+              mode = CheckMode,
               currentPage = WhatTypeOfAgreementPage,
               nextPage = AgreementVerbalPage,
               nextPageCall = uk.gov.hmrc.ngrraldfrontend.controllers.routes.AgreementVerbalController.show(NormalMode),
@@ -414,7 +411,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository) {
             )
           case _ =>
             genericNavigationSwitchHandler(
-              mode = NormalMode,
+              mode = CheckMode,
               currentPage = WhatTypeOfAgreementPage,
               nextPage = AgreementPage,
               nextPageCall = uk.gov.hmrc.ngrraldfrontend.controllers.routes.AgreementController.show(NormalMode),
@@ -651,8 +648,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository) {
         case None => throw new NotFoundException("Failed to find answers - ConfirmBreakClausePage")
       }
 
-    case _ => _ => _ =>
-      uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show
+    case _ => _ => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show
   }
 
   private def genericNavigationSwitchHandler[A](
