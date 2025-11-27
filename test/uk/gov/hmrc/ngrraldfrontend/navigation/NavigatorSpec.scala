@@ -211,7 +211,7 @@ class NavigatorSpec
 
       val result = navigator.checkRouteMap(AgreedRentChangePage)(answers)
 
-      result shouldBe routes.AgreedRentChangeController.show(NormalMode)
+      result shouldBe routes.HowMuchIsTotalAnnualRentController.show(NormalMode)
       verify(mockSessionRepository, times(1)).set(any[UserAnswers])
     }
 
@@ -536,14 +536,14 @@ class NavigatorSpec
 
 
     "checkRouteMap for DidYouGetIncentiveForNotTriggeringBreakClausePage" should {
-      
+
       "return AboutTheRentFreePeriodController when only YesRentFreePeriod selected and AboutTheRentFreePeriodPage is missing" in {
         val incentive = DidYouGetIncentiveForNotTriggeringBreakClause(Set(YesRentFreePeriod))
         val answers = UserAnswers(CredId("1234"))
           .set(DidYouGetIncentiveForNotTriggeringBreakClausePage, incentive)
           .success
           .value
-        
+
         val result = navigator.checkRouteMap(DidYouGetIncentiveForNotTriggeringBreakClausePage)(answers)
         result shouldBe routes.AboutTheRentFreePeriodController.show(NormalMode)
         verify(mockSessionRepository, never()).set(any[UserAnswers])
