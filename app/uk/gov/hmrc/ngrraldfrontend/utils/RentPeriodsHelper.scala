@@ -48,5 +48,10 @@ object RentPeriodsHelper {
       case _ => userAnswers.remove(RentPeriodsPage)
     }
   }
-  
+
+  def shouldGoToRentPeriodsPageCheckMode(oldAnswers: UserAnswers, newAnswers: UserAnswers): Boolean = {
+    val oldPeriods = oldAnswers.get(ProvideDetailsOfSecondRentPeriodPage).map(_.size).getOrElse(0)
+    val newPeriods = newAnswers.get(ProvideDetailsOfSecondRentPeriodPage).map(_.size).getOrElse(0)
+    oldPeriods != newPeriods
+  }
 }

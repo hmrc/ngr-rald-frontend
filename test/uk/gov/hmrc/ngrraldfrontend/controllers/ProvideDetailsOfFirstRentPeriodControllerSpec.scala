@@ -25,8 +25,8 @@ import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redir
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, UserAnswers}
-import uk.gov.hmrc.ngrraldfrontend.pages.ProvideDetailsOfFirstRentPeriodPage
+import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, CheckMode, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.pages.{ProvideDetailsOfFirstRentPeriodPage, ProvideDetailsOfSecondRentPeriodPage}
 import uk.gov.hmrc.ngrraldfrontend.views.html.ProvideDetailsOfFirstRentPeriodView
 
 import scala.concurrent.Future
@@ -60,6 +60,10 @@ class ProvideDetailsOfFirstRentPeriodControllerSpec extends ControllerSpecSuppor
 
   val firstRentPeriodAnswers: Option[UserAnswers] = userAnswersWithoutData.set(ProvideDetailsOfFirstRentPeriodPage, firstRentPeriod).toOption
   val firstRentPeriodAnswersNoRentPayed: Option[UserAnswers] = userAnswersWithoutData.set(ProvideDetailsOfFirstRentPeriodPage, firstRentPeriodNoRentPayed).toOption
+  val fourRentPeriodsAnswers: Option[UserAnswers] =
+    userAnswersWithoutData.set(ProvideDetailsOfFirstRentPeriodPage, firstRentPeriod)
+      .flatMap(_.set(ProvideDetailsOfSecondRentPeriodPage, detailsOfRentPeriod))
+      .toOption
 
   "ProvideDetailsOfFirstRentPeriodController" must {
     "method show" must {
@@ -146,6 +150,25 @@ class ProvideDetailsOfFirstRentPeriodControllerSpec extends ControllerSpecSuppor
         ))
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.ProvideDetailsOfSecondRentPeriodController.show(NormalMode).url)
+      }
+
+      "return SEE_OTHER after changing end date in check mode" in {
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        val result = controllerWithAnswers(fourRentPeriodsAnswers).submit(CheckMode)(authenticatedFakePostRequest(
+          FakeRequest(routes.ProvideDetailsOfFirstRentPeriodController.submit(CheckMode))
+            .withFormUrlEncodedBody(
+              "startDate.day" -> "1",
+              "startDate.month" -> "1",
+              "startDate.year" -> "2025",
+              "endDate.day" -> "31",
+              "endDate.month" -> "12",
+              "endDate.year" -> "2025",
+              "provideDetailsOfFirstRentPeriod-radio-isRentPayablePeriod" -> "true",
+              "rentPeriodAmount" -> "22000.00"
+            )
+        ))
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.ProvideDetailsOfSecondRentPeriodController.show(CheckMode).url)
       }
 
       "return form with errors when day is empty for the start date" in {

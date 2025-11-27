@@ -24,7 +24,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
-import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{CheckMode, NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.pages.{ProvideDetailsOfFirstRentPeriodPage, ProvideDetailsOfSecondRentPeriodPage}
 import uk.gov.hmrc.ngrraldfrontend.views.html.ProvideDetailsOfSecondRentPeriodView
 
@@ -48,6 +48,11 @@ class ProvideDetailsOfSecondRentPeriodControllerSpec extends ControllerSpecSuppo
 
   val firstRentPeriodAnswers: Option[UserAnswers] = userAnswersWithoutData.set(ProvideDetailsOfFirstRentPeriodPage, firstRentPeriod).toOption
   val firstSecondAnswers: Option[UserAnswers] =
+    userAnswersWithoutData.set(ProvideDetailsOfFirstRentPeriodPage, firstRentPeriod)
+      .flatMap(_.set(ProvideDetailsOfSecondRentPeriodPage, Seq(secondRentPeriod)))
+      .toOption
+
+  val fourRentPeriodsAnswers: Option[UserAnswers] =
     userAnswersWithoutData.set(ProvideDetailsOfFirstRentPeriodPage, firstRentPeriod)
       .flatMap(_.set(ProvideDetailsOfSecondRentPeriodPage, detailsOfRentPeriod))
       .toOption
@@ -94,6 +99,34 @@ class ProvideDetailsOfSecondRentPeriodControllerSpec extends ControllerSpecSuppo
         ))
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.RentPeriodsController.show(NormalMode).url)
+      }
+      "return SEE_OTHER after change end date in check mode and direct to check your answer" in {
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        val result = controllerWithAnswers(firstSecondAnswers).submit(CheckMode)(authenticatedFakePostRequest(
+          FakeRequest(routes.ProvideDetailsOfSecondRentPeriodController.submit(CheckMode))
+            .withFormUrlEncodedBody(
+              "endDate.day" -> "31",
+              "endDate.month" -> "12",
+              "endDate.year" -> "2026",
+              "rentPeriodAmount" -> "22000.00"
+            )
+        ))
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.CheckAnswersController.show().url)
+      }
+      "return SEE_OTHER after change end date in check mode and direct to rent periods" in {
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        val result = controllerWithAnswers(fourRentPeriodsAnswers).submit(CheckMode)(authenticatedFakePostRequest(
+          FakeRequest(routes.ProvideDetailsOfSecondRentPeriodController.submit(CheckMode))
+            .withFormUrlEncodedBody(
+              "endDate.day" -> "31",
+              "endDate.month" -> "12",
+              "endDate.year" -> "2026",
+              "rentPeriodAmount" -> "22000.00"
+            )
+        ))
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.RentPeriodsController.show(CheckMode).url)
       }
       "Return Form with Errors when end date day is missing" in {
         val result = controllerWithAnswers(firstRentPeriodAnswers).submit(NormalMode)(authenticatedFakePostRequest(

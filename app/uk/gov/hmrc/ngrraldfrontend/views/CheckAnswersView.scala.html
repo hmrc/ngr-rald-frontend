@@ -71,7 +71,6 @@
         @govukSummaryList(firstRentPeriod.get)
     }
 
-
     @rentPeriods.map { rentPeriods =>
         @for((period, idx) <- rentPeriods.zipWithIndex) {
             <h2 class="govuk-heading-m">
@@ -104,8 +103,6 @@
         <h2 class="govuk-heading-m">@messages("checkAnswers.breakClause.label")</h2>
         @govukSummaryList(breakClause.get)
     }
-
-
 
     <h2 class="govuk-heading-m">@messages("checkAnswers.Otherdetails.label")</h2>
     @govukSummaryList(otherDetailsSummary)
