@@ -16,16 +16,20 @@
 
 package uk.gov.hmrc.ngrraldfrontend.navigation
 
+import play.api.libs.json.{JsNull, Writes}
 import play.api.mvc.Call
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.models.Incentive.{YesLumpSum, YesRentFreePeriod}
-import uk.gov.hmrc.ngrraldfrontend.models.{CheckMode, Mode, NormalMode, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{AgreementVerbal, CheckMode, Mode, NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.pages.*
+import uk.gov.hmrc.ngrraldfrontend.queries.Settable
+import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 
 import javax.inject.{Inject, Singleton}
+import scala.util.{Failure, Success, Try}
 
 @Singleton
-class Navigator @Inject()() {
+class Navigator @Inject()(sessionRepository: SessionRepository) {
 
   private val normalRoutes: Page => UserAnswers => Call = {
     case TellUsAboutRentPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.LandlordController.show(NormalMode)
@@ -241,21 +245,37 @@ class Navigator @Inject()() {
     case DeclarationPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentReviewDetailsSentController.confirmation()
   }
 
-  //TODO change to check your answers page
-  private val checkRouteMap: Page => Boolean => UserAnswers => Call = {
-    case ProvideDetailsOfFirstRentPeriodPage => shouldGoToSecondRentPeriod => answers =>
-      shouldGoToSecondRentPeriod match {
-        case true => uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfSecondRentPeriodController.show(CheckMode)
-        case _    => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show()
-      }
+  private val pagesOrdered  = List(
+    TellUsAboutRentPage,
+    TellUsAboutYourRenewedAgreementPage,
+    TellUsAboutYourNewAgreementPage,
+    LandlordPage,
+    WhatTypeOfAgreementPage,
+    AgreementVerbalPage,
+    AgreementPage,
+    WhatIsYourRentBasedOnPage,
+    AgreedRentChangePage,
+  )
 
-    case ProvideDetailsOfSecondRentPeriodPage => shouldGoToRentPeriodsPage => answers =>
-        shouldGoToRentPeriodsPage match {
-          case true => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentPeriodsController.show(CheckMode)
-          case _    => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show()
+
+  private val checkRouteMap: Page => Boolean => UserAnswers => Call = {
+
+    case ProvideDetailsOfFirstRentPeriodPage => shouldGoToSecondRentPeriod =>
+      answers =>
+        shouldGoToSecondRentPeriod match {
+          case true => uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfSecondRentPeriodController.show(CheckMode)
+          case _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show()
         }
 
-    case RentPeriodsPage => _ => answers =>
+    case ProvideDetailsOfSecondRentPeriodPage => shouldGoToRentPeriodsPage =>
+      answers =>
+        shouldGoToRentPeriodsPage match {
+          case true => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentPeriodsController.show(CheckMode)
+          case _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show()
+        }
+
+    case RentPeriodsPage => _ =>
+      answers =>
         answers.get(RentPeriodsPage).getOrElse(false) match
           case true =>
             val rentPeriodsSize = answers.get(ProvideDetailsOfSecondRentPeriodPage).map(_.size).getOrElse(0)
@@ -264,8 +284,82 @@ class Navigator @Inject()() {
             else
               uk.gov.hmrc.ngrraldfrontend.controllers.routes.AdditionalRentPeriodController.show(CheckMode, rentPeriodsSize)
           case _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show()
-          
+
     case _ => _ => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show()
+  }
+
+    case WhatTypeOfAgreementPage => answers =>
+      answers.get(WhatTypeOfAgreementPage) match {
+        case Some(value) => value match {
+          case "Verbal" =>
+            if(answers.get(AgreementVerbalPage).isEmpty)
+              val updatedAnswers = trimUserAnswersFromPage(WhatTypeOfAgreementPage, pagesOrdered, answers).getOrElse(answers)
+              sessionRepository.set(updatedAnswers)
+              uk.gov.hmrc.ngrraldfrontend.controllers.routes.AgreementVerbalController.show(NormalMode)
+            else uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show
+          case _ =>
+            if(answers.get(AgreementPage).isEmpty)
+              val updatedAnswers = trimUserAnswersFromPage(WhatTypeOfAgreementPage, pagesOrdered, answers).getOrElse(answers)
+              sessionRepository.set(updatedAnswers)
+              uk.gov.hmrc.ngrraldfrontend.controllers.routes.AgreementController.show(NormalMode)
+            else uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show
+        }
+        case None => throw new NotFoundException("Failed to find answers - DidYouPayAnyMoneyToLandlordPage")
+      }
+
+    case WhatIsYourRentBasedOnPage => answers =>
+      answers.get(WhatIsYourRentBasedOnPage) match {
+        case Some(value) => value.rentBased match {
+          case "PercentageTurnover" =>
+            if(answers.get(HowMuchIsTotalAnnualRentPage).isEmpty)
+              val updatedAnswers = trimUserAnswersFromPage(WhatIsYourRentBasedOnPage, pagesOrdered, answers).getOrElse(answers)
+              sessionRepository.set(updatedAnswers)
+              uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchIsTotalAnnualRentController.show(NormalMode)
+            else uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show
+          case _ =>
+            if(answers.get(AgreedRentChangePage).isEmpty)
+              val updatedAnswers = trimUserAnswersFromPage(WhatIsYourRentBasedOnPage, pagesOrdered, answers).getOrElse(answers)
+              sessionRepository.set(updatedAnswers)
+              uk.gov.hmrc.ngrraldfrontend.controllers.routes.AgreedRentChangeController.show(NormalMode)
+            else uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show
+        }
+        case None => throw new NotFoundException("Failed to find answers - WhatIsYourRentBasedOnPage")
+      }
+
+    case _ => _ =>
+      uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show
+  }
+
+
+  private def trimUserAnswersFromPage(
+                                       startPage: Settable[_],
+                                       pages: List[Settable[_]],
+                                       userAnswers: UserAnswers
+                                     ): Try[UserAnswers] = {
+    implicit val anyWrites: Writes[Any] = Writes(_ => JsNull)
+
+    val indexOpt = pages.indexWhere(_ == startPage) match {
+      case -1 => None
+      case idx => Some(idx)
+    }
+
+    indexOpt match {
+      case None => Success(userAnswers)
+      case Some(idx) =>
+        val pagesToRemove = pages.drop(idx + 1)
+        var currentAnswers = userAnswers
+
+        pagesToRemove.foreach { page =>
+          println(Console.MAGENTA +  page + Console.RESET)
+          currentAnswers = currentAnswers.remove(page.asInstanceOf[Settable[Any]]) match {
+            case Success(updated) =>
+              println(Console.GREEN +  "Success" + Console.RESET)
+              updated
+            case Failure(_) => currentAnswers
+          }
+        }
+        Success(currentAnswers)
+    }
   }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers, shouldGoToRentPeriodsPage: Boolean = false): Call = mode match {

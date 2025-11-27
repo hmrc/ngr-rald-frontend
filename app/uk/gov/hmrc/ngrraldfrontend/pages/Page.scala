@@ -16,11 +16,24 @@
 
 package uk.gov.hmrc.ngrraldfrontend.pages
 
+import play.api.libs.json.*
+
 import scala.language.implicitConversions
 
 trait Page
 
 object Page {
+  
+  implicit val pageReads: Reads[Page] =
+    Reads.StringReads.map(str => new Page {
+      override def toString = str
+    })
+
+  implicit val pageWrites: Writes[Page] =
+    Writes(page => JsString(page.toString))
+
+  implicit val pageFormat: Format[Page] = Format(pageReads, pageWrites)
+
 
   implicit def toString(page: Page): String =
     page.toString

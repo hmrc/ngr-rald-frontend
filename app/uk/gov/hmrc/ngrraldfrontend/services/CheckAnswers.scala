@@ -87,6 +87,7 @@ object CheckAnswers {
     val answers = userAnswers.getOrElse(UserAnswers(CredId(credId)))
     val agreementTypeOpt = answers.get(WhatTypeOfAgreementPage)
     val agreement = answers.get(AgreementPage)
+    val verbalAgreement = answers.get(AgreementVerbalPage)
 
     agreementTypeOpt.map { agreementType =>
       val displayValue = agreementType match {
@@ -104,6 +105,28 @@ object CheckAnswers {
         hiddenKey = "what-type-of-agreement"
       )
 
+      val verbalAgreementStartDate = verbalAgreement.map { value =>
+        buildRow(
+          labelKey = "checkAnswers.agreement.startDate",
+          value = NGRDate.formatDate(value.startDate),
+          linkId = "verbal-agreement-start-date",
+          href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.AgreementVerbalController.show(CheckMode),
+          hiddenKey = "verbal-agreement-start-date"
+        )
+      }.toSeq
+
+      val verbalAgreementOpenEnded = verbalAgreement.map { value =>
+        buildRow(
+          labelKey = "checkAnswers.agreement.isOpenEnded",
+          value = value.openEnded match
+            case true => Messages("agreementVerbal.yes")
+            case false => Messages("agreementVerbal.no"),
+          linkId = "is-open-ended",
+          href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.AgreementVerbalController.show(CheckMode),
+          hiddenKey = "is-open-ended"
+        )
+      }.toSeq
+      
       val agreementStartDate = agreement.map { value =>
         buildRow(
           labelKey = "checkAnswers.agreement.startDate",
@@ -159,7 +182,7 @@ object CheckAnswers {
           )
         }
       }
-      val rows = Seq(agreementTypeRow) ++ agreementStartDate ++ agreementOpenEnded ++ agreementEndDate ++ breakClause ++ breakClauseDetails
+      val rows = Seq(agreementTypeRow) ++ agreementStartDate ++ verbalAgreementStartDate ++ verbalAgreementOpenEnded ++ agreementOpenEnded ++ agreementEndDate ++ breakClause ++ breakClauseDetails
       SummaryList(rows.map(summarise), classes = "govuk-!-margin-bottom-9")
     }
   }
