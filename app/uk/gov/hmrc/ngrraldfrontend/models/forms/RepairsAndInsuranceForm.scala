@@ -58,7 +58,8 @@ object RepairsAndInsuranceForm extends CommonFormValidators with Mappings {
     ngrRadio(
       radioName = s"repairsAndInsurance-$radioType-radio-value",
       radioButtons = buttons,
-      ngrTitle = s"repairsAndInsurance.$radioType.radio.label"
+      ngrTitle = s"repairsAndInsurance.$radioType.radio.label",
+      isPageHeading = false
     )
 
   def form: Form[RepairsAndInsuranceForm] = {

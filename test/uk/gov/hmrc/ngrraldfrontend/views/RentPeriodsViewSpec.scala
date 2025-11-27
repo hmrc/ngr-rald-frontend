@@ -96,7 +96,7 @@ class RentPeriodsViewSpec extends ViewBaseSpec with TestData {
     val secondRentAmount = "#second-period-rent-value-id"
     val thirdRentAmount = "#third-period-rent-value-id"
     val fourthRentAmount = "#fourth-period-rent-value-id"
-    val additionPeriodQuestion = "#main-content > div > div.govuk-grid-column-two-thirds > form > div > fieldset > legend > h1"
+    val additionPeriodQuestion = "#main-content > div > div.govuk-grid-column-two-thirds > form > div > fieldset > legend"
     val additionPeriodQuestionLegend ="#main-content > div > div.govuk-grid-column-two-thirds > form > div.govuk-form-group > fieldset > legend"
     val radioButtonsGroup = "#main-content > div > div.govuk-grid-column-two-thirds > form > div.govuk-form-group > fieldset > div"
     val yesRadio = "#main-content > div > div.govuk-grid-column-two-thirds > form > div > fieldset > div > div:nth-child(1) > label"

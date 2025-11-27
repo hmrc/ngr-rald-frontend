@@ -141,12 +141,14 @@ object RentReviewForm extends Mappings with MonthYearMappings {
         noButton()
       ),
       ngrTitle = "rentReview.hasIncludeRentReview.radio.label",
-      hint = Some("rentReview.hasIncludeRentReview.radio.hint")
+      hint = Some("rentReview.hasIncludeRentReview.radio.hint"),
+      isPageHeading = false
     )
 
   def createCanRentGoDownRadio(implicit messages: Messages): NGRRadio =
     ngrRadio(radioName = canRentGoDownRadio,
       radioButtons = Seq(yesButton(), noButton()),
-      ngrTitle = "rentReview.canRentGoDown.radio.label"
+      ngrTitle = "rentReview.canRentGoDown.radio.label",
+      isPageHeading = false
     )
 }

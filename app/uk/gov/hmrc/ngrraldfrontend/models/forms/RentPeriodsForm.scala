@@ -68,7 +68,8 @@ object RentPeriodsForm extends Mappings {
       ),
       ngrTitle = "rentPeriods.radio.heading",
       ngrTitleClass = if (isMaxLength) "govuk-visually-hidden" else "govuk-fieldset__legend--m",
-      classes = if(isMaxLength) Some("govuk-visually-hidden") else None
+      classes = if(isMaxLength) Some("govuk-visually-hidden") else None,
+      isPageHeading = false
     )
   }
 }

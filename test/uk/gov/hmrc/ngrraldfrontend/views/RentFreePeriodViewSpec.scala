@@ -42,7 +42,7 @@ class RentFreePeriodViewSpec extends ViewBaseSpec {
     val navTitle = "head > title"
     val heading = "#main-content > div > div.govuk-grid-column-two-thirds > form > h1"
     val addressCaption = "#main-content > div > div.govuk-grid-column-two-thirds > form > span"
-    val howManyMonthsTitle = "#main-content > div > div.govuk-grid-column-two-thirds > form > div:nth-child(4) > h1 > label"
+    val howManyMonthsTitle = "#main-content > div > div.govuk-grid-column-two-thirds > form > div:nth-child(4) > label"
     val reasonsTitle = "#main-content > div > div.govuk-grid-column-two-thirds > form > div.govuk-form-group.govuk-character-count > label"
     val reasonsHint = "#reasons-hint"
     val charactersCount = "#reasons-info"

@@ -41,7 +41,7 @@ class RepairAndFittingOutViewSpec extends ViewBaseSpec {
   object Selectors {
     val title = "#main-content > div > div.govuk-grid-column-two-thirds > form > h1"
     val body = "#main-content > div > div.govuk-grid-column-two-thirds > form > p"
-    val heading = "#main-content > div > div.govuk-grid-column-two-thirds > form > div > fieldset > legend > h1"
+    val heading = "#main-content > div > div.govuk-grid-column-two-thirds > form > div > fieldset > legend"
     val radio1 = "#main-content > div > div.govuk-grid-column-two-thirds > form > div > fieldset > div > div:nth-child(1) > label"
     val radio2 = "#main-content > div > div.govuk-grid-column-two-thirds > form > div > fieldset > div > div:nth-child(2) > label"
     val continue = "#continue"

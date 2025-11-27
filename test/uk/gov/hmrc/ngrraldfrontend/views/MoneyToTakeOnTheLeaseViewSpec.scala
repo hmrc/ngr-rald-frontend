@@ -41,7 +41,7 @@ class MoneyToTakeOnTheLeaseViewSpec extends ViewBaseSpec {
   object Selectors {
     val navTitle = "head > title"
     val heading = "#main-content > div > div.govuk-grid-column-two-thirds > form > h1"
-    val label1 = "#main-content > div > div.govuk-grid-column-two-thirds > form > div:nth-child(3) > h1"
+    val label1 = "#main-content > div > div.govuk-grid-column-two-thirds > form > div:nth-child(3) > label"
     val label2 = "#main-content > div > div.govuk-grid-column-two-thirds > form > div:nth-child(4) > fieldset > legend"
     val hint2 = "#date-hint"
     val startPayingDateDayInputLabel = "#date > div:nth-child(1) > div > label"

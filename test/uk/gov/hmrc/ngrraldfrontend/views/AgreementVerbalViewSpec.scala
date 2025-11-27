@@ -61,7 +61,7 @@ class AgreementVerbalViewSpec extends ViewBaseSpec {
     val startDateDayInputLabel = "#agreementStartDate > div:nth-child(1) > div > label"
     val startDateMonthInputLabel = "#agreementStartDate > div:nth-child(2) > div > label"
     val startDateYearInputLabel = "#agreementStartDate > div:nth-child(3) > div > label"
-    val radioTitle = "#main-content > div > div.govuk-grid-column-two-thirds > form > div:nth-child(4) > fieldset > legend > h1"
+    val radioTitle = "#main-content > div > div.govuk-grid-column-two-thirds > form > div:nth-child(4) > fieldset > legend"
     val radioHint = "#agreement-verbal-radio-hint"
     val yesRadio = "#main-content > div > div.govuk-grid-column-two-thirds > form > div:nth-child(4) > fieldset > div.govuk-radios.govuk-radios > div:nth-child(1) > label"
     val noRadio = "#main-content > div > div.govuk-grid-column-two-thirds > form > div:nth-child(4) > fieldset > div.govuk-radios.govuk-radios > div:nth-child(2) > label"
