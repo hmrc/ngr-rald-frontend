@@ -755,7 +755,7 @@ object CheckAnswers {
 
     val startDate = buildRow(
       labelKey = "checkAnswers.rentReviewDetails.startDate",
-      value = rentDetails.map(_.startDate).getOrElse(messages("service.notProvided")),
+      value = rentDetails.map(rentReviewDetails => NGRDate.formatDate(rentReviewDetails.startDate)).getOrElse(messages("service.notProvided")),
       linkId = "start-date",
       href = rentDetailsLink,
       hiddenKey = "start-date"
@@ -898,6 +898,7 @@ object CheckAnswers {
     val confirmBreakClause = answers.get(ConfirmBreakClausePage)
     val didYouGetIncentiveForNotTriggeringBreakClause = answers.get(DidYouGetIncentiveForNotTriggeringBreakClausePage)
     val aboutTheRentFreePeriod = answers.get(AboutTheRentFreePeriodPage)
+    val lumpSumPage = answers.get(HowMuchWasTheLumpSumPage)
 
     val confirmBreakClauseRow = confirmBreakClause.map { value =>
       buildRow(
@@ -947,10 +948,21 @@ object CheckAnswers {
         hiddenKey = "about-the-rent-free-period"
       )
     }
+    
+    val lumpSum = lumpSumPage.map{ value =>
+      buildRow(
+        labelKey = "checkAnswers.breakClause.lumpSum",
+        value = s"£$value",
+        linkId = "how-much-was-the-lump-sum",
+        href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchWasTheLumpSumController.show(CheckMode),
+        hiddenKey = "how-much-was-the-lump-sum"
+      )
+    }
 
     val rows =
       confirmBreakClauseRow.toSeq ++
       didYouGetIncentiveForNotTriggeringBreakClauseRow.toSeq ++
+      lumpSum.toSeq ++ 
       rentFreeMonths.toSeq ++
       rentFreeStartDate.toSeq
 

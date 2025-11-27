@@ -29,10 +29,11 @@ import uk.gov.hmrc.ngrraldfrontend.controllers.routes
 import uk.gov.hmrc.ngrraldfrontend.helpers.TestData
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.RentAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.models.{CheckMode, NormalMode, RentBasedOn, RentFreePeriod, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.*
+import uk.gov.hmrc.ngrraldfrontend.models.Incentive.*
 import uk.gov.hmrc.ngrraldfrontend.pages.*
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
+
 
 class NavigatorSpec
   extends AnyWordSpec
@@ -358,6 +359,190 @@ class NavigatorSpec
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
   }
+  "checkRouteMap for DidYouGetMoneyFromLandlordPage" should {
+
+    "return CheckAnswersController when DidYouGetMoneyFromLandlord is true and MoneyToTakeOnTheLeasePage is present" in {
+      val answers = UserAnswers(CredId("1234"))
+        .set(DidYouGetMoneyFromLandlordPage, true)
+        .flatMap(_.set(MoneyToTakeOnTheLeasePage, MoneyToTakeOnTheLease(10000, "2000-01-01")))
+        .success.value
+
+      val result = navigator.checkRouteMap(DidYouGetMoneyFromLandlordPage)(answers)
+
+      result shouldBe routes.CheckAnswersController.show
+      verify(mockSessionRepository, never()).set(any[UserAnswers])
+    }
+
+    "return MoneyToTakeOnTheLeaseController when DidYouGetMoneyFromLandlord is true and MoneyToTakeOnTheLeasePage is missing" in {
+      val answers = UserAnswers(CredId("1234"))
+        .set(DidYouGetMoneyFromLandlordPage, true)
+        .success.value
+
+      val result = navigator.checkRouteMap(DidYouGetMoneyFromLandlordPage)(answers)
+
+      result shouldBe routes.MoneyToTakeOnTheLeaseController.show(CheckMode)
+      verify(mockSessionRepository, never()).set(any[UserAnswers])
+    }
+
+    "return CheckAnswersController and remove MoneyToTakeOnTheLeasePage when DidYouGetMoneyFromLandlord is false" in {
+      val answers = UserAnswers(CredId("1234"))
+        .set(DidYouGetMoneyFromLandlordPage, false)
+        .flatMap(_.set(MoneyToTakeOnTheLeasePage, MoneyToTakeOnTheLease(10000, "2000-01-01")))
+        .success.value
+
+      val result = navigator.checkRouteMap(DidYouGetMoneyFromLandlordPage)(answers)
+
+      result shouldBe routes.CheckAnswersController.show
+      verify(mockSessionRepository, times(1)).set(any[UserAnswers])
+    }
+
+    "throw NotFoundException when DidYouGetMoneyFromLandlordPage is missing" in {
+      val answers = UserAnswers(CredId("1234"))
+
+      an[NotFoundException] shouldBe thrownBy {
+        navigator.checkRouteMap(DidYouGetMoneyFromLandlordPage)(answers)
+      }
+      verify(mockSessionRepository, never()).set(any[UserAnswers])
+    }
+  }
+  "checkRouteMap for DidYouPayAnyMoneyToLandlordPage" should {
+
+    "return CheckAnswersController when DidYouPayAnyMoneyToLandlord is true and MoneyYouPaidInAdvanceToLandlordPage is present" in {
+      val answers = UserAnswers(CredId("1234"))
+        .set(DidYouPayAnyMoneyToLandlordPage, true)
+        .flatMap(_.set(MoneyYouPaidInAdvanceToLandlordPage, paymentAdvance))
+        .success.value
+
+      val result = navigator.checkRouteMap(DidYouPayAnyMoneyToLandlordPage)(answers)
+
+      result shouldBe routes.CheckAnswersController.show
+      verify(mockSessionRepository, never()).set(any[UserAnswers])
+    }
+
+    "return MoneyYouPaidInAdvanceToLandlordController when DidYouPayAnyMoneyToLandlord is true and MoneyYouPaidInAdvanceToLandlordPage is missing" in {
+      val answers = UserAnswers(CredId("1234"))
+        .set(DidYouPayAnyMoneyToLandlordPage, true)
+        .success.value
+
+      val result = navigator.checkRouteMap(DidYouPayAnyMoneyToLandlordPage)(answers)
+
+      result shouldBe routes.MoneyYouPaidInAdvanceToLandlordController.show(CheckMode)
+      verify(mockSessionRepository, never()).set(any[UserAnswers])
+    }
+
+    "return CheckAnswersController and remove MoneyYouPaidInAdvanceToLandlordPage when DidYouPayAnyMoneyToLandlord is false" in {
+      val answers = UserAnswers(CredId("1234"))
+        .set(DidYouPayAnyMoneyToLandlordPage, false)
+        .flatMap(_.set(MoneyYouPaidInAdvanceToLandlordPage, paymentAdvance))
+        .success.value
+
+      val result = navigator.checkRouteMap(DidYouPayAnyMoneyToLandlordPage)(answers)
+
+      result shouldBe routes.CheckAnswersController.show
+      verify(mockSessionRepository, times(1)).set(any[UserAnswers])
+    }
+
+    "throw NotFoundException when DidYouPayAnyMoneyToLandlordPage is missing" in {
+      val answers = UserAnswers(CredId("1234"))
+
+      an[NotFoundException] shouldBe thrownBy {
+        navigator.checkRouteMap(DidYouPayAnyMoneyToLandlordPage)(answers)
+      }
+      verify(mockSessionRepository, never()).set(any[UserAnswers])
+    }
+  }
+  "checkRouteMap for DidYouAgreeRentWithLandlordPage" should {
+
+    "return CheckAnswersController and update answers when DidYouAgreeRentWithLandlord is true" in {
+      val answers = UserAnswers(CredId("1234"))
+        .set(DidYouAgreeRentWithLandlordPage, true)
+        .success.value
+
+      val result = navigator.checkRouteMap(DidYouAgreeRentWithLandlordPage)(answers)
+
+      result shouldBe routes.CheckAnswersController.show
+      verify(mockSessionRepository, times(1)).set(any[UserAnswers])
+    }
+
+    "return CheckAnswersController when DidYouAgreeRentWithLandlord is false and RentInterimPage is present" in {
+      val answers = UserAnswers(CredId("1234"))
+        .set(DidYouAgreeRentWithLandlordPage, false)
+        .flatMap(_.set(RentInterimPage, true))
+        .success.value
+
+      val result = navigator.checkRouteMap(DidYouAgreeRentWithLandlordPage)(answers)
+
+      result shouldBe routes.CheckAnswersController.show
+      verify(mockSessionRepository, never()).set(any[UserAnswers])
+    }
+
+    "return RentInterimController when DidYouAgreeRentWithLandlord is false and RentInterimPage is missing" in {
+      val answers = UserAnswers(CredId("1234"))
+        .set(DidYouAgreeRentWithLandlordPage, false)
+        .success.value
+
+      val result = navigator.checkRouteMap(DidYouAgreeRentWithLandlordPage)(answers)
+
+      result shouldBe routes.RentInterimController.show(NormalMode)
+      verify(mockSessionRepository, never()).set(any[UserAnswers])
+    }
+
+    "throw NotFoundException when DidYouAgreeRentWithLandlordPage is missing" in {
+      val answers = UserAnswers(CredId("1234"))
+
+      an[NotFoundException] shouldBe thrownBy {
+        navigator.checkRouteMap(DidYouAgreeRentWithLandlordPage)(answers)
+      }
+      verify(mockSessionRepository, never()).set(any[UserAnswers])
+    }
+  }
+
+  "checkRouteMap for ConfirmBreakClausePage" should {
+
+    "return CheckAnswersController when ConfirmBreakClause is true and DidYouGetIncentiveForNotTriggeringBreakClausePage is present" in {
+      val answers = UserAnswers(CredId("1234"))
+        .set(ConfirmBreakClausePage, true)
+        .flatMap(_.set(DidYouGetIncentiveForNotTriggeringBreakClausePage, DidYouGetIncentiveForNotTriggeringBreakClause(checkBox = Set(YesLumpSum, YesRentFreePeriod))))
+        .success.value
+
+      val result = navigator.checkRouteMap(ConfirmBreakClausePage)(answers)
+
+      result shouldBe routes.CheckAnswersController.show
+      verify(mockSessionRepository, never()).set(any[UserAnswers])
+    }
+
+    "return DidYouGetIncentiveForNotTriggeringBreakClauseController when ConfirmBreakClause is true and DidYouGetIncentiveForNotTriggeringBreakClausePage is missing" in {
+      val answers = UserAnswers(CredId("1234"))
+        .set(ConfirmBreakClausePage, true)
+        .success.value
+
+      val result = navigator.checkRouteMap(ConfirmBreakClausePage)(answers)
+
+      result shouldBe routes.DidYouGetIncentiveForNotTriggeringBreakClauseController.show(NormalMode)
+      verify(mockSessionRepository, never()).set(any[UserAnswers])
+    }
+
+    "return CheckAnswersController and update answers when ConfirmBreakClause is false" in {
+      val answers = UserAnswers(CredId("1234"))
+        .set(ConfirmBreakClausePage, false)
+        .flatMap(_.set(DidYouGetIncentiveForNotTriggeringBreakClausePage, DidYouGetIncentiveForNotTriggeringBreakClause(checkBox = Set(YesLumpSum, YesRentFreePeriod))))
+        .success.value
+
+      val result = navigator.checkRouteMap(ConfirmBreakClausePage)(answers)
+
+      result shouldBe routes.CheckAnswersController.show
+      verify(mockSessionRepository, times(1)).set(any[UserAnswers])
+    }
+
+    "throw NotFoundException when ConfirmBreakClausePage is missing" in {
+      val answers = UserAnswers(CredId("1234"))
+
+      an[NotFoundException] shouldBe thrownBy {
+        navigator.checkRouteMap(ConfirmBreakClausePage)(answers)
+      }
+      verify(mockSessionRepository, never()).set(any[UserAnswers])
+    }
+  }
   "checkRouteMap for ProvideDetailsOfFirstRentPeriodPage" should {
     "return ProvideDetailsOfSecondRentPeriodController when shouldGoToSecondRentPeriod is true" in {
       val result = navigator.nextPage(ProvideDetailsOfFirstRentPeriodPage, CheckMode, answersWithoutData, true)
@@ -414,5 +599,3 @@ class NavigatorSpec
     }
   }
 }
-
-
