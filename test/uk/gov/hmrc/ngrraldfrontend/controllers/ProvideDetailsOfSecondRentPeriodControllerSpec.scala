@@ -112,7 +112,7 @@ class ProvideDetailsOfSecondRentPeriodControllerSpec extends ControllerSpecSuppo
             )
         ))
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.CheckAnswersController.show().url)
+        redirectLocation(result) mustBe Some(routes.CheckAnswersController.show.url)
       }
       "return SEE_OTHER after change end date in check mode and direct to rent periods" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))

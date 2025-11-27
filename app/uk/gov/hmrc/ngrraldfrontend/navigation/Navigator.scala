@@ -173,13 +173,13 @@ class Navigator @Inject()(sessionRepository: SessionRepository) {
           case true => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentFreePeriodController.show(NormalMode)
           case _ =>
             genericNavigationSwitchHandler(
-            mode = NormalMode,
-            currentPage = CheckRentFreePeriodPage,
-            nextPage = RentDatesAgreePage,
-            nextPageCall = uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeStartController.show(NormalMode),
-            dropList = List(CheckRentFreePeriodPage,RentFreePeriodPage),
-            answers = answers
-          )
+              mode = NormalMode,
+              currentPage = CheckRentFreePeriodPage,
+              nextPage = RentDatesAgreePage,
+              nextPageCall = uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeStartController.show(NormalMode),
+              dropList = List(CheckRentFreePeriodPage,RentFreePeriodPage),
+              answers = answers
+            )
         }
         case None => throw new NotFoundException("Failed to find answers - CheckRentFreePeriodPage")
       }
@@ -275,9 +275,9 @@ class Navigator @Inject()(sessionRepository: SessionRepository) {
         case Some(value) => value match {
           case true => uk.gov.hmrc.ngrraldfrontend.controllers.routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.show(NormalMode)
           case _ => val redirectLocation = answers.get(WhatIsYourRentBasedOnPage) match {
-                        case Some(RentBasedOn("TotalOccupancyCost", None)) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentReviewController.show(NormalMode)
-                        case _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RepairsAndInsuranceController.show(NormalMode)
-                    }
+            case Some(RentBasedOn("TotalOccupancyCost", None)) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentReviewController.show(NormalMode)
+            case _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RepairsAndInsuranceController.show(NormalMode)
+          }
             genericNavigationSwitchHandler(
               mode = NormalMode,
               currentPage = DoYouPayExtraForParkingSpacesPage,
@@ -341,7 +341,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository) {
       }
 
     case MoneyYouPaidInAdvanceToLandlordPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HasAnythingElseAffectedTheRentController.show(NormalMode)
-    case HasAnythingElseAffectedTheRentPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show()
+    case HasAnythingElseAffectedTheRentPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show
     case CheckAnswersPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DeclarationController.show
     case DeclarationPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentReviewDetailsSentController.confirmation()
   }
@@ -371,42 +371,41 @@ class Navigator @Inject()(sessionRepository: SessionRepository) {
   )
 
 
-  private val checkRouteMap: Page => Boolean => UserAnswers => Call = {
+  val checkRouteMap: Page => Boolean => UserAnswers => Call = {
 
     case ProvideDetailsOfFirstRentPeriodPage => shouldGoToSecondRentPeriod =>
       answers =>
         shouldGoToSecondRentPeriod match {
           case true => uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfSecondRentPeriodController.show(CheckMode)
-          case _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show()
+          case _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show
         }
 
     case ProvideDetailsOfSecondRentPeriodPage => shouldGoToRentPeriodsPage =>
       answers =>
         shouldGoToRentPeriodsPage match {
           case true => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentPeriodsController.show(CheckMode)
-          case _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show()
+          case _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show
         }
 
-    case RentPeriodsPage => _ =>
-      answers =>
-        answers.get(RentPeriodsPage).getOrElse(false) match
-          case true =>
-            val rentPeriodsSize = answers.get(ProvideDetailsOfSecondRentPeriodPage).map(_.size).getOrElse(0)
-            if (rentPeriodsSize == 0)
-              uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfSecondRentPeriodController.show(CheckMode)
-            else
-              uk.gov.hmrc.ngrraldfrontend.controllers.routes.AdditionalRentPeriodController.show(CheckMode, rentPeriodsSize)
-          case _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show()
+    case RentPeriodsPage => _ => answers =>
+      answers.get(RentPeriodsPage).getOrElse(false) match
+        case true =>
+          val rentPeriodsSize = answers.get(ProvideDetailsOfSecondRentPeriodPage).map(_.size).getOrElse(0)
+          if (rentPeriodsSize == 0)
+            uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfSecondRentPeriodController.show(CheckMode)
+          else
+            uk.gov.hmrc.ngrraldfrontend.controllers.routes.AdditionalRentPeriodController.show(CheckMode, rentPeriodsSize)
+        case _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show
 
-    case _ => _ => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show()
+    case _ => _ => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show
 
 
-    case WhatTypeOfAgreementPage => answers =>
+    case WhatTypeOfAgreementPage => _ => answers =>
       answers.get(WhatTypeOfAgreementPage) match {
         case Some(value) => value match {
           case "Verbal" =>
             genericNavigationSwitchHandler(
-              mode = CheckMode,
+              mode = NormalMode,
               currentPage = WhatTypeOfAgreementPage,
               nextPage = AgreementVerbalPage,
               nextPageCall = uk.gov.hmrc.ngrraldfrontend.controllers.routes.AgreementVerbalController.show(NormalMode),
@@ -415,7 +414,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository) {
             )
           case _ =>
             genericNavigationSwitchHandler(
-              mode = CheckMode,
+              mode = NormalMode,
               currentPage = WhatTypeOfAgreementPage,
               nextPage = AgreementPage,
               nextPageCall = uk.gov.hmrc.ngrraldfrontend.controllers.routes.AgreementController.show(NormalMode),
@@ -427,7 +426,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository) {
       }
 
 
-    case WhatIsYourRentBasedOnPage => answers =>
+    case WhatIsYourRentBasedOnPage => _ => answers =>
       answers.get(WhatIsYourRentBasedOnPage) match {
         case Some(value) => value.rentBased match {
           case "PercentageTurnover" =>
@@ -460,7 +459,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository) {
         case None => throw new NotFoundException("Failed to find answers - WhatIsYourRentBasedOnPage")
       }
 
-    case AgreedRentChangePage => answers =>
+    case AgreedRentChangePage => _ => answers =>
       answers.get(AgreedRentChangePage) match {
         case Some(value) => if (value) {
           genericNavigationSwitchHandler(
@@ -484,7 +483,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository) {
         case None => throw new NotFoundException("Failed to find answers - AgreedRentChangePage")
       }
 
-    case CheckRentFreePeriodPage => answers =>
+    case CheckRentFreePeriodPage => _ => answers =>
       answers.get(CheckRentFreePeriodPage) match {
         case Some(value) => if (value) {
           if (answers.get(RentFreePeriodPage).nonEmpty) {
@@ -505,7 +504,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository) {
         case None => throw new NotFoundException("Failed to find answers - CheckRentFreePeriodPage")
       }
 
-    case DoesYourRentIncludeParkingPage => answers =>
+    case DoesYourRentIncludeParkingPage => _ => answers =>
       answers.get(DoesYourRentIncludeParkingPage) match {
         case Some(value) => if (value) {
           if (answers.get(HowManyParkingSpacesOrGaragesIncludedInRentPage).nonEmpty) {
@@ -526,7 +525,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository) {
         case None => throw new NotFoundException("Failed to find answers - DoesYourRentIncludeParkingPage")
       }
 
-    case DoYouPayExtraForParkingSpacesPage => answers =>
+    case DoYouPayExtraForParkingSpacesPage => _ => answers =>
       answers.get(DoYouPayExtraForParkingSpacesPage) match {
         case Some(value) => if (value) {
           if (answers.get(ParkingSpacesOrGaragesNotIncludedInYourRentPage).nonEmpty) {
@@ -547,7 +546,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository) {
         case None => throw new NotFoundException("Failed to find answers - DoYouPayExtraForParkingSpacesPage")
       }
 
-    case DidYouGetMoneyFromLandlordPage => answers =>
+    case DidYouGetMoneyFromLandlordPage => _ => answers =>
       answers.get(DidYouGetMoneyFromLandlordPage) match {
         case Some(value) => if (value) {
           if (answers.get(MoneyToTakeOnTheLeasePage).nonEmpty) {
@@ -568,7 +567,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository) {
         case None => throw new NotFoundException("Failed to find answers - DidYouGetMoneyFromLandlordPage")
       }
 
-    case DidYouPayAnyMoneyToLandlordPage => answers =>
+    case DidYouPayAnyMoneyToLandlordPage => _ => answers =>
       answers.get(DidYouPayAnyMoneyToLandlordPage) match {
         case Some(value) => if (value) {
           if (answers.get(MoneyYouPaidInAdvanceToLandlordPage).nonEmpty) {
@@ -592,7 +591,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository) {
         case None => throw new NotFoundException("Failed to find answers - DidYouPayAnyMoneyToLandlordPage")
       }
 
-    case DidYouAgreeRentWithLandlordPage => answers =>
+    case DidYouAgreeRentWithLandlordPage => _ => answers =>
       answers.get(DidYouAgreeRentWithLandlordPage) match {
         case Some(value) => if (value) {
           genericNavigationSwitchHandler(
@@ -613,7 +612,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository) {
         case None => throw new NotFoundException("Failed to find answers - DidYouAgreeRentWithLandlordPage")
       }
 
-    case ConfirmBreakClausePage => answers =>
+    case ConfirmBreakClausePage => _ => answers =>
       answers.get(ConfirmBreakClausePage) match {
         case Some(value) => if (value) {
           if (answers.get(DidYouGetIncentiveForNotTriggeringBreakClausePage).nonEmpty) {
@@ -634,7 +633,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository) {
         case None => throw new NotFoundException("Failed to find answers - ConfirmBreakClausePage")
       }
 
-    case DidYouGetIncentiveForNotTriggeringBreakClausePage => answers =>
+    case DidYouGetIncentiveForNotTriggeringBreakClausePage => _ => answers =>
       def dropBreakClauseJourney = trimUserAnswersFromPage(DidYouGetIncentiveForNotTriggeringBreakClausePage, List(DidYouGetIncentiveForNotTriggeringBreakClausePage, HowMuchWasTheLumpSumPage, AboutTheRentFreePeriodPage), answers)
       answers.get(DidYouGetIncentiveForNotTriggeringBreakClausePage) match {
         case Some(value) => value match {
@@ -652,7 +651,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository) {
         case None => throw new NotFoundException("Failed to find answers - ConfirmBreakClausePage")
       }
 
-    case _ => _ =>
+    case _ => _ => _ =>
       uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show
   }
 

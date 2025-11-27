@@ -425,7 +425,7 @@ object CheckAnswers {
     val answers = userAnswers.getOrElse(UserAnswers(CredId(credId)))
     val rentPeriodsDetailsOpt = answers.get(ProvideDetailsOfSecondRentPeriodPage)
     val link = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfSecondRentPeriodController.show(CheckMode)
-
+    val SecondRentPeriodLink = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfSecondRentPeriodController.show(CheckMode)
     rentPeriodsDetailsOpt match {
       case Some(rentPeriodsDetails) =>
         Some(rentPeriodsDetails.zipWithIndex.map { case (period, index) =>

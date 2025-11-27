@@ -57,7 +57,7 @@ class NavigatorSpec
         .set(WhatTypeOfAgreementPage, "Verbal")
         .success.value
 
-      val result = navigator.checkRouteMap(WhatTypeOfAgreementPage)(answers)
+      val result = navigator.checkRouteMap(WhatTypeOfAgreementPage)(false)(answers)
 
       result shouldBe routes.AgreementVerbalController.show(NormalMode)
       verify(mockSessionRepository, times(1)).set(any[UserAnswers])
@@ -69,7 +69,7 @@ class NavigatorSpec
         .flatMap(_.set(AgreementVerbalPage, agreementVerbalModel))
         .success.value
 
-      val result = navigator.checkRouteMap(WhatTypeOfAgreementPage)(answers)
+      val result = navigator.checkRouteMap(WhatTypeOfAgreementPage)(false)(answers)
 
       result shouldBe routes.CheckAnswersController.show
       verify(mockSessionRepository, never()).set(any[UserAnswers])
@@ -80,7 +80,7 @@ class NavigatorSpec
         .set(WhatTypeOfAgreementPage, "Written")
         .success.value
 
-      val result = navigator.checkRouteMap(WhatTypeOfAgreementPage)(answers)
+      val result = navigator.checkRouteMap(WhatTypeOfAgreementPage)(false)(answers)
 
       result shouldBe routes.AgreementController.show(NormalMode)
       verify(mockSessionRepository, times(1)).set(any[UserAnswers])
@@ -92,7 +92,7 @@ class NavigatorSpec
         .flatMap(_.set(AgreementPage, agreementModel))
         .success.value
 
-      val result = navigator.checkRouteMap(WhatTypeOfAgreementPage)(answers)
+      val result = navigator.checkRouteMap(WhatTypeOfAgreementPage)(false)(answers)
 
       result shouldBe routes.CheckAnswersController.show
       verify(mockSessionRepository, never()).set(any[UserAnswers])
@@ -102,7 +102,7 @@ class NavigatorSpec
       val answers = UserAnswers(CredId("1234"))
 
       an[NotFoundException] shouldBe thrownBy {
-        navigator.checkRouteMap(WhatTypeOfAgreementPage)(answers)
+        navigator.checkRouteMap(WhatTypeOfAgreementPage)(false)(answers)
       }
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
@@ -115,7 +115,7 @@ class NavigatorSpec
         .flatMap(_.set(TellUsAboutRentPage, RentAgreement))
         .success.value
 
-      val result = navigator.checkRouteMap(WhatIsYourRentBasedOnPage)(answers)
+      val result = navigator.checkRouteMap(WhatIsYourRentBasedOnPage)(false)(answers)
 
       result shouldBe routes.CheckAnswersController.show
       verify(mockSessionRepository, never()).set(any[UserAnswers])
@@ -126,7 +126,7 @@ class NavigatorSpec
         .set(WhatIsYourRentBasedOnPage, RentBasedOn("PercentageTurnover", None))
         .success.value
 
-      val result = navigator.checkRouteMap(WhatIsYourRentBasedOnPage)(answers)
+      val result = navigator.checkRouteMap(WhatIsYourRentBasedOnPage)(false)(answers)
 
       result shouldBe routes.HowMuchIsTotalAnnualRentController.show(NormalMode)
       verify(mockSessionRepository, times(1)).set(any[UserAnswers])
@@ -138,7 +138,7 @@ class NavigatorSpec
         .flatMap(_.set(HowMuchIsTotalAnnualRentPage, BigDecimal("10000")))
         .success.value
 
-      val result = navigator.checkRouteMap(WhatIsYourRentBasedOnPage)(answers)
+      val result = navigator.checkRouteMap(WhatIsYourRentBasedOnPage)(false)(answers)
 
       result shouldBe routes.CheckAnswersController.show
       verify(mockSessionRepository, never()).set(any[UserAnswers])
@@ -149,7 +149,7 @@ class NavigatorSpec
         .set(WhatIsYourRentBasedOnPage, rentBasedOnModel)
         .success.value
 
-      val result = navigator.checkRouteMap(WhatIsYourRentBasedOnPage)(answers)
+      val result = navigator.checkRouteMap(WhatIsYourRentBasedOnPage)(false)(answers)
 
       result shouldBe routes.AgreedRentChangeController.show(NormalMode)
       verify(mockSessionRepository, times(1)).set(any[UserAnswers])
@@ -161,7 +161,7 @@ class NavigatorSpec
         .flatMap(_.set(AgreedRentChangePage, true))
         .success.value
 
-      val result = navigator.checkRouteMap(WhatIsYourRentBasedOnPage)(answers)
+      val result = navigator.checkRouteMap(WhatIsYourRentBasedOnPage)(false)(answers)
 
       result shouldBe routes.CheckAnswersController.show
       verify(mockSessionRepository, never()).set(any[UserAnswers])
@@ -175,7 +175,7 @@ class NavigatorSpec
         .flatMap(_.set(ProvideDetailsOfFirstRentPeriodPage, firstRentPeriod))
         .success.value
 
-      val result = navigator.checkRouteMap(AgreedRentChangePage)(answers)
+      val result = navigator.checkRouteMap(AgreedRentChangePage)(false)(answers)
 
       result shouldBe routes.CheckAnswersController.show
       verify(mockSessionRepository, never()).set(any[UserAnswers])
@@ -186,7 +186,7 @@ class NavigatorSpec
         .set(AgreedRentChangePage, true)
         .success.value
 
-      val result = navigator.checkRouteMap(AgreedRentChangePage)(answers)
+      val result = navigator.checkRouteMap(AgreedRentChangePage)(false)(answers)
 
       result shouldBe routes.ProvideDetailsOfFirstRentPeriodController.show(NormalMode)
       verify(mockSessionRepository, times(1)).set(any[UserAnswers])
@@ -198,7 +198,7 @@ class NavigatorSpec
         .flatMap(_.set(HowMuchIsTotalAnnualRentPage, BigDecimal("10000")))
         .success.value
 
-      val result = navigator.checkRouteMap(AgreedRentChangePage)(answers)
+      val result = navigator.checkRouteMap(AgreedRentChangePage)(false)(answers)
 
       result shouldBe routes.CheckAnswersController.show
       verify(mockSessionRepository, never()).set(any[UserAnswers])
@@ -209,7 +209,7 @@ class NavigatorSpec
         .set(AgreedRentChangePage, false)
         .success.value
 
-      val result = navigator.checkRouteMap(AgreedRentChangePage)(answers)
+      val result = navigator.checkRouteMap(AgreedRentChangePage)(false)(answers)
 
       result shouldBe routes.HowMuchIsTotalAnnualRentController.show(NormalMode)
       verify(mockSessionRepository, times(1)).set(any[UserAnswers])
@@ -219,7 +219,7 @@ class NavigatorSpec
       val answers = UserAnswers(CredId("1234"))
 
       an[NotFoundException] shouldBe thrownBy {
-        navigator.checkRouteMap(AgreedRentChangePage)(answers)
+        navigator.checkRouteMap(AgreedRentChangePage)(false)(answers)
       }
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
@@ -230,7 +230,7 @@ class NavigatorSpec
         .set(CheckRentFreePeriodPage, true)
         .flatMap(_.set(RentFreePeriodPage, RentFreePeriod(months = 2, reasons = "Was not in the country"))).success.value
 
-      val result = navigator.checkRouteMap(CheckRentFreePeriodPage)(answers)
+      val result = navigator.checkRouteMap(CheckRentFreePeriodPage)(false)(answers)
 
       result shouldBe routes.CheckAnswersController.show
       verify(mockSessionRepository, never()).set(any[UserAnswers])
@@ -241,7 +241,7 @@ class NavigatorSpec
         .set(CheckRentFreePeriodPage, true)
         .success.value
 
-      val result = navigator.checkRouteMap(CheckRentFreePeriodPage)(answers)
+      val result = navigator.checkRouteMap(CheckRentFreePeriodPage)(false)(answers)
 
       result shouldBe routes.RentFreePeriodController.show(CheckMode)
       verify(mockSessionRepository, never()).set(any[UserAnswers])
@@ -252,7 +252,7 @@ class NavigatorSpec
         .set(CheckRentFreePeriodPage, false)
         .flatMap(_.set(RentFreePeriodPage, RentFreePeriod(months = 2, reasons = "Was not in the country"))).success.value
 
-      val result = navigator.checkRouteMap(CheckRentFreePeriodPage)(answers)
+      val result = navigator.checkRouteMap(CheckRentFreePeriodPage)(false)(answers)
 
       result shouldBe routes.CheckAnswersController.show
       verify(mockSessionRepository, times(1)).set(any[UserAnswers])
@@ -262,7 +262,7 @@ class NavigatorSpec
       val answers = UserAnswers(CredId("1234"))
 
       an[NotFoundException] shouldBe thrownBy {
-        navigator.checkRouteMap(CheckRentFreePeriodPage)(answers)
+        navigator.checkRouteMap(CheckRentFreePeriodPage)(false)(answers)
       }
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
@@ -275,7 +275,7 @@ class NavigatorSpec
         .flatMap(_.set(HowManyParkingSpacesOrGaragesIncludedInRentPage, parkingSpacesIncluded))
         .success.value
 
-      val result = navigator.checkRouteMap(DoesYourRentIncludeParkingPage)(answers)
+      val result = navigator.checkRouteMap(DoesYourRentIncludeParkingPage)(false)(answers)
 
       result shouldBe routes.CheckAnswersController.show
       verify(mockSessionRepository, never()).set(any[UserAnswers])
@@ -286,7 +286,7 @@ class NavigatorSpec
         .set(DoesYourRentIncludeParkingPage, true)
         .success.value
 
-      val result = navigator.checkRouteMap(DoesYourRentIncludeParkingPage)(answers)
+      val result = navigator.checkRouteMap(DoesYourRentIncludeParkingPage)(false)(answers)
 
       result shouldBe routes.HowManyParkingSpacesOrGaragesIncludedInRentController.show(CheckMode)
       verify(mockSessionRepository, never()).set(any[UserAnswers])
@@ -298,7 +298,7 @@ class NavigatorSpec
         .flatMap(_.set(HowManyParkingSpacesOrGaragesIncludedInRentPage, parkingSpacesIncluded))
         .success.value
 
-      val result = navigator.checkRouteMap(DoesYourRentIncludeParkingPage)(answers)
+      val result = navigator.checkRouteMap(DoesYourRentIncludeParkingPage)(false)(answers)
 
       result shouldBe routes.CheckAnswersController.show
       verify(mockSessionRepository, times(1)).set(any[UserAnswers])
@@ -308,7 +308,7 @@ class NavigatorSpec
       val answers = UserAnswers(CredId("1234"))
 
       an[NotFoundException] shouldBe thrownBy {
-        navigator.checkRouteMap(DoesYourRentIncludeParkingPage)(answers)
+        navigator.checkRouteMap(DoesYourRentIncludeParkingPage)(false)(answers)
       }
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
@@ -321,7 +321,7 @@ class NavigatorSpec
         .flatMap(_.set(ParkingSpacesOrGaragesNotIncludedInYourRentPage, parkingSpacesNotIncluded))
         .success.value
 
-      val result = navigator.checkRouteMap(DoYouPayExtraForParkingSpacesPage)(answers)
+      val result = navigator.checkRouteMap(DoYouPayExtraForParkingSpacesPage)(false)(answers)
 
       result shouldBe routes.CheckAnswersController.show
       verify(mockSessionRepository, never()).set(any[UserAnswers])
@@ -332,7 +332,7 @@ class NavigatorSpec
         .set(DoYouPayExtraForParkingSpacesPage, true)
         .success.value
 
-      val result = navigator.checkRouteMap(DoYouPayExtraForParkingSpacesPage)(answers)
+      val result = navigator.checkRouteMap(DoYouPayExtraForParkingSpacesPage)(false)(answers)
 
       result shouldBe routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.show(CheckMode)
       verify(mockSessionRepository, never()).set(any[UserAnswers])
@@ -344,7 +344,7 @@ class NavigatorSpec
         .flatMap(_.set(ParkingSpacesOrGaragesNotIncludedInYourRentPage, parkingSpacesNotIncluded))
         .success.value
 
-      val result = navigator.checkRouteMap(DoYouPayExtraForParkingSpacesPage)(answers)
+      val result = navigator.checkRouteMap(DoYouPayExtraForParkingSpacesPage)(false)(answers)
 
       result shouldBe routes.CheckAnswersController.show
       verify(mockSessionRepository, times(1)).set(any[UserAnswers])
@@ -354,7 +354,7 @@ class NavigatorSpec
       val answers = UserAnswers(CredId("1234"))
 
       an[NotFoundException] shouldBe thrownBy {
-        navigator.checkRouteMap(DoYouPayExtraForParkingSpacesPage)(answers)
+        navigator.checkRouteMap(DoYouPayExtraForParkingSpacesPage)(false)(answers)
       }
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
@@ -367,7 +367,7 @@ class NavigatorSpec
         .flatMap(_.set(MoneyToTakeOnTheLeasePage, MoneyToTakeOnTheLease(10000, "2000-01-01")))
         .success.value
 
-      val result = navigator.checkRouteMap(DidYouGetMoneyFromLandlordPage)(answers)
+      val result = navigator.checkRouteMap(DidYouGetMoneyFromLandlordPage)(false)(answers)
 
       result shouldBe routes.CheckAnswersController.show
       verify(mockSessionRepository, never()).set(any[UserAnswers])
@@ -378,7 +378,7 @@ class NavigatorSpec
         .set(DidYouGetMoneyFromLandlordPage, true)
         .success.value
 
-      val result = navigator.checkRouteMap(DidYouGetMoneyFromLandlordPage)(answers)
+      val result = navigator.checkRouteMap(DidYouGetMoneyFromLandlordPage)(false)(answers)
 
       result shouldBe routes.MoneyToTakeOnTheLeaseController.show(CheckMode)
       verify(mockSessionRepository, never()).set(any[UserAnswers])
@@ -390,7 +390,7 @@ class NavigatorSpec
         .flatMap(_.set(MoneyToTakeOnTheLeasePage, MoneyToTakeOnTheLease(10000, "2000-01-01")))
         .success.value
 
-      val result = navigator.checkRouteMap(DidYouGetMoneyFromLandlordPage)(answers)
+      val result = navigator.checkRouteMap(DidYouGetMoneyFromLandlordPage)(false)(answers)
 
       result shouldBe routes.CheckAnswersController.show
       verify(mockSessionRepository, times(1)).set(any[UserAnswers])
@@ -400,7 +400,7 @@ class NavigatorSpec
       val answers = UserAnswers(CredId("1234"))
 
       an[NotFoundException] shouldBe thrownBy {
-        navigator.checkRouteMap(DidYouGetMoneyFromLandlordPage)(answers)
+        navigator.checkRouteMap(DidYouGetMoneyFromLandlordPage)(false)(answers)
       }
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
@@ -413,7 +413,7 @@ class NavigatorSpec
         .flatMap(_.set(MoneyYouPaidInAdvanceToLandlordPage, paymentAdvance))
         .success.value
 
-      val result = navigator.checkRouteMap(DidYouPayAnyMoneyToLandlordPage)(answers)
+      val result = navigator.checkRouteMap(DidYouPayAnyMoneyToLandlordPage)(false)(answers)
 
       result shouldBe routes.CheckAnswersController.show
       verify(mockSessionRepository, never()).set(any[UserAnswers])
@@ -424,7 +424,7 @@ class NavigatorSpec
         .set(DidYouPayAnyMoneyToLandlordPage, true)
         .success.value
 
-      val result = navigator.checkRouteMap(DidYouPayAnyMoneyToLandlordPage)(answers)
+      val result = navigator.checkRouteMap(DidYouPayAnyMoneyToLandlordPage)(false)(answers)
 
       result shouldBe routes.MoneyYouPaidInAdvanceToLandlordController.show(CheckMode)
       verify(mockSessionRepository, never()).set(any[UserAnswers])
@@ -436,7 +436,7 @@ class NavigatorSpec
         .flatMap(_.set(MoneyYouPaidInAdvanceToLandlordPage, paymentAdvance))
         .success.value
 
-      val result = navigator.checkRouteMap(DidYouPayAnyMoneyToLandlordPage)(answers)
+      val result = navigator.checkRouteMap(DidYouPayAnyMoneyToLandlordPage)(false)(answers)
 
       result shouldBe routes.CheckAnswersController.show
       verify(mockSessionRepository, times(1)).set(any[UserAnswers])
@@ -446,7 +446,7 @@ class NavigatorSpec
       val answers = UserAnswers(CredId("1234"))
 
       an[NotFoundException] shouldBe thrownBy {
-        navigator.checkRouteMap(DidYouPayAnyMoneyToLandlordPage)(answers)
+        navigator.checkRouteMap(DidYouPayAnyMoneyToLandlordPage)(false)(answers)
       }
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
@@ -458,7 +458,7 @@ class NavigatorSpec
         .set(DidYouAgreeRentWithLandlordPage, true)
         .success.value
 
-      val result = navigator.checkRouteMap(DidYouAgreeRentWithLandlordPage)(answers)
+      val result = navigator.checkRouteMap(DidYouAgreeRentWithLandlordPage)(false)(answers)
 
       result shouldBe routes.CheckAnswersController.show
       verify(mockSessionRepository, times(1)).set(any[UserAnswers])
@@ -470,7 +470,7 @@ class NavigatorSpec
         .flatMap(_.set(RentInterimPage, true))
         .success.value
 
-      val result = navigator.checkRouteMap(DidYouAgreeRentWithLandlordPage)(answers)
+      val result = navigator.checkRouteMap(DidYouAgreeRentWithLandlordPage)(false)(answers)
 
       result shouldBe routes.CheckAnswersController.show
       verify(mockSessionRepository, never()).set(any[UserAnswers])
@@ -481,7 +481,7 @@ class NavigatorSpec
         .set(DidYouAgreeRentWithLandlordPage, false)
         .success.value
 
-      val result = navigator.checkRouteMap(DidYouAgreeRentWithLandlordPage)(answers)
+      val result = navigator.checkRouteMap(DidYouAgreeRentWithLandlordPage)(false)(answers)
 
       result shouldBe routes.RentInterimController.show(NormalMode)
       verify(mockSessionRepository, never()).set(any[UserAnswers])
@@ -491,7 +491,7 @@ class NavigatorSpec
       val answers = UserAnswers(CredId("1234"))
 
       an[NotFoundException] shouldBe thrownBy {
-        navigator.checkRouteMap(DidYouAgreeRentWithLandlordPage)(answers)
+        navigator.checkRouteMap(DidYouAgreeRentWithLandlordPage)(false)(answers)
       }
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
@@ -505,7 +505,7 @@ class NavigatorSpec
         .flatMap(_.set(DidYouGetIncentiveForNotTriggeringBreakClausePage, DidYouGetIncentiveForNotTriggeringBreakClause(checkBox = Set(YesLumpSum, YesRentFreePeriod))))
         .success.value
 
-      val result = navigator.checkRouteMap(ConfirmBreakClausePage)(answers)
+      val result = navigator.checkRouteMap(ConfirmBreakClausePage)(false)(answers)
 
       result shouldBe routes.CheckAnswersController.show
       verify(mockSessionRepository, never()).set(any[UserAnswers])
@@ -516,7 +516,7 @@ class NavigatorSpec
         .set(ConfirmBreakClausePage, true)
         .success.value
 
-      val result = navigator.checkRouteMap(ConfirmBreakClausePage)(answers)
+      val result = navigator.checkRouteMap(ConfirmBreakClausePage)(false)(answers)
 
       result shouldBe routes.DidYouGetIncentiveForNotTriggeringBreakClauseController.show(NormalMode)
       verify(mockSessionRepository, never()).set(any[UserAnswers])
@@ -528,7 +528,7 @@ class NavigatorSpec
         .flatMap(_.set(DidYouGetIncentiveForNotTriggeringBreakClausePage, DidYouGetIncentiveForNotTriggeringBreakClause(checkBox = Set(YesLumpSum, YesRentFreePeriod))))
         .success.value
 
-      val result = navigator.checkRouteMap(ConfirmBreakClausePage)(answers)
+      val result = navigator.checkRouteMap(ConfirmBreakClausePage)(false)(answers)
 
       result shouldBe routes.CheckAnswersController.show
       verify(mockSessionRepository, times(1)).set(any[UserAnswers])
@@ -544,7 +544,7 @@ class NavigatorSpec
           .success
           .value
 
-        val result = navigator.checkRouteMap(DidYouGetIncentiveForNotTriggeringBreakClausePage)(answers)
+        val result = navigator.checkRouteMap(DidYouGetIncentiveForNotTriggeringBreakClausePage)(false)(answers)
         result shouldBe routes.AboutTheRentFreePeriodController.show(NormalMode)
         verify(mockSessionRepository, never()).set(any[UserAnswers])
       }
@@ -556,7 +556,7 @@ class NavigatorSpec
           .set(DidYouGetIncentiveForNotTriggeringBreakClausePage, incentive)
           .success.value
 
-        val result = navigator.checkRouteMap(DidYouGetIncentiveForNotTriggeringBreakClausePage)(answers)
+        val result = navigator.checkRouteMap(DidYouGetIncentiveForNotTriggeringBreakClausePage)(false)(answers)
 
         result shouldBe routes.HowMuchWasTheLumpSumController.show(NormalMode)
         verify(mockSessionRepository, never()).set(any[UserAnswers])
@@ -568,7 +568,7 @@ class NavigatorSpec
           .set(DidYouGetIncentiveForNotTriggeringBreakClausePage, incentive)
           .success.value
 
-        val result = navigator.checkRouteMap(DidYouGetIncentiveForNotTriggeringBreakClausePage)(answers)
+        val result = navigator.checkRouteMap(DidYouGetIncentiveForNotTriggeringBreakClausePage)(false)(answers)
 
         result shouldBe routes.HasAnythingElseAffectedTheRentController.show(NormalMode)
         verify(mockSessionRepository, never()).set(any[UserAnswers])
@@ -583,7 +583,7 @@ class NavigatorSpec
           .flatMap(_.set(HasAnythingElseAffectedTheRentPage,  HasAnythingElseAffectedTheRent(radio = true, reason = Some("Special discount applied"))))
           .success.value
 
-        val result = navigator.checkRouteMap(DidYouGetIncentiveForNotTriggeringBreakClausePage)(answers)
+        val result = navigator.checkRouteMap(DidYouGetIncentiveForNotTriggeringBreakClausePage)(false)(answers)
 
         result shouldBe routes.CheckAnswersController.show
         verify(mockSessionRepository, never()).set(any[UserAnswers])
@@ -593,7 +593,7 @@ class NavigatorSpec
         val answers = UserAnswers(CredId("1234"))
 
         an[NotFoundException] shouldBe thrownBy {
-          navigator.checkRouteMap(DidYouGetIncentiveForNotTriggeringBreakClausePage)(answers)
+          navigator.checkRouteMap(DidYouGetIncentiveForNotTriggeringBreakClausePage)(false)(answers)
         }
         verify(mockSessionRepository, never()).set(any[UserAnswers])
       }
@@ -604,7 +604,7 @@ class NavigatorSpec
       val answers = UserAnswers(CredId("1234"))
 
       an[NotFoundException] shouldBe thrownBy {
-        navigator.checkRouteMap(ConfirmBreakClausePage)(answers)
+        navigator.checkRouteMap(ConfirmBreakClausePage)(false)(answers)
       }
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
@@ -619,7 +619,7 @@ class NavigatorSpec
     "return CheckAnswersController when shouldGoToSecondRentPeriod is false" in {
       val result = navigator.nextPage(ProvideDetailsOfFirstRentPeriodPage, CheckMode, answersWithoutData, false)
 
-      result shouldBe routes.CheckAnswersController.show()
+      result shouldBe routes.CheckAnswersController.show
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
   }
@@ -634,7 +634,7 @@ class NavigatorSpec
     "return CheckAnswersController when shouldGoToRentPeriodsPage is false" in {
       val result = navigator.nextPage(ProvideDetailsOfSecondRentPeriodPage, CheckMode, answersWithoutData)
 
-      result shouldBe routes.CheckAnswersController.show()
+      result shouldBe routes.CheckAnswersController.show
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
   }
@@ -660,7 +660,7 @@ class NavigatorSpec
       val answers = answersWithoutData.set(RentPeriodsPage, false).success.value
       val result = navigator.nextPage(RentPeriodsPage, CheckMode, answers)
 
-      result shouldBe routes.CheckAnswersController.show()
+      result shouldBe routes.CheckAnswersController.show
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
   }
