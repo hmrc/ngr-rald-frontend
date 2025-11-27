@@ -62,9 +62,8 @@ final case class UserAnswers(
       Success(data)
 
     updatedData.flatMap {
-      d =>
-        println(Console.MAGENTA + d + Console.RESET)
-        val updatedAnswers = copy(data = d, lastUpdated = Instant.now)
+      updatedData =>
+        val updatedAnswers = copy(data = updatedData)
         page.cleanup(None, updatedAnswers)
     }
   }
