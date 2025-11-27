@@ -476,10 +476,23 @@ class Navigator @Inject()(sessionRepository: SessionRepository) {
         case None => throw new NotFoundException("Failed to find answers - ConfirmBreakClausePage")
       }
 
-//    case DidYouGetIncentiveForNotTriggeringBreakClausePage => answers =>
-//      answers.get(value) => match value {
-//        case Some(value) =>
-//      }
+    case DidYouGetIncentiveForNotTriggeringBreakClausePage => answers =>
+      val dropBreakClauseJourney = trimUserAnswersFromPage(DidYouGetIncentiveForNotTriggeringBreakClausePage, List(DidYouGetIncentiveForNotTriggeringBreakClausePage, HowMuchWasTheLumpSumPage, AboutTheRentFreePeriodPage), answers)
+      answers.get(DidYouGetIncentiveForNotTriggeringBreakClausePage) match {
+        case Some(value) => value match {
+          case value if value.checkBox.size == 1 && value.checkBox.contains(YesRentFreePeriod) && AboutTheRentFreePeriodPage.isEmpty =>
+            dropBreakClauseJourney
+            uk.gov.hmrc.ngrraldfrontend.controllers.routes.AboutTheRentFreePeriodController.show(NormalMode)
+          case value if value.checkBox.contains(YesLumpSum) && HowMuchWasTheLumpSumPage.isEmpty =>
+            dropBreakClauseJourney
+            uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchWasTheLumpSumController.show(NormalMode)
+          case value if HasAnythingElseAffectedTheRentPage.isEmpty =>
+            dropBreakClauseJourney
+            uk.gov.hmrc.ngrraldfrontend.controllers.routes.HasAnythingElseAffectedTheRentController.show(NormalMode)
+          case value => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show
+        }
+        case None => throw new NotFoundException("Failed to find answers - ConfirmBreakClausePage")
+      }
 
     case _ => _ =>
       uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show

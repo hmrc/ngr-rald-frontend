@@ -434,14 +434,14 @@ object CheckAnswers {
               labelKey = "checkAnswers.rentPeriod.provideDetailsOfFirstRentPeriod.end",
               value = formatDate(period.endDate),
               linkId = s"rent-period-${index + 1}-end",
-              href = link,
+              href = if (index == 0) {SecondRentPeriodLink} else {uk.gov.hmrc.ngrraldfrontend.controllers.routes.AdditionalRentPeriodController.show(CheckMode, index)},
               hiddenKey = s"rent-period-${index + 1}-end"
             ),
             buildRow(
               labelKey = "checkAnswers.rentPeriod.provideDetailsOfFirstSecondRentPeriod.amount",
               value = s"£${period.rentPeriodAmount}",
               linkId = s"rent-period-${index + 1}-amount",
-              href = link,
+              href = if (index == 0) {SecondRentPeriodLink} else {uk.gov.hmrc.ngrraldfrontend.controllers.routes.AdditionalRentPeriodController.show(CheckMode, index)},
               hiddenKey = s"rent-period-${index + 1}-amount"
             )
           )
@@ -948,7 +948,7 @@ object CheckAnswers {
         hiddenKey = "about-the-rent-free-period"
       )
     }
-    
+
     val lumpSum = lumpSumPage.map{ value =>
       buildRow(
         labelKey = "checkAnswers.breakClause.lumpSum",
@@ -962,7 +962,7 @@ object CheckAnswers {
     val rows =
       confirmBreakClauseRow.toSeq ++
       didYouGetIncentiveForNotTriggeringBreakClauseRow.toSeq ++
-      lumpSum.toSeq ++ 
+      lumpSum.toSeq ++
       rentFreeMonths.toSeq ++
       rentFreeStartDate.toSeq
 
