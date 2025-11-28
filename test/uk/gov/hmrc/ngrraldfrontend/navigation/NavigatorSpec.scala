@@ -27,7 +27,7 @@ import play.api.mvc.Call
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.controllers.routes
 import uk.gov.hmrc.ngrraldfrontend.helpers.TestData
-import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.RentAgreement
+import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.{NewAgreement, RentAgreement}
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.*
 import uk.gov.hmrc.ngrraldfrontend.models.Incentive.*
@@ -662,6 +662,41 @@ class NavigatorSpec
 
       result shouldBe routes.CheckAnswersController.show
       verify(mockSessionRepository, never()).set(any[UserAnswers])
+    }
+  }
+
+  "skipRepairsAndInsuranceIfRentBasedOnIsTOC" should {
+    "return WhatIsYourRentBasedOnController if rentBasedOn is empty and type of agreement is not verbal" in {
+      val answers = answersWithoutData.set(WhatTypeOfAgreementPage, "LeaseOrTenancy").success.value
+      val result = navigator.skipRepairsAndInsuranceIfRentBasedOnIsTOC(answers)
+
+      result shouldBe routes.WhatIsYourRentBasedOnController.show(NormalMode)
+    }
+    "return RepairsAndInsuranceController if rentBasedOn is empty and type of agreement is verbal" in {
+      val answers = answersWithoutData.set(WhatTypeOfAgreementPage, "Verbal").success.value
+      val result = navigator.skipRepairsAndInsuranceIfRentBasedOnIsTOC(answers)
+
+      result shouldBe routes.RepairsAndInsuranceController.show(NormalMode)
+    }
+    "return RepairsAndInsuranceController if rentBasedOn is open market" in {
+      val answers = answersWithoutData.set(WhatIsYourRentBasedOnPage, RentBasedOn("OpenMarket", None)).success.value
+      val result = navigator.skipRepairsAndInsuranceIfRentBasedOnIsTOC(answers)
+
+      result shouldBe routes.RepairsAndInsuranceController.show(NormalMode)
+    }
+    "return RentReviewController if rentBasedOn is TOC in new agreement journey" in {
+      val answers = answersWithoutData.set(TellUsAboutYourNewAgreementPage, NewAgreement)
+        .flatMap(_.set(WhatIsYourRentBasedOnPage, RentBasedOn("TotalOccupancyCost", None))).success.value
+      val result = navigator.skipRepairsAndInsuranceIfRentBasedOnIsTOC(answers)
+
+      result shouldBe routes.RentReviewController.show(NormalMode)
+    }
+    "return ConfirmBreakClauseController if rentBasedOn is TOC in rent review journey" in {
+      val answers = answersWithoutData.set(TellUsAboutRentPage, RentAgreement)
+        .flatMap(_.set(WhatIsYourRentBasedOnPage, RentBasedOn("TotalOccupancyCost", None))).success.value
+      val result = navigator.skipRepairsAndInsuranceIfRentBasedOnIsTOC(answers)
+
+      result shouldBe routes.ConfirmBreakClauseController.show(NormalMode)
     }
   }
 }

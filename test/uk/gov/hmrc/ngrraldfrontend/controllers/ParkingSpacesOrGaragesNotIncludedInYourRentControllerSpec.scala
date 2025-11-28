@@ -25,9 +25,10 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
 import uk.gov.hmrc.http.{HeaderNames, NotFoundException}
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
-import uk.gov.hmrc.ngrraldfrontend.models.{HowManyParkingSpacesOrGarages, NGRDate, NormalMode, ParkingSpacesOrGaragesNotIncludedInYourRent, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.RentAgreement
+import uk.gov.hmrc.ngrraldfrontend.models.{HowManyParkingSpacesOrGarages, NGRDate, NormalMode, ParkingSpacesOrGaragesNotIncludedInYourRent, RentBasedOn, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.pages.{HowManyParkingSpacesOrGaragesIncludedInRentPage, ParkingSpacesOrGaragesNotIncludedInYourRentPage}
+import uk.gov.hmrc.ngrraldfrontend.pages.{HowManyParkingSpacesOrGaragesIncludedInRentPage, ParkingSpacesOrGaragesNotIncludedInYourRentPage, TellUsAboutRentPage, WhatIsYourRentBasedOnPage}
 import uk.gov.hmrc.ngrraldfrontend.views.html.{HowManyParkingSpacesOrGaragesIncludedInRentView, ParkingSpacesOrGaragesNotIncludedInYourRentView}
 
 import scala.concurrent.Future
@@ -94,6 +95,7 @@ class ParkingSpacesOrGaragesNotIncludedInYourRentControllerSpec extends Controll
     "method submit" must {
       "Return SEE_OTHER and the correct view" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        val userAnswers = userAnswersWithoutData.set(WhatIsYourRentBasedOnPage, RentBasedOn("OpenMarket", None)).toOption
         val fakePostRequest =  FakeRequest(routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.submit(NormalMode))
           .withFormUrlEncodedBody(
             "uncoveredSpaces" -> "1",
@@ -105,9 +107,46 @@ class ParkingSpacesOrGaragesNotIncludedInYourRentControllerSpec extends Controll
             "agreementDate.year" -> "2025"
           ).withHeaders(HeaderNames.authorisation -> "Bearer 1")
 
-        val result = controllerProperty(None).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
+        val result = controllerProperty(userAnswers).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.RepairsAndInsuranceController.show(NormalMode).url)
+      }
+      "Return SEE_OTHER and the correct view when rentBasedOn is TOC" in {
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        val userAnswers = userAnswersWithoutData.set(WhatIsYourRentBasedOnPage, RentBasedOn("TotalOccupancyCost", None)).toOption
+        val fakePostRequest = FakeRequest(routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.submit(NormalMode))
+          .withFormUrlEncodedBody(
+            "uncoveredSpaces" -> "1",
+            "coveredSpaces" -> "0",
+            "garages" -> "0",
+            "totalCost" -> "2000",
+            "agreementDate.day" -> "01",
+            "agreementDate.month" -> "10",
+            "agreementDate.year" -> "2025"
+          ).withHeaders(HeaderNames.authorisation -> "Bearer 1")
+
+        val result = controllerProperty(userAnswers).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.RentReviewController.show(NormalMode).url)
+      }
+      "Return SEE_OTHER and the correct view when rentBasedOn is TOC and rent review journey" in {
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        val userAnswers = userAnswersWithoutData.set(WhatIsYourRentBasedOnPage, RentBasedOn("TotalOccupancyCost", None))
+          .flatMap(_.set(TellUsAboutRentPage, RentAgreement)).toOption
+        val fakePostRequest = FakeRequest(routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.submit(NormalMode))
+          .withFormUrlEncodedBody(
+            "uncoveredSpaces" -> "1",
+            "coveredSpaces" -> "0",
+            "garages" -> "0",
+            "totalCost" -> "2000",
+            "agreementDate.day" -> "01",
+            "agreementDate.month" -> "10",
+            "agreementDate.year" -> "2025"
+          ).withHeaders(HeaderNames.authorisation -> "Bearer 1")
+
+        val result = controllerProperty(userAnswers).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.ConfirmBreakClauseController.show(NormalMode).url)
       }
       "Return BAD_REQUEST for inputting 0 in all parking space fields and show the correct view" in {
         val fakePostRequest =  FakeRequest(routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.submit(NormalMode))

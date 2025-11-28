@@ -56,7 +56,7 @@ class HowMuchWasTheLumpSumControllerSpec extends ControllerSpecSupport {
         status(result) mustBe OK
         val content = contentAsString(result)
         val document = Jsoup.parse(content)
-        document.select("input[name=how–much–was–the–lump–sum-value]").attr("value") mustBe "1234.67"
+        document.select("input[name=how-much-was-the-lump-sum-value]").attr("value") mustBe "1234.67"
       }
       "Return NotFoundException when property is not found in the mongo" in {
         when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(None))
@@ -70,7 +70,7 @@ class HowMuchWasTheLumpSumControllerSpec extends ControllerSpecSupport {
     "method submit" must {
       "Return BAD_REQUEST for missing input and the correct view" in {
         val fakePostRequest = FakeRequest(routes.HowMuchWasTheLumpSumController.submit(NormalMode))
-          .withFormUrlEncodedBody(("how–much–was–the–lump–sum-value", ""))
+          .withFormUrlEncodedBody(("how-much-was-the-lump-sum-value", ""))
           .withHeaders(HeaderNames.authorisation -> "Bearer 1")
 
         val result = controllerProperty.submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
@@ -81,7 +81,7 @@ class HowMuchWasTheLumpSumControllerSpec extends ControllerSpecSupport {
       }
       "Return BAD_REQUEST for incorrect input and the correct view" in {
         val fakePostRequest = FakeRequest(routes.HowMuchWasTheLumpSumController.submit(NormalMode))
-          .withFormUrlEncodedBody(("how–much–was–the–lump–sum-value", "xyz"))
+          .withFormUrlEncodedBody(("how-much-was-the-lump-sum-value", "xyz"))
           .withHeaders(HeaderNames.authorisation -> "Bearer 1")
 
         val result = controllerProperty.submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
@@ -92,7 +92,7 @@ class HowMuchWasTheLumpSumControllerSpec extends ControllerSpecSupport {
       }
       "Return Exception if no address is in the mongo" in {
         val fakePostRequest = FakeRequest(routes.WhatTypeOfLeaseRenewalController.submit(NormalMode))
-          .withFormUrlEncodedBody(("how–much–was–the–lump–sum-value", ""))
+          .withFormUrlEncodedBody(("how-much-was-the-lump-sum-value", ""))
           .withHeaders(HeaderNames.authorisation -> "Bearer 1")
         val exception = intercept[NotFoundException] {
           await(controllerNoProperty.submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest)))

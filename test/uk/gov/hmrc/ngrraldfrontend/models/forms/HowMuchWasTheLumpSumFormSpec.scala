@@ -29,7 +29,7 @@ class HowMuchWasTheLumpSumFormSpec extends AnyWordSpec with Matchers {
   "HowMuchWasTheLumpSumForm" should {
 
     "bind valid input" in {
-      val data = Map("how–much–was–the–lump–sum-value" -> "123456.78")
+      val data = Map("how-much-was-the-lump-sum-value" -> "123456.78")
       val boundForm = HowMuchWasTheLumpSumForm.form.bind(data)
 
       boundForm.hasErrors shouldBe false
@@ -37,7 +37,7 @@ class HowMuchWasTheLumpSumFormSpec extends AnyWordSpec with Matchers {
     }
 
     "bind valid input when rounding up" in {
-      val data = Map("how–much–was–the–lump–sum-value" -> "123456.78561")
+      val data = Map("how-much-was-the-lump-sum-value" -> "123456.78561")
       val boundForm = HowMuchWasTheLumpSumForm.form.bind(data)
 
       boundForm.hasErrors shouldBe false
@@ -47,7 +47,7 @@ class HowMuchWasTheLumpSumFormSpec extends AnyWordSpec with Matchers {
 
     "bind amount with commas" in {
       val data = Map(
-        "how–much–was–the–lump–sum-value" -> "9,999,999.99",
+        "how-much-was-the-lump-sum-value" -> "9,999,999.99",
       )
       val boundForm = HowMuchWasTheLumpSumForm.form.bind(data)
 
@@ -56,30 +56,30 @@ class HowMuchWasTheLumpSumFormSpec extends AnyWordSpec with Matchers {
     }
 
     "fail to bind empty input" in {
-      val data = Map("how–much–was–the–lump–sum-value" -> "")
+      val data = Map("how-much-was-the-lump-sum-value" -> "")
       val boundForm = HowMuchWasTheLumpSumForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("how–much–was–the–lump–sum-value", List("howMuchWasTheLumpSum.empty.error"), ArraySeq("how–much–was–the–lump–sum-value")))
+      boundForm.errors should contain(FormError("how-much-was-the-lump-sum-value", List("howMuchWasTheLumpSum.empty.error"), ArraySeq("how-much-was-the-lump-sum-value")))
     }
 
     "fail to bind non-numeric input" in {
-      val data = Map("how–much–was–the–lump–sum-value" -> "abc")
+      val data = Map("how-much-was-the-lump-sum-value" -> "abc")
       val boundForm = HowMuchWasTheLumpSumForm.form.bind(data)
 
-      boundForm.errors should contain(FormError("how–much–was–the–lump–sum-value", List("howMuchWasTheLumpSum.format.error"), ArraySeq("^\\d+\\.?\\d{0,}$")))
+      boundForm.errors should contain(FormError("how-much-was-the-lump-sum-value", List("howMuchWasTheLumpSum.format.error"), ArraySeq("^\\d+\\.?\\d{0,}$")))
     }
 
     "fail to bind input greater than 9999999.99" in {
-      val data = Map("how–much–was–the–lump–sum-value" -> "10000000.00")
+      val data = Map("how-much-was-the-lump-sum-value" -> "10000000.00")
       val boundForm = HowMuchWasTheLumpSumForm.form.bind(data)
 
       boundForm.hasErrors shouldBe true
-      boundForm.errors should contain(FormError("how–much–was–the–lump–sum-value", List("howMuchWasTheLumpSum.tooLarge.error"), ArraySeq(9999999.99)))
+      boundForm.errors should contain(FormError("how-much-was-the-lump-sum-value", List("howMuchWasTheLumpSum.tooLarge.error"), ArraySeq(9999999.99)))
     }
 
     "bind edge case of exactly 9999999.99" in {
-      val data = Map("how–much–was–the–lump–sum-value" -> "9999999.99")
+      val data = Map("how-much-was-the-lump-sum-value" -> "9999999.99")
       val boundForm = HowMuchWasTheLumpSumForm.form.bind(data)
 
       boundForm.hasErrors shouldBe false
