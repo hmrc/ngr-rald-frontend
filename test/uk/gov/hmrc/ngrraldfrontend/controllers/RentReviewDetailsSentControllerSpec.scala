@@ -25,18 +25,24 @@ import play.api.test.Helpers.{await, contentAsString, contentType, redirectLocat
 import uk.gov.hmrc.http.{HttpResponse, NotFoundException}
 import uk.gov.hmrc.ngrraldfrontend.config.{AppConfig, FrontendAppConfig}
 import uk.gov.hmrc.ngrraldfrontend.helpers.{ControllerSpecSupport, TestData}
-import uk.gov.hmrc.ngrraldfrontend.models.{PropertyLinkingUserAnswers, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.registration.{CredId, RatepayerRegistrationValuation}
+import uk.gov.hmrc.ngrraldfrontend.models.{PropertyLinkingUserAnswers, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.views.html.RentReviewDetailsSentView
 
 import scala.concurrent.Future
 
 
 class  RentReviewDetailsSentControllerSpec extends ControllerSpecSupport with DefaultAwaitTimeout {
-  val pageTitle = "Renewed agreement details sent"
+  val pageTitleRenewedAgreement = "Renewed agreement details sent"
+  val pageTitleNewAgreement = "New agreement details sent"
+  val pageTitleRentAgreement = "Rent review details sent"
   val view: RentReviewDetailsSentView = inject[RentReviewDetailsSentView]
   val controller: RentReviewDetailsSentController = new RentReviewDetailsSentController(view, fakeAuth, mcc, fakeDataProperty(Some(property), Some(userAnswersWithoutData)), mockNGRConnector)
   val controllerNoProperty: RentReviewDetailsSentController = new RentReviewDetailsSentController(view, fakeAuth, mcc, fakeData(None), mockNGRConnector)
+
+  val controllerNewAgreement: RentReviewDetailsSentController = new RentReviewDetailsSentController(view, fakeAuth, mcc, fakeDataProperty(Some(property), newAgreementAnswers), mockNGRConnector)
+  val controllerRenewedAgreement: RentReviewDetailsSentController = new RentReviewDetailsSentController(view, fakeAuth, mcc, fakeDataProperty(Some(property), renewedAgreementAnswers), mockNGRConnector)
+
 
   "RentReviewDetailsSent Controller" must {
     "method show" must {
@@ -48,7 +54,30 @@ class  RentReviewDetailsSentControllerSpec extends ControllerSpecSupport with De
         status(result) mustBe OK
         contentType(result) shouldBe Some("text/html")
         val content = contentAsString(result)
-        content must include(pageTitle)
+        content must include(pageTitleRentAgreement)
+      }
+
+
+      "Return OK and the correct title for new agreement" in {
+        val response: Option[UserAnswers] = newAgreementAnswers
+        when(mockNGRConnector.getRaldUserAnswers(any())(any()))
+          .thenReturn(Future.successful(response))
+        val result = controllerNewAgreement.confirmation()(authenticatedFakeRequestEmail)
+        status(result) mustBe OK
+        contentType(result) shouldBe Some("text/html")
+        val content = contentAsString(result)
+        content must include(pageTitleNewAgreement)
+      }
+
+      "Return OK and the correct title for renever agreement" in {
+        val response: Option[UserAnswers] = renewedAgreementAnswers
+        when(mockNGRConnector.getRaldUserAnswers(any())(any()))
+          .thenReturn(Future.successful(response))
+        val result = controllerRenewedAgreement.confirmation()(authenticatedFakeRequestEmail)
+        status(result) mustBe OK
+        contentType(result) shouldBe Some("text/html")
+        val content = contentAsString(result)
+        content must include(pageTitleRenewedAgreement)
       }
     }
 
