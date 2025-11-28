@@ -53,7 +53,8 @@
         isPageHeading = false,
         hint  =   None,
         isVisible = true,
-        classes = None
+        classes = None,
+        labelClasses = Some("govuk-label--m")
     )
     @govukRadios(ngrRadio)
     @saveAndContinueButton(msg = messages("service.continue"), isStartButton = false)

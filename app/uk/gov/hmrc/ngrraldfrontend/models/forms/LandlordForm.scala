@@ -62,7 +62,7 @@ object LandlordForm extends Mappings{
               name = landlordRelationshipYes,
               maxLength = Some(250),
               label = Label(
-                classes = "govuk-label govuk-label--s",
+                classes = "govuk-label govuk-label--m",
                 content = Text(Messages("landlord.radio.yes"))
               ),
               hint = Some(

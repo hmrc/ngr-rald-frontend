@@ -45,7 +45,8 @@
             theForm,
             legendContent = messages("aboutRepairsAndFittingOut.date.heading"),
             legendAsPageHeading = false,
-            hintText = Some(messages("aboutRepairsAndFittingOut.date.hint"))
+            hintText = Some(messages("aboutRepairsAndFittingOut.date.hint")),
+            legendClasses = "govuk-fieldset__legend--m"
         )
 
         @inputText(
@@ -53,11 +54,11 @@
             id = "cost",
             name = "cost",
             label = messages("aboutRepairsAndFittingOut.cost.heading"),
-            labelClasses = Some("govuk-fieldset__legend govuk-fieldset__legend--s"),
+            labelClasses = Some("govuk-fieldset__legend govuk-fieldset__legend--m"),
             isPageHeading = false,
             isVisible = true,
             classes = Some("govuk-input govuk-input--width-10"),
-            prefix = Some(PrefixOrSuffix(content = Text(messages("common.pound"))))
+            prefix = Some(PrefixOrSuffix(content = Text(messages("common.pound")))),
         )
 
 
