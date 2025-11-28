@@ -30,7 +30,7 @@ final case class HowMuchWasTheLumpSumForm(lumpSum: BigDecimal)
 object HowMuchWasTheLumpSumForm extends CommonFormValidators {
   implicit val format: OFormat[HowMuchWasTheLumpSumForm] = Json.format[HowMuchWasTheLumpSumForm]
 
-  private lazy val lumpSum = "how–much–was–the–lump–sum-value"
+  private lazy val lumpSum = "how-much-was-the-lump-sum-value"
   private lazy val lumpSumEmptyError  = "howMuchWasTheLumpSum.empty.error"
   private lazy val lumpSumMaxError    = "howMuchWasTheLumpSum.tooLarge.error"
   private lazy val lumpSumFormatError = "howMuchWasTheLumpSum.format.error"
