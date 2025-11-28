@@ -32,6 +32,28 @@ import scala.util.{Failure, Success, Try}
 @Singleton
 class Navigator @Inject()(sessionRepository: SessionRepository) {
   implicit val repo: SessionRepository = sessionRepository
+
+  val typeOfAgreementJourney: List[uk.gov.hmrc.ngrraldfrontend.queries.Settable[?]] = List(
+    WhatTypeOfAgreementPage,
+    AgreementVerbalPage,
+    AgreementPage,
+    WhatIsYourRentBasedOnPage,
+    AgreedRentChangePage,
+    ProvideDetailsOfFirstRentPeriodPage,
+    ProvideDetailsOfSecondRentPeriodPage,
+    RentPeriodsPage,
+    RentDatesAgreePage,
+    HowMuchIsTotalAnnualRentPage,
+    CheckRentFreePeriodPage,
+    RentFreePeriodPage,
+    RentDatesAgreeStartPage,
+    HowManyParkingSpacesOrGaragesIncludedInRentPage,
+    ParkingSpacesOrGaragesNotIncludedInYourRentPage,
+    DidYouGetMoneyFromLandlordPage,
+    MoneyYouPaidInAdvanceToLandlordPage
+  )
+
+
   private val normalRoutes: Page => UserAnswers => Call = {
     case TellUsAboutRentPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.LandlordController.show(NormalMode)
     case TellUsAboutYourRenewedAgreementPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatTypeOfLeaseRenewalController.show(NormalMode)
@@ -54,7 +76,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository) {
               currentPage = WhatTypeOfAgreementPage,
               nextPage = AgreementVerbalPage,
               nextPageCall = uk.gov.hmrc.ngrraldfrontend.controllers.routes.AgreementVerbalController.show(NormalMode),
-              dropList = pagesOrdered,
+              dropList = typeOfAgreementJourney,
               answers = answers
             )
           case _ =>
@@ -63,7 +85,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository) {
               currentPage = WhatTypeOfAgreementPage,
               nextPage = AgreementPage,
               nextPageCall = uk.gov.hmrc.ngrraldfrontend.controllers.routes.AgreementController.show(NormalMode),
-              dropList = pagesOrdered,
+              dropList = typeOfAgreementJourney,
               answers = answers
             )
         }
@@ -85,7 +107,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository) {
                   currentPage = WhatIsYourRentBasedOnPage,
                   nextPage = HowMuchIsTotalAnnualRentPage,
                   nextPageCall = uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchIsTotalAnnualRentController.show(NormalMode),
-                  dropList = pagesOrdered,
+                  dropList = typeOfAgreementJourney,
                   answers = answers
                 )
             }
@@ -100,7 +122,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository) {
                   currentPage = WhatIsYourRentBasedOnPage,
                   nextPage = AgreedRentChangePage,
                   nextPageCall = uk.gov.hmrc.ngrraldfrontend.controllers.routes.AgreedRentChangeController.show(NormalMode),
-                  dropList = pagesOrdered,
+                  dropList = typeOfAgreementJourney,
                   answers = answers
                 )
             }
@@ -115,7 +137,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository) {
             currentPage = AgreedRentChangePage,
             nextPage = ProvideDetailsOfFirstRentPeriodPage,
             nextPageCall = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfFirstRentPeriodController.show(NormalMode),
-            dropList = pagesOrdered,
+            dropList = typeOfAgreementJourney,
             answers = answers
           )
         } else {
@@ -124,7 +146,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository) {
             currentPage = AgreedRentChangePage,
             nextPage = HowMuchIsTotalAnnualRentPage,
             nextPageCall = uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchIsTotalAnnualRentController.show(NormalMode),
-            dropList = pagesOrdered,
+            dropList = typeOfAgreementJourney,
             answers = answers
           )
         }
@@ -345,32 +367,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository) {
     case CheckAnswersPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DeclarationController.show
     case DeclarationPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentReviewDetailsSentController.confirmation()
   }
-
-  val pagesOrdered: List[uk.gov.hmrc.ngrraldfrontend.queries.Settable[?]] = List(
-    TellUsAboutRentPage,
-    TellUsAboutYourRenewedAgreementPage,
-    TellUsAboutYourNewAgreementPage,
-    LandlordPage,
-    WhatTypeOfAgreementPage,
-    AgreementVerbalPage,
-    AgreementPage,
-    WhatIsYourRentBasedOnPage,
-    AgreedRentChangePage,
-    ProvideDetailsOfFirstRentPeriodPage,
-    ProvideDetailsOfSecondRentPeriodPage,
-    RentPeriodsPage,
-    RentDatesAgreePage,
-    HowMuchIsTotalAnnualRentPage,
-    CheckRentFreePeriodPage,
-    RentFreePeriodPage,
-    RentDatesAgreeStartPage,
-    HowManyParkingSpacesOrGaragesIncludedInRentPage,
-    ParkingSpacesOrGaragesNotIncludedInYourRentPage,
-    DidYouGetMoneyFromLandlordPage,
-    MoneyYouPaidInAdvanceToLandlordPage
-  )
-
-
+  
   val checkRouteMap: Page => Boolean => UserAnswers => Call = {
 
     case ProvideDetailsOfFirstRentPeriodPage => shouldGoToSecondRentPeriod =>
@@ -406,7 +403,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository) {
               currentPage = WhatTypeOfAgreementPage,
               nextPage = AgreementVerbalPage,
               nextPageCall = uk.gov.hmrc.ngrraldfrontend.controllers.routes.AgreementVerbalController.show(NormalMode),
-              dropList = pagesOrdered,
+              dropList = typeOfAgreementJourney,
               answers = answers
             )
           case _ =>
@@ -415,7 +412,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository) {
               currentPage = WhatTypeOfAgreementPage,
               nextPage = AgreementPage,
               nextPageCall = uk.gov.hmrc.ngrraldfrontend.controllers.routes.AgreementController.show(NormalMode),
-              dropList = pagesOrdered,
+              dropList = typeOfAgreementJourney,
               answers = answers
             )
         }
@@ -435,7 +432,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository) {
                   currentPage = WhatIsYourRentBasedOnPage,
                   nextPage = HowMuchIsTotalAnnualRentPage,
                   nextPageCall = uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchIsTotalAnnualRentController.show(NormalMode),
-                  dropList = pagesOrdered,
+                  dropList = typeOfAgreementJourney,
                   answers = answers
                 )
             }
@@ -448,7 +445,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository) {
                   currentPage = WhatIsYourRentBasedOnPage,
                   nextPage = AgreedRentChangePage,
                   nextPageCall = uk.gov.hmrc.ngrraldfrontend.controllers.routes.AgreedRentChangeController.show(NormalMode),
-                  dropList = pagesOrdered,
+                  dropList = typeOfAgreementJourney,
                   answers = answers
                 )
             }
@@ -464,7 +461,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository) {
             currentPage = AgreedRentChangePage,
             nextPage = ProvideDetailsOfFirstRentPeriodPage,
             nextPageCall = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfFirstRentPeriodController.show(NormalMode),
-            dropList = pagesOrdered,
+            dropList = typeOfAgreementJourney,
             answers = answers
           )
         } else {
@@ -473,7 +470,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository) {
             currentPage = AgreedRentChangePage,
             nextPage = HowMuchIsTotalAnnualRentPage,
             nextPageCall = uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchIsTotalAnnualRentController.show(NormalMode),
-            dropList = pagesOrdered,
+            dropList = typeOfAgreementJourney,
             answers = answers
           )
         }
