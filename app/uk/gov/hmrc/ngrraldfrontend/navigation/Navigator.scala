@@ -238,14 +238,7 @@ class Navigator @Inject()() {
     case MoneyYouPaidInAdvanceToLandlordPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HasAnythingElseAffectedTheRentController.show(NormalMode)
     case HasAnythingElseAffectedTheRentPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show()
     case CheckAnswersPage => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DeclarationController.show
-    case DeclarationPage => answers => 
-      (answers.get(TellUsAboutRentPage), answers.get(TellUsAboutYourRenewedAgreementPage), answers.get(TellUsAboutYourNewAgreementPage)) match {
-        case (Some(_), None, None) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentReviewDetailsSentController.confirmation()
-        case (None, Some(_), None) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentReviewDetailsSentController.confirmation()
-        case (None, None, Some(_)) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentReviewDetailsSentController.confirmation()
-        case (Some(_), Some(_), Some(_)) => throw new RuntimeException("User should not have all three options")
-        case (None, None, None) => throw new NotFoundException("Failed to find values")
-      }
+    case DeclarationPage => answers => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentReviewDetailsSentController.confirmation()
   }
 
   //TODO change to check your answers page
