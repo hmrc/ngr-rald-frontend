@@ -62,13 +62,13 @@
 
  @formHelper(action =
   if(agreement == AgreementType.NewAgreement){
-  uk.gov.hmrc.ngrraldfrontend.controllers.routes.NewAgreementDetailsSentController.confirmation()
+  uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentReviewDetailsSentController.confirmation()
    }else  if(agreement == AgreementType.RenewedAgreement){
-   uk.gov.hmrc.ngrraldfrontend.controllers.routes.RenewedAgreementDetailsSentController.confirmation()
+   uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentReviewDetailsSentController.confirmation()
  }else{
    uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentReviewDetailsSentController.confirmation()
   }, Symbol("autoComplete") -> "off") {
-  
+
   @journey
 
   <p id="printPage" class="js-visible govuk-body govuk-!-display-none-print">

@@ -24,11 +24,11 @@ import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.connectors.NGRConnector
-import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.{NewAgreement, RentAgreement}
-import uk.gov.hmrc.ngrraldfrontend.models.UserAnswers
+import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.{NewAgreement, RenewedAgreement, RentAgreement}
+import uk.gov.hmrc.ngrraldfrontend.models.{AgreementType, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.vmvProperty.VMVProperty
-import uk.gov.hmrc.ngrraldfrontend.pages.DeclarationPage
+import uk.gov.hmrc.ngrraldfrontend.pages.*
 import uk.gov.hmrc.ngrraldfrontend.views.html.RentReviewDetailsSentView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -41,6 +41,7 @@ class RentReviewDetailsSentController @Inject()(view: RentReviewDetailsSentView,
                                                 getData: DataRetrievalAction,
                                                 ngrConnector: NGRConnector
                                                )(implicit appConfig: AppConfig, executionContext: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
+
 
   def firstTable(property: VMVProperty)(implicit messages: Messages): Table =
     Table(
@@ -74,15 +75,28 @@ class RentReviewDetailsSentController @Inject()(view: RentReviewDetailsSentView,
 
   def confirmation: Action[AnyContent] =
     (authenticate andThen getData).async { implicit request =>
+//      val answers = request.userAnswers.getOrElse(CredId(request.credId))
+      
+      val newAgreement = request.userAnswers.map(answers => answers.getCurrentJourneyUserAnswers(TellUsAboutYourNewAgreementPage, answers, request.credId))
+      val renewed = request.userAnswers.map(answers => answers.getCurrentJourneyUserAnswers(TellUsAboutYourRenewedAgreementPage, answers, request.credId))
+      val rent = request.userAnswers.map(answers => answers.getCurrentJourneyUserAnswers(TellUsAboutRentPage, answers, request.credId))
+
       ngrConnector.getRaldUserAnswers(CredId(request.credId)).flatMap {
         case Some(raldUserAnswers) => Future.successful(Ok(view(
           raldUserAnswers.get(DeclarationPage),
           firstTable(request.property),
           request.email.getOrElse(""),
-          RentAgreement
+          if (newAgreement == NewAgreement) {
+            NewAgreement
+          } else if (renewed == RenewedAgreement) {
+            RenewedAgreement
+          } else {
+            RentAgreement
+          }
         )))
         case None => Future.failed(throw new NotFoundException("Unable to find rald user answers"))
       }
     }
 }
+
 
