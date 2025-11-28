@@ -51,20 +51,19 @@ final case class UserAnswers(
   }
 
   def remove[A](page: Settable[A])(implicit writes: Writes[A]): Try[UserAnswers] = {
-    val updatedData = data.keys.contains(page.toString) match {
-      case true =>
-        data.removeObject(page.path) match {
-          case JsSuccess(jsValue, _) =>
-            Success(jsValue)
-          case JsError(errors) =>
-            Failure(JsResultException(errors))
-        }
-      case false => Success(data)
-    }
+    val updatedData = if data.keys.contains(page.toString) then
+      data.removeObject(page.path) match {
+        case JsSuccess(jsValue, _) =>
+          Success(jsValue)
+        case JsError(errors) =>
+          Failure(JsResultException(errors))
+      }
+    else
+      Success(data)
 
     updatedData.flatMap {
-      d =>
-        val updatedAnswers = copy(data = d)
+      updatedData =>
+        val updatedAnswers = copy(data = updatedData)
         page.cleanup(None, updatedAnswers)
     }
   }

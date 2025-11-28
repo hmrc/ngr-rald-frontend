@@ -42,7 +42,7 @@ class CheckAnswersController @Inject()(view: CheckAnswersView,
                                        mcc: MessagesControllerComponents,
                                       )(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
-  def show(mode: Mode): Action[AnyContent] = {
+  def show: Action[AnyContent] = {
     (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
       Future.successful(Ok(view(
         selectedPropertyAddress = request.property.addressFull,

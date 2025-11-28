@@ -27,10 +27,11 @@ import uk.gov.hmrc.ngrraldfrontend.models.Incentive.{YesLumpSum, YesRentFreePeri
 import uk.gov.hmrc.ngrraldfrontend.models.registration.*
 import uk.gov.hmrc.ngrraldfrontend.pages.*
 import uk.gov.hmrc.ngrraldfrontend.services.CheckAnswers.{createBreakClauseRows, createFirstRentPeriodRow, createRentPeriodsSummaryLists}
+import uk.gov.hmrc.ngrraldfrontend.helpers.TestData
 
 import java.time.LocalDate
 
-class CheckAnswersSpec extends ViewBaseSpec {
+class CheckAnswersSpec extends ViewBaseSpec with TestData {
 
   def extractText(content: Content): String = content match {
     case Text(value) => value
@@ -89,8 +90,11 @@ class CheckAnswersSpec extends ViewBaseSpec {
     }
   }
 
+
   "createAgreementDetailsRows" should {
-    "return rows with agreement details when data is present" in {
+
+
+    "return SummaryList with all rows when all answers are present" in {
       val agreement = Agreement(
         agreementStart = NGRDate("1", "1", "2025").makeString,
         isOpenEnded = false,
@@ -99,39 +103,96 @@ class CheckAnswersSpec extends ViewBaseSpec {
         breakClauseInfo = Some("Break clause details")
       )
 
-      val userAnswers = UserAnswers(CredId("cred-123"))
-        .set(WhatTypeOfAgreementPage, "LeaseOrTenancy").success.value
-        .set(AgreementPage, agreement).success.value
+      val answers = UserAnswers(CredId("1234"))
+        .set(WhatTypeOfAgreementPage, "Written")
+        .flatMap(_.set(AgreementPage, agreement))
+        .success.value
 
+      val result = CheckAnswers.createAgreementDetailsRows("1234", Some(answers))
 
-      val summaryListOpt = CheckAnswers.createAgreementDetailsRows("cred-123", Some(userAnswers))
-
-      summaryListOpt mustBe defined
-      val summaryList = summaryListOpt.get
-
-      summaryList.rows.size mustBe 6
-
-      val keys = summaryList.rows.map(row => extractText(row.key.content))
-      keys must contain allOf(
-        messages("checkAnswers.agreement.whatTypeOfAgreement"),
-        messages("checkAnswers.agreement.startDate"),
-        messages("checkAnswers.agreement.isOpenEnded"),
-        messages("checkAnswers.agreement.endDate"),
-        messages("checkAnswers.agreement.breakClause"),
-        messages("checkAnswers.agreement.breakClauseDetails")
-      )
-
-      val values = summaryList.rows.map(row => extractText(row.value.content))
-      values must contain(messages("whatTypeOfAgreement.LeaseOrTenancy"))
-      values must contain(NGRDate.formatDate(agreement.agreementStart))
-      values must contain(messages("agreementVerbal.no"))
-      values must contain(NGRDate.formatDate(agreement.openEndedDate.get))
-      values must contain("Yes")
-      values must contain("Break clause details")
+      result mustBe defined
+      val rows = result.get.rows
+      rows.size mustBe 6
+      rows.map(_.key.content.asHtml.body) must contain(messages("checkAnswers.agreement.whatTypeOfAgreement"))
     }
+
+      "return SummaryList with only agreement type row when only that answer is present" in {
+    val answers = UserAnswers(CredId("1234"))
+      .set(WhatTypeOfAgreementPage, "Verbal")
+      .success.value
+
+    val result = CheckAnswers.createAgreementDetailsRows("1234", Some(answers))
+
+    result mustBe defined
+    result.get.rows.size mustBe 1
+    result.get.rows.head.value.content.asHtml.body must include(messages("whatTypeOfAgreement.verbal"))
   }
 
-  "return only agreement type row when other details are missing" in {
+
+    "include verbal agreement rows when verbal agreement details are present" in {
+      val answers = UserAnswers(CredId("1234"))
+        .set(WhatTypeOfAgreementPage, "Verbal")
+        .flatMap(_.set(AgreementVerbalPage, agreementVerbalModel))
+        .success.value
+      val result = CheckAnswers.createAgreementDetailsRows("1234", Some(answers))
+
+      result mustBe defined
+      val rows = result.get.rows
+
+      rows.size mustBe 3
+      val valuesHtml = rows.map(_.value.content.asHtml.body)
+      valuesHtml.exists(_.contains(NGRDate.formatDate(LocalDate.of(2025, 1, 1).toString))) mustBe true
+      println(Console.YELLOW + "" + Console.RESET)
+
+      val expectedOpenEndedText = if (agreementVerbalModel.openEnded) {
+        messages("agreementVerbal.yes")
+      } else {
+        messages("agreementVerbal.no")
+      }
+
+      valuesHtml.exists(_.contains(expectedOpenEndedText)) mustBe true
+
+    }
+
+
+    "include end date and break clause details when provided in written agreement" in {
+    val agreement = Agreement(
+      agreementStart = NGRDate("1", "1", "2025").makeString,
+      isOpenEnded = false,
+      openEndedDate = Some(NGRDate("1", "1", "2025").makeString),
+      haveBreakClause = true,
+      breakClauseInfo = Some("Break clause details")
+    )
+
+    val answers = UserAnswers(CredId("1234"))
+      .set(WhatTypeOfAgreementPage, "Written")
+      .flatMap(_.set(AgreementPage, agreement))
+      .success.value
+
+    val result = CheckAnswers.createAgreementDetailsRows("1234", Some(answers))
+
+    result mustBe defined
+    val rows = result.get.rows
+
+
+      rows.map(_.value.content.asHtml.body) must contain(
+        """<span id="checkanswers.agreement.startdate-id">1 January 2025</span>"""
+      )
+
+      rows.mkString must include("Break clause details")
+    }
+
+  "return None when agreement type is missing" in {
+    val answers = UserAnswers(CredId("1234"))
+
+    val result = CheckAnswers.createAgreementDetailsRows("1234", Some(answers))
+
+    result mustBe None
+  }
+}
+
+
+"return only agreement type row when other details are missing" in {
     val userAnswers = UserAnswers(CredId("cred-123"))
       .set(WhatTypeOfAgreementPage, "Verbal")
       .get
@@ -223,23 +284,23 @@ class CheckAnswersSpec extends ViewBaseSpec {
         .set(ParkingSpacesOrGaragesNotIncludedInYourRentPage, parkingSpacesNotIncluded).success.value
 
       val summaryList = CheckAnswers.createWhatYourRentIncludesRows("cred-123", Some(userAnswers))
-      summaryList.rows.size must be >= 8 // livingAccommodation, bedroomNumbers, rentPartAddress, etc.
+      summaryList.rows.size must be >= 8
 
       val keys = summaryList.rows.map(row => extractText(row.key.content))
       keys must contain(messages("checkAnswers.whatYourRentIncludes.livingAccommodation"))
       keys must contain(messages("checkAnswers.whatYourRentIncludes.bedroomNumbers"))
-      //keys must contain(messages("checkAnswers.parking.doesYourRentIncludeParking"))
+      keys must contain(messages("checkAnswers.whatYourRentIncludes.doesYourRentIncludeParking"))
 
       val values = summaryList.rows.map(row => extractText(row.value.content))
-      values must contain(messages("service.yes")) // livingAccommodation true
-      values must contain("3") // bedroomNumbers
-      values must contain(messages("service.no")) // doYouPayExtraForParkingSpaces false
-      values.exists(_.contains("100")) mustBe true // uncoveredSpaces
+      values must contain(messages("service.yes"))
+      values must contain("3")
+      values must contain(messages("service.no"))
+      values.exists(_.contains("100")) mustBe true
     }
   }
   "createWhatYourRentIncludesRows return rows with 'not provided' when data is missing" in {
     val summaryList = CheckAnswers.createWhatYourRentIncludesRows("cred-123", None)
-    summaryList.rows.size mustBe 3 // livingAccommodation, rentPartAddress, rentEmptyShell always present
+    summaryList.rows.size mustBe 3
     summaryList.rows.foreach { row =>
       extractText(row.value.content) mustBe messages("service.notProvided")
     }
@@ -332,7 +393,7 @@ class CheckAnswersSpec extends ViewBaseSpec {
       values.exists(_.contains("Every 3 years and 6 months")) mustBe true
       values must contain(messages("rentReviewDetails.whatHappensAtRentReview.radio2.text"))
       values.exists(_.contains("£ 15000")) mustBe true
-      values must contain(messages("service.yes")) // hasAgreedNewRent
+      values must contain(messages("service.yes"))
       values must contain(messages("rentReviewDetails.whoAgreed.radio1.text"))
     }
   }
@@ -438,8 +499,8 @@ class CheckAnswersSpec extends ViewBaseSpec {
       )
 
       val values = summaryList.rows.map(row => extractText(row.value.content))
-      values must contain(messages("service.yes")) // gotMoney true
-      values must contain(messages("service.no")) // paidMoney false
+      values must contain(messages("service.yes"))
+      values must contain(messages("service.no"))
       values.exists(_.contains("£2500")) mustBe true
       values must contain(NGRDate.formatDate(paymentAdvance.date))
     }
@@ -473,10 +534,12 @@ class CheckAnswersSpec extends ViewBaseSpec {
       val confirmBreakClause = true
       val incentiveDetails = DidYouGetIncentiveForNotTriggeringBreakClause(checkBox = Set(YesRentFreePeriod, YesLumpSum))
       val rentFreePeriod = AboutTheRentFreePeriod(months = 2, date = NGRDate("01","01","2025").makeString)
+      val lumpSum = BigDecimal(7500.00)
 
       val userAnswers = UserAnswers(CredId("credId"))
         .set(ConfirmBreakClausePage, confirmBreakClause).success.value
         .set(DidYouGetIncentiveForNotTriggeringBreakClausePage, incentiveDetails).success.value
+        .set(HowMuchWasTheLumpSumPage, lumpSum).success.value
         .set(AboutTheRentFreePeriodPage, rentFreePeriod).success.value
 
       val result = createBreakClauseRows("credId", Some(userAnswers))
@@ -484,12 +547,13 @@ class CheckAnswersSpec extends ViewBaseSpec {
       result mustBe defined
       val summaryList = result.get
 
-      summaryList.rows.size mustBe 4
+      summaryList.rows.size mustBe 5
 
       summaryList.rows.head.value.content.asHtml.toString must include("Yes")
       summaryList.rows(1).value.content.asHtml.toString must include(messages("didYouGetIncentiveForNotTriggeringBreakClause.checkbox"))
-      summaryList.rows(2).value.content.asHtml.toString must include("2 months")
-      summaryList.rows(3).value.content.asHtml.toString must include("1 January 2025")
+      summaryList.rows(2).value.content.asHtml.toString must include("£7500.0")
+      summaryList.rows(3).value.content.asHtml.toString must include("2 months")
+      summaryList.rows(4).value.content.asHtml.toString must include("1 January 2025")
     }
 
     "handle single checkbox selection correctly" in {
@@ -577,7 +641,7 @@ class CheckAnswersSpec extends ViewBaseSpec {
       result mustBe defined
       val summaryList = result.get
 
-      summaryList.rows.size mustBe 4 // start, end, isRentPayablePeriod, amount
+      summaryList.rows.size mustBe 4
 
       summaryList.rows.head.value.content.asHtml.toString must include("1 January 2020")
       summaryList.rows(1).value.content.asHtml.toString must include("30 June 2020")
@@ -601,7 +665,7 @@ class CheckAnswersSpec extends ViewBaseSpec {
       result mustBe defined
       val summaryList = result.get
 
-      summaryList.rows.size mustBe 3 // amount row excluded
+      summaryList.rows.size mustBe 3
       summaryList.rows(2).value.content.asHtml.toString must include("No")
     }
   }

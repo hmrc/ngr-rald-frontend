@@ -42,7 +42,7 @@ class CheckAnswersControllerSpec extends ControllerSpecSupport {
   "show" should {
     "return OK and render the view with empty summaries when property exists but no answers" in {
       val controller = controllerProperty(None)
-      val result = controller.show(CheckMode)(fakeRequest)
+      val result = controller.show(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) must include(pageTitle)

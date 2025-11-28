@@ -111,7 +111,7 @@ class AdditionalRentPeriodControllerSpec extends ControllerSpecSupport:
             )
         ))
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.CheckAnswersController.show().url)
+        redirectLocation(result) mustBe Some(routes.CheckAnswersController.show.url)
       }
       "return SEE_OTHER after changing end date and direct to rent periods" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
@@ -139,7 +139,7 @@ class AdditionalRentPeriodControllerSpec extends ControllerSpecSupport:
             )
         ))
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.CheckAnswersController.show().url)
+        redirectLocation(result) mustBe Some(routes.CheckAnswersController.show.url)
       }
       "return SEE_OTHER after adding additional rent period and direct to rent periods" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))

@@ -87,6 +87,7 @@ object CheckAnswers {
     val answers = userAnswers.getOrElse(UserAnswers(CredId(credId)))
     val agreementTypeOpt = answers.get(WhatTypeOfAgreementPage)
     val agreement = answers.get(AgreementPage)
+    val verbalAgreement = answers.get(AgreementVerbalPage)
 
     agreementTypeOpt.map { agreementType =>
       val displayValue = agreementType match {
@@ -104,6 +105,28 @@ object CheckAnswers {
         hiddenKey = "what-type-of-agreement"
       )
 
+      val verbalAgreementStartDate = verbalAgreement.map { value =>
+        buildRow(
+          labelKey = "checkAnswers.agreement.startDate",
+          value = NGRDate.formatDate(value.startDate),
+          linkId = "verbal-agreement-start-date",
+          href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.AgreementVerbalController.show(CheckMode),
+          hiddenKey = "verbal-agreement-start-date"
+        )
+      }.toSeq
+
+      val verbalAgreementOpenEnded = verbalAgreement.map { value =>
+        buildRow(
+          labelKey = "checkAnswers.agreement.isOpenEnded",
+          value = value.openEnded match
+            case true => Messages("agreementVerbal.yes")
+            case false => Messages("agreementVerbal.no"),
+          linkId = "is-open-ended",
+          href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.AgreementVerbalController.show(CheckMode),
+          hiddenKey = "is-open-ended"
+        )
+      }.toSeq
+      
       val agreementStartDate = agreement.map { value =>
         buildRow(
           labelKey = "checkAnswers.agreement.startDate",
@@ -159,7 +182,7 @@ object CheckAnswers {
           )
         }
       }
-      val rows = Seq(agreementTypeRow) ++ agreementStartDate ++ agreementOpenEnded ++ agreementEndDate ++ breakClause ++ breakClauseDetails
+      val rows = Seq(agreementTypeRow) ++ agreementStartDate ++ verbalAgreementStartDate ++ verbalAgreementOpenEnded ++ agreementOpenEnded ++ agreementEndDate ++ breakClause ++ breakClauseDetails
       SummaryList(rows.map(summarise), classes = "govuk-!-margin-bottom-9")
     }
   }
@@ -402,7 +425,7 @@ object CheckAnswers {
     val answers = userAnswers.getOrElse(UserAnswers(CredId(credId)))
     val rentPeriodsDetailsOpt = answers.get(ProvideDetailsOfSecondRentPeriodPage)
     val link = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfSecondRentPeriodController.show(CheckMode)
-
+    val SecondRentPeriodLink = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfSecondRentPeriodController.show(CheckMode)
     rentPeriodsDetailsOpt match {
       case Some(rentPeriodsDetails) =>
         Some(rentPeriodsDetails.zipWithIndex.map { case (period, index) =>
@@ -411,14 +434,14 @@ object CheckAnswers {
               labelKey = "checkAnswers.rentPeriod.provideDetailsOfFirstRentPeriod.end",
               value = formatDate(period.endDate),
               linkId = s"rent-period-${index + 1}-end",
-              href = link,
+              href = if (index == 0) {SecondRentPeriodLink} else {uk.gov.hmrc.ngrraldfrontend.controllers.routes.AdditionalRentPeriodController.show(CheckMode, index)},
               hiddenKey = s"rent-period-${index + 1}-end"
             ),
             buildRow(
               labelKey = "checkAnswers.rentPeriod.provideDetailsOfFirstSecondRentPeriod.amount",
               value = s"£${period.rentPeriodAmount}",
               linkId = s"rent-period-${index + 1}-amount",
-              href = link,
+              href = if (index == 0) {SecondRentPeriodLink} else {uk.gov.hmrc.ngrraldfrontend.controllers.routes.AdditionalRentPeriodController.show(CheckMode, index)},
               hiddenKey = s"rent-period-${index + 1}-amount"
             )
           )
@@ -732,7 +755,7 @@ object CheckAnswers {
 
     val startDate = buildRow(
       labelKey = "checkAnswers.rentReviewDetails.startDate",
-      value = rentDetails.map(_.startDate).getOrElse(messages("service.notProvided")),
+      value = rentDetails.map(rentReviewDetails => NGRDate.formatDate(rentReviewDetails.startDate)).getOrElse(messages("service.notProvided")),
       linkId = "start-date",
       href = rentDetailsLink,
       hiddenKey = "start-date"
@@ -875,6 +898,7 @@ object CheckAnswers {
     val confirmBreakClause = answers.get(ConfirmBreakClausePage)
     val didYouGetIncentiveForNotTriggeringBreakClause = answers.get(DidYouGetIncentiveForNotTriggeringBreakClausePage)
     val aboutTheRentFreePeriod = answers.get(AboutTheRentFreePeriodPage)
+    val lumpSumPage = answers.get(HowMuchWasTheLumpSumPage)
 
     val confirmBreakClauseRow = confirmBreakClause.map { value =>
       buildRow(
@@ -925,9 +949,20 @@ object CheckAnswers {
       )
     }
 
+    val lumpSum = lumpSumPage.map{ value =>
+      buildRow(
+        labelKey = "checkAnswers.breakClause.lumpSum",
+        value = s"£$value",
+        linkId = "how-much-was-the-lump-sum",
+        href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchWasTheLumpSumController.show(CheckMode),
+        hiddenKey = "how-much-was-the-lump-sum"
+      )
+    }
+
     val rows =
       confirmBreakClauseRow.toSeq ++
       didYouGetIncentiveForNotTriggeringBreakClauseRow.toSeq ++
+      lumpSum.toSeq ++
       rentFreeMonths.toSeq ++
       rentFreeStartDate.toSeq
 

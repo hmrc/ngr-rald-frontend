@@ -696,6 +696,7 @@ checkAnswers.payments.moneyYouPaidInAdvanceToLandlord.date = When did you pay th
 checkAnswers.breakClause.label = Break clause
 checkAnswers.breakClause.confirmBreakClause = Did your agreement allow you to trigger a break clause?
 checkAnswers.breakClause.didYouGetIncentiveForNotTriggeringBreakClause = Did you get an incentive if you do not trigger the break clause?
+checkAnswers.breakClause.lumpSum = How much is the the lump sum?
 checkAnswers.breakClause.rentFreeMonths = How many months is the rent-free period?
 checkAnswers.breakClause.rentFreeStartDate = Rent-free period start date
 
