@@ -55,18 +55,6 @@ class DeclaratioinControllerSpec extends ControllerSpecSupport {
         status(result) mustBe SEE_OTHER
         redirectLocation(result) shouldBe Some(routes.RentReviewDetailsSentController.confirmation().url)
       }
-      "Return SEE_OTHER and the correct view while in the renew agreement journey" in {
-        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        val result = controllerProperty(renewedAgreementAnswers).submit(authenticatedFakeRequest)
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.RenewedAgreementDetailsSentController.confirmation().url)
-      }
-      "Return SEE_OTHER and the correct view while in the new agreement journey" in {
-        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        val result = controllerProperty(newAgreementAnswers).submit(authenticatedFakeRequest)
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.NewAgreementDetailsSentController.confirmation().url)
-      }
       "Return Exception when fail to store send request reference user answers" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(false))
         val exception = intercept[Exception] {

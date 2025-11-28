@@ -75,24 +75,27 @@ class RentReviewDetailsSentController @Inject()(view: RentReviewDetailsSentView,
 
   def confirmation: Action[AnyContent] =
     (authenticate andThen getData).async { implicit request =>
-//      val answers = request.userAnswers.getOrElse(CredId(request.credId))
-      
-      val newAgreement = request.userAnswers.map(answers => answers.getCurrentJourneyUserAnswers(TellUsAboutYourNewAgreementPage, answers, request.credId))
-      val renewed = request.userAnswers.map(answers => answers.getCurrentJourneyUserAnswers(TellUsAboutYourRenewedAgreementPage, answers, request.credId))
-      val rent = request.userAnswers.map(answers => answers.getCurrentJourneyUserAnswers(TellUsAboutRentPage, answers, request.credId))
+      val answers = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId)))
+      val newAgreement = answers.get(TellUsAboutYourNewAgreementPage)
+      val renewed = answers.get(TellUsAboutYourRenewedAgreementPage)
+      val rent = answers.get(TellUsAboutRentPage)
+
+      def agreementType = {
+        if (newAgreement.contains(NewAgreement)) {
+          NewAgreement
+        } else if (renewed.contains(RenewedAgreement)) {
+          RenewedAgreement
+        } else {
+          RentAgreement
+        }
+      }
 
       ngrConnector.getRaldUserAnswers(CredId(request.credId)).flatMap {
         case Some(raldUserAnswers) => Future.successful(Ok(view(
           raldUserAnswers.get(DeclarationPage),
           firstTable(request.property),
           request.email.getOrElse(""),
-          if (newAgreement == NewAgreement) {
-            NewAgreement
-          } else if (renewed == RenewedAgreement) {
-            RenewedAgreement
-          } else {
-            RentAgreement
-          }
+          agreementType
         )))
         case None => Future.failed(throw new NotFoundException("Unable to find rald user answers"))
       }

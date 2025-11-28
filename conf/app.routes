@@ -250,8 +250,6 @@ GET        /declaration                            uk.gov.hmrc.ngrraldfrontend.c
 POST       /declaration                            uk.gov.hmrc.ngrraldfrontend.controllers.DeclarationController.submit
 
 GET        /rent-review-details-sent               uk.gov.hmrc.ngrraldfrontend.controllers.RentReviewDetailsSentController.confirmation()
-GET        /renewed-agreement-details-sent         uk.gov.hmrc.ngrraldfrontend.controllers.RenewedAgreementDetailsSentController.confirmation()
-GET        /new-agreement-details-sent             uk.gov.hmrc.ngrraldfrontend.controllers.NewAgreementDetailsSentController.confirmation()
 
 #check answers
 GET        /check-answers                          uk.gov.hmrc.ngrraldfrontend.controllers.CheckAnswersController.show(mode: Mode = NormalMode)
