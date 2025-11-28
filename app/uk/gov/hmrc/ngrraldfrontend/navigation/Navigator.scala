@@ -295,12 +295,12 @@ class Navigator @Inject()(sessionRepository: SessionRepository) {
       answers.get(DoYouPayExtraForParkingSpacesPage) match {
         case Some(value) => value match {
           case true => uk.gov.hmrc.ngrraldfrontend.controllers.routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.show(NormalMode)
-          case _    => skipRepairsAndInsuranceIfRentBasedOnIsTOC(answers)
+          case _    =>
             genericNavigationSwitchHandler(
               mode = NormalMode,
               currentPage = DoYouPayExtraForParkingSpacesPage,
               nextPage = RepairsAndInsurancePage,
-              nextPageCall = redirectLocation,
+              nextPageCall = skipRepairsAndInsuranceIfRentBasedOnIsTOC(answers),
               dropList = List(DoYouPayExtraForParkingSpacesPage, ParkingSpacesOrGaragesNotIncludedInYourRentPage),
               answers = answers
             )
@@ -369,7 +369,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository) {
     case ProvideDetailsOfSecondRentPeriodPage => shouldGoToRentPeriodsPage => answers =>
         shouldGoToRentPeriodsPage match {
           case true => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentPeriodsController.show(CheckMode)
-          case _    => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show()
+          case _    => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show
         }
 
     case RentPeriodsPage => _ => answers =>
