@@ -51,7 +51,8 @@
             hint  =   Some(Hint(content = Text(messages("rentReviewDetails.annualAmount.hint")))),
             isVisible = true,
             classes = Some("govuk-input--width-10"),
-            prefix = Some(PrefixOrSuffix(content = Text("£")))
+            prefix = Some(PrefixOrSuffix(content = Text("£"))),
+            labelClasses = Some("govuk-label--m")
         )
         @govukRadios(whatHappensAtRentReviewRadios)
         @dateTextFields(
