@@ -51,7 +51,7 @@ class AdditionalRentPeriodController @Inject()(view: ProvideDetailsOfSecondRentP
 
   private def getPreviousEndDate(userAnswers: UserAnswers, index: Int): Option[LocalDate] =
     userAnswers.get(ProvideDetailsOfSecondRentPeriodPage) match {
-      case Some(rentPeriods) if rentPeriods.size >= index => Some(LocalDate.parse(rentPeriods(index - 1).endDate).plusDays(1))
+      case Some(rentPeriods) if rentPeriods.size >= index && index > 0 => Some(LocalDate.parse(rentPeriods(index - 1).endDate).plusDays(1))
       case _ => None
     }
 
@@ -59,9 +59,13 @@ class AdditionalRentPeriodController @Inject()(view: ProvideDetailsOfSecondRentP
     (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
       val credId = CredId(request.credId)
       val userAnswers = request.userAnswers.getOrElse(UserAnswers(credId))
+      val rentPeriodsOpt = userAnswers.get(ProvideDetailsOfSecondRentPeriodPage)
       val previousRentPeriodEndDate: Option[LocalDate] = getPreviousEndDate(userAnswers, index)
 
       previousRentPeriodEndDate match {
+        //If index is greater than total periods size then go to the last period
+        case None if rentPeriodsOpt.exists(_.size < index) => Future.successful(Redirect(routes.AdditionalRentPeriodController.show(mode, rentPeriodsOpt.get.size - 1)))
+        //If index is 0 or there isn't any rent periods yet
         case None => Future.successful(Redirect(routes.ProvideDetailsOfSecondRentPeriodController.show(mode)))
         case Some(previousEndDate) =>
           val preparedForm = userAnswers.get(ProvideDetailsOfSecondRentPeriodPage) match {
