@@ -85,7 +85,7 @@ class WhatTypeOfAgreementController @Inject()(view: WhatTypeOfAgreementView,
                 case "Verbal" => Future(updatedAnswers.remove(WhatIsYourRentBasedOnPage))
                 case _ => Future(Try(updatedAnswers))
               _ <- sessionRepository.set(newAnswers.get)
-            } yield Redirect(navigator.nextPage(WhatTypeOfAgreementPage,mode,newAnswers.get))
+            } yield Redirect(navigator.nextPage(WhatTypeOfAgreementPage, mode, newAnswers.get))
         )
     }
   }

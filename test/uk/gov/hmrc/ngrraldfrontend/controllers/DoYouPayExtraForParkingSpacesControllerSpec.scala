@@ -24,9 +24,10 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import uk.gov.hmrc.http.{HeaderNames, NotFoundException}
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
+import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.RentAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, UserAnswers}
-import uk.gov.hmrc.ngrraldfrontend.pages.DoYouPayExtraForParkingSpacesPage
+import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, RentBasedOn, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.pages.{DoYouPayExtraForParkingSpacesPage, TellUsAboutRentPage, WhatIsYourRentBasedOnPage}
 import uk.gov.hmrc.ngrraldfrontend.views.html.DoYouPayExtraForParkingSpacesView
 
 import scala.concurrent.Future
@@ -63,7 +64,7 @@ class DoYouPayExtraForParkingSpacesControllerSpec extends ControllerSpecSupport{
       }
     }
     "method submit" must {
-      "Return OK and the correct view and the answer is Yes" in {
+      "Return SEE_OTHER and the correct view and the answer is Yes" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val fakePostRequest = FakeRequest(routes.DoYouPayExtraForParkingSpacesController.submit(NormalMode))
           .withFormUrlEncodedBody("payExtra" -> "true")
@@ -73,15 +74,39 @@ class DoYouPayExtraForParkingSpacesControllerSpec extends ControllerSpecSupport{
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.show(NormalMode).url)
       }
-      "Return OK and the correct view and the answer is No" in {
+      "Return SEE_OTHER and the correct view and the answer is No" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        val userAnswers = userAnswersWithoutData.set(WhatIsYourRentBasedOnPage, RentBasedOn("OpenMarket", None)).toOption
         val fakePostRequest = FakeRequest(routes.CheckRentFreePeriodController.submit(NormalMode))
           .withFormUrlEncodedBody("payExtra" -> "false")
           .withHeaders(HeaderNames.authorisation -> "Bearer 1")
 
-        val result = controllerProperty(None).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
+        val result = controllerProperty(userAnswers).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.RepairsAndInsuranceController.show(NormalMode).url)
+      }
+      "Return SEE_OTHER and the correct view and the answer is No when rentBasedOn is TOC" in {
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        val userAnswers = userAnswersWithoutData.set(WhatIsYourRentBasedOnPage, RentBasedOn("TotalOccupancyCost", None)).toOption
+        val fakePostRequest = FakeRequest(routes.CheckRentFreePeriodController.submit(NormalMode))
+          .withFormUrlEncodedBody("payExtra" -> "false")
+          .withHeaders(HeaderNames.authorisation -> "Bearer 1")
+
+        val result = controllerProperty(userAnswers).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.RentReviewController.show(NormalMode).url)
+      }
+      "Return SEE_OTHER and the correct view and the answer is No when rentBasedOn is TOC and rent review journey" in {
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        val userAnswers = userAnswersWithoutData.set(WhatIsYourRentBasedOnPage, RentBasedOn("TotalOccupancyCost", None))
+          .flatMap(_.set(TellUsAboutRentPage, RentAgreement)).toOption
+        val fakePostRequest = FakeRequest(routes.CheckRentFreePeriodController.submit(NormalMode))
+          .withFormUrlEncodedBody("payExtra" -> "false")
+          .withHeaders(HeaderNames.authorisation -> "Bearer 1")
+
+        val result = controllerProperty(userAnswers).submit(NormalMode)(authenticatedFakePostRequest(fakePostRequest))
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.ConfirmBreakClauseController.show(NormalMode).url)
       }
       "Return BAD_REQUEST for missing input and the correct view" in {
         val fakePostRequest = FakeRequest(routes.WhatTypeOfLeaseRenewalController.submit(NormalMode))

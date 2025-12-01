@@ -65,6 +65,18 @@ class AdditionalRentPeriodControllerSpec extends ControllerSpecSupport:
         content must include(pageTitle)
       }
 
+      "return SEE_OTHER and redirect to second rent period if the index is 0" in {
+        val result = controllerWithAnswers(firstSecondAnswers).show(NormalMode, 0)(authenticatedFakeRequest)
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.ProvideDetailsOfSecondRentPeriodController.show(NormalMode).url)
+      }
+
+      "return SEE_OTHER and redirect to last rent period if the index is greater than total periods" in {
+        val result = controllerWithAnswers(fourRentPeriodsAnswers).show(NormalMode, 10)(authenticatedFakeRequest)
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.AdditionalRentPeriodController.show(NormalMode, 2).url)
+      }
+
       "return OK and the correct view with prepopulated data for rent payable period" in {
         val result = controllerWithAnswers(fourRentPeriodsAnswers).show(NormalMode, 1)(authenticatedFakeRequest)
         status(result) mustBe OK

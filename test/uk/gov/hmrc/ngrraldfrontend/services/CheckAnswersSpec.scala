@@ -21,13 +21,12 @@ import play.api.mvc.Call
 import uk.gov.hmrc.govukfrontend.views.Aliases.{HtmlContent, Key, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.*
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Content
-import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
+import uk.gov.hmrc.ngrraldfrontend.helpers.{TestData, ViewBaseSpec}
 import uk.gov.hmrc.ngrraldfrontend.models.*
 import uk.gov.hmrc.ngrraldfrontend.models.Incentive.{YesLumpSum, YesRentFreePeriod}
 import uk.gov.hmrc.ngrraldfrontend.models.registration.*
 import uk.gov.hmrc.ngrraldfrontend.pages.*
 import uk.gov.hmrc.ngrraldfrontend.services.CheckAnswers.{createBreakClauseRows, createFirstRentPeriodRow, createRentPeriodsSummaryLists}
-import uk.gov.hmrc.ngrraldfrontend.helpers.TestData
 
 import java.time.LocalDate
 
@@ -116,17 +115,17 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
       rows.map(_.key.content.asHtml.body) must contain(messages("checkAnswers.agreement.whatTypeOfAgreement"))
     }
 
-      "return SummaryList with only agreement type row when only that answer is present" in {
-    val answers = UserAnswers(CredId("1234"))
-      .set(WhatTypeOfAgreementPage, "Verbal")
-      .success.value
+    "return SummaryList with only agreement type row when only that answer is present" in {
+      val answers = UserAnswers(CredId("1234"))
+        .set(WhatTypeOfAgreementPage, "Verbal")
+        .success.value
 
-    val result = CheckAnswers.createAgreementDetailsRows("1234", Some(answers))
+      val result = CheckAnswers.createAgreementDetailsRows("1234", Some(answers))
 
-    result mustBe defined
-    result.get.rows.size mustBe 1
-    result.get.rows.head.value.content.asHtml.body must include(messages("whatTypeOfAgreement.verbal"))
-  }
+      result mustBe defined
+      result.get.rows.size mustBe 1
+      result.get.rows.head.value.content.asHtml.body must include(messages("whatTypeOfAgreement.verbal"))
+    }
 
 
     "include verbal agreement rows when verbal agreement details are present" in {
@@ -156,23 +155,23 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
 
 
     "include end date and break clause details when provided in written agreement" in {
-    val agreement = Agreement(
-      agreementStart = NGRDate("1", "1", "2025").makeString,
-      isOpenEnded = false,
-      openEndedDate = Some(NGRDate("1", "1", "2025").makeString),
-      haveBreakClause = true,
-      breakClauseInfo = Some("Break clause details")
-    )
+      val agreement = Agreement(
+        agreementStart = NGRDate("1", "1", "2025").makeString,
+        isOpenEnded = false,
+        openEndedDate = Some(NGRDate("1", "1", "2025").makeString),
+        haveBreakClause = true,
+        breakClauseInfo = Some("Break clause details")
+      )
 
-    val answers = UserAnswers(CredId("1234"))
-      .set(WhatTypeOfAgreementPage, "Written")
-      .flatMap(_.set(AgreementPage, agreement))
-      .success.value
+      val answers = UserAnswers(CredId("1234"))
+        .set(WhatTypeOfAgreementPage, "Written")
+        .flatMap(_.set(AgreementPage, agreement))
+        .success.value
 
-    val result = CheckAnswers.createAgreementDetailsRows("1234", Some(answers))
+      val result = CheckAnswers.createAgreementDetailsRows("1234", Some(answers))
 
-    result mustBe defined
-    val rows = result.get.rows
+      result mustBe defined
+      val rows = result.get.rows
 
 
       rows.map(_.value.content.asHtml.body) must contain(
@@ -182,17 +181,17 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
       rows.mkString must include("Break clause details")
     }
 
-  "return None when agreement type is missing" in {
-    val answers = UserAnswers(CredId("1234"))
+    "return None when agreement type is missing" in {
+      val answers = UserAnswers(CredId("1234"))
 
-    val result = CheckAnswers.createAgreementDetailsRows("1234", Some(answers))
+      val result = CheckAnswers.createAgreementDetailsRows("1234", Some(answers))
 
-    result mustBe None
+      result mustBe None
+    }
   }
-}
 
 
-"return only agreement type row when other details are missing" in {
+  "return only agreement type row when other details are missing" in {
     val userAnswers = UserAnswers(CredId("cred-123"))
       .set(WhatTypeOfAgreementPage, "Verbal")
       .get
@@ -210,7 +209,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
   "createRentRows" should {
     "return rows with rent details when data is present" in {
       val userAnswers = UserAnswers(CredId("cred-123"))
-        .set(WhatIsYourRentBasedOnPage, RentBasedOn("Other",  Some("Reason for being other"))).success.value
+        .set(WhatIsYourRentBasedOnPage, RentBasedOn("Other", Some("Reason for being other"))).success.value
         .set(RentDatesAgreePage, NGRDate("1", "1", "2020").makeString).success.value
         .set(DidYouAgreeRentWithLandlordPage, true).success.value
         .set(AgreedRentChangePage, true).success.value
@@ -274,7 +273,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
       )
 
       val parkingSpacesIncluded = HowManyParkingSpacesOrGarages(uncoveredSpaces = 5, coveredSpaces = 6, garages = 0)
-      val parkingSpacesNotIncluded = ParkingSpacesOrGaragesNotIncludedInYourRent(uncoveredSpaces = 100, coveredSpaces = 0, garages = 20,totalCost =  BigDecimal(12.0), agreementDate = NGRDate("12", "12", "2020").makeString)
+      val parkingSpacesNotIncluded = ParkingSpacesOrGaragesNotIncludedInYourRent(uncoveredSpaces = 100, coveredSpaces = 0, garages = 20, totalCost = BigDecimal(12.0), agreementDate = NGRDate("12", "12", "2020").makeString)
 
       val userAnswers = UserAnswers(CredId("cred-123"))
         .set(WhatYourRentIncludesPage, whatYourRentIncludes).success.value
@@ -533,7 +532,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
     "return Some SummaryList with correct rows when all data exists" in {
       val confirmBreakClause = true
       val incentiveDetails = DidYouGetIncentiveForNotTriggeringBreakClause(checkBox = Set(YesRentFreePeriod, YesLumpSum))
-      val rentFreePeriod = AboutTheRentFreePeriod(months = 2, date = NGRDate("01","01","2025").makeString)
+      val rentFreePeriod = AboutTheRentFreePeriod(months = 2, date = NGRDate("01", "01", "2025").makeString)
       val lumpSum = BigDecimal(7500.00)
 
       val userAnswers = UserAnswers(CredId("credId"))
@@ -569,7 +568,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
     }
 
     "format months correctly for singular value" in {
-      val rentFreePeriod = AboutTheRentFreePeriod(months = 1, date = NGRDate("01","01","2025").makeString)
+      val rentFreePeriod = AboutTheRentFreePeriod(months = 1, date = NGRDate("01", "01", "2025").makeString)
       val userAnswers = UserAnswers(CredId("credId"))
         .set(AboutTheRentFreePeriodPage, rentFreePeriod).success.value
 
@@ -707,7 +706,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
   }
 
 
-    "createLeaseRenewalsSummaryRows" should {
+  "createLeaseRenewalsSummaryRows" should {
     "return a row with lease renewal details when data is present" in {
       val userAnswers = UserAnswers(CredId("cred-123"))
         .set(WhatTypeOfLeaseRenewalPage, "RenewedAgreement")
