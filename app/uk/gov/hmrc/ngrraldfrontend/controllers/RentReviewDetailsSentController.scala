@@ -69,8 +69,7 @@ class RentReviewDetailsSentController @Inject()(view: RentReviewDetailsSentView,
               "id" -> "local-authority-reference-id"
             )
           ))))
-
-
+  
   def confirmation: Action[AnyContent] =
     (authenticate andThen getData).async { implicit request =>
       ngrConnector.getRaldUserAnswers(CredId(request.credId)).flatMap {
