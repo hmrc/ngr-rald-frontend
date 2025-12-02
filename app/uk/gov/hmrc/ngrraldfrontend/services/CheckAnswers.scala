@@ -25,7 +25,8 @@ import uk.gov.hmrc.ngrraldfrontend.models.NGRDate.formatDate
 import uk.gov.hmrc.ngrraldfrontend.models.NGRSummaryListRow.summarise
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.pages.*
-
+import uk.gov.hmrc.ngrraldfrontend.utils.MoneyFormatter
+import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -126,7 +127,7 @@ object CheckAnswers {
           hiddenKey = "is-open-ended"
         )
       }.toSeq
-      
+
       val agreementStartDate = agreement.map { value =>
         buildRow(
           labelKey = "checkAnswers.agreement.startDate",
@@ -266,8 +267,17 @@ object CheckAnswers {
     }
 
     val rentDatesAgreeStartRow = answers.get(RentDatesAgreeStartPage).map { value =>
+      val agreementTypeOpt = answers.get(TellUsAboutYourRenewedAgreementPage)
+
+      val labelKey = agreementTypeOpt match {
+        case Some(AgreementType.RenewedAgreement) =>
+          "checkAnswers.rents.startPayingDate.renewedAgreement"
+        case _ =>
+          "checkAnswers.rents.whenDidYouAgree"
+      }
+
       buildRow(
-        labelKey = "checkAnswers.rents.whenDidYouAgree",
+        labelKey = labelKey,
         value = NGRDate.formatDate(value.agreedDate),
         linkId = "when-did-you-agree",
         href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeStartController.show(CheckMode),
@@ -277,14 +287,22 @@ object CheckAnswers {
 
 
     val didYouAgreeRentWithLandlord = answers.get(DidYouAgreeRentWithLandlordPage).map { value =>
+      val displayValue =
+        if (value) {
+          messages("service.yes")
+        } else {
+          messages("checkAnswers.rent.didYouAgreeRentWithLandlord.no")
+        }
+
       buildRow(
         labelKey = "checkAnswers.rent.didYouAgreeRentWithLandlord",
-        value = yesNo(value),
+        value = displayValue,
         linkId = "did-you-agree-rent-with-landlord",
         href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouAgreeRentWithLandlordController.show(CheckMode),
         hiddenKey = "did-you-agree-rent-with-landlord"
       )
     }
+
 
     val rentInterim = answers.get(RentInterimPage).map { value =>
       buildRow(
@@ -295,11 +313,34 @@ object CheckAnswers {
         hiddenKey = "rent-interim"
       )
     }
+    val interimRentSetByTheCourt = answers.get(InterimSetByTheCourtPage)
+
+    val interimRentAmountRow = interimRentSetByTheCourt.map { value =>
+      buildRow(
+        labelKey = "checkAnswers.rent.rentInterim",
+        value = MoneyFormatter.format(value.amount),
+        linkId = "rent-interim-amount",
+        href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.InterimRentSetByTheCourtController.show(CheckMode),
+        hiddenKey = "rent-interim-amount"
+      )
+    }
+
+    val interimRentDateRow = interimRentSetByTheCourt.map { value =>
+      val yearMonth = YearMonth.parse(value.date)
+      buildRow(
+        labelKey = "checkAnswers.rent.rentInterim.date",
+        value = yearMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy")),
+        linkId = "rent-interim-date",
+        href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.InterimRentSetByTheCourtController.show(CheckMode),
+        hiddenKey = "rent-interim-date"
+      )
+    }
+
 
     val totalAnualRent = answers.get(HowMuchIsTotalAnnualRentPage).map { value =>
       buildRow(
         labelKey = "checkAnswers.rent.totalAnnualRent",
-        value = s"£$value",
+        value = MoneyFormatter.format(value),
         linkId = "how-much-is-total-annual-rent",
         href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchIsTotalAnnualRentController.show(CheckMode),
         hiddenKey = "how-much-is-total-annual-rent"
@@ -350,14 +391,16 @@ object CheckAnswers {
       rentBasedOn,
       otherReason,
       agreedRentChange,
-      rentDatesAgreeRow,
-      rentDatesAgreeStartRow,
+      totalAnualRent,
       didYouAgreeRentWithLandlord,
       rentInterim,
-      totalAnualRent,
+      interimRentDateRow,
+      interimRentAmountRow,
       checkRentPeriod,
       rentFreePeriodMonths,
       rentFreePeriodReason,
+      rentDatesAgreeRow,
+      rentDatesAgreeStartRow,
       rentDatesPaymentStartRow
     ).flatten.map(summarise)
 
@@ -402,7 +445,7 @@ object CheckAnswers {
       value.rentPeriodAmount.map { amount =>
         buildRow(
           labelKey = "checkAnswers.rentPeriod.provideDetailsOfFirstSecondRentPeriod.amount",
-          value = s"£${amount.toString}",
+          value = MoneyFormatter.format(amount),
           linkId = "provide-details-of-first-period-amount",
           href = link,
           hiddenKey = "provide-details-of-first-period-amount"
@@ -439,7 +482,7 @@ object CheckAnswers {
             ),
             buildRow(
               labelKey = "checkAnswers.rentPeriod.provideDetailsOfFirstSecondRentPeriod.amount",
-              value = s"£${period.rentPeriodAmount}",
+              value = MoneyFormatter.format(period.rentPeriodAmount),
               linkId = s"rent-period-${index + 1}-amount",
               href = if (index == 0) {SecondRentPeriodLink} else {uk.gov.hmrc.ngrraldfrontend.controllers.routes.AdditionalRentPeriodController.show(CheckMode, index)},
               hiddenKey = s"rent-period-${index + 1}-amount"
@@ -537,38 +580,44 @@ object CheckAnswers {
       )
     }
 
-    val howManyUncoveredSpacesIncludedInRent = howManyParkingSpacesOrGaragesIncludedInRentValue.map {
-      value =>
-        buildRow(
-          labelKey = "checkAnswers.whatYourRentIncludes.howManyUncoveredSpacesIncludedInRent",
-          value = value.uncoveredSpaces.toString,
-          linkId = "how-many-uncovered-spaces-included-in-rent",
-          href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowManyParkingSpacesOrGaragesIncludedInRentController.show(CheckMode),
-          hiddenKey = "how-many-uncovered-spaces-included-in-rent"
-        )
-    }
+    val howManyUncoveredSpacesIncludedInRent =
+      howManyParkingSpacesOrGaragesIncludedInRentValue.flatMap { value =>
+        if (value.uncoveredSpaces > 0) {
+          Some(buildRow(
+            labelKey = "checkAnswers.whatYourRentIncludes.howManyUncoveredSpacesIncludedInRent",
+            value = value.uncoveredSpaces.toString,
+            linkId = "how-many-uncovered-spaces-included-in-rent",
+            href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowManyParkingSpacesOrGaragesIncludedInRentController.show(CheckMode),
+            hiddenKey = "how-many-uncovered-spaces-included-in-rent"
+          ))
+        } else None
+      }
 
-    val howManyCoveredSpacesIncludedInRent = howManyParkingSpacesOrGaragesIncludedInRentValue.map {
-      value =>
-        buildRow(
-          labelKey = "checkAnswers.whatYourRentIncludes.howManyCoveredSpacesIncludedInRent",
-          value = value.coveredSpaces.toString,
-          linkId = "how-many-covered-spaces-included-in-rent",
-          href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowManyParkingSpacesOrGaragesIncludedInRentController.show(CheckMode),
-          hiddenKey = "how-many-covered-spaces-included-in-rent"
-        )
-    }
+    val howManyCoveredSpacesIncludedInRent =
+      howManyParkingSpacesOrGaragesIncludedInRentValue.flatMap { value =>
+        if (value.coveredSpaces > 0) {
+          Some(buildRow(
+            labelKey = "checkAnswers.whatYourRentIncludes.howManyCoveredSpacesIncludedInRent",
+            value = value.coveredSpaces.toString,
+            linkId = "how-many-covered-spaces-included-in-rent",
+            href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowManyParkingSpacesOrGaragesIncludedInRentController.show(CheckMode),
+            hiddenKey = "how-many-covered-spaces-included-in-rent"
+          ))
+        } else None
+      }
 
-    val howManyGaragesIncludedInRent = howManyParkingSpacesOrGaragesIncludedInRentValue.map {
-      value =>
-        buildRow(
-          labelKey = "checkAnswers.whatYourRentIncludes.howManyGaragesIncludedInRent",
-          value = value.garages.toString,
-          linkId = "how-many-covered-spaces-included-in-rent",
-          href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowManyParkingSpacesOrGaragesIncludedInRentController.show(CheckMode),
-          hiddenKey = "how-many-covered-spaces-included-in-rent"
-        )
-    }
+    val howManyGaragesIncludedInRent =
+      howManyParkingSpacesOrGaragesIncludedInRentValue.flatMap { value =>
+        if (value.garages > 0) {
+          Some(buildRow(
+            labelKey = "checkAnswers.whatYourRentIncludes.howManyGaragesIncludedInRent",
+            value = value.garages.toString,
+            linkId = "how-many-garages-included-in-rent",
+            href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowManyParkingSpacesOrGaragesIncludedInRentController.show(CheckMode),
+            hiddenKey = "how-many-garages-included-in-rent"
+          ))
+        } else None
+      }
 
     val doYouPayExtraForParkingSpaces = doYouPayExtraForParkingSpacesValue.map{
       value =>
@@ -581,44 +630,51 @@ object CheckAnswers {
         )
     }
 
-    val howManyUncoveredSpacesNotIncludedInRent = parkingSpacesOrGaragesNotIncludedInYourRentPageValue.map {
-      value =>
-        buildRow(
-          labelKey = "checkAnswers.whatYourRentIncludes.howManyUncoveredSpacesNotIncludedInRent",
-          value = value.uncoveredSpaces.toString,
-          linkId = "how-many-uncovered-spaces-not-included-in-rent",
-          href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.show(CheckMode),
-          hiddenKey = "how-many-uncovered-spaces-not-included-in-rent"
-        )
-    }
 
-    val howManyCoveredSpacesNotIncludedInRent = parkingSpacesOrGaragesNotIncludedInYourRentPageValue.map {
-      value =>
-        buildRow(
-          labelKey = "checkAnswers.whatYourRentIncludes.howManyCoveredSpacesNotIncludedInRent",
-          value = value.coveredSpaces.toString,
-          linkId = "how-many-covered-spaces-not-included-in-rent",
-          href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.show(CheckMode),
-          hiddenKey = "how-many-covered-spaces-not-included-in-rent"
-        )
-    }
+    val howManyUncoveredSpacesNotIncludedInRent =
+      parkingSpacesOrGaragesNotIncludedInYourRentPageValue.flatMap { value =>
+        if (value.uncoveredSpaces > 0) {
+          Some(buildRow(
+            labelKey = "checkAnswers.whatYourRentIncludes.howManyUncoveredSpacesNotIncludedInRent",
+            value = value.uncoveredSpaces.toString,
+            linkId = "how-many-uncovered-spaces-not-included-in-rent",
+            href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.show(CheckMode),
+            hiddenKey = "how-many-uncovered-spaces-not-included-in-rent"
+          ))
+        } else None
+      }
 
-    val howManyGaragesNotIncludedInRent = parkingSpacesOrGaragesNotIncludedInYourRentPageValue.map {
-      value =>
-        buildRow(
-          labelKey = "checkAnswers.whatYourRentIncludes.howManyGaragesNotIncludedInRent",
-          value = value.garages.toString,
-          linkId = "how-many-garages-not-included-in-rent",
-          href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.show(CheckMode),
-          hiddenKey = "how-many-garages-not-included-in-rent"
-        )
-    }
+    val howManyCoveredSpacesNotIncludedInRent =
+      parkingSpacesOrGaragesNotIncludedInYourRentPageValue.flatMap { value =>
+        if (value.coveredSpaces > 0) {
+          Some(buildRow(
+            labelKey = "checkAnswers.whatYourRentIncludes.howManyCoveredSpacesNotIncludedInRent",
+            value = value.coveredSpaces.toString,
+            linkId = "how-many-covered-spaces-not-included-in-rent",
+            href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.show(CheckMode),
+            hiddenKey = "how-many-covered-spaces-not-included-in-rent"
+          ))
+        } else None
+      }
+
+    val howManyGaragesNotIncludedInRent =
+      parkingSpacesOrGaragesNotIncludedInYourRentPageValue.flatMap { value =>
+        if (value.garages > 0) {
+          Some(buildRow(
+            labelKey = "checkAnswers.whatYourRentIncludes.howManyGaragesNotIncludedInRent",
+            value = value.garages.toString,
+            linkId = "how-many-garages-not-included-in-rent",
+            href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.show(CheckMode),
+            hiddenKey = "how-many-garages-not-included-in-rent"
+          ))
+        } else None
+      }
 
     val totalCost = parkingSpacesOrGaragesNotIncludedInYourRentPageValue.map {
       value =>
         buildRow(
           labelKey = "checkAnswers.whatYourRentIncludes.parkingSpacesOrGaragesNotIncludedInYourRent.totalCost",
-          value = s"£${value.totalCost.toString()}",
+          value = MoneyFormatter.format(value.totalCost),
           linkId = "parking-spaces-or-garages-not-included-in-your-rent-value",
           href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.show(CheckMode),
           hiddenKey = "parking-spaces-or-garages-not-included-in-your-rent-value"
@@ -715,9 +771,33 @@ object CheckAnswers {
     )
 
     val howOftenReviewed = rentReview.map { value =>
+      val years = value.rentReviewYears.getOrElse(0)
+      val months = value.rentReviewMonths.getOrElse(0)
+
+      val messageKey =
+        if (months == 0) {
+          if (years == 1)
+            "checkAnswers.rentReview.howOftenReviewed.yearsOnly.oneYear"
+          else
+            "checkAnswers.rentReview.howOftenReviewed.yearsOnly.otherYear"
+        } else {
+          (years, months) match {
+            case (1, 1) => "checkAnswers.rentReview.howOftenReviewed.yearsAndMonths.oneYear.oneMonth"
+            case (1, _) => "checkAnswers.rentReview.howOftenReviewed.yearsAndMonths.oneYear.otherMonth"
+            case (_, 1) => "checkAnswers.rentReview.howOftenReviewed.yearsAndMonths.otherYear.oneMonth"
+            case _ => "checkAnswers.rentReview.howOftenReviewed.yearsAndMonths.otherYear.otherMonth"
+          }
+        }
+
+      val formattedValue =
+        if (months == 0)
+          messages(messageKey, years.toString)
+        else
+          messages(messageKey, years.toString, months.toString)
+
       buildRow(
         labelKey = "checkAnswers.rentReview.howOftenReviewed",
-        value = s"Every ${value.rentReviewYears.getOrElse(0)} years and ${value.rentReviewMonths.getOrElse(0)} months",
+        value = formattedValue,
         linkId = "how-often-reviewed",
         href = rentReviewLink,
         hiddenKey = "how-often-reviewed"
@@ -726,7 +806,7 @@ object CheckAnswers {
 
     val canRentGoDown = rentReview.map { r =>
       buildRow(
-        labelKey = "checkAnswers.whatYourRentIncludes.rentIncService",
+        labelKey = "checkAnswers.rentReview.canRentGoDown",
         value = yesNo(r.canRentGoDown),
         linkId = "can-rent-go-down",
         href = rentReviewLink,
@@ -736,7 +816,9 @@ object CheckAnswers {
 
     val annualAmount = buildRow(
       labelKey = "checkAnswers.rentReviewDetails.annualAmount",
-      value = rentDetails.map(d => s"£ ${d.annualRentAmount}").getOrElse(messages("service.notProvided")),
+      value = rentDetails
+        .map(d => MoneyFormatter.format(d.annualRentAmount))
+        .getOrElse(messages("service.notProvided")),
       linkId = "annual-amount",
       href = rentDetailsLink,
       hiddenKey = "annual-amount"
@@ -828,7 +910,7 @@ object CheckAnswers {
     val aboutRepairsAndFittingOutCostRow = aboutRepairsAndFittingOut.map { value =>
       buildRow(
         labelKey = "checkAnswers.repairsAndFittingOut.cost",
-        value = s"£${value.cost}",
+        value = MoneyFormatter.format(value.cost),
         linkId = "repairs-and-fitting-out-cost",
         href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.AboutRepairsAndFittingOutController.show(CheckMode),
         hiddenKey = "repairs-and-fitting-out-cost"
@@ -845,6 +927,7 @@ object CheckAnswers {
     val gotMoney = answers.get(DidYouGetMoneyFromLandlordPage)
     val paidMoney = answers.get(DidYouPayAnyMoneyToLandlordPage)
     val moneyYouPaidInAdvanceToLandlord = answers.get(MoneyYouPaidInAdvanceToLandlordPage)
+    val moneyToTakeOnTheLease = answers.get(MoneyToTakeOnTheLeasePage)
 
     val gotMoneyRow = gotMoney.map { value =>
       buildRow(
@@ -856,6 +939,32 @@ object CheckAnswers {
       )
     }
 
+    val moneyToTakeOnTheLeaseAmountRow =
+      if (gotMoney.contains(true)) {
+        moneyToTakeOnTheLease.map { value =>
+          buildRow(
+            labelKey = "checkAnswers.payments.didYouGetMoneyFromLandlord.amount",
+            value = MoneyFormatter.format(value.amount),
+            linkId = "money-to-take-on-the-lease-amount",
+            href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.MoneyToTakeOnTheLeaseController.show(CheckMode),
+            hiddenKey = "money-to-take-on-the-lease-amount"
+          )
+        }
+      } else None
+
+    val moneyToTakeOnTheLeaseDateRow =
+      if (gotMoney.contains(true)) {
+        moneyToTakeOnTheLease.map { value =>
+          buildRow(
+            labelKey = "checkAnswers.payments.didYouGetMoneyFromLandlord.date",
+            value = NGRDate.formatDate(value.date),
+            linkId = "money-to-take-on-the-lease-date",
+            href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.MoneyToTakeOnTheLeaseController.show(CheckMode),
+            hiddenKey = "money-to-take-on-the-lease-date"
+          )
+        }
+      } else None
+
     val paidMoneyRow = paidMoney.map { value =>
       buildRow(
         labelKey = "checkAnswers.payments.didYouPayAnyMoneyToLandlord",
@@ -866,29 +975,40 @@ object CheckAnswers {
       )
     }
 
-    val moneyYouPaidInAdvanceToLandlordAmountRow = moneyYouPaidInAdvanceToLandlord.map { value =>
-      buildRow(
-        labelKey = "checkAnswers.payments.moneyYouPaidInAdvanceToLandlord.amount",
-        value = s"£${value.amount.toString()}",
-        linkId = "money-you-paid-in-advance-to-landlord-amount",
-        href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.MoneyYouPaidInAdvanceToLandlordController.show(CheckMode),
-        hiddenKey = "money-you-paid-in-advance-to-landlord-amount"
-      )
-    }
+    val moneyYouPaidInAdvanceToLandlordAmountRow =
+      if (paidMoney.contains(true)) {
+        moneyYouPaidInAdvanceToLandlord.map { value =>
+          buildRow(
+            labelKey = "checkAnswers.payments.moneyYouPaidInAdvanceToLandlord.amount",
+            value = MoneyFormatter.format(value.amount),
+            linkId = "money-you-paid-in-advance-to-landlord-amount",
+            href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.MoneyYouPaidInAdvanceToLandlordController.show(CheckMode),
+            hiddenKey = "money-you-paid-in-advance-to-landlord-amount"
+          )
+        }
+      } else None
 
-    val moneyYouPaidInAdvanceToLandlordDateRow = moneyYouPaidInAdvanceToLandlord.map { value =>
-      buildRow(
-        labelKey = "checkAnswers.payments.moneyYouPaidInAdvanceToLandlord.date",
-        value = NGRDate.formatDate(value.date),
-        linkId = "money-you-paid-in-advance-to-landlord-amount",
-        href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.MoneyYouPaidInAdvanceToLandlordController.show(CheckMode),
-        hiddenKey = "money-you-paid-in-advance-to-landlord-amount"
-      )
-    }
+    val moneyYouPaidInAdvanceToLandlordDateRow =
+      if (paidMoney.contains(true)) {
+        moneyYouPaidInAdvanceToLandlord.map { value =>
+          buildRow(
+            labelKey = "checkAnswers.payments.moneyYouPaidInAdvanceToLandlord.date",
+            value = NGRDate.formatDate(value.date),
+            linkId = "money-you-paid-in-advance-to-landlord-date",
+            href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.MoneyYouPaidInAdvanceToLandlordController.show(CheckMode),
+            hiddenKey = "money-you-paid-in-advance-to-landlord-date"
+          )
+        }
+      } else None
 
 
-    val rows = gotMoneyRow.toSeq ++ paidMoneyRow.toSeq ++ moneyYouPaidInAdvanceToLandlordAmountRow.toSeq ++ moneyYouPaidInAdvanceToLandlordDateRow.toSeq
-
+    val rows =
+      gotMoneyRow.toSeq ++
+      moneyToTakeOnTheLeaseAmountRow.toSeq ++
+      moneyToTakeOnTheLeaseDateRow.toSeq ++
+      paidMoneyRow.toSeq ++
+      moneyYouPaidInAdvanceToLandlordAmountRow.toSeq ++
+      moneyYouPaidInAdvanceToLandlordDateRow.toSeq
     if (rows.nonEmpty) Some(SummaryList(rows.map(summarise), classes = "govuk-!-margin-bottom-9")) else None
   }
 
@@ -910,22 +1030,33 @@ object CheckAnswers {
       )
     }
 
-    val didYouGetIncentiveForNotTriggeringBreakClauseRow = didYouGetIncentiveForNotTriggeringBreakClause.map { value =>
+    val didYouGetIncentiveForNotTriggeringBreakClauseRow =
+      didYouGetIncentiveForNotTriggeringBreakClause.map { value =>
+        val selectedLabels: Seq[String] = value.checkBox.toSeq.collect {
+          case YesLumpSum => messages("didYouGetIncentiveForNotTriggeringBreakClause.checkbox")
+          case YesRentFreePeriod => messages("didYouGetIncentiveForNotTriggeringBreakClause.checkbox1")
+          case No => messages("didYouGetIncentiveForNotTriggeringBreakClause.checkbox2")
+        }
+
+        buildRow(
+          labelKey = "checkAnswers.breakClause.didYouGetIncentiveForNotTriggeringBreakClause",
+          value = selectedLabels.mkString("\n"),
+          linkId = "did-you-get-incentive-for-not-triggering-break-clause",
+          href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouGetIncentiveForNotTriggeringBreakClauseController.show(CheckMode),
+          hiddenKey = "did-you-get-incentive-for-not-triggering-break-clause"
+        )
+      }
+
+
+    val howMuchWasTheLumpSum = answers.get(HowMuchWasTheLumpSumPage)
+
+    val howMuchWasTheLumpSumRow = howMuchWasTheLumpSum.map { value =>
       buildRow(
-        labelKey = "checkAnswers.breakClause.didYouGetIncentiveForNotTriggeringBreakClause",
-        value = value.checkBox.match{
-          case value if value.contains(YesRentFreePeriod) && value.contains(YesLumpSum) =>
-            s"${messages("didYouGetIncentiveForNotTriggeringBreakClause.checkbox")}, ${messages("didYouGetIncentiveForNotTriggeringBreakClause.checkbox1")}"
-          case value if value.contains(YesRentFreePeriod) =>
-            messages("didYouGetIncentiveForNotTriggeringBreakClause.checkbox1")
-          case value if value.contains(YesLumpSum) =>
-            messages("didYouGetIncentiveForNotTriggeringBreakClause.checkbox")
-          case value if value.contains(No) =>
-            "Yes, I got a rent-free period"
-        },
-        linkId = "did-you-get-incentive-for-not-triggering-break-clause",
-        href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouGetIncentiveForNotTriggeringBreakClauseController.show(CheckMode),
-        hiddenKey = "did-you-get-incentive-for-not-triggering-break-clause"
+        labelKey = "checkAnswers.rent.lumpSum",
+        value = MoneyFormatter.format(value),
+        linkId = "how-much-was-the-lump-sum",
+        href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchWasTheLumpSumController.show(CheckMode),
+        hiddenKey = "how-much-was-the-lump-sum"
       )
     }
 
@@ -949,20 +1080,10 @@ object CheckAnswers {
       )
     }
 
-    val lumpSum = lumpSumPage.map{ value =>
-      buildRow(
-        labelKey = "checkAnswers.breakClause.lumpSum",
-        value = s"£$value",
-        linkId = "how-much-was-the-lump-sum",
-        href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchWasTheLumpSumController.show(CheckMode),
-        hiddenKey = "how-much-was-the-lump-sum"
-      )
-    }
-
     val rows =
       confirmBreakClauseRow.toSeq ++
       didYouGetIncentiveForNotTriggeringBreakClauseRow.toSeq ++
-      lumpSum.toSeq ++
+      howMuchWasTheLumpSumRow.toSeq ++
       rentFreeMonths.toSeq ++
       rentFreeStartDate.toSeq
 
@@ -985,7 +1106,10 @@ object CheckAnswers {
       )
     }.toSeq
 
-    val reason = hasAnythingElseAffectedTheRent.flatMap(_.reason).map { reason =>
+    val reason =
+      hasAnythingElseAffectedTheRent match {
+        case Some(details) if details.radio =>
+          details.reason.map { reason =>
       buildRow(
         labelKey = "checkAnswers.Otherdetails.reason",
         value = reason,
@@ -994,6 +1118,8 @@ object CheckAnswers {
         hiddenKey = "other-details-reason"
       )
     }.toSeq
+        case _ => Seq.empty
+   }
 
     val rows = hasAnyAffectedRent ++ reason
     SummaryList(rows.map(summarise), classes = "govuk-!-margin-bottom-9")
