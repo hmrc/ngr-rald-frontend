@@ -78,15 +78,14 @@ class RentReviewDetailsSentController @Inject()(view: RentReviewDetailsSentView,
       val answers = request.userAnswers.getOrElse(UserAnswers(CredId(request.credId)))
       val newAgreement = answers.get(TellUsAboutYourNewAgreementPage)
       val renewed = answers.get(TellUsAboutYourRenewedAgreementPage)
-      val rent = answers.get(TellUsAboutRentPage)
 
-      def agreementType = {
-        if (newAgreement.contains(NewAgreement)) {
-          NewAgreement
-        } else if (renewed.contains(RenewedAgreement)) {
-          RenewedAgreement
+      def agreementType(implicit messages: Messages) = {
+        if (newAgreement.nonEmpty) {
+          messages("rentReviewDetailsSentNew.title")
+        } else if (renewed.nonEmpty) {
+          messages("rentReviewDetailsSentRenewed.title")
         } else {
-          RentAgreement
+          messages("rentReviewDetailsSentReview.title")
         }
       }
 

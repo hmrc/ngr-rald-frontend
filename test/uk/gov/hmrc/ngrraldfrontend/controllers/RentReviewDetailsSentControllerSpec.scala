@@ -39,11 +39,8 @@ class  RentReviewDetailsSentControllerSpec extends ControllerSpecSupport with De
   val view: RentReviewDetailsSentView = inject[RentReviewDetailsSentView]
   val controller: RentReviewDetailsSentController = new RentReviewDetailsSentController(view, fakeAuth, mcc, fakeDataProperty(Some(property), Some(userAnswersWithoutData)), mockNGRConnector)
   val controllerNoProperty: RentReviewDetailsSentController = new RentReviewDetailsSentController(view, fakeAuth, mcc, fakeData(None), mockNGRConnector)
-
-  val controllerNewAgreement: RentReviewDetailsSentController = new RentReviewDetailsSentController(view, fakeAuth, mcc, fakeDataProperty(Some(property), newAgreementAnswers), mockNGRConnector)
-  val controllerRenewedAgreement: RentReviewDetailsSentController = new RentReviewDetailsSentController(view, fakeAuth, mcc, fakeDataProperty(Some(property), renewedAgreementAnswers), mockNGRConnector)
-
-
+  lazy val filledController: Option[UserAnswers] => RentReviewDetailsSentController = answers => RentReviewDetailsSentController(view, fakeAuth, mcc, fakeDataProperty(Some(property), answers), mockNGRConnector)
+  
   "RentReviewDetailsSent Controller" must {
     "method show" must {
       "Return OK and the correct view" in {
@@ -61,19 +58,19 @@ class  RentReviewDetailsSentControllerSpec extends ControllerSpecSupport with De
       "Return OK and the correct title for new agreement" in {
         val response: Option[UserAnswers] = newAgreementAnswers
         when(mockNGRConnector.getRaldUserAnswers(any())(any()))
-          .thenReturn(Future.successful(response))
-        val result = controllerNewAgreement.confirmation()(authenticatedFakeRequestEmail)
+          .thenReturn(Future.successful(newAgreementAnswers))
+        val result = filledController(newAgreementAnswers).confirmation()(authenticatedFakeRequestEmail)
         status(result) mustBe OK
         contentType(result) shouldBe Some("text/html")
         val content = contentAsString(result)
         content must include(pageTitleNewAgreement)
       }
 
-      "Return OK and the correct title for renever agreement" in {
+      "Return OK and the correct title for renewed agreement" in {
         val response: Option[UserAnswers] = renewedAgreementAnswers
         when(mockNGRConnector.getRaldUserAnswers(any())(any()))
-          .thenReturn(Future.successful(response))
-        val result = controllerRenewedAgreement.confirmation()(authenticatedFakeRequestEmail)
+          .thenReturn(Future.successful(renewedAgreementAnswers))
+        val result = filledController(renewedAgreementAnswers).confirmation()(authenticatedFakeRequestEmail)
         status(result) mustBe OK
         contentType(result) shouldBe Some("text/html")
         val content = contentAsString(result)

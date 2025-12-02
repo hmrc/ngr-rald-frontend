@@ -44,7 +44,6 @@ class TellUsAboutYourAgreementViewSpec extends ViewBaseSpec {
     val bulletPoint5 = "if you have done any alterations and improvements"
     val rentBulletPoint5 = "if you have a break clause"
     val subheading2 = "Supporting documents"
-    val subheading3 = "Supporting documents"
     val p4 = "You do not need to upload any documents to support what you tell us."
     val continue = "Continue"
   }
@@ -272,10 +271,6 @@ class TellUsAboutYourAgreementViewSpec extends ViewBaseSpec {
 
     "show correct bulletPoint5" in {
       elementText(Selectors.bulletPoint5) mustBe Strings.rentBulletPoint5
-    }
-
-    "show correct subheading2" in {
-      elementText(Selectors.subheading3) mustBe Strings.subheading3
     }
 
     "show correct p4" in {

@@ -60,20 +60,20 @@ class RentReviewDetailSentViewSpec extends ViewBaseSpec {
     val email: String = "test@testUser.com"
 
     object Selectors {
-      val title = "#main-content > div > div.govuk-grid-column-two-thirds > form > div > h1"
-      val yourRef = "#main-content > div > div.govuk-grid-column-two-thirds > form > div > div"
+      val title = "#main-content > div > div.govuk-grid-column-two-thirds > div > h1"
+      val yourRef = "#main-content > div > div.govuk-grid-column-two-thirds > div > div"
       val print = "#printPage > a"
-      val emailText = "#main-content > div > div.govuk-grid-column-two-thirds > form > p:nth-child(4)"
-      val whatNext = "#main-content > div > div.govuk-grid-column-two-thirds > form > h2"
-      val goBack = "#main-content > div > div.govuk-grid-column-two-thirds > form > p:nth-child(7)"
+      val emailText = "#main-content > div > div.govuk-grid-column-two-thirds > p:nth-child(4)"
+      val whatNext = "#main-content > div > div.govuk-grid-column-two-thirds > h2"
+      val goBack = "#main-content > div > div.govuk-grid-column-two-thirds >   p:nth-child(7)"
     }
 
     "AddPropertyRequestSent" must {
-      val RentReviewDetailSentView = view(Some(reference), table, email, AgreementType.NewAgreement)
+      val RentReviewDetailSentView = view(Some(reference), table, email, "New agreement details sent")
       lazy implicit val document: Document = Jsoup.parse(RentReviewDetailSentView.body)
-      val htmlApply = view.apply(Some(reference), table, email, AgreementType.NewAgreement).body
-      val htmlRender = view.render(Some(reference), table, email, AgreementType.NewAgreement,  request, messages, mockConfig).body
-      lazy val htmlF = view.f(Some(reference), table, email, AgreementType.NewAgreement)
+      val htmlApply = view.apply(Some(reference), table, email, "New agreement details sent").body
+      val htmlRender = view.render(Some(reference), table, email, "New agreement details sent",  request, messages, mockConfig).body
+      lazy val htmlF = view.f(Some(reference), table, email, "New agreement details sent")
 
       "htmlF is not empty" in {
         htmlF.toString() must not be empty

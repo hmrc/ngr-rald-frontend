@@ -20,17 +20,13 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.shouldBe
 import play.api.http.Status.{CREATED, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
-import play.api.libs.json.Json
-import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import uk.gov.hmrc.http.{HeaderNames, HttpResponse}
+import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
-import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.UserAnswers
 import uk.gov.hmrc.ngrraldfrontend.views.html.DeclarationView
-import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.{NewAgreement, RenewedAgreement, RentAgreement}
-import uk.gov.hmrc.auth.core.Nino
 
-import java.time.Instant
+
 import scala.concurrent.Future
 
 class DeclaratioinControllerSpec extends ControllerSpecSupport {
