@@ -74,7 +74,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
 
       summaryList.rows.size mustBe 3
       summaryList.rows.map(_.key) must contain allOf(
-        Key(Text("Landlords full name"), ""),
+        Key(Text("Landlord's full name"), ""),
         Key(Text("Do you have a relationship with the landlord other than as a tenant?"), ""),
         Key(Text("Relationship with the landlord"), "")
       )
@@ -249,7 +249,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
         "2 months",
         "Was not in the country",
         messages("Yes"),
-        "£12000",
+        "£12,000",
       )
     }
   }
@@ -391,7 +391,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
       values must contain("Yes")
       values.exists(_.contains("Every 3 years and 6 months")) mustBe true
       values must contain(messages("rentReviewDetails.whatHappensAtRentReview.radio2.text"))
-      values.exists(_.contains("£ 15000")) mustBe true
+      values.exists(_.contains("£15,000")) mustBe true
       values must contain(messages("service.yes"))
       values must contain(messages("rentReviewDetails.whoAgreed.radio1.text"))
     }
@@ -421,7 +421,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
 
     summaryList.rows.size must be >= 4
     extractText(summaryList.rows.head.key.content) mustBe messages("checkAnswers.rentReviewDetails.annualAmount")
-    extractText(summaryList.rows.head.value.content) must include("£ 20000")
+    extractText(summaryList.rows.head.value.content) must include("£20,000")
   }
   "createRentReviewRows return empty rows when no data is provided" in {
     val summaryList = CheckAnswers.createRentReviewRows("cred-123", None)
@@ -453,7 +453,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
       val values = summaryList.rows.map(row => extractText(row.value.content))
       values must contain(messages("service.yes"))
       values must contain(NGRMonthYear.formatYearMonth("2024-01"))
-      values.exists(_.contains("£5000")) mustBe true
+      values.exists(_.contains("£5,000")) mustBe true
     }
   }
   "createRepairsAndFittingOut return only repairsAndFittingOut row when other details are missing" in {
@@ -474,13 +474,36 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
   }
 
   "createPaymentRows" should {
-    "return rows with all payment details when data is present" in {
-      val paymentAdvance = MoneyYouPaidInAdvanceToLandlord(amount = BigDecimal(2500), date = NGRDate("12", "12", "2020").makeString)
+
+    "return gotMoney = Yes and paidMoney = No when explicitly set, with no extra details" in {
+      val userAnswers = UserAnswers(CredId("cred-123"))
+        .set(DidYouGetMoneyFromLandlordPage, true).success.value
+        .set(DidYouPayAnyMoneyToLandlordPage, false).success.value
+
+      val summaryListOpt = CheckAnswers.createPaymentRows("cred-123", Some(userAnswers))
+
+      summaryListOpt mustBe defined
+      val summaryList = summaryListOpt.get
+
+      summaryList.rows.size mustBe 2
+      val keys = summaryList.rows.map(row => extractText(row.key.content))
+      keys must contain allOf(
+        messages("checkAnswers.payments.didYouGetMoneyFromLandlord"),
+        messages("checkAnswers.payments.didYouPayAnyMoneyToLandlord")
+      )
+
+      val values = summaryList.rows.map(row => extractText(row.value.content))
+      values must contain(messages("service.yes"))
+      values must contain(messages("service.no"))
+    }
+
+    "return gotMoney rows including amount and date when lease details are present" in {
+      val lease = MoneyToTakeOnTheLease(BigDecimal(1000), NGRDate("01","01","2021").makeString)
 
       val userAnswers = UserAnswers(CredId("cred-123"))
         .set(DidYouGetMoneyFromLandlordPage, true).success.value
         .set(DidYouPayAnyMoneyToLandlordPage, false).success.value
-        .set(MoneyYouPaidInAdvanceToLandlordPage, paymentAdvance).success.value
+        .set(MoneyToTakeOnTheLeasePage, lease).success.value
 
       val summaryListOpt = CheckAnswers.createPaymentRows("cred-123", Some(userAnswers))
 
@@ -488,7 +511,29 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
       val summaryList = summaryListOpt.get
 
       summaryList.rows.size mustBe 4
+      val keys = summaryList.rows.map(row => extractText(row.key.content))
+      keys must contain allOf(
+        messages("checkAnswers.payments.didYouGetMoneyFromLandlord"),
+        messages("checkAnswers.payments.didYouPayAnyMoneyToLandlord"),
+        messages("checkAnswers.payments.didYouGetMoneyFromLandlord.amount"),
+        messages("checkAnswers.payments.didYouGetMoneyFromLandlord.date")
+      )
+    }
 
+    "return paidMoney rows including amount and date when advance payment details are present" in {
+      val advance = MoneyYouPaidInAdvanceToLandlord(BigDecimal(500), NGRDate("05","05","2021").makeString)
+
+      val userAnswers = UserAnswers(CredId("cred-123"))
+        .set(DidYouGetMoneyFromLandlordPage, false).success.value
+        .set(DidYouPayAnyMoneyToLandlordPage, true).success.value
+        .set(MoneyYouPaidInAdvanceToLandlordPage, advance).success.value
+
+      val summaryListOpt = CheckAnswers.createPaymentRows("cred-123", Some(userAnswers))
+
+      summaryListOpt mustBe defined
+      val summaryList = summaryListOpt.get
+
+      summaryList.rows.size mustBe 4
       val keys = summaryList.rows.map(row => extractText(row.key.content))
       keys must contain allOf(
         messages("checkAnswers.payments.didYouGetMoneyFromLandlord"),
@@ -496,12 +541,24 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
         messages("checkAnswers.payments.moneyYouPaidInAdvanceToLandlord.amount"),
         messages("checkAnswers.payments.moneyYouPaidInAdvanceToLandlord.date")
       )
+    }
 
-      val values = summaryList.rows.map(row => extractText(row.value.content))
-      values must contain(messages("service.yes"))
-      values must contain(messages("service.no"))
-      values.exists(_.contains("£2500")) mustBe true
-      values must contain(NGRDate.formatDate(paymentAdvance.date))
+    "return all rows when both lease and advance payment details are present" in {
+      val lease = MoneyToTakeOnTheLease(BigDecimal(1000), NGRDate("01","01","2021").makeString)
+      val advance = MoneyYouPaidInAdvanceToLandlord(BigDecimal(500), NGRDate("05","05","2021").makeString)
+
+      val userAnswers = UserAnswers(CredId("cred-123"))
+        .set(DidYouGetMoneyFromLandlordPage, true).success.value
+        .set(MoneyToTakeOnTheLeasePage, lease).success.value
+        .set(DidYouPayAnyMoneyToLandlordPage, true).success.value
+        .set(MoneyYouPaidInAdvanceToLandlordPage, advance).success.value
+
+      val summaryListOpt = CheckAnswers.createPaymentRows("cred-123", Some(userAnswers))
+
+      summaryListOpt mustBe defined
+      val summaryList = summaryListOpt.get
+
+      summaryList.rows.size mustBe 6
     }
   }
   "createPaymentRows return only gotMoney row when other details are missing" in {
@@ -550,7 +607,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
 
       summaryList.rows.head.value.content.asHtml.toString must include("Yes")
       summaryList.rows(1).value.content.asHtml.toString must include(messages("didYouGetIncentiveForNotTriggeringBreakClause.checkbox"))
-      summaryList.rows(2).value.content.asHtml.toString must include("£7500.0")
+      summaryList.rows(2).value.content.asHtml.toString must include("£7,500")
       summaryList.rows(3).value.content.asHtml.toString must include("2 months")
       summaryList.rows(4).value.content.asHtml.toString must include("1 January 2025")
     }
@@ -645,7 +702,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
       summaryList.rows.head.value.content.asHtml.toString must include("1 January 2020")
       summaryList.rows(1).value.content.asHtml.toString must include("30 June 2020")
       summaryList.rows(2).value.content.asHtml.toString must include("Yes")
-      summaryList.rows(3).value.content.asHtml.toString must include("£1200.0")
+      summaryList.rows(3).value.content.asHtml.toString must include("£1,200")
     }
 
     "exclude amount row when rentPeriodAmount is None" in {
@@ -695,13 +752,13 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
       firstSummaryList.rows.head.key.content.asHtml.toString must include("End date")
       firstSummaryList.rows.head.value.content.asHtml.toString must include("12 December 2020")
       firstSummaryList.rows(1).key.content.asHtml.toString must include("Rent for this period (excluding VAT)")
-      firstSummaryList.rows(1).value.content.asHtml.toString must include("£800.0")
+      firstSummaryList.rows(1).value.content.asHtml.toString must include("£800")
 
       val lastSummaryList = summaryLists.last
       lastSummaryList.rows.head.key.content.asHtml.toString must include("End date")
       lastSummaryList.rows.head.value.content.asHtml.toString must include("13 May 2021")
       lastSummaryList.rows(1).key.content.asHtml.toString must include("Rent for this period (excluding VAT)")
-      lastSummaryList.rows(1).value.content.asHtml.toString must include("£500.0")
+      lastSummaryList.rows(1).value.content.asHtml.toString must include("£500")
     }
   }
 

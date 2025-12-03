@@ -616,7 +616,7 @@ checkAnswers.leaseRenewal.label = Lease renewal details
 checkAnswers.leaseRenewal.typeOfLeaseRenewal = What type of lease renewal is it?
 
 checkAnswers.landlord.label = Landlord details
-checkAnswers.landlord.fullName = Landlord's full name
+checkAnswers.landlord.fullName = Landlord''s full name
 checkAnswers.landlord.relationship = Do you have a relationship with the landlord other than as a tenant?
 checkAnswers.landlord.relationship.reason = Relationship with the landlord
 
@@ -633,13 +633,18 @@ checkAnswers.rent.whatIsYourRentBasedOn = What is your rent based on?
 checkAnswers.rent.otherReason = Can you tell us how your rent was agreed?
 checkAnswers.rent.agreedRentChange = Do you have a stepped rent?
 checkAnswers.rent.didYouAgreeRentWithLandlord = Did you agree the rent with your landlord or their agent?
+checkAnswers.rent.didYouAgreeRentWithLandlord.no = No, a court set the rent
 checkAnswers.rent.rentInterim = Did the court also set an interim rent?
+checkAnswers.rent.rentInterim.date = When did you start paying the interim rent?
+checkAnswers.rent.rentInterim.amount = How much was the interim rent?
 checkAnswers.rents.whenDidYouAgree = When did you agree your rent?
+checkAnswers.rent.lumpSum = How much was the lump sum?
 checkAnswers.rent.totalAnnualRent = Total annual rent
 checkAnswers.rent.checkRentPeriod = Do you have a rent-free period at the start of your agreement?
 checkAnswers.rents.rentFreePeriod = How many months is your rent-free period?
 checkAnswers.rents.rentFreePeriodReason = Why do you have a rent-free period?
 checkAnswers.rents.startPayingDate = When will you start paying rent?
+checkAnswers.rents.startPayingDate.renewedAgreement  = New rent start date
 
 checkAnswers.rentPeriod.provideDetailsOfFirstSecondRentPeriod.label = First rent period
 checkAnswers.rentPeriod.provideDetailsOfFirstRentPeriod.start = Start date
@@ -666,7 +671,7 @@ checkAnswers.whatYourRentIncludes.howManyCoveredSpacesNotIncludedInRent = Covere
 checkAnswers.whatYourRentIncludes.howManyGaragesNotIncludedInRent = Garages not included in your rent
 checkAnswers.whatYourRentIncludes.doYouPayExtraForParkingSpaces = Do you pay extra for parking spaces or garages that are not included in your rent?
 checkAnswers.whatYourRentIncludes.parkingSpacesOrGaragesNotIncludedInYourRent = How many parking spaces or garages do you pay extra for?
-checkAnswers.whatYourRentIncludes.parkingSpacesOrGaragesNotIncludedInYourRent.totalCost = How much extra do you pay each year for parking and garages (excluding VAT)?
+checkAnswers.whatYourRentIncludes.parkingSpacesOrGaragesNotIncludedInYourRent.totalCost = How much extra do you pay for parking and garages (excluding VAT)?
 checkAnswers.whatYourRentIncludes.parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate = When was this payment agreed for parking and garages?
 
 checkAnswers.repairsAndInsurance.label = Repairs and insurance details
@@ -677,6 +682,9 @@ checkAnswers.repairsAndInsurance.buildingInsurance = Who pays for building insur
 checkAnswers.rentReview.label = Rent review details
 checkAnswers.rentReview.hasIncludeRentReview = Does your agreement include a rent review?
 checkAnswers.rentReview.howOftenReviewed = How often is your rent reviewed?
+checkAnswers.rentReview.howOftenReviewed.yearsOnly = Every {0} year{1}
+checkAnswers.rentReview.howOftenReviewed.monthsOnly = Every {0} month{1}
+checkAnswers.rentReview.howOftenReviewed.yearsAndMonths = Every {0} year{1} and {2} month{3}
 checkAnswers.rentReview.canRentGoDown = Can the rent go down when it is reviewed?
 checkAnswers.rentReviewDetails.annualAmount = How much is your new total annual rent?
 checkAnswers.rentReviewDetails.whatHappensAtRentReview = What did your agreement say could happen to the rent at rent review?
@@ -691,6 +699,8 @@ checkAnswers.repairsAndFittingOut.cost = How much did the repairs or fitting out
 
 checkAnswers.payments.label = Payments
 checkAnswers.payments.didYouGetMoneyFromLandlord = Did you get any money from the landlord or previous tenant to take on the lease?
+checkAnswers.payments.didYouGetMoneyFromLandlord.amount = How much money did you get to take on the lease (excluding VAT)?
+checkAnswers.payments.didYouGetMoneyFromLandlord.date = When did you get the money?
 checkAnswers.payments.didYouPayAnyMoneyToLandlord = Did you pay any money in advance to the landlord?
 checkAnswers.payments.moneyYouPaidInAdvanceToLandlord.amount = How much money did you pay in advance to the landlord (excluding VAT)?
 checkAnswers.payments.moneyYouPaidInAdvanceToLandlord.date = When did you pay the money?

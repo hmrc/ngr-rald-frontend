@@ -42,7 +42,8 @@
     repairsAndFittingOutSummary: Option[SummaryList],
     payments: Option[SummaryList],
     breakClause: Option[SummaryList],
-    otherDetailsSummary: SummaryList
+    otherDetailsSummary: SummaryList,
+    isRenewed: Boolean
 )(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 @heading = @{messages("checkAnswers.title")}
 @layout(pageTitle = Some(messages("checkAnswers.title")), showBackLink = true, fullWidth = false) {
@@ -61,33 +62,61 @@
         <h2 class="govuk-heading-m">@messages("checkAnswers.agreement.label")</h2>
         @govukSummaryList(agreementDetailsSummary.get)
     }
+      @if(isRenewed){
 
-    <h2 class="govuk-heading-m">@messages("checkAnswers.rent.label")</h2>
-    @govukSummaryList(rentSummary)
+          <h2 class="govuk-heading-m">@messages("checkAnswers.rentReview.label")</h2>
+          @govukSummaryList(rentReview)
 
-    @if(firstRentPeriod.nonEmpty){
-        <h2 class="govuk-heading-m">@messages("checkAnswers.rentPeriod.provideDetailsOfFirstSecondRentPeriod.label")</h2>
-        @govukSummaryList(firstRentPeriod.get)
-    }
+          <h2 class="govuk-heading-m">@messages("checkAnswers.rent.label")</h2>
+          @govukSummaryList(rentSummary)
 
-    @rentPeriods.map { rentPeriods =>
-        @for((period, idx) <- rentPeriods.zipWithIndex) {
-            <h2 class="govuk-heading-m">
-                @messages(s"checkAnswers.rentPeriod.ordinal.${idx + 1}")
-            </h2>
-            @govukSummaryList(period)
-        }
-    }
+          @if(firstRentPeriod.nonEmpty) {
+              <h2 class="govuk-heading-m">@messages("checkAnswers.rentPeriod.provideDetailsOfFirstSecondRentPeriod.label")</h2>
+              @govukSummaryList(firstRentPeriod.get)
+          }
 
-    <h2 class="govuk-heading-m">@messages("checkAnswers.whatYourRentIncludes.label")</h2>
-    @govukSummaryList(whatYourRentIncludesSummary)
+          @rentPeriods.map { rentPeriods =>
+              @for((period, idx) <- rentPeriods.zipWithIndex) {
+                  <h2 class="govuk-heading-m">
+                  @messages(s"checkAnswers.rentPeriod.ordinal.${idx + 1}")
+                  </h2>
+                  @govukSummaryList(period)
+              }
+          }
 
-    <h2 class="govuk-heading-m">@messages("checkAnswers.repairsAndInsurance.label")</h2>
-    @govukSummaryList(repairsAndInsurance)
+          <h2 class="govuk-heading-m">@messages("checkAnswers.whatYourRentIncludes.label")</h2>
+          @govukSummaryList(whatYourRentIncludesSummary)
 
-    <h2 class="govuk-heading-m">@messages("checkAnswers.rentReview.label")</h2>
-    @govukSummaryList(rentReview)
+          <h2 class="govuk-heading-m">@messages("checkAnswers.repairsAndInsurance.label")</h2>
+          @govukSummaryList(repairsAndInsurance)
 
+      }else {
+          <h2 class="govuk-heading-m">@messages("checkAnswers.rent.label")</h2>
+          @govukSummaryList(rentSummary)
+
+          @if(firstRentPeriod.nonEmpty) {
+              <h2 class="govuk-heading-m">@messages("checkAnswers.rentPeriod.provideDetailsOfFirstSecondRentPeriod.label")</h2>
+              @govukSummaryList(firstRentPeriod.get)
+          }
+
+          @rentPeriods.map { rentPeriods =>
+              @for((period, idx) <- rentPeriods.zipWithIndex) {
+                  <h2 class="govuk-heading-m">
+                  @messages(s"checkAnswers.rentPeriod.ordinal.${idx + 1}")
+                  </h2>
+                  @govukSummaryList(period)
+              }
+          }
+
+          <h2 class="govuk-heading-m">@messages("checkAnswers.whatYourRentIncludes.label")</h2>
+          @govukSummaryList(whatYourRentIncludesSummary)
+
+          <h2 class="govuk-heading-m">@messages("checkAnswers.repairsAndInsurance.label")</h2>
+          @govukSummaryList(repairsAndInsurance)
+
+          <h2 class="govuk-heading-m">@messages("checkAnswers.rentReview.label")</h2>
+          @govukSummaryList(rentReview)
+      }
     @if(repairsAndFittingOutSummary.nonEmpty){
         <h2 class="govuk-heading-m">@messages("checkAnswers.repairsAndFittingOut.label")</h2>
         @govukSummaryList(repairsAndFittingOutSummary.get)
