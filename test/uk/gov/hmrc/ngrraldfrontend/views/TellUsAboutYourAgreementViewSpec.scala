@@ -62,7 +62,6 @@ class TellUsAboutYourAgreementViewSpec extends ViewBaseSpec {
     val bulletPoint4 = "#main-content > div > div > form > div > div > ul > li:nth-child(4)"
     val bulletPoint5 = "#main-content > div > div > form > div > div > ul > li:nth-child(5)"
     val subheading2 = "#main-content > div > div > form > div > div > h2:nth-child(8)"
-    val subheading3 = "#main-content > div > div > form > div > div > h2:nth-child(9)"
     val rentSubheading2 = "#main-content > div > div > form > div > div > h2"
     val p4 = "#main-content > div > div > form > div > div > p:nth-child(9)"
     val rentp4 = "#main-content > div > div > form > div > div > p:nth-child(10)"

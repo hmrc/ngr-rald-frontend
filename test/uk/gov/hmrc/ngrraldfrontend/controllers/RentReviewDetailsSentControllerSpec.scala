@@ -56,7 +56,6 @@ class  RentReviewDetailsSentControllerSpec extends ControllerSpecSupport with De
 
 
       "Return OK and the correct title for new agreement" in {
-        val response: Option[UserAnswers] = newAgreementAnswers
         when(mockNGRConnector.getRaldUserAnswers(any())(any()))
           .thenReturn(Future.successful(newAgreementAnswers))
         val result = filledController(newAgreementAnswers).confirmation()(authenticatedFakeRequestEmail)
@@ -67,7 +66,6 @@ class  RentReviewDetailsSentControllerSpec extends ControllerSpecSupport with De
       }
 
       "Return OK and the correct title for renewed agreement" in {
-        val response: Option[UserAnswers] = renewedAgreementAnswers
         when(mockNGRConnector.getRaldUserAnswers(any())(any()))
           .thenReturn(Future.successful(renewedAgreementAnswers))
         val result = filledController(renewedAgreementAnswers).confirmation()(authenticatedFakeRequestEmail)
