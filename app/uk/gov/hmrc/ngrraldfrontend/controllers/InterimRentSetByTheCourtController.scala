@@ -56,7 +56,6 @@ class InterimRentSetByTheCourtController @Inject()(interimRentSetByTheCourtView:
       name = inputFieldName,
       label = messages(s"interimRentSetByTheCourt.label.1"),
       labelClasses = Some("govuk-fieldset__legend govuk-fieldset__legend--s"),
-      isPageHeading = true,
       isVisible = true,
       classes = Some("govuk-input govuk-input--width-10"),
       prefix = Some(PrefixOrSuffix(content = Text("£")))
