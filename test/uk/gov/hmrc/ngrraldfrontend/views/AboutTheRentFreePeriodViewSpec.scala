@@ -67,8 +67,7 @@ class AboutTheRentFreePeriodViewSpec extends ViewBaseSpec {
     fieldset = Some(Fieldset(
       legend = Some(Legend(
         content = Text(messages("aboutTheRentFreePeriod.date.label.2")),
-        classes = "govuk-fieldset__legend--s",
-        isPageHeading = false
+        classes = "govuk-fieldset__legend--s"
       ))
     )),
     hint = Some(Hint(

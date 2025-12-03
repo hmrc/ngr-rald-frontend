@@ -34,7 +34,7 @@ class MoneyYouPaidInAdvanceToLandlordViewSpec extends ViewBaseSpec {
   object Strings {
     val heading = "Money you paid in advance to the landlord"
     val title = s"$heading - GOV.UK"
-    val label1 = "How much money did you pay in advance to the landlord (excluding VAT)?"
+    val label1 = "How much money did you pay in advance to the landlord (excluding VAT)? £"
     val label2 = "When did you pay the money?"
     val hint2 = "For example, 27 6 2026"
     val dayInputLabel = "Day"
@@ -46,7 +46,7 @@ class MoneyYouPaidInAdvanceToLandlordViewSpec extends ViewBaseSpec {
   object Selectors {
     val navTitle = "head > title"
     val heading = "#main-content > div > div.govuk-grid-column-two-thirds > form > h1"
-    val label1 = "#main-content > div > div.govuk-grid-column-two-thirds > form > div:nth-child(3) > h1"
+    val label1 = "#main-content > div > div.govuk-grid-column-two-thirds > form > div:nth-child(3)"
     val label2 = "#main-content > div > div.govuk-grid-column-two-thirds > form > div:nth-child(4) > fieldset > legend"
     val hint2 = "#date-hint"
     val startPayingDateDayInputLabel = "#date > div:nth-child(1) > div > label"
@@ -66,7 +66,6 @@ class MoneyYouPaidInAdvanceToLandlordViewSpec extends ViewBaseSpec {
       name = inputFieldName,
       label = messages(s"moneyYouPaidInAdvanceToLandlord.label.1"),
       headingMessageArgs = Seq("govuk-fieldset__legend govuk-fieldset__legend--s"),
-      isPageHeading = true,
       isVisible = true,
       classes = Some("govuk-input govuk-input--width-5"),
       prefix = Some(PrefixOrSuffix(content = Text("£")))
@@ -79,8 +78,7 @@ class MoneyYouPaidInAdvanceToLandlordViewSpec extends ViewBaseSpec {
     fieldset = Some(Fieldset(
       legend = Some(Legend(
         content = Text(messages("moneyYouPaidInAdvanceToLandlord.date.label.2")),
-        classes = "govuk-fieldset__legend--s",
-        isPageHeading = false
+        classes = "govuk-fieldset__legend--s"
       ))
     )),
     hint = Some(Hint(

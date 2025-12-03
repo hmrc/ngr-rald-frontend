@@ -67,8 +67,7 @@ class MoneyYouPaidInAdvanceToLandlordController @Inject()(moneyYouPaidInAdvanceT
     fieldset = Some(Fieldset(
       legend = Some(Legend(
         content = Text(messages("moneyYouPaidInAdvanceToLandlord.date.label.2")),
-        classes = "govuk-fieldset__legend--s",
-        isPageHeading = false
+        classes = "govuk-fieldset__legend--s"
       ))
     )),
     hint = Some(Hint(

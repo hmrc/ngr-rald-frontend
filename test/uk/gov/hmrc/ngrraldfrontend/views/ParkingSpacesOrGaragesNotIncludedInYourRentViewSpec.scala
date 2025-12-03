@@ -49,9 +49,9 @@ class ParkingSpacesOrGaragesNotIncludedInYourRentViewSpec extends ViewBaseSpec {
     val heading = "#main-content > div > div.govuk-grid-column-two-thirds > form > h1"
     val subheading = "#main-content > div > div.govuk-grid-column-two-thirds > form > h2"
     val hint = "#main-content > div > div.govuk-grid-column-two-thirds > form > span:nth-child(4)"
-    val uncoveredSpacesLabel = "#main-content > div > div.govuk-grid-column-two-thirds > form > div:nth-child(6) > h1 > label"
-    val coveredSpacesLabel = "#main-content > div > div.govuk-grid-column-two-thirds > form > div:nth-child(7) > h1 > label"
-    val garagesLabel = "#main-content > div > div.govuk-grid-column-two-thirds > form > div:nth-child(8) > h1 > label"
+    val uncoveredSpacesLabel = "#main-content > div > div.govuk-grid-column-two-thirds > form > div:nth-child(6) > label"
+    val coveredSpacesLabel = "#main-content > div > div.govuk-grid-column-two-thirds > form > div:nth-child(7) > label"
+    val garagesLabel = "#main-content > div > div.govuk-grid-column-two-thirds > form > div:nth-child(8)  > label"
     val totalCostTitle = "#main-content > div > div.govuk-grid-column-two-thirds > form > div:nth-child(9) > label"
     val agreementDateLabel = "#main-content > div > div.govuk-grid-column-two-thirds > form > div:nth-child(10) > fieldset > legend"
     val agreementDateHint = "#agreementDate-hint"
@@ -68,7 +68,6 @@ class ParkingSpacesOrGaragesNotIncludedInYourRentViewSpec extends ViewBaseSpec {
       name = inputFieldName,
       label = messages(s"howManyParkingSpacesOrGaragesIncludedInRent.$inputFieldName.label"),
       headingMessageArgs = Seq("govuk-fieldset__legend govuk-fieldset__legend--s"),
-      isPageHeading = true,
       isVisible = true,
       classes = Some("govuk-input govuk-input--width-5"),
     )
@@ -80,8 +79,7 @@ class ParkingSpacesOrGaragesNotIncludedInYourRentViewSpec extends ViewBaseSpec {
     fieldset = Some(Fieldset(
       legend = Some(Legend(
         content = Text(messages("parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.label")),
-        classes = "govuk-fieldset__legend--s",
-        isPageHeading = false
+        classes = "govuk-fieldset__legend--s"
       ))
     )),
     hint = Some(Hint(
