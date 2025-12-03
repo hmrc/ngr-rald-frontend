@@ -20,8 +20,23 @@ import java.text.NumberFormat
 import java.util.Locale
 
 trait CurrencyHelper {
+
+  private val ukFormatter: NumberFormat = NumberFormat.getCurrencyInstance(Locale.UK)
+  
   def formatRentValue(rentValue: Double): String = {
-    val ukFormatter = NumberFormat.getCurrencyInstance(Locale.UK)
     ukFormatter.format(rentValue).replaceAll("[.]0{2}", "")
   }
+
+  def formatBigDecimals(amount: BigDecimal): String = {
+    if (amount.isValidInt || amount.scale == 0 || amount % 1 == 0) {
+      ukFormatter.setMaximumFractionDigits(0)
+    } else {
+      ukFormatter.setMinimumFractionDigits(2)
+      ukFormatter.setMaximumFractionDigits(2)
+    }
+
+    ukFormatter.format(amount)
+  }
 }
+
+object CurrencyHelper extends CurrencyHelper

@@ -25,7 +25,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.NGRDate.formatDate
 import uk.gov.hmrc.ngrraldfrontend.models.NGRSummaryListRow.summarise
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.pages.*
-import uk.gov.hmrc.ngrraldfrontend.utils.MoneyFormatter
+import uk.gov.hmrc.ngrraldfrontend.utils.CurrencyHelper
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -318,7 +318,7 @@ object CheckAnswers {
     val interimRentAmountRow = interimRentSetByTheCourt.map { value =>
       buildRow(
         labelKey = "checkAnswers.rent.rentInterim",
-        value = MoneyFormatter.format(value.amount),
+        value = CurrencyHelper.formatBigDecimals(value.amount),
         linkId = "rent-interim-amount",
         href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.InterimRentSetByTheCourtController.show(CheckMode),
         hiddenKey = "rent-interim-amount"
@@ -340,7 +340,7 @@ object CheckAnswers {
     val totalAnualRent = answers.get(HowMuchIsTotalAnnualRentPage).map { value =>
       buildRow(
         labelKey = "checkAnswers.rent.totalAnnualRent",
-        value = MoneyFormatter.format(value),
+        value = CurrencyHelper.formatBigDecimals(value),
         linkId = "how-much-is-total-annual-rent",
         href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchIsTotalAnnualRentController.show(CheckMode),
         hiddenKey = "how-much-is-total-annual-rent"
@@ -445,7 +445,7 @@ object CheckAnswers {
       value.rentPeriodAmount.map { amount =>
         buildRow(
           labelKey = "checkAnswers.rentPeriod.provideDetailsOfFirstSecondRentPeriod.amount",
-          value = MoneyFormatter.format(amount),
+          value = CurrencyHelper.formatBigDecimals(amount),
           linkId = "provide-details-of-first-period-amount",
           href = link,
           hiddenKey = "provide-details-of-first-period-amount"
@@ -482,7 +482,7 @@ object CheckAnswers {
             ),
             buildRow(
               labelKey = "checkAnswers.rentPeriod.provideDetailsOfFirstSecondRentPeriod.amount",
-              value = MoneyFormatter.format(period.rentPeriodAmount),
+              value = CurrencyHelper.formatBigDecimals(period.rentPeriodAmount),
               linkId = s"rent-period-${index + 1}-amount",
               href = if (index == 0) {SecondRentPeriodLink} else {uk.gov.hmrc.ngrraldfrontend.controllers.routes.AdditionalRentPeriodController.show(CheckMode, index)},
               hiddenKey = s"rent-period-${index + 1}-amount"
@@ -674,7 +674,7 @@ object CheckAnswers {
       value =>
         buildRow(
           labelKey = "checkAnswers.whatYourRentIncludes.parkingSpacesOrGaragesNotIncludedInYourRent.totalCost",
-          value = MoneyFormatter.format(value.totalCost),
+          value = CurrencyHelper.formatBigDecimals(value.totalCost),
           linkId = "parking-spaces-or-garages-not-included-in-your-rent-value",
           href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.show(CheckMode),
           hiddenKey = "parking-spaces-or-garages-not-included-in-your-rent-value"
@@ -755,7 +755,10 @@ object CheckAnswers {
   }
 
 
-  def createRentReviewRows(credId: String, userAnswers: Option[UserAnswers])(implicit messages: Messages): SummaryList = {
+  def createRentReviewRows(
+                            credId: String,
+                            userAnswers: Option[UserAnswers]
+                          )(implicit messages: Messages): SummaryList = {
     val answers = userAnswers.getOrElse(UserAnswers(CredId(credId)))
     val rentReview = answers.get(RentReviewPage)
     val rentDetails = answers.get(RentReviewDetailsPage)
@@ -764,7 +767,8 @@ object CheckAnswers {
 
     val hasIncludeRentReview = buildRow(
       labelKey = "checkAnswers.rentReview.hasIncludeRentReview",
-      value = rentReview.map(value => if (value.hasIncludeRentReview) "Yes" else "No").getOrElse(messages("service.notProvided")),
+      value = rentReview.map(value => if (value.hasIncludeRentReview) "Yes" else "No")
+        .getOrElse(messages("service.notProvided")),
       linkId = "has-include-rent-review",
       href = rentReviewLink,
       hiddenKey = "has-include-rent-review"
@@ -774,26 +778,20 @@ object CheckAnswers {
       val years = value.rentReviewYears.getOrElse(0)
       val months = value.rentReviewMonths.getOrElse(0)
 
-      val messageKey =
-        if (months == 0) {
-          if (years == 1)
-            "checkAnswers.rentReview.howOftenReviewed.yearsOnly.oneYear"
-          else
-            "checkAnswers.rentReview.howOftenReviewed.yearsOnly.otherYear"
-        } else {
-          (years, months) match {
-            case (1, 1) => "checkAnswers.rentReview.howOftenReviewed.yearsAndMonths.oneYear.oneMonth"
-            case (1, _) => "checkAnswers.rentReview.howOftenReviewed.yearsAndMonths.oneYear.otherMonth"
-            case (_, 1) => "checkAnswers.rentReview.howOftenReviewed.yearsAndMonths.otherYear.oneMonth"
-            case _ => "checkAnswers.rentReview.howOftenReviewed.yearsAndMonths.otherYear.otherMonth"
-          }
-        }
-
-      val formattedValue =
-        if (months == 0)
-          messages(messageKey, years.toString)
-        else
-          messages(messageKey, years.toString, months.toString)
+      val formattedValue = (years, months) match {
+        case (y, 0) if y == 1 =>
+          messages("checkAnswers.rentReview.howOftenReviewed.yearsOnly", y, "")
+        case (y, 0) if y > 1 =>
+          messages("checkAnswers.rentReview.howOftenReviewed.yearsOnly", y, "s")
+        case (0, m) if m == 1 =>
+          messages("checkAnswers.rentReview.howOftenReviewed.monthsOnly", m, "")
+        case (0, m) if m > 1 =>
+          messages("checkAnswers.rentReview.howOftenReviewed.monthsOnly", m, "s")
+        case (y, m) =>
+          val yearsSuffix = if (y > 1) "s" else ""
+          val monthsSuffix = if (m > 1) "s" else ""
+          messages("checkAnswers.rentReview.howOftenReviewed.yearsAndMonths", y, yearsSuffix, m, monthsSuffix)
+      }
 
       buildRow(
         labelKey = "checkAnswers.rentReview.howOftenReviewed",
@@ -817,7 +815,7 @@ object CheckAnswers {
     val annualAmount = buildRow(
       labelKey = "checkAnswers.rentReviewDetails.annualAmount",
       value = rentDetails
-        .map(d => MoneyFormatter.format(d.annualRentAmount))
+        .map(d => CurrencyHelper.formatBigDecimals(d.annualRentAmount))
         .getOrElse(messages("service.notProvided")),
       linkId = "annual-amount",
       href = rentDetailsLink,
@@ -910,7 +908,7 @@ object CheckAnswers {
     val aboutRepairsAndFittingOutCostRow = aboutRepairsAndFittingOut.map { value =>
       buildRow(
         labelKey = "checkAnswers.repairsAndFittingOut.cost",
-        value = MoneyFormatter.format(value.cost),
+        value = CurrencyHelper.formatBigDecimals(value.cost),
         linkId = "repairs-and-fitting-out-cost",
         href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.AboutRepairsAndFittingOutController.show(CheckMode),
         hiddenKey = "repairs-and-fitting-out-cost"
@@ -944,7 +942,7 @@ object CheckAnswers {
         moneyToTakeOnTheLease.map { value =>
           buildRow(
             labelKey = "checkAnswers.payments.didYouGetMoneyFromLandlord.amount",
-            value = MoneyFormatter.format(value.amount),
+            value = CurrencyHelper.formatBigDecimals(value.amount),
             linkId = "money-to-take-on-the-lease-amount",
             href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.MoneyToTakeOnTheLeaseController.show(CheckMode),
             hiddenKey = "money-to-take-on-the-lease-amount"
@@ -980,7 +978,7 @@ object CheckAnswers {
         moneyYouPaidInAdvanceToLandlord.map { value =>
           buildRow(
             labelKey = "checkAnswers.payments.moneyYouPaidInAdvanceToLandlord.amount",
-            value = MoneyFormatter.format(value.amount),
+            value = CurrencyHelper.formatBigDecimals(value.amount),
             linkId = "money-you-paid-in-advance-to-landlord-amount",
             href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.MoneyYouPaidInAdvanceToLandlordController.show(CheckMode),
             hiddenKey = "money-you-paid-in-advance-to-landlord-amount"
@@ -1053,7 +1051,7 @@ object CheckAnswers {
     val howMuchWasTheLumpSumRow = howMuchWasTheLumpSum.map { value =>
       buildRow(
         labelKey = "checkAnswers.rent.lumpSum",
-        value = MoneyFormatter.format(value),
+        value = CurrencyHelper.formatBigDecimals(value),
         linkId = "how-much-was-the-lump-sum",
         href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchWasTheLumpSumController.show(CheckMode),
         hiddenKey = "how-much-was-the-lump-sum"
