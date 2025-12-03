@@ -33,7 +33,7 @@
 @(reference: Option[String], table: Table, email: String, agreement:String)(implicit request: RequestHeader, messages: Messages,  appConfig: AppConfig)
 
 @panelContent = {
-@Messages("rentReviewDetailsSent.p1") <br> @reference.getOrElse("TestRecoveryId")
+@Messages("rentReviewDetailsSent.p1") <br> <b>@reference.getOrElse("TestRecoveryId")</b>
 }
  
 
