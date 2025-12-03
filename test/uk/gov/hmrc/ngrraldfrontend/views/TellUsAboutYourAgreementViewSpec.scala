@@ -62,7 +62,7 @@ class TellUsAboutYourAgreementViewSpec extends ViewBaseSpec {
     val bulletPoint4 = "#main-content > div > div > form > div > div > ul > li:nth-child(4)"
     val bulletPoint5 = "#main-content > div > div > form > div > div > ul > li:nth-child(5)"
     val subheading2 = "#main-content > div > div > form > div > div > h2:nth-child(8)"
-    val rentSubheading2 = "#main-content > div > div > form > div > div > h2"
+    val rentSubheading2 = "#main-content > div > div > form > div > div > h2:nth-child(9)"
     val p4 = "#main-content > div > div > form > div > div > p:nth-child(9)"
     val rentp4 = "#main-content > div > div > form > div > div > p:nth-child(10)"
     val continue = "#continue"
@@ -270,6 +270,10 @@ class TellUsAboutYourAgreementViewSpec extends ViewBaseSpec {
 
     "show correct bulletPoint5" in {
       elementText(Selectors.bulletPoint5) mustBe Strings.rentBulletPoint5
+    }
+
+    "show correct subheading2" in {
+      elementText(Selectors.rentSubheading2) mustBe Strings.subheading2
     }
 
     "show correct p4" in {
