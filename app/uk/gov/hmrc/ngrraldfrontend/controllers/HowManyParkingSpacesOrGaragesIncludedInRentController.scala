@@ -52,7 +52,7 @@ class HowManyParkingSpacesOrGaragesIncludedInRentController @Inject()(howManyPar
       id = inputFieldName,
       name = inputFieldName,
       label = messages(s"howManyParkingSpacesOrGaragesIncludedInRent.$inputFieldName.label"),
-      labelClasses = Some("govuk-fieldset__legend govuk-fieldset__legend--s"),
+      labelClasses = Some("govuk-label govuk-label--s "),
       headingMessageArgs = Seq("govuk-fieldset__legend govuk-fieldset__legend--s"),
       isVisible = true,
       classes = Some("govuk-input govuk-input--width-5"),
