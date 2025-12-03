@@ -37,7 +37,7 @@
     firstRentPeriod: Option[SummaryList],
     rentPeriods: Option[Seq[SummaryList]],
     whatYourRentIncludesSummary: SummaryList,
-    repairsAndInsurance: SummaryList,
+    repairsAndInsurance: Option[SummaryList],
     rentReview: SummaryList,
     repairsAndFittingOutSummary: Option[SummaryList],
     payments: Option[SummaryList],
@@ -111,8 +111,10 @@
           <h2 class="govuk-heading-m">@messages("checkAnswers.whatYourRentIncludes.label")</h2>
           @govukSummaryList(whatYourRentIncludesSummary)
 
-          <h2 class="govuk-heading-m">@messages("checkAnswers.repairsAndInsurance.label")</h2>
-          @govukSummaryList(repairsAndInsurance)
+    @if(repairsAndInsurance.nonEmpty){
+        <h2 class="govuk-heading-m">@messages("checkAnswers.repairsAndInsurance.label")</h2>
+        @govukSummaryList(repairsAndInsurance.get)
+    }
 
           <h2 class="govuk-heading-m">@messages("checkAnswers.rentReview.label")</h2>
           @govukSummaryList(rentReview)

@@ -17,6 +17,7 @@
 package uk.gov.hmrc.ngrraldfrontend.controllers
 
 import play.api.i18n.I18nSupport
+import play.api.mvc.Results.Redirect
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, CheckRequestSentReferenceAction, DataRetrievalAction}
@@ -43,23 +44,27 @@ class CheckAnswersController @Inject()(view: CheckAnswersView,
 
   def show: Action[AnyContent] = {
     (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
-      Future.successful(Ok(view(
-        selectedPropertyAddress = request.property.addressFull,
-        leaseRenewalsSummary = createLeaseRenewalsSummaryRows(credId = request.credId, userAnswers = request.userAnswers),
-        landlordSummary = createLandlordSummaryRows(credId = request.credId, userAnswers = request.userAnswers),
-        agreementDetailsSummary = createAgreementDetailsRows(credId = request.credId, userAnswers = request.userAnswers),
-        rentSummary = createRentRows(credId = request.credId, userAnswers = request.userAnswers),
-        firstRentPeriod = createFirstRentPeriodRow(credId = request.credId, userAnswers = request.userAnswers),
-        rentPeriods = createRentPeriodsSummaryLists(credId = request.credId, userAnswers = request.userAnswers),
-        whatYourRentIncludesSummary = createWhatYourRentIncludesRows(credId = request.credId, userAnswers = request.userAnswers),
-        repairsAndInsurance = createRepairsAndInsurance(credId = request.credId, userAnswers = request.userAnswers),
-        rentReview = createRentReviewRows(credId = request.credId, userAnswers = request.userAnswers),
-        repairsAndFittingOutSummary = createRepairsAndFittingOut(credId = request.credId, userAnswers = request.userAnswers),
-        payments = createPaymentRows(credId = request.credId, userAnswers = request.userAnswers),
-        breakClause = createBreakClauseRows(credId = request.credId, userAnswers = request.userAnswers),
-        otherDetailsSummary = createOtherDetailsRow(credId = request.credId, userAnswers = request.userAnswers),
-        isRenewed =  request.userAnswers.flatMap(_.get(TellUsAboutYourRenewedAgreementPage)).contains(AgreementType.RenewedAgreement)
-      )))
+      val userAnswers = request.userAnswers
+      userAnswers match
+        case Some(_) =>
+          Future.successful(Ok(view(
+            selectedPropertyAddress = request.property.addressFull,
+            leaseRenewalsSummary = createLeaseRenewalsSummaryRows(credId = request.credId, userAnswers = userAnswers),
+            landlordSummary = createLandlordSummaryRows(credId = request.credId, userAnswers = userAnswers),
+            agreementDetailsSummary = createAgreementDetailsRows(credId = request.credId, userAnswers = userAnswers),
+            rentSummary = createRentRows(credId = request.credId, userAnswers = userAnswers),
+            firstRentPeriod = createFirstRentPeriodRow(credId = request.credId, userAnswers = userAnswers),
+            rentPeriods = createRentPeriodsSummaryLists(credId = request.credId, userAnswers = userAnswers),
+            whatYourRentIncludesSummary = createWhatYourRentIncludesRows(credId = request.credId, userAnswers = userAnswers),
+            repairsAndInsurance = createRepairsAndInsurance(credId = request.credId, userAnswers = userAnswers),
+            rentReview = createRentReviewRows(credId = request.credId, userAnswers = userAnswers),
+            repairsAndFittingOutSummary = createRepairsAndFittingOut(credId = request.credId, userAnswers = userAnswers),
+            payments = createPaymentRows(credId = request.credId, userAnswers = userAnswers),
+            breakClause = createBreakClauseRows(credId = request.credId, userAnswers = userAnswers),
+            otherDetailsSummary = createOtherDetailsRow(credId = request.credId, userAnswers = userAnswers),
+            isRenewed =  userAnswers.flatMap(_.get(TellUsAboutYourRenewedAgreementPage)).contains(AgreementType.RenewedAgreement)
+          )))
+        case None => Future.successful(Redirect(appConfig.ngrDashboardUrl))
     }
   }
 

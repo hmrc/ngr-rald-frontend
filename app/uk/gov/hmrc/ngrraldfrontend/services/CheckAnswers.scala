@@ -715,7 +715,7 @@ object CheckAnswers {
     SummaryList(rows, classes = "govuk-!-margin-bottom-9")
   }
 
-  def createRepairsAndInsurance(credId: String, userAnswers: Option[UserAnswers])(implicit messages: Messages): SummaryList = {
+  def createRepairsAndInsurance(credId: String, userAnswers: Option[UserAnswers])(implicit messages: Messages): Option[SummaryList] = {
     val answers = userAnswers.getOrElse(UserAnswers(CredId(credId)))
     val valueOpt = answers.get(RepairsAndInsurancePage)
     val link = uk.gov.hmrc.ngrraldfrontend.controllers.routes.RepairsAndInsuranceController.show(CheckMode)
@@ -751,7 +751,7 @@ object CheckAnswers {
       hiddenKey = "building-insurance"
     )
 
-    SummaryList(Seq(internalRepairs, externalRepairs, buildingInsurance).map(summarise), classes = "govuk-!-margin-bottom-9")
+    if (valueOpt.isEmpty) None else Some(SummaryList(Seq(internalRepairs, externalRepairs, buildingInsurance).map(summarise), classes = "govuk-!-margin-bottom-9"))
   }
 
 
