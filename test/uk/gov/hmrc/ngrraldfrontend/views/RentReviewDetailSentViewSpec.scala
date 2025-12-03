@@ -23,6 +23,7 @@ import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
 import uk.gov.hmrc.ngrraldfrontend.views.html.{Layout, RentReviewDetailsSentView}
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Table, TableRow, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import uk.gov.hmrc.ngrraldfrontend.models.AgreementType
 
 class RentReviewDetailSentViewSpec extends ViewBaseSpec {
     lazy val view: RentReviewDetailsSentView = inject[RentReviewDetailsSentView]
@@ -47,11 +48,11 @@ class RentReviewDetailSentViewSpec extends ViewBaseSpec {
     )
 
     object Strings {
-      val title: String = "Renewed agreement details sent"
+      val title: String = "New agreement details sent"
       val yourRef: String = s"Your reference is $reference"
       val print: String = "Print this page"
       val emailText: String = s"We have sent a confirmation email to $email"
-      val whatNext: String = "What happens next?"
+      val whatNext: String = "What happens next"
       val goBack: String = "Go to your account home"
     }
 
@@ -59,20 +60,20 @@ class RentReviewDetailSentViewSpec extends ViewBaseSpec {
     val email: String = "test@testUser.com"
 
     object Selectors {
-      val title = "#main-content > div > div.govuk-grid-column-two-thirds > form > div > h1"
-      val yourRef = "#main-content > div > div.govuk-grid-column-two-thirds > form > div > div"
+      val title = "#main-content > div > div.govuk-grid-column-two-thirds > div > h1"
+      val yourRef = "#main-content > div > div.govuk-grid-column-two-thirds > div > div"
       val print = "#printPage > a"
-      val emailText = "#main-content > div > div.govuk-grid-column-two-thirds > form > p:nth-child(4)"
-      val whatNext = "#main-content > div > div.govuk-grid-column-two-thirds > form > h2"
-      val goBack = "#main-content > div > div.govuk-grid-column-two-thirds > form > p:nth-child(7)"
+      val emailText = "#main-content > div > div.govuk-grid-column-two-thirds > p:nth-child(4)"
+      val whatNext = "#main-content > div > div.govuk-grid-column-two-thirds > h2"
+      val goBack = "#main-content > div > div.govuk-grid-column-two-thirds >   p:nth-child(7)"
     }
 
     "AddPropertyRequestSent" must {
-      val RentReviewDetailSentView = view(Some(reference), table, email)
+      val RentReviewDetailSentView = view(Some(reference), table, email, "New agreement details sent")
       lazy implicit val document: Document = Jsoup.parse(RentReviewDetailSentView.body)
-      val htmlApply = view.apply(Some(reference), table, email).body
-      val htmlRender = view.render(Some(reference), table, email, request, messages, mockConfig).body
-      lazy val htmlF = view.f(Some(reference), table, email)
+      val htmlApply = view.apply(Some(reference), table, email, "New agreement details sent").body
+      val htmlRender = view.render(Some(reference), table, email, "New agreement details sent",  request, messages, mockConfig).body
+      lazy val htmlF = view.f(Some(reference), table, email, "New agreement details sent")
 
       "htmlF is not empty" in {
         htmlF.toString() must not be empty

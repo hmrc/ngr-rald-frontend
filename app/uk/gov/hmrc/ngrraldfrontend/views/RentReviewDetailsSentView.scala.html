@@ -20,6 +20,7 @@
 @import uk.gov.hmrc.ngrraldfrontend.viewmodels.govuk.all._
 @import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 @import uk.gov.hmrc.ngrraldfrontend.models.components.NavigationBarContent
+@import uk.gov.hmrc.ngrraldfrontend.models.*
 
 
 @this(
@@ -29,21 +30,20 @@
         govukTable : GovukTable,
         saveAndContinueButton: saveAndContinueButton)
 
-@(reference: Option[String], table: Table, email: String)(implicit request: RequestHeader, messages: Messages,  appConfig: AppConfig)
+@(reference: Option[String], table: Table, email: String, agreement:String)(implicit request: RequestHeader, messages: Messages,  appConfig: AppConfig)
 
 @panelContent = {
-@Messages("rentReviewDetailsSent.p1") @reference.getOrElse("TestRecoveryId")
+@Messages("rentReviewDetailsSent.p1") <br> @reference.getOrElse("TestRecoveryId")
 }
+ 
+
+@layout(pageTitle = Some(agreement), showBackLink = false) {
 
 
-@layout(pageTitle = Some(messages("rentReviewDetailsSent.title")), showBackLink = false) {
-
- @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentReviewDetailsSentController.confirmation(), Symbol("autoComplete") -> "off") {
-
-  @govukPanel(Panel(
-   title = Text(Messages("rentReviewDetailsSent.title")),
-   content = HtmlContent(panelContent)
-  ))
+ @govukPanel(Panel(
+  title = Text(Messages(agreement)),
+  content = HtmlContent(panelContent)
+ ))
 
   <p id="printPage" class="js-visible govuk-body govuk-!-display-none-print">
    <a href="#" class="govuk-link" data-module="hmrc-print-link">
@@ -61,5 +61,4 @@
 
   <p class="govuk-body"><a href="@appConfig.ngrDashboardUrl">@Messages("rentReviewDetailsSent.goHome")</a></p>
 
- }
 }

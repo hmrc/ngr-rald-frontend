@@ -26,6 +26,7 @@ import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
 import uk.gov.hmrc.ngrraldfrontend.models.UserAnswers
 import uk.gov.hmrc.ngrraldfrontend.views.html.DeclarationView
 
+
 import scala.concurrent.Future
 
 class DeclaratioinControllerSpec extends ControllerSpecSupport {
@@ -46,7 +47,7 @@ class DeclaratioinControllerSpec extends ControllerSpecSupport {
       "Return SEE_OTHER and the correct view" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         when(mockNGRConnector.upsertRaldUserAnswers(any())(any())).thenReturn(Future.successful(HttpResponse(CREATED, "Created Successfully")))
-        val result = controllerProperty(None).submit(authenticatedFakeRequest)
+        val result = controllerProperty(rentAgreementAnswers).submit(authenticatedFakeRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) shouldBe Some(routes.RentReviewDetailsSentController.confirmation().url)
       }
