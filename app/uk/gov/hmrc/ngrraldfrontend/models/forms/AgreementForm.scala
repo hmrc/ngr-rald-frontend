@@ -66,8 +66,7 @@ object AgreementForm extends Mappings with DateMappings{
     fieldset = Some(Fieldset(
       legend = Some(Legend(
         content = Text(messages("agreement.subheading.1")),
-        classes = "govuk-fieldset__legend--m",
-        isPageHeading = false
+        classes = "govuk-fieldset__legend--m"
       ))
     )),
     hint = Some(Hint(
@@ -89,8 +88,7 @@ object AgreementForm extends Mappings with DateMappings{
             fieldset = Some(Fieldset(
               legend = Some(Legend(
                 content = Text(messages("agreement.radio.conditional.subheading.1")),
-                classes = "govuk-fieldset__legend--s",
-                isPageHeading = false
+                classes = "govuk-fieldset__legend--s"
               ))
             )),
             hint = Some(Hint(
