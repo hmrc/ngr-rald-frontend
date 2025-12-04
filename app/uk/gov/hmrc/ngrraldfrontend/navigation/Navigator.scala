@@ -481,19 +481,19 @@ class Navigator @Inject()(sessionRepository: SessionRepository) {
             answers.get(TellUsAboutRentPage) match {
               case Some(_) =>
                 if (answers.get(RepairsAndInsurancePage).isEmpty)
-                  nextPageForRentBasedOnRentReviewCheckMode(answers, false)
+                  nextPageForRentBasedOnRentCheckMode(answers, false)
                 else
                   uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show
               case None =>
-                val direction = if (answers.get(AgreedRentChangePage).nonEmpty)
-                  uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchIsTotalAnnualRentController.show(CheckMode)
-                else
-                  nextPageForRentBaseOnNonTOCCheckModeOnly(HowMuchIsTotalAnnualRentPage, uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchIsTotalAnnualRentController.show(CheckMode), answers)
+//                val direction = if (answers.get(AgreedRentChangePage).nonEmpty)
+//                  uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchIsTotalAnnualRentController.show(CheckMode)
+//                else
+//                  nextPageForRentBaseOnNonTOCCheckModeOnly(HowMuchIsTotalAnnualRentPage, uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchIsTotalAnnualRentController.show(CheckMode), answers)
                 genericNavigationSwitchHandler(
                   mode = CheckMode,
                   currentPage = WhatIsYourRentBasedOnPage,
                   nextPageToBeClean = AgreedRentChangePage,
-                  nextPageCall = direction,
+                  nextPageCall = nextPageForRentBaseOnNonTOCCheckModeOnly(HowMuchIsTotalAnnualRentPage, uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchIsTotalAnnualRentController.show(CheckMode), answers),
                   dropList = typeOfAgreementJourney,
                   answers = answers,
                   returnCYA = answers.get(HowMuchIsTotalAnnualRentPage).nonEmpty
@@ -503,7 +503,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository) {
             answers.get(TellUsAboutRentPage) match {
               case Some(_) =>
                 if (answers.get(RepairsAndInsurancePage).nonEmpty)
-                  nextPageForRentBasedOnRentReviewCheckMode(answers, true)
+                  nextPageForRentBasedOnRentCheckMode(answers, true)
                 else
                   uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show
               case _ =>
@@ -528,7 +528,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository) {
             answers.get(TellUsAboutRentPage) match {
               case Some(_) =>
                 if (answers.get(RepairsAndInsurancePage).isEmpty)
-                  nextPageForRentBasedOnRentReviewCheckMode(answers, false)
+                  nextPageForRentBasedOnRentCheckMode(answers, false)
                 else
                   uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show
               case None =>
@@ -954,7 +954,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository) {
       checkRouteMap(page)(shouldGoToRentPeriodsPage)(userAnswers)
   }
 
-  private def nextPageForRentBasedOnRentReviewCheckMode(userAnswers: UserAnswers, isTOC: Boolean) = {
+  private def nextPageForRentBasedOnRentCheckMode(userAnswers: UserAnswers, isTOC: Boolean) = {
     val pagesToBeRemoved = List(WhatIsYourRentBasedOnPage, WhatYourRentIncludesPage)
     val direction = if (isTOC) uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatRentIncludesRatesWaterServiceController.show(CheckMode) else
       uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatYourRentIncludesController.show(CheckMode)
@@ -976,7 +976,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository) {
   }
 
   private def nextPageForRentBaseOnNonTOCCheckModeOnly[A](nextPage: Gettable[A], nextPageCall: Call, userAnswers: UserAnswers)(implicit reads: Reads[A]): Call =
-    (userAnswers.get(nextPage).isEmpty, userAnswers.get(WhatYourRentIncludesPage).exists(_.rentIncService.isEmpty)) match
+    (userAnswers.get(nextPage).isEmpty, userAnswers.get(WhatYourRentIncludesPage).isEmpty || userAnswers.get(WhatYourRentIncludesPage).exists(_.rentIncService.isEmpty)) match
       case (true, _) => nextPageCall
       case (false, true) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatYourRentIncludesController.show(CheckMode)
       case (false, false) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show

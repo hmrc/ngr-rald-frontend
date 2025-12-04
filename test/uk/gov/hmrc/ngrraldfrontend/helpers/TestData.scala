@@ -144,6 +144,8 @@ trait TestData {
 
  val interimRentSetByTheCourtModel: InterimRentSetByTheCourt = InterimRentSetByTheCourt(BigDecimal("10000"), "1990-01")
 
+ val rentFreePeriodModel: RentFreePeriod = RentFreePeriod(1, "Rent free reason")
+
  val aboutTheRentFreePeriodModel: AboutTheRentFreePeriod = AboutTheRentFreePeriod(1, "1990-01-01")
 
  val landlordModel: Landlord = Landlord("Joe Bloggs", true, None)
@@ -155,9 +157,11 @@ trait TestData {
  val whatYourRentIncludesModelAllYes: WhatYourRentIncludes = WhatYourRentIncludes(true, true, true, Some(true), Some(true), Some(true), Some(5))
 
  val whatYourRentIncludesModelAllNo: WhatYourRentIncludes = WhatYourRentIncludes(false, false, false, Some(false), Some(false), Some(false), None)
+
+ val whatYourRentIncludesModelForTOC: WhatYourRentIncludes = WhatYourRentIncludes(false, false, false, None, None, None, None)
  
  val rentBasedOnModel: RentBasedOn = RentBasedOn("Other", Some("The rent was agreed"))
- 
+
  val rentBasedOnTOC: RentBasedOn = RentBasedOn("TotalOccupancyCost", None)
  
  val hasAnythingElseAffectedTheRentModel: HasAnythingElseAffectedTheRent = HasAnythingElseAffectedTheRent(true, Some("The area has gone up in value"))
