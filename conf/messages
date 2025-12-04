@@ -607,7 +607,7 @@ rentReviewDetailsSent.p3 = Address
 rentReviewDetailsSent.p4 = Property Reference
 rentReviewDetailsSent.p5 = We have sent a confirmation email to {0}
 rentReviewDetailsSent.h1 = What happens next
-rentReviewDetailsSent.p6 = We will review the information you sent us. If we need to clarify anything or need more details, we will contact you by email
+rentReviewDetailsSent.p6 = We will review the information you sent us. If we need to clarify anything or need more details, we will contact you by email.
 rentReviewDetailsSent.goHome = Go to your account home
 
 #Check Answers
