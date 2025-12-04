@@ -158,6 +158,8 @@ trait TestData {
  
  val rentBasedOnModel: RentBasedOn = RentBasedOn("Other", Some("The rent was agreed"))
  
+ val rentBasedOnTOC: RentBasedOn = RentBasedOn("TotalOccupancyCost", None)
+ 
  val hasAnythingElseAffectedTheRentModel: HasAnythingElseAffectedTheRent = HasAnythingElseAffectedTheRent(true, Some("The area has gone up in value"))
 
  val repairsAndInsuranceModel  = RepairsAndInsurance("You", "Landlord", "YouAndLandlord")

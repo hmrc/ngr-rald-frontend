@@ -31,7 +31,7 @@ import uk.gov.hmrc.ngrraldfrontend.services.CheckAnswers.{createBreakClauseRows,
 import java.time.LocalDate
 
 class CheckAnswersSpec extends ViewBaseSpec with TestData {
-
+  val userAnswersWithData = UserAnswers(CredId("credId"))
   def extractText(content: Content): String = content match {
     case Text(value) => value
     case HtmlContent(html) => html.toString.replaceAll("<[^>]*>", "")
@@ -70,7 +70,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
     "return rows with landlord details when data is present" in {
       val landlord = Landlord("John Doe", hasRelationship = true, landlordRelationship = Some("Family"))
       val userAnswers: UserAnswers = UserAnswers(CredId("cred-123")).set(LandlordPage, landlord).get
-      val summaryList = CheckAnswers.createLandlordSummaryRows("cred-123", Some(userAnswers))
+      val summaryList = CheckAnswers.createLandlordSummaryRows(userAnswers)
 
       summaryList.rows.size mustBe 3
       summaryList.rows.map(_.key) must contain allOf(
@@ -81,7 +81,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
     }
 
     "return rows with 'not provided' when data is missing" in {
-      val summaryList = CheckAnswers.createLandlordSummaryRows("cred-123", None)
+      val summaryList = CheckAnswers.createLandlordSummaryRows(userAnswersWithData)
 
       summaryList.rows.foreach { row =>
         extractText(row.value.content) mustBe messages("service.notProvided")
@@ -91,8 +91,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
 
 
   "createAgreementDetailsRows" should {
-
-
+    
     "return SummaryList with all rows when all answers are present" in {
       val agreement = Agreement(
         agreementStart = NGRDate("1", "1", "2025").makeString,
@@ -107,7 +106,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
         .flatMap(_.set(AgreementPage, agreement))
         .success.value
 
-      val result = CheckAnswers.createAgreementDetailsRows("1234", Some(answers))
+      val result = CheckAnswers.createAgreementDetailsRows(answers)
 
       result mustBe defined
       val rows = result.get.rows
@@ -120,7 +119,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
         .set(WhatTypeOfAgreementPage, "Verbal")
         .success.value
 
-      val result = CheckAnswers.createAgreementDetailsRows("1234", Some(answers))
+      val result = CheckAnswers.createAgreementDetailsRows(answers)
 
       result mustBe defined
       result.get.rows.size mustBe 1
@@ -133,7 +132,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
         .set(WhatTypeOfAgreementPage, "Verbal")
         .flatMap(_.set(AgreementVerbalPage, agreementVerbalModel))
         .success.value
-      val result = CheckAnswers.createAgreementDetailsRows("1234", Some(answers))
+      val result = CheckAnswers.createAgreementDetailsRows(answers)
 
       result mustBe defined
       val rows = result.get.rows
@@ -168,7 +167,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
         .flatMap(_.set(AgreementPage, agreement))
         .success.value
 
-      val result = CheckAnswers.createAgreementDetailsRows("1234", Some(answers))
+      val result = CheckAnswers.createAgreementDetailsRows(answers)
 
       result mustBe defined
       val rows = result.get.rows
@@ -184,7 +183,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
     "return None when agreement type is missing" in {
       val answers = UserAnswers(CredId("1234"))
 
-      val result = CheckAnswers.createAgreementDetailsRows("1234", Some(answers))
+      val result = CheckAnswers.createAgreementDetailsRows(answers)
 
       result mustBe None
     }
@@ -196,7 +195,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
       .set(WhatTypeOfAgreementPage, "Verbal")
       .get
 
-    val summaryListOpt = CheckAnswers.createAgreementDetailsRows("cred-123", Some(userAnswers))
+    val summaryListOpt = CheckAnswers.createAgreementDetailsRows(userAnswers)
 
     summaryListOpt mustBe defined
     val summaryList = summaryListOpt.get
@@ -218,7 +217,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
         .set(CheckRentFreePeriodPage, true).success.value
         .set(RentFreePeriodPage, RentFreePeriod(months = 2, reasons = "Was not in the country")).success.value
         .set(RentDatesAgreeStartPage, RentDatesAgreeStart(NGRDate("1", "1", "2020").makeString, NGRDate("1", "1", "2021").makeString)).success.value
-      val summaryList = CheckAnswers.createRentRows("cred-123", Some(userAnswers))
+      val summaryList = CheckAnswers.createRentRows(userAnswers)
       summaryList.rows.size must be >= 3
       val keys = summaryList.rows.map(_.key.content).map {
         case Text(text) => text
@@ -255,7 +254,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
   }
   "createRentRows" should {
     "return empty rows when no data is provided" in {
-      val summaryList = CheckAnswers.createRentRows("cred-123", None)
+      val summaryList = CheckAnswers.createRentRows(userAnswersWithData)
       summaryList.rows.size mustBe 0
     }
   }
@@ -282,7 +281,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
         .set(DoYouPayExtraForParkingSpacesPage, false).success.value
         .set(ParkingSpacesOrGaragesNotIncludedInYourRentPage, parkingSpacesNotIncluded).success.value
 
-      val summaryList = CheckAnswers.createWhatYourRentIncludesRows("cred-123", Some(userAnswers))
+      val summaryList = CheckAnswers.createWhatYourRentIncludesRows(userAnswers)
       summaryList.rows.size must be >= 8
 
       val keys = summaryList.rows.map(row => extractText(row.key.content))
@@ -298,7 +297,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
     }
   }
   "createWhatYourRentIncludesRows return rows with 'not provided' when data is missing" in {
-    val summaryList = CheckAnswers.createWhatYourRentIncludesRows("cred-123", None)
+    val summaryList = CheckAnswers.createWhatYourRentIncludesRows(userAnswersWithData)
     summaryList.rows.size mustBe 3
     summaryList.rows.foreach { row =>
       extractText(row.value.content) mustBe messages("service.notProvided")
@@ -315,7 +314,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
       rentIncService = None
     )
     val userAnswers = UserAnswers(CredId("cred-123")).set(WhatYourRentIncludesPage, whatYourRentIncludes).get
-    val summaryList = CheckAnswers.createWhatYourRentIncludesRows("cred-123", Some(userAnswers))
+    val summaryList = CheckAnswers.createWhatYourRentIncludesRows(userAnswers)
     val livingRow = summaryList.rows.find(row => extractText(row.key.content) == messages("checkAnswers.whatYourRentIncludes.livingAccommodation"))
     livingRow mustBe defined
     extractText(livingRow.get.value.content) mustBe messages("service.yes")
@@ -332,8 +331,12 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
         .set(RepairsAndInsurancePage, repairsAndInsurance)
         .get
 
-      val summaryList = CheckAnswers.createRepairsAndInsurance("cred-123", Some(userAnswers))
+      val summaryListOption = CheckAnswers.createRepairsAndInsurance(userAnswers)
 
+      summaryListOption.nonEmpty mustBe true
+      
+      val summaryList = summaryListOption.get
+      
       summaryList.rows.size mustBe 3
 
       val keys = summaryList.rows.map(row => extractText(row.key.content))
@@ -348,13 +351,10 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
       values must contain(messages("repairsAndInsurance.radio.landlord"))
     }
   }
-  "createRepairsAndInsurance return rows with 'not provided' when data is missing" in {
-    val summaryList = CheckAnswers.createRepairsAndInsurance("cred-123", None)
+  "createRepairsAndInsurance summaryList return none when data is missing" in {
+    val summaryList = CheckAnswers.createRepairsAndInsurance(userAnswersWithData)
 
-    summaryList.rows.size mustBe 3
-    summaryList.rows.foreach { row =>
-      extractText(row.value.content) mustBe messages("service.notProvided")
-    }
+    summaryList mustBe None
   }
 
   "createRentReviewRows" should {
@@ -378,7 +378,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
         .set(RentReviewPage, rentReview).success.value
         .set(RentReviewDetailsPage, rentDetails).success.value
 
-      val summaryList = CheckAnswers.createRentReviewRows("cred-123", Some(userAnswers))
+      val summaryList = CheckAnswers.createRentReviewRows(userAnswers)
 
       summaryList.rows.size must be >= 6
 
@@ -400,7 +400,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
     val rentReview = RentReview(hasIncludeRentReview = true, rentReviewYears = Some(2), rentReviewMonths = Some(0), canRentGoDown = true)
     val userAnswers = UserAnswers(CredId("cred-123")).set(RentReviewPage, rentReview).get
 
-    val summaryList = CheckAnswers.createRentReviewRows("cred-123", Some(userAnswers))
+    val summaryList = CheckAnswers.createRentReviewRows(userAnswers)
 
     summaryList.rows.size must be >= 3
     extractText(summaryList.rows.head.key.content) mustBe messages("checkAnswers.rentReview.hasIncludeRentReview")
@@ -417,14 +417,15 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
 
     val userAnswers = UserAnswers(CredId("cred-123")).set(RentReviewDetailsPage, rentDetails).get
 
-    val summaryList = CheckAnswers.createRentReviewRows("cred-123", Some(userAnswers))
+    val summaryList = CheckAnswers.createRentReviewRows(userAnswers)
 
     summaryList.rows.size must be >= 4
     extractText(summaryList.rows.head.key.content) mustBe messages("checkAnswers.rentReviewDetails.annualAmount")
     extractText(summaryList.rows.head.value.content) must include("£20,000")
   }
+  
   "createRentReviewRows return empty rows when no data is provided" in {
-    val summaryList = CheckAnswers.createRentReviewRows("cred-123", None)
+    val summaryList = CheckAnswers.createRentReviewRows(userAnswersWithData)
     summaryList.rows.size mustBe 0
   }
 
@@ -436,7 +437,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
         .set(RepairsAndFittingOutPage, true).success.value
         .set(AboutRepairsAndFittingOutPage, aboutRepairs).success.value
 
-      val summaryListOpt = CheckAnswers.createRepairsAndFittingOut("cred-123", Some(userAnswers))
+      val summaryListOpt = CheckAnswers.createRepairsAndFittingOut(userAnswers)
 
       summaryListOpt mustBe defined
       val summaryList = summaryListOpt.get
@@ -459,7 +460,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
   "createRepairsAndFittingOut return only repairsAndFittingOut row when other details are missing" in {
     val userAnswers = UserAnswers(CredId("cred-123")).set(RepairsAndFittingOutPage, false).get
 
-    val summaryListOpt = CheckAnswers.createRepairsAndFittingOut("cred-123", Some(userAnswers))
+    val summaryListOpt = CheckAnswers.createRepairsAndFittingOut(userAnswers)
 
     summaryListOpt mustBe defined
     val summaryList = summaryListOpt.get
@@ -469,7 +470,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
     extractText(summaryList.rows.head.value.content) mustBe messages("service.no")
   }
   "createRepairsAndFittingOut return None when no data is provided" in {
-    val summaryListOpt = CheckAnswers.createRepairsAndFittingOut("cred-123", None)
+    val summaryListOpt = CheckAnswers.createRepairsAndFittingOut(userAnswersWithData)
     summaryListOpt mustBe None
   }
 
@@ -480,7 +481,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
         .set(DidYouGetMoneyFromLandlordPage, true).success.value
         .set(DidYouPayAnyMoneyToLandlordPage, false).success.value
 
-      val summaryListOpt = CheckAnswers.createPaymentRows("cred-123", Some(userAnswers))
+      val summaryListOpt = CheckAnswers.createPaymentRows(userAnswers)
 
       summaryListOpt mustBe defined
       val summaryList = summaryListOpt.get
@@ -505,7 +506,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
         .set(DidYouPayAnyMoneyToLandlordPage, false).success.value
         .set(MoneyToTakeOnTheLeasePage, lease).success.value
 
-      val summaryListOpt = CheckAnswers.createPaymentRows("cred-123", Some(userAnswers))
+      val summaryListOpt = CheckAnswers.createPaymentRows(userAnswers)
 
       summaryListOpt mustBe defined
       val summaryList = summaryListOpt.get
@@ -528,7 +529,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
         .set(DidYouPayAnyMoneyToLandlordPage, true).success.value
         .set(MoneyYouPaidInAdvanceToLandlordPage, advance).success.value
 
-      val summaryListOpt = CheckAnswers.createPaymentRows("cred-123", Some(userAnswers))
+      val summaryListOpt = CheckAnswers.createPaymentRows(userAnswers)
 
       summaryListOpt mustBe defined
       val summaryList = summaryListOpt.get
@@ -553,7 +554,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
         .set(DidYouPayAnyMoneyToLandlordPage, true).success.value
         .set(MoneyYouPaidInAdvanceToLandlordPage, advance).success.value
 
-      val summaryListOpt = CheckAnswers.createPaymentRows("cred-123", Some(userAnswers))
+      val summaryListOpt = CheckAnswers.createPaymentRows(userAnswers)
 
       summaryListOpt mustBe defined
       val summaryList = summaryListOpt.get
@@ -564,7 +565,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
   "createPaymentRows return only gotMoney row when other details are missing" in {
     val userAnswers = UserAnswers(CredId("cred-123")).set(DidYouGetMoneyFromLandlordPage, true).get
 
-    val summaryListOpt = CheckAnswers.createPaymentRows("cred-123", Some(userAnswers))
+    val summaryListOpt = CheckAnswers.createPaymentRows(userAnswers)
 
     summaryListOpt mustBe defined
     val summaryList = summaryListOpt.get
@@ -574,7 +575,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
     extractText(summaryList.rows.head.value.content) mustBe messages("service.yes")
   }
   "createPaymentRows return None when no data is provided" in {
-    val summaryListOpt = CheckAnswers.createPaymentRows("cred-123", None)
+    val summaryListOpt = CheckAnswers.createPaymentRows(userAnswersWithData)
     summaryListOpt mustBe None
   }
 
@@ -582,7 +583,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
   "createBreakClauseRows" must {
 
     "return None when no break clause data exists" in {
-      val result = createBreakClauseRows("credId", Some(UserAnswers(CredId("credId"))))
+      val result = createBreakClauseRows(userAnswersWithData)
       result mustBe None
     }
 
@@ -592,13 +593,13 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
       val rentFreePeriod = AboutTheRentFreePeriod(months = 2, date = NGRDate("01", "01", "2025").makeString)
       val lumpSum = BigDecimal(7500.00)
 
-      val userAnswers = UserAnswers(CredId("credId"))
+      val userAnswers = userAnswersWithData
         .set(ConfirmBreakClausePage, confirmBreakClause).success.value
         .set(DidYouGetIncentiveForNotTriggeringBreakClausePage, incentiveDetails).success.value
         .set(HowMuchWasTheLumpSumPage, lumpSum).success.value
         .set(AboutTheRentFreePeriodPage, rentFreePeriod).success.value
 
-      val result = createBreakClauseRows("credId", Some(userAnswers))
+      val result = createBreakClauseRows(userAnswers)
 
       result mustBe defined
       val summaryList = result.get
@@ -614,10 +615,10 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
 
     "handle single checkbox selection correctly" in {
       val incentiveDetails = DidYouGetIncentiveForNotTriggeringBreakClause(checkBox = Set(YesRentFreePeriod))
-      val userAnswers = UserAnswers(CredId("credId"))
+      val userAnswers = userAnswersWithData
         .set(DidYouGetIncentiveForNotTriggeringBreakClausePage, incentiveDetails).success.value
 
-      val result = createBreakClauseRows("credId", Some(userAnswers))
+      val result = createBreakClauseRows(userAnswers)
 
       result mustBe defined
       val summaryList = result.get
@@ -626,10 +627,10 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
 
     "format months correctly for singular value" in {
       val rentFreePeriod = AboutTheRentFreePeriod(months = 1, date = NGRDate("01", "01", "2025").makeString)
-      val userAnswers = UserAnswers(CredId("credId"))
+      val userAnswers = userAnswersWithData
         .set(AboutTheRentFreePeriodPage, rentFreePeriod).success.value
 
-      val result = createBreakClauseRows("credId", Some(userAnswers))
+      val result = createBreakClauseRows(userAnswers)
 
       result mustBe defined
       val summaryList = result.get
@@ -643,7 +644,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
 
       val userAnswers = UserAnswers(CredId("cred-123")).set(HasAnythingElseAffectedTheRentPage, otherDetails).get
 
-      val summaryList = CheckAnswers.createOtherDetailsRow("cred-123", Some(userAnswers))
+      val summaryList = CheckAnswers.createOtherDetailsRow(userAnswers)
 
       summaryList.rows.size mustBe 2
 
@@ -662,14 +663,14 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
     val otherDetails = HasAnythingElseAffectedTheRent(radio = false, reason = None)
     val userAnswers = UserAnswers(CredId("cred-123")).set(HasAnythingElseAffectedTheRentPage, otherDetails).get
 
-    val summaryList = CheckAnswers.createOtherDetailsRow("cred-123", Some(userAnswers))
+    val summaryList = CheckAnswers.createOtherDetailsRow(userAnswers)
 
     summaryList.rows.size mustBe 1
     extractText(summaryList.rows.head.key.content) mustBe messages("checkAnswers.Otherdetails.hasAnyAffectedRent")
     extractText(summaryList.rows.head.value.content) mustBe messages("service.no")
   }
   "createOtherDetailsRow return empty SummaryList when no other details data is provided" in {
-    val summaryList = CheckAnswers.createOtherDetailsRow("cred-123", None)
+    val summaryList = CheckAnswers.createOtherDetailsRow(userAnswersWithData)
     summaryList.rows.size mustBe 0
   }
 
@@ -677,7 +678,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
   "createFirstRentPeriodRow" must {
 
     "return None when ProvideDetailsOfFirstRentPeriodPage is missing" in {
-      val result = createFirstRentPeriodRow("credId", Some(UserAnswers(CredId("credId"))))
+      val result = createFirstRentPeriodRow(userAnswersWithData)
       result mustBe None
     }
 
@@ -689,10 +690,10 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
         rentPeriodAmount = Some(BigDecimal(1200.0))
       )
 
-      val userAnswers = UserAnswers(CredId("credId"))
+      val userAnswers = userAnswersWithData
         .set(ProvideDetailsOfFirstRentPeriodPage, rentPeriodDetail).success.value
 
-      val result = createFirstRentPeriodRow("credId", Some(userAnswers))
+      val result = createFirstRentPeriodRow(userAnswers)
 
       result mustBe defined
       val summaryList = result.get
@@ -713,10 +714,10 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
         rentPeriodAmount = None
       )
 
-      val userAnswers = UserAnswers(CredId("credId"))
+      val userAnswers = userAnswersWithData
         .set(ProvideDetailsOfFirstRentPeriodPage, rentPeriodDetail).success.value
 
-      val result = createFirstRentPeriodRow("credId", Some(userAnswers))
+      val result = createFirstRentPeriodRow(userAnswers)
 
       result mustBe defined
       val summaryList = result.get
@@ -730,7 +731,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
   "createRentPeriodsSummaryLists" should {
 
     "return None when rent periods details are missing" in {
-      val result = createRentPeriodsSummaryLists("credId", Some(UserAnswers(CredId("credId"))))
+      val result = createRentPeriodsSummaryLists(userAnswersWithData)
       result mustBe None
     }
 
@@ -740,9 +741,9 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
         DetailsOfRentPeriod(NGRDate("13", "5", "2021").makeString, BigDecimal(500.0))
       )
 
-      val userAnswers: UserAnswers = UserAnswers(CredId("credId")).set(ProvideDetailsOfSecondRentPeriodPage, rentPeriodsDetails).success.value
+      val userAnswers: UserAnswers = userAnswersWithData.set(ProvideDetailsOfSecondRentPeriodPage, rentPeriodsDetails).success.value
 
-      val result = createRentPeriodsSummaryLists("credId", Some(userAnswers))
+      val result = createRentPeriodsSummaryLists(userAnswers)
 
       result mustBe defined
       val summaryLists = result.get
@@ -765,10 +766,10 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
 
   "createLeaseRenewalsSummaryRows" should {
     "return a row with lease renewal details when data is present" in {
-      val userAnswers = UserAnswers(CredId("cred-123"))
+      val userAnswers = userAnswersWithData
         .set(WhatTypeOfLeaseRenewalPage, "RenewedAgreement")
         .get
-      val summaryListOpt = CheckAnswers.createLeaseRenewalsSummaryRows("cred-123", Some(userAnswers))
+      val summaryListOpt = CheckAnswers.createLeaseRenewalsSummaryRows(userAnswers)
 
       summaryListOpt mustBe defined
       val summaryList = summaryListOpt.get
@@ -787,7 +788,7 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
 
   "createLeaseRenewalsSummaryRows" should {
     "return None when data is missing" in {
-      val summaryListOpt = CheckAnswers.createLeaseRenewalsSummaryRows("cred-123", None)
+      val summaryListOpt = CheckAnswers.createLeaseRenewalsSummaryRows(userAnswersWithData)
       summaryListOpt mustBe None
     }
   }

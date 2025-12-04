@@ -47,9 +47,7 @@ object CheckAnswers {
 
   def yesNo(value: Boolean)(implicit messages: Messages): String = if (value) messages("service.yes") else messages("service.no")
 
-  def createLandlordSummaryRows(credId: String, userAnswers: Option[UserAnswers])
-                               (implicit messages: Messages): SummaryList = {
-    val answers = userAnswers.getOrElse(UserAnswers(CredId(credId)))
+  def createLandlordSummaryRows(answers: UserAnswers)(implicit messages: Messages): SummaryList = {
     val landlord = answers.get(LandlordPage)
 
     val nameRow = buildRow(
@@ -83,9 +81,7 @@ object CheckAnswers {
     SummaryList(rows.map(summarise), classes = "govuk-!-margin-bottom-9")
   }
 
-  def createAgreementDetailsRows(credId: String, userAnswers: Option[UserAnswers])
-                                (implicit messages: Messages): Option[SummaryList] = {
-    val answers = userAnswers.getOrElse(UserAnswers(CredId(credId)))
+  def createAgreementDetailsRows(answers: UserAnswers)(implicit messages: Messages): Option[SummaryList] = {
     val agreementTypeOpt = answers.get(WhatTypeOfAgreementPage)
     val agreement = answers.get(AgreementPage)
     val verbalAgreement = answers.get(AgreementVerbalPage)
@@ -188,9 +184,7 @@ object CheckAnswers {
     }
   }
 
-  def createLeaseRenewalsSummaryRows(credId: String, userAnswers: Option[UserAnswers])
-                                    (implicit messages: Messages): Option[SummaryList] = {
-    val answers = userAnswers.getOrElse(UserAnswers(CredId(credId)))
+  def createLeaseRenewalsSummaryRows(answers: UserAnswers)(implicit messages: Messages): Option[SummaryList] = {
     val leaseRenewal = answers.get(WhatTypeOfLeaseRenewalPage)
 
     leaseRenewal.map { value =>
@@ -211,10 +205,7 @@ object CheckAnswers {
     }
   }
 
-  def createRentRows(credId: String, userAnswers: Option[UserAnswers])
-                    (implicit messages: Messages): SummaryList = {
-    val answers = userAnswers.getOrElse(UserAnswers(CredId(credId)))
-
+  def createRentRows(answers: UserAnswers)(implicit messages: Messages): SummaryList = {
     val rentBasedOn = answers.get(WhatIsYourRentBasedOnPage).map { value =>
       val rentType = value.rentBased match {
         case "OpenMarket" => messages("whatIsYourRentBasedOn.openMarket")
@@ -407,9 +398,7 @@ object CheckAnswers {
     SummaryList(rows, classes = "govuk-!-margin-bottom-9")
   }
 
-  def createFirstRentPeriodRow(credId: String, userAnswers: Option[UserAnswers])
-                         (implicit messages: Messages): Option[SummaryList] = {
-    val answers = userAnswers.getOrElse(UserAnswers(CredId(credId)))
+  def createFirstRentPeriodRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryList] = {
     val rentPeriod = answers.get(ProvideDetailsOfFirstRentPeriodPage)
     val link = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfFirstRentPeriodController.show(CheckMode)
 
@@ -462,10 +451,7 @@ object CheckAnswers {
     }
   }
 
-
-  def createRentPeriodsSummaryLists(credId: String, userAnswers: Option[UserAnswers])
-                                   (implicit messages: Messages): Option[Seq[SummaryList]] = {
-    val answers = userAnswers.getOrElse(UserAnswers(CredId(credId)))
+  def createRentPeriodsSummaryLists(answers: UserAnswers)(implicit messages: Messages): Option[Seq[SummaryList]] = {
     val rentPeriodsDetailsOpt = answers.get(ProvideDetailsOfSecondRentPeriodPage)
     val link = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfSecondRentPeriodController.show(CheckMode)
     val SecondRentPeriodLink = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfSecondRentPeriodController.show(CheckMode)
@@ -495,9 +481,7 @@ object CheckAnswers {
     }
   }
 
-
-  def createWhatYourRentIncludesRows(credId: String, userAnswers: Option[UserAnswers])(implicit messages: Messages): SummaryList = {
-    val answers = userAnswers.getOrElse(UserAnswers(CredId(credId)))
+  def createWhatYourRentIncludesRows(answers: UserAnswers)(implicit messages: Messages): SummaryList = {
     val whatYourRentIncludesOpt = answers.get(WhatYourRentIncludesPage)
     val link = uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatYourRentIncludesController.show(CheckMode)
 
@@ -715,8 +699,7 @@ object CheckAnswers {
     SummaryList(rows, classes = "govuk-!-margin-bottom-9")
   }
 
-  def createRepairsAndInsurance(credId: String, userAnswers: Option[UserAnswers])(implicit messages: Messages): Option[SummaryList] = {
-    val answers = userAnswers.getOrElse(UserAnswers(CredId(credId)))
+  def createRepairsAndInsurance(answers: UserAnswers)(implicit messages: Messages): Option[SummaryList] = {
     val valueOpt = answers.get(RepairsAndInsurancePage)
     val link = uk.gov.hmrc.ngrraldfrontend.controllers.routes.RepairsAndInsuranceController.show(CheckMode)
 
@@ -754,12 +737,7 @@ object CheckAnswers {
     if (valueOpt.isEmpty) None else Some(SummaryList(Seq(internalRepairs, externalRepairs, buildingInsurance).map(summarise), classes = "govuk-!-margin-bottom-9"))
   }
 
-
-  def createRentReviewRows(
-                            credId: String,
-                            userAnswers: Option[UserAnswers]
-                          )(implicit messages: Messages): SummaryList = {
-    val answers = userAnswers.getOrElse(UserAnswers(CredId(credId)))
+  def createRentReviewRows(answers: UserAnswers)(implicit messages: Messages): SummaryList = {
     val rentReview = answers.get(RentReviewPage)
     val rentDetails = answers.get(RentReviewDetailsPage)
     val rentReviewLink = uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentReviewController.show(CheckMode)
@@ -880,8 +858,7 @@ object CheckAnswers {
     SummaryList(rows.map(summarise), classes = "govuk-!-margin-bottom-9")
   }
 
-  def createRepairsAndFittingOut(credId: String, userAnswers: Option[UserAnswers])(implicit messages: Messages): Option[SummaryList] = {
-    val answers = userAnswers.getOrElse(UserAnswers(CredId(credId)))
+  def createRepairsAndFittingOut(answers: UserAnswers)(implicit messages: Messages): Option[SummaryList] = {
     val repairsAndFittingOut = answers.get(RepairsAndFittingOutPage)
     val aboutRepairsAndFittingOut = answers.get(AboutRepairsAndFittingOutPage)
 
@@ -920,8 +897,7 @@ object CheckAnswers {
     if (rows.nonEmpty) Some(SummaryList(rows.map(summarise), classes = "govuk-!-margin-bottom-9")) else None
   }
 
-  def createPaymentRows(credId: String, userAnswers: Option[UserAnswers])(implicit messages: Messages): Option[SummaryList] = {
-    val answers = userAnswers.getOrElse(UserAnswers(CredId(credId)))
+  def createPaymentRows(answers: UserAnswers)(implicit messages: Messages): Option[SummaryList] = {
     val gotMoney = answers.get(DidYouGetMoneyFromLandlordPage)
     val paidMoney = answers.get(DidYouPayAnyMoneyToLandlordPage)
     val moneyYouPaidInAdvanceToLandlord = answers.get(MoneyYouPaidInAdvanceToLandlordPage)
@@ -999,7 +975,6 @@ object CheckAnswers {
         }
       } else None
 
-
     val rows =
       gotMoneyRow.toSeq ++
       moneyToTakeOnTheLeaseAmountRow.toSeq ++
@@ -1010,9 +985,7 @@ object CheckAnswers {
     if (rows.nonEmpty) Some(SummaryList(rows.map(summarise), classes = "govuk-!-margin-bottom-9")) else None
   }
 
-  def createBreakClauseRows(credId: String, userAnswers: Option[UserAnswers])
-                           (implicit messages: Messages): Option[SummaryList] = {
-    val answers = userAnswers.getOrElse(UserAnswers(CredId(credId)))
+  def createBreakClauseRows(answers: UserAnswers)(implicit messages: Messages): Option[SummaryList] = {
     val confirmBreakClause = answers.get(ConfirmBreakClausePage)
     val didYouGetIncentiveForNotTriggeringBreakClause = answers.get(DidYouGetIncentiveForNotTriggeringBreakClausePage)
     val aboutTheRentFreePeriod = answers.get(AboutTheRentFreePeriodPage)
@@ -1044,7 +1017,6 @@ object CheckAnswers {
           hiddenKey = "did-you-get-incentive-for-not-triggering-break-clause"
         )
       }
-
 
     val howMuchWasTheLumpSum = answers.get(HowMuchWasTheLumpSumPage)
 
@@ -1086,12 +1058,9 @@ object CheckAnswers {
       rentFreeStartDate.toSeq
 
     if (rows.nonEmpty) Some(SummaryList(rows.map(summarise), classes = "govuk-!-margin-bottom-9")) else None
-
   }
 
-  def createOtherDetailsRow(credId: String, userAnswers: Option[UserAnswers])
-                           (implicit messages: Messages): SummaryList = {
-    val answers = userAnswers.getOrElse(UserAnswers(CredId(credId)))
+  def createOtherDetailsRow(answers: UserAnswers)(implicit messages: Messages): SummaryList = {
     val hasAnythingElseAffectedTheRent = answers.get(HasAnythingElseAffectedTheRentPage)
 
     val hasAnyAffectedRent = hasAnythingElseAffectedTheRent.map{value =>
@@ -1108,16 +1077,16 @@ object CheckAnswers {
       hasAnythingElseAffectedTheRent match {
         case Some(details) if details.radio =>
           details.reason.map { reason =>
-      buildRow(
-        labelKey = "checkAnswers.Otherdetails.reason",
-        value = reason,
-        linkId = "other-details-reason",
-        href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.HasAnythingElseAffectedTheRentController.show(CheckMode),
-        hiddenKey = "other-details-reason"
-      )
-    }.toSeq
+            buildRow(
+              labelKey = "checkAnswers.Otherdetails.reason",
+              value = reason,
+              linkId = "other-details-reason",
+              href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.HasAnythingElseAffectedTheRentController.show(CheckMode),
+              hiddenKey = "other-details-reason"
+            )
+          }.toSeq
         case _ => Seq.empty
-   }
+      }
 
     val rows = hasAnyAffectedRent ++ reason
     SummaryList(rows.map(summarise), classes = "govuk-!-margin-bottom-9")

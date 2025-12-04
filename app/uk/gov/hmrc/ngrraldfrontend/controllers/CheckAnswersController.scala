@@ -46,23 +46,23 @@ class CheckAnswersController @Inject()(view: CheckAnswersView,
     (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
       val userAnswers = request.userAnswers
       userAnswers match
-        case Some(_) =>
+        case Some(answers) =>
           Future.successful(Ok(view(
             selectedPropertyAddress = request.property.addressFull,
-            leaseRenewalsSummary = createLeaseRenewalsSummaryRows(credId = request.credId, userAnswers = userAnswers),
-            landlordSummary = createLandlordSummaryRows(credId = request.credId, userAnswers = userAnswers),
-            agreementDetailsSummary = createAgreementDetailsRows(credId = request.credId, userAnswers = userAnswers),
-            rentSummary = createRentRows(credId = request.credId, userAnswers = userAnswers),
-            firstRentPeriod = createFirstRentPeriodRow(credId = request.credId, userAnswers = userAnswers),
-            rentPeriods = createRentPeriodsSummaryLists(credId = request.credId, userAnswers = userAnswers),
-            whatYourRentIncludesSummary = createWhatYourRentIncludesRows(credId = request.credId, userAnswers = userAnswers),
-            repairsAndInsurance = createRepairsAndInsurance(credId = request.credId, userAnswers = userAnswers),
-            rentReview = createRentReviewRows(credId = request.credId, userAnswers = userAnswers),
-            repairsAndFittingOutSummary = createRepairsAndFittingOut(credId = request.credId, userAnswers = userAnswers),
-            payments = createPaymentRows(credId = request.credId, userAnswers = userAnswers),
-            breakClause = createBreakClauseRows(credId = request.credId, userAnswers = userAnswers),
-            otherDetailsSummary = createOtherDetailsRow(credId = request.credId, userAnswers = userAnswers),
-            isRenewed =  userAnswers.flatMap(_.get(TellUsAboutYourRenewedAgreementPage)).contains(AgreementType.RenewedAgreement)
+            leaseRenewalsSummary = createLeaseRenewalsSummaryRows(answers = answers),
+            landlordSummary = createLandlordSummaryRows(answers = answers),
+            agreementDetailsSummary = createAgreementDetailsRows(answers = answers),
+            rentSummary = createRentRows(answers = answers),
+            firstRentPeriod = createFirstRentPeriodRow(answers = answers),
+            rentPeriods = createRentPeriodsSummaryLists(answers = answers),
+            whatYourRentIncludesSummary = createWhatYourRentIncludesRows(answers = answers),
+            repairsAndInsurance = createRepairsAndInsurance(answers = answers),
+            rentReview = createRentReviewRows(answers = answers),
+            repairsAndFittingOutSummary = createRepairsAndFittingOut(answers = answers),
+            payments = createPaymentRows(answers = answers),
+            breakClause = createBreakClauseRows(answers = answers),
+            otherDetailsSummary = createOtherDetailsRow(answers = answers),
+            isRenewed =  answers.get(TellUsAboutYourRenewedAgreementPage).nonEmpty
           )))
         case None => Future.successful(Redirect(appConfig.ngrDashboardUrl))
     }

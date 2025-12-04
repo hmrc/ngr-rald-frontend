@@ -87,8 +87,10 @@
           <h2 class="govuk-heading-m">@messages("checkAnswers.whatYourRentIncludes.label")</h2>
           @govukSummaryList(whatYourRentIncludesSummary)
 
-          <h2 class="govuk-heading-m">@messages("checkAnswers.repairsAndInsurance.label")</h2>
-          @govukSummaryList(repairsAndInsurance)
+          @if(repairsAndInsurance.nonEmpty){
+            <h2 class="govuk-heading-m">@messages("checkAnswers.repairsAndInsurance.label")</h2>
+            @govukSummaryList(repairsAndInsurance.get)
+          }
 
       }else {
           <h2 class="govuk-heading-m">@messages("checkAnswers.rent.label")</h2>
@@ -111,14 +113,15 @@
           <h2 class="govuk-heading-m">@messages("checkAnswers.whatYourRentIncludes.label")</h2>
           @govukSummaryList(whatYourRentIncludesSummary)
 
-    @if(repairsAndInsurance.nonEmpty){
-        <h2 class="govuk-heading-m">@messages("checkAnswers.repairsAndInsurance.label")</h2>
-        @govukSummaryList(repairsAndInsurance.get)
-    }
+          @if(repairsAndInsurance.nonEmpty){
+            <h2 class="govuk-heading-m">@messages("checkAnswers.repairsAndInsurance.label")</h2>
+            @govukSummaryList(repairsAndInsurance.get)
+          }
 
           <h2 class="govuk-heading-m">@messages("checkAnswers.rentReview.label")</h2>
           @govukSummaryList(rentReview)
       }
+
     @if(repairsAndFittingOutSummary.nonEmpty){
         <h2 class="govuk-heading-m">@messages("checkAnswers.repairsAndFittingOut.label")</h2>
         @govukSummaryList(repairsAndFittingOutSummary.get)
