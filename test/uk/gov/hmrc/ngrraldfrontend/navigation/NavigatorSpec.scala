@@ -64,8 +64,310 @@ class NavigatorSpec
       result shouldBe routes.AgreementVerbalController.show(NormalMode)
       verify(mockSessionRepository, times(1)).set(any[UserAnswers])
     }
+    "return AgreementController when LeaseOrTenancy is select and AgreementVerbalPage is removed" in {
+      val answers = userAnswersWithoutData
+        .set(WhatTypeOfAgreementPage, "LeaseOrTenancy")
+        .flatMap(_.set(AgreementVerbalPage, agreementVerbalModel))
+        .success.value
+
+      val result = navigator.nextPage(WhatTypeOfAgreementPage, NormalMode, answers)
+
+      result shouldBe routes.AgreementController.show(NormalMode)
+      verify(mockSessionRepository, times(1)).set(any[UserAnswers])
+    }
   }
 
+  "normalRoute for WhatIsYourRentBasedOnPage" should {
+    "return HowMuchIsTotalAnnualRentController when PercentageTurnover is select and AgreedRentChangePage is removed" in {
+      val answers = userAnswersWithoutData
+        .set(WhatIsYourRentBasedOnPage, rentBasedOnPercentageTurnover)
+        .flatMap(_.set(AgreedRentChangePage, true))
+        .success.value
+
+      val result = navigator.nextPage(WhatIsYourRentBasedOnPage, NormalMode, answers)
+
+      result shouldBe routes.HowMuchIsTotalAnnualRentController.show(NormalMode)
+      verify(mockSessionRepository, times(1)).set(any[UserAnswers])
+    }
+    "return AgreedRentChangeController when TotalOccupancyCost is select and WhatYourRentIncludesPage is removed" in {
+      val answers = userAnswersWithoutData
+        .set(WhatIsYourRentBasedOnPage, rentBasedOnTOC)
+        .flatMap(_.set(WhatYourRentIncludesPage, whatYourRentIncludesModelAllYes))
+        .success.value
+
+      val result = navigator.nextPage(WhatIsYourRentBasedOnPage, NormalMode, answers)
+
+      result shouldBe routes.AgreedRentChangeController.show(NormalMode)
+      verify(mockSessionRepository, times(1)).set(any[UserAnswers])
+    }
+    "return WhatRentIncludesRatesWaterServiceController when TotalOccupancyCost is select, TellUsAboutRentPage is provided and WhatYourRentIncludesPage is removed" in {
+      val answers = userAnswersWithoutData
+        .set(WhatIsYourRentBasedOnPage, rentBasedOnTOC)
+        .flatMap(_.set(TellUsAboutRentPage, RentAgreement))
+        .flatMap(_.set(RepairsAndInsurancePage, repairsAndInsuranceModel))
+        .flatMap(_.set(WhatYourRentIncludesPage, whatYourRentIncludesModelAllYes))
+        .success.value
+
+      val result = navigator.nextPage(WhatIsYourRentBasedOnPage, NormalMode, answers)
+
+      result shouldBe routes.WhatRentIncludesRatesWaterServiceController.show(NormalMode)
+      verify(mockSessionRepository, times(1)).set(any[UserAnswers])
+    }
+    "return AgreedRentChangeController when Other is select and HowMuchIsTotalAnnualRentPage is removed" in {
+      val answers = userAnswersWithoutData
+        .set(WhatIsYourRentBasedOnPage, rentBasedOnModel)
+        .flatMap(_.set(HowMuchIsTotalAnnualRentPage, BigDecimal("10000")))
+        .success.value
+
+      val result = navigator.nextPage(WhatIsYourRentBasedOnPage, NormalMode, answers)
+
+      result shouldBe routes.AgreedRentChangeController.show(NormalMode)
+      verify(mockSessionRepository, times(1)).set(any[UserAnswers])
+    }
+  }
+
+  "normalRoute for AgreedRentChangePage" should {
+    "return ProvideDetailsOfFirstRentPeriodController when yes is select and HowMuchIsTotalAnnualRentPage is removed" in {
+      val answers = userAnswersWithoutData
+        .set(AgreedRentChangePage, true)
+        .flatMap(_.set(HowMuchIsTotalAnnualRentPage, BigDecimal("10000")))
+        .success.value
+
+      val result = navigator.nextPage(AgreedRentChangePage, NormalMode, answers)
+
+      result shouldBe routes.ProvideDetailsOfFirstRentPeriodController.show(NormalMode)
+      verify(mockSessionRepository, times(1)).set(any[UserAnswers])
+    }
+    "return HowMuchIsTotalAnnualRentController when no is select and ProvideDetailsOfFirstRentPeriodPage is removed" in {
+      val answers = userAnswersWithoutData
+        .set(AgreedRentChangePage, false)
+        .flatMap(_.set(ProvideDetailsOfFirstRentPeriodPage, firstRentPeriod))
+        .success.value
+
+      val result = navigator.nextPage(AgreedRentChangePage, NormalMode, answers)
+
+      result shouldBe routes.HowMuchIsTotalAnnualRentController.show(NormalMode)
+      verify(mockSessionRepository, times(1)).set(any[UserAnswers])
+    }
+  }
+  "normalRoute for DidYouAgreeRentWithLandlordPage" should {
+    "return RentDatesAgreeController when yes is select and RentInterimPage is removed" in {
+      val answers = userAnswersWithoutData
+        .set(DidYouAgreeRentWithLandlordPage, true)
+        .flatMap(_.set(ProvideDetailsOfSecondRentPeriodPage, detailsOfRentPeriod))
+        .flatMap(_.set(RentInterimPage, true))
+        .success.value
+
+      val result = navigator.nextPage(DidYouAgreeRentWithLandlordPage, NormalMode, answers)
+
+      result shouldBe routes.RentDatesAgreeController.show(NormalMode)
+      verify(mockSessionRepository, times(1)).set(any[UserAnswers])
+    }
+    "return CheckRentFreePeriodController when yes is select and RentInterimPage is removed" in {
+      val answers = userAnswersWithoutData
+        .set(DidYouAgreeRentWithLandlordPage, true)
+        .flatMap(_.set(RentInterimPage, true))
+        .success.value
+
+      val result = navigator.nextPage(DidYouAgreeRentWithLandlordPage, NormalMode, answers)
+
+      result shouldBe routes.CheckRentFreePeriodController.show(NormalMode)
+      verify(mockSessionRepository, times(1)).set(any[UserAnswers])
+    }
+  }
+  "normalRoute for CheckRentFreePeriodPage" should {
+    "return RentDatesAgreeStartController when no is select and RentFreePeriodPage is removed" in {
+      val answers = userAnswersWithoutData
+        .set(CheckRentFreePeriodPage, false)
+        .flatMap(_.set(RentFreePeriodPage, rentFreePeriodModel))
+        .success.value
+
+      val result = navigator.nextPage(CheckRentFreePeriodPage, NormalMode, answers)
+
+      result shouldBe routes.RentDatesAgreeStartController.show(NormalMode)
+      verify(mockSessionRepository, times(1)).set(any[UserAnswers])
+    }
+  }
+  "normalRoute for RentInterimPage" should {
+    "return CheckRentFreePeriodController when no is select and InterimSetByTheCourtPage is removed" in {
+      val answers = userAnswersWithoutData
+        .set(RentInterimPage, false)
+        .flatMap(_.set(InterimSetByTheCourtPage, interimRentSetByTheCourtModel))
+        .success.value
+
+      val result = navigator.nextPage(RentInterimPage, NormalMode, answers)
+
+      result shouldBe routes.CheckRentFreePeriodController.show(NormalMode)
+      verify(mockSessionRepository, times(1)).set(any[UserAnswers])
+    }
+  }
+  "normalRoute for DoesYourRentIncludeParkingPage" should {
+    "return DoYouPayExtraForParkingSpacesController when no is select and HowManyParkingSpacesOrGaragesIncludedInRentPage is removed" in {
+      val answers = userAnswersWithoutData
+        .set(DoesYourRentIncludeParkingPage, false)
+        .flatMap(_.set(HowManyParkingSpacesOrGaragesIncludedInRentPage, parkingSpacesIncluded))
+        .success.value
+
+      val result = navigator.nextPage(DoesYourRentIncludeParkingPage, NormalMode, answers)
+
+      result shouldBe routes.DoYouPayExtraForParkingSpacesController.show(NormalMode)
+      verify(mockSessionRepository, times(1)).set(any[UserAnswers])
+    }
+  }
+  "normalRoute for RentFreePeriodPage" should {
+    "return HasAnythingElseAffectedTheRentController when no is select and DidYouGetIncentiveForNotTriggeringBreakClausePage is removed" in {
+      val answers = userAnswersWithoutData
+        .set(ConfirmBreakClausePage, false)
+        .flatMap(_.set(DidYouGetIncentiveForNotTriggeringBreakClausePage, DidYouGetIncentiveForNotTriggeringBreakClause(checkBox = Set(YesLumpSum, YesRentFreePeriod))))
+        .success.value
+
+      val result = navigator.nextPage(ConfirmBreakClausePage, NormalMode, answers)
+
+      result shouldBe routes.HasAnythingElseAffectedTheRentController.show(NormalMode)
+      verify(mockSessionRepository, times(1)).set(any[UserAnswers])
+    }
+  }
+  "normalRoute for DidYouGetIncentiveForNotTriggeringBreakClausePage" should {
+    "return AboutTheRentFreePeriodController when only YesRentFreePeriod is select and HowMuchWasTheLumpSumPage is removed" in {
+      val answers = userAnswersWithoutData
+        .set(DidYouGetIncentiveForNotTriggeringBreakClausePage, DidYouGetIncentiveForNotTriggeringBreakClause(checkBox = Set(YesRentFreePeriod)))
+        .flatMap(_.set(HowMuchWasTheLumpSumPage, BigDecimal(1000)))
+        .success.value
+
+      val result = navigator.nextPage(DidYouGetIncentiveForNotTriggeringBreakClausePage, NormalMode, answers)
+
+      result shouldBe routes.AboutTheRentFreePeriodController.show(NormalMode)
+      verify(mockSessionRepository, times(1)).set(any[UserAnswers])
+    }
+  }
+  "normalRoute for DidYouGetMoneyFromLandlordPage" should {
+    "return DidYouPayAnyMoneyToLandlordController when no is select and MoneyToTakeOnTheLeasePage is removed" in {
+      val answers = userAnswersWithoutData
+        .set(DidYouGetMoneyFromLandlordPage, false)
+        .flatMap(_.set(MoneyToTakeOnTheLeasePage, MoneyToTakeOnTheLease(10000, "2000-01-01")))
+        .success.value
+
+      val result = navigator.nextPage(DidYouGetMoneyFromLandlordPage, NormalMode, answers)
+
+      result shouldBe routes.DidYouPayAnyMoneyToLandlordController.show(NormalMode)
+      verify(mockSessionRepository, times(1)).set(any[UserAnswers])
+    }
+  }
+  "normalRoute for DoYouPayExtraForParkingSpacesPage" should {
+    "return RentReviewController when no is select, rentBasedOn is TOC and ParkingSpacesOrGaragesNotIncludedInYourRentPage is removed" in {
+      val answers = userAnswersWithoutData
+        .set(DoYouPayExtraForParkingSpacesPage, false)
+        .flatMap(_.set(WhatIsYourRentBasedOnPage, rentBasedOnTOC))
+        .flatMap(_.set(ParkingSpacesOrGaragesNotIncludedInYourRentPage, parkingSpacesNotIncluded))
+        .success.value
+
+      val result = navigator.nextPage(DoYouPayExtraForParkingSpacesPage, NormalMode, answers)
+
+      result shouldBe routes.RentReviewController.show(NormalMode)
+      verify(mockSessionRepository, times(1)).set(any[UserAnswers])
+    }
+    "return ConfirmBreakClauseController when no is select, TellUsAboutRentPage is provided, rentBasedOn is TOC and ParkingSpacesOrGaragesNotIncludedInYourRentPage is removed" in {
+      val answers = userAnswersWithoutData
+        .set(DoYouPayExtraForParkingSpacesPage, false)
+        .flatMap(_.set(WhatIsYourRentBasedOnPage, rentBasedOnTOC))
+        .flatMap(_.set(TellUsAboutRentPage, RentAgreement))
+        .flatMap(_.set(ParkingSpacesOrGaragesNotIncludedInYourRentPage, parkingSpacesNotIncluded))
+        .success.value
+
+      val result = navigator.nextPage(DoYouPayExtraForParkingSpacesPage, NormalMode, answers)
+
+      result shouldBe routes.ConfirmBreakClauseController.show(NormalMode)
+      verify(mockSessionRepository, times(1)).set(any[UserAnswers])
+    }
+    "return WhatIsYourRentBasedOnController when no is select, WhatTypeOfAgreementPage is Written and ParkingSpacesOrGaragesNotIncludedInYourRentPage is removed" in {
+      val answers = userAnswersWithoutData
+        .set(DoYouPayExtraForParkingSpacesPage, false)
+        .flatMap(_.set(WhatTypeOfAgreementPage, "Written"))
+        .flatMap(_.set(ParkingSpacesOrGaragesNotIncludedInYourRentPage, parkingSpacesNotIncluded))
+        .success.value
+
+      val result = navigator.nextPage(DoYouPayExtraForParkingSpacesPage, NormalMode, answers)
+
+      result shouldBe routes.WhatIsYourRentBasedOnController.show(NormalMode)
+      verify(mockSessionRepository, times(1)).set(any[UserAnswers])
+    }
+    "return RepairsAndInsuranceController when no is select, WhatTypeOfAgreementPage is Verbal and ParkingSpacesOrGaragesNotIncludedInYourRentPage is removed" in {
+      val answers = userAnswersWithoutData
+        .set(DoYouPayExtraForParkingSpacesPage, false)
+        .flatMap(_.set(WhatTypeOfAgreementPage, "Verbal"))
+        .flatMap(_.set(ParkingSpacesOrGaragesNotIncludedInYourRentPage, parkingSpacesNotIncluded))
+        .success.value
+
+      val result = navigator.nextPage(DoYouPayExtraForParkingSpacesPage, NormalMode, answers)
+
+      result shouldBe routes.RepairsAndInsuranceController.show(NormalMode)
+      verify(mockSessionRepository, times(1)).set(any[UserAnswers])
+    }
+    "return RepairsAndInsuranceController when no is select, rentBasedOn is Other and ParkingSpacesOrGaragesNotIncludedInYourRentPage is removed" in {
+      val answers = userAnswersWithoutData
+        .set(DoYouPayExtraForParkingSpacesPage, false)
+        .flatMap(_.set(WhatIsYourRentBasedOnPage, rentBasedOnModel))
+        .flatMap(_.set(ParkingSpacesOrGaragesNotIncludedInYourRentPage, parkingSpacesNotIncluded))
+        .success.value
+
+      val result = navigator.nextPage(DoYouPayExtraForParkingSpacesPage, NormalMode, answers)
+
+      result shouldBe routes.RepairsAndInsuranceController.show(NormalMode)
+      verify(mockSessionRepository, times(1)).set(any[UserAnswers])
+    }
+  }
+  "normalRoute for RepairsAndFittingOutPage" should {
+    "return DidYouGetMoneyFromLandlordController when no is select and AboutRepairsAndFittingOutPage is removed" in {
+      val answers = userAnswersWithoutData
+        .set(RepairsAndFittingOutPage, false)
+        .flatMap(_.set(AboutRepairsAndFittingOutPage, aboutRepairsAndFittingOutModel))
+        .success.value
+
+      val result = navigator.nextPage(RepairsAndFittingOutPage, NormalMode, answers)
+
+      result shouldBe routes.DidYouGetMoneyFromLandlordController.show(NormalMode)
+      verify(mockSessionRepository, times(1)).set(any[UserAnswers])
+    }
+  }
+  "normalRoute for HowMuchWasTheLumpSumPage" should {
+    "return HasAnythingElseAffectedTheRentController when only YesLumpSum is select and AboutTheRentFreePeriodPage is removed" in {
+      val answers = userAnswersWithoutData
+        .set(HowMuchWasTheLumpSumPage, BigDecimal(1000))
+        .flatMap(_.set(DidYouGetIncentiveForNotTriggeringBreakClausePage, DidYouGetIncentiveForNotTriggeringBreakClause(checkBox = Set(YesLumpSum))))
+        .flatMap(_.set(AboutTheRentFreePeriodPage, aboutTheRentFreePeriodModel))
+        .success.value
+
+      val result = navigator.nextPage(HowMuchWasTheLumpSumPage, NormalMode, answers)
+
+      result shouldBe routes.HasAnythingElseAffectedTheRentController.show(NormalMode)
+      verify(mockSessionRepository, times(1)).set(any[UserAnswers])
+    }
+    "return AboutTheRentFreePeriodController when YesLumpSum and YesRentFreePeriod are select and AboutTheRentFreePeriodPage is not removed" in {
+      val answers = userAnswersWithoutData
+        .set(HowMuchWasTheLumpSumPage, BigDecimal(1000))
+        .flatMap(_.set(DidYouGetIncentiveForNotTriggeringBreakClausePage, DidYouGetIncentiveForNotTriggeringBreakClause(checkBox = Set(YesLumpSum, YesRentFreePeriod))))
+        .flatMap(_.set(AboutTheRentFreePeriodPage, aboutTheRentFreePeriodModel))
+        .success.value
+
+      val result = navigator.nextPage(HowMuchWasTheLumpSumPage, NormalMode, answers)
+
+      result shouldBe routes.AboutTheRentFreePeriodController.show(NormalMode)
+      verify(mockSessionRepository, never()).set(any[UserAnswers])
+    }
+  }
+  "normalRoute for DidYouPayAnyMoneyToLandlordPage" should {
+    "return HasAnythingElseAffectedTheRentController when no is select and MoneyYouPaidInAdvanceToLandlordPage is removed" in {
+      val answers = userAnswersWithoutData
+        .set(DidYouPayAnyMoneyToLandlordPage, false)
+        .flatMap(_.set(MoneyYouPaidInAdvanceToLandlordPage, moneyYouPaidInAdvanceToLandlordModel))
+        .success.value
+
+      val result = navigator.nextPage(DidYouPayAnyMoneyToLandlordPage, NormalMode, answers)
+
+      result shouldBe routes.HasAnythingElseAffectedTheRentController.show(NormalMode)
+      verify(mockSessionRepository, times(1)).set(any[UserAnswers])
+    }
+  }
   "checkRouteMap for WhatTypeOfAgreementPage" should {
     "return AgreementVerbalController when value is Verbal and AgreementVerbalPage is missing" in {
       val answers = userAnswersWithoutData
@@ -78,7 +380,6 @@ class NavigatorSpec
       result shouldBe routes.AgreementVerbalController.show(CheckMode)
       verify(mockSessionRepository, times(1)).set(any[UserAnswers])
     }
-
     "return CheckAnswersController when value is Verbal and AgreementVerbalPage is present" in {
       val answers = userAnswersWithoutData
         .set(WhatTypeOfAgreementPage, "Verbal")
@@ -218,7 +519,7 @@ class NavigatorSpec
       result shouldBe routes.WhatYourRentIncludesController.show(CheckMode)
       verify(mockSessionRepository, times(1)).set(any[UserAnswers])
     }
-    "return AgreedRentChangeController when rentBased is Other and TellUsAboutRentPage, WhatYourRentIncludesPage and AgreedRentChangePage are missing" in {
+    "return AgreedRentChangeController when rentBased is Other, WhatYourRentIncludesPage and AgreedRentChangePage are missing" in {
       val answers = userAnswersWithoutData
         .set(WhatIsYourRentBasedOnPage, rentBasedOnModel)
         .flatMap(_.set(HowMuchIsTotalAnnualRentPage, BigDecimal("10000")))
@@ -253,7 +554,7 @@ class NavigatorSpec
       result shouldBe routes.CheckAnswersController.show
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
-    "return HowMuchIsTotalAnnualRentController when rentBased is PercentageTurnover, TellUsAboutRentPage and HowMuchIsTotalAnnualRentPage are missing" in {
+    "return HowMuchIsTotalAnnualRentController when rentBased is PercentageTurnover and HowMuchIsTotalAnnualRentPage are missing" in {
       val answers = userAnswersWithoutData
         .set(WhatIsYourRentBasedOnPage, RentBasedOn("PercentageTurnover", None))
         .flatMap(_.set(AgreedRentChangePage, true))
@@ -264,10 +565,21 @@ class NavigatorSpec
       result shouldBe routes.HowMuchIsTotalAnnualRentController.show(CheckMode)
       verify(mockSessionRepository, times(1)).set(any[UserAnswers])
     }
-    "return WhatYourRentIncludesController when rentBased is PercentageTurnover, TellUsAboutRentPage and WhatYourRentIncludesPage last 3 questions are missing" in {
+    "return HowMuchIsTotalAnnualRentController when rentBased is PercentageTurnover and AgreedRentChangePage are removed" in {
       val answers = userAnswersWithoutData
         .set(WhatIsYourRentBasedOnPage, RentBasedOn("PercentageTurnover", None))
         .flatMap(_.set(AgreedRentChangePage, true))
+        .flatMap(_.set(HowMuchIsTotalAnnualRentPage, BigDecimal("10000")))
+        .success.value
+
+      val result = navigator.checkRouteMap(WhatIsYourRentBasedOnPage)(false)(answers)
+
+      result shouldBe routes.HowMuchIsTotalAnnualRentController.show(CheckMode)
+      verify(mockSessionRepository, times(1)).set(any[UserAnswers])
+    }
+    "return WhatYourRentIncludesController when rentBased is PercentageTurnover, AgreedRentChangePage and WhatYourRentIncludesPage last 3 questions are missing" in {
+      val answers = userAnswersWithoutData
+        .set(WhatIsYourRentBasedOnPage, RentBasedOn("PercentageTurnover", None))
         .flatMap(_.set(HowMuchIsTotalAnnualRentPage, BigDecimal("10000")))
         .flatMap(_.set(WhatYourRentIncludesPage, whatYourRentIncludesModelForTOC))
         .success.value
@@ -275,12 +587,13 @@ class NavigatorSpec
       val result = navigator.checkRouteMap(WhatIsYourRentBasedOnPage)(false)(answers)
 
       result shouldBe routes.WhatYourRentIncludesController.show(CheckMode)
-      verify(mockSessionRepository, times(1)).set(any[UserAnswers])
+      verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
     "return CheckAnswersController when rentBased is PercentageTurnover and HowMuchIsTotalAnnualRentPage is present but TellUsAboutRentPage is missing" in {
       val answers = userAnswersWithoutData
         .set(WhatIsYourRentBasedOnPage, RentBasedOn("PercentageTurnover", None))
         .flatMap(_.set(HowMuchIsTotalAnnualRentPage, BigDecimal("10000")))
+        .flatMap(_.set(WhatYourRentIncludesPage, whatYourRentIncludesModelAllNo))
         .success.value
 
       val result = navigator.checkRouteMap(WhatIsYourRentBasedOnPage)(false)(answers)

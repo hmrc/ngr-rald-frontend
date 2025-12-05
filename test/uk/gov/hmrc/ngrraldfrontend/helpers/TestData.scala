@@ -164,6 +164,8 @@ trait TestData {
 
  val rentBasedOnTOC: RentBasedOn = RentBasedOn("TotalOccupancyCost", None)
  
+ val rentBasedOnPercentageTurnover: RentBasedOn = RentBasedOn("PercentageTurnover", None)
+ 
  val hasAnythingElseAffectedTheRentModel: HasAnythingElseAffectedTheRent = HasAnythingElseAffectedTheRent(true, Some("The area has gone up in value"))
 
  val repairsAndInsuranceModel  = RepairsAndInsurance("You", "Landlord", "YouAndLandlord")

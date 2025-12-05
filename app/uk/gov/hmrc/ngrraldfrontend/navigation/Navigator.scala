@@ -49,13 +49,31 @@ class Navigator @Inject()(sessionRepository: SessionRepository, appConfig: AppCo
     RentFreePeriodPage,
     RentDatesAgreeStartPage
   )
+  val typeOfAgreementJourneyForRenewed: List[uk.gov.hmrc.ngrraldfrontend.queries.Settable[?]] = List(
+    WhatTypeOfAgreementPage,
+    AgreementVerbalPage,
+    AgreementPage,
+    WhatIsYourRentBasedOnPage,
+    AgreedRentChangePage,
+    ProvideDetailsOfFirstRentPeriodPage,
+    ProvideDetailsOfSecondRentPeriodPage,
+    RentPeriodsPage,
+    RentDatesAgreePage
+  )
   val rentBasedOnTOCJourney: List[uk.gov.hmrc.ngrraldfrontend.queries.Settable[?]] = List(
     WhatIsYourRentBasedOnPage,
     RepairsAndInsurancePage,
     HowMuchIsTotalAnnualRentPage,
     CheckRentFreePeriodPage,
     RentFreePeriodPage,
-    RentDatesAgreeStartPage
+    RentDatesAgreeStartPage,
+    WhatYourRentIncludesPage
+  )
+
+  val rentBasedOnTOCRenewedJourney: List[uk.gov.hmrc.ngrraldfrontend.queries.Settable[?]] = List(
+    WhatIsYourRentBasedOnPage,
+    RepairsAndInsurancePage,
+    WhatYourRentIncludesPage
   )
 
 
@@ -106,12 +124,13 @@ class Navigator @Inject()(sessionRepository: SessionRepository, appConfig: AppCo
             answers.get(TellUsAboutRentPage) match {
               case Some(_) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatYourRentIncludesController.show(NormalMode)
               case None =>
+                val deletePages = if (answers.get(TellUsAboutYourNewAgreementPage).nonEmpty) typeOfAgreementJourney else typeOfAgreementJourneyForRenewed
                 genericNavigationSwitchHandler(
                   mode = NormalMode,
                   currentPage = WhatIsYourRentBasedOnPage,
                   nextPageToBeClean = AgreedRentChangePage,
                   nextPageCall = uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchIsTotalAnnualRentController.show(NormalMode),
-                  dropList = typeOfAgreementJourney,
+                  dropList = deletePages,
                   answers = answers
                 )
             }
@@ -121,12 +140,14 @@ class Navigator @Inject()(sessionRepository: SessionRepository, appConfig: AppCo
             else
               uk.gov.hmrc.ngrraldfrontend.controllers.routes.AgreedRentChangeController.show(NormalMode)
 
+            val deletePages = if (answers.get(TellUsAboutYourNewAgreementPage).nonEmpty) rentBasedOnTOCJourney else rentBasedOnTOCRenewedJourney
+
             genericNavigationSwitchHandler(
               mode = NormalMode,
               currentPage = WhatIsYourRentBasedOnPage,
-              nextPageToBeClean = RepairsAndInsurancePage,
+              nextPageToBeClean = WhatYourRentIncludesPage,
               nextPageCall = direction,
-              dropList = rentBasedOnTOCJourney,
+              dropList = deletePages,
               answers = answers
             )
           case _ =>
@@ -485,18 +506,20 @@ class Navigator @Inject()(sessionRepository: SessionRepository, appConfig: AppCo
                 else
                   uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show
               case None =>
-//                val direction = if (answers.get(AgreedRentChangePage).nonEmpty)
-//                  uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchIsTotalAnnualRentController.show(CheckMode)
-//                else
-//                  nextPageForRentBaseOnNonTOCCheckModeOnly(HowMuchIsTotalAnnualRentPage, uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchIsTotalAnnualRentController.show(CheckMode), answers)
+                val direction = if (answers.get(AgreedRentChangePage).nonEmpty || answers.get(HowMuchIsTotalAnnualRentPage).isEmpty)
+                  uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchIsTotalAnnualRentController.show(CheckMode)
+                else if (answers.get(WhatYourRentIncludesPage).isEmpty || answers.get(WhatYourRentIncludesPage).exists(_.rentIncService.isEmpty))
+                  uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatYourRentIncludesController.show(CheckMode)
+                else
+                  uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show
+                val deletePages = if (answers.get(TellUsAboutYourNewAgreementPage).nonEmpty) typeOfAgreementJourney else typeOfAgreementJourneyForRenewed
                 genericNavigationSwitchHandler(
                   mode = CheckMode,
                   currentPage = WhatIsYourRentBasedOnPage,
                   nextPageToBeClean = AgreedRentChangePage,
-                  nextPageCall = nextPageForRentBaseOnNonTOCCheckModeOnly(HowMuchIsTotalAnnualRentPage, uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchIsTotalAnnualRentController.show(CheckMode), answers),
-                  dropList = typeOfAgreementJourney,
+                  nextPageCall = direction,
+                  dropList = deletePages,
                   answers = answers,
-                  returnCYA = answers.get(HowMuchIsTotalAnnualRentPage).nonEmpty
                 )
             }
           case "TotalOccupancyCost" =>
@@ -514,12 +537,14 @@ class Navigator @Inject()(sessionRepository: SessionRepository, appConfig: AppCo
                 else
                   uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show
 
+                val deletePages = if (answers.get(TellUsAboutYourNewAgreementPage).nonEmpty) rentBasedOnTOCJourney else rentBasedOnTOCRenewedJourney
+
                 genericNavigationSwitchHandler(
                   mode = CheckMode,
                   currentPage = WhatIsYourRentBasedOnPage,
                   nextPageToBeClean = RepairsAndInsurancePage,
                   nextPageCall = direction,
-                  dropList = rentBasedOnTOCJourney :+ WhatYourRentIncludesPage,
+                  dropList = deletePages,
                   answers = answers
                 )
             }

@@ -45,6 +45,19 @@ object CheckAnswers {
       ))
     )
 
+  def buildRowWithSeqValues(labelKey: String, value: Seq[String], linkId: String, href: Call, hiddenKey: String)(implicit messages: Messages): NGRSummaryListRow =
+    NGRSummaryListRow(
+      titleMessageKey = labelKey,
+      captionKey = None,
+      value = value,
+      changeLink = Some(Link(
+        href = href,
+        linkId = linkId,
+        messageKey = "service.change",
+        visuallyHiddenMessageKey = Some(hiddenKey)
+      ))
+    )
+
   def yesNo(value: Boolean)(implicit messages: Messages): String = if (value) messages("service.yes") else messages("service.no")
 
   def createLandlordSummaryRows(answers: UserAnswers)(implicit messages: Messages): SummaryList = {
@@ -1009,9 +1022,9 @@ object CheckAnswers {
           case No => messages("didYouGetIncentiveForNotTriggeringBreakClause.checkbox2")
         }
 
-        buildRow(
+        buildRowWithSeqValues(
           labelKey = "checkAnswers.breakClause.didYouGetIncentiveForNotTriggeringBreakClause",
-          value = selectedLabels.mkString("\n"),
+          value = selectedLabels,
           linkId = "did-you-get-incentive-for-not-triggering-break-clause",
           href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouGetIncentiveForNotTriggeringBreakClauseController.show(CheckMode),
           hiddenKey = "did-you-get-incentive-for-not-triggering-break-clause"
