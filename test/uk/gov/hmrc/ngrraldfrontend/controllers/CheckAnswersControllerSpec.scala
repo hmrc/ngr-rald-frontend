@@ -41,11 +41,18 @@ class CheckAnswersControllerSpec extends ControllerSpecSupport {
 
   "show" should {
     "return OK and render the view with empty summaries when property exists but no answers" in {
-      val controller = controllerProperty(None)
+      val controller = controllerProperty(didYouPayAnyMoneyToLandlordAnswers)
       val result = controller.show(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) must include(pageTitle)
+    }
+    "return SEE_OTHER and render the view with empty summaries when property exists but no answers" in {
+      val controller = controllerProperty(None)
+      val result = controller.show(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) shouldBe Some(mockConfig.ngrDashboardUrl)
     }
   }
   "method submit" must {

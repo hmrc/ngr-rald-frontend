@@ -52,6 +52,6 @@ object RentPeriodsHelper {
   def shouldGoToRentPeriodsPageCheckMode(oldAnswers: UserAnswers, newAnswers: UserAnswers): Boolean = {
     val oldPeriods = oldAnswers.get(ProvideDetailsOfSecondRentPeriodPage).map(_.size).getOrElse(0)
     val newPeriods = newAnswers.get(ProvideDetailsOfSecondRentPeriodPage).map(_.size).getOrElse(0)
-    oldPeriods != newPeriods
+    oldPeriods == 0 || oldPeriods != newPeriods
   }
 }
