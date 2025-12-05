@@ -53,7 +53,8 @@ object AgreementVerbalForm extends Mappings with DateMappings {
         )
       ),
       ngrTitle = "agreementVerbal.radio.title",
-      hint = Some("agreementVerbal.radio.hint")
+      hint = Some("agreementVerbal.radio.hint"),
+      isPageHeading = false
     )
 
   private def endDateFormatter(args: Seq[String] = Seq.empty): Formatter[Option[NGRDate]] = new Formatter[Option[NGRDate]] {

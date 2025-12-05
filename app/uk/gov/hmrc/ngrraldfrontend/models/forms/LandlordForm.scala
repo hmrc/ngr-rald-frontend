@@ -62,7 +62,7 @@ object LandlordForm extends Mappings{
               name = landlordRelationshipYes,
               maxLength = Some(250),
               label = Label(
-                classes = "govuk-label govuk-label--s",
+                classes = "govuk-label govuk-label--m",
                 content = Text(Messages("landlord.radio.yes"))
               ),
               hint = Some(
@@ -76,7 +76,8 @@ object LandlordForm extends Mappings{
         ),
         noButton()
       ),
-      ngrTitle = "landlord.p2"
+      ngrTitle = "landlord.p2",
+      isPageHeading = false
     )
     
   def unapply(landlordForm: LandlordForm): Option[(String, String, Option[String])] =

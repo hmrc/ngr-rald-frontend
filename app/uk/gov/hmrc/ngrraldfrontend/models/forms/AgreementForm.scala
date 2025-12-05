@@ -66,8 +66,7 @@ object AgreementForm extends Mappings with DateMappings{
     fieldset = Some(Fieldset(
       legend = Some(Legend(
         content = Text(messages("agreement.subheading.1")),
-        classes = "govuk-fieldset__legend--m",
-        isPageHeading = true
+        classes = "govuk-fieldset__legend--m"
       ))
     )),
     hint = Some(Hint(
@@ -89,8 +88,7 @@ object AgreementForm extends Mappings with DateMappings{
             fieldset = Some(Fieldset(
               legend = Some(Legend(
                 content = Text(messages("agreement.radio.conditional.subheading.1")),
-                classes = "govuk-fieldset__legend--s",
-                isPageHeading = true
+                classes = "govuk-fieldset__legend--s"
               ))
             )),
             hint = Some(Hint(
@@ -100,7 +98,8 @@ object AgreementForm extends Mappings with DateMappings{
         )
       ),
       ngrTitle = "agreement.subheading.2",
-      hint = Some("agreement.hint.2")
+      hint = Some("agreement.hint.2"),
+      isPageHeading = false
     )
 
   def breakClauseRadio(form: Form[AgreementForm], ngrCharacterCountComponent: NGRCharacterCountComponent)(implicit messages: Messages): NGRRadio =
@@ -130,7 +129,8 @@ object AgreementForm extends Mappings with DateMappings{
         noButton()
       ),
       ngrTitle = "agreement.subheading.3",
-      hint = Some("agreement.hint.3")
+      hint = Some("agreement.hint.3"),
+      isPageHeading = false
     )
 
   def unapply(agreementForm: AgreementForm): Option[(NGRDate, String, Option[NGRDate], String, Option[String])] =

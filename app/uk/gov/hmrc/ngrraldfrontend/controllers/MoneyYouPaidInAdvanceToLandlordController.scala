@@ -55,8 +55,7 @@ class MoneyYouPaidInAdvanceToLandlordController @Inject()(moneyYouPaidInAdvanceT
       id = inputFieldName,
       name = inputFieldName,
       label = messages("moneyYouPaidInAdvanceToLandlord.label.1"),
-      labelClasses = Some("govuk-fieldset__legend govuk-fieldset__legend--s"),
-      isPageHeading = true,
+      labelClasses = Some("govuk-label govuk-label--s"),
       isVisible = true,
       classes = Some("govuk-input govuk-input--width-10"),
       prefix = Some(PrefixOrSuffix(content = Text("£")))
@@ -69,8 +68,7 @@ class MoneyYouPaidInAdvanceToLandlordController @Inject()(moneyYouPaidInAdvanceT
     fieldset = Some(Fieldset(
       legend = Some(Legend(
         content = Text(messages("moneyYouPaidInAdvanceToLandlord.date.label.2")),
-        classes = "govuk-fieldset__legend--s",
-        isPageHeading = false
+        classes = "govuk-fieldset__legend--s"
       ))
     )),
     hint = Some(Hint(

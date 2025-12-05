@@ -68,8 +68,7 @@ class ParkingSpacesOrGaragesNotIncludedInYourRentController @Inject()(view: Park
     fieldset = Some(Fieldset(
       legend = Some(Legend(
         content = Text(messages("parkingSpacesOrGaragesNotIncludedInYourRent.agreementDate.label")),
-        classes = "govuk-fieldset__legend--s",
-        isPageHeading = false
+        classes = "govuk-fieldset__legend--s"
       ))
     )),
     hint = Some(Hint(
