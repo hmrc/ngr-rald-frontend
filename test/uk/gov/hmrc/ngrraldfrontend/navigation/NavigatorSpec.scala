@@ -24,13 +24,13 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.Call
-import uk.gov.hmrc.http.NotFoundException
+import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.controllers.routes
 import uk.gov.hmrc.ngrraldfrontend.helpers.TestData
-import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.{NewAgreement, RenewedAgreement, RentAgreement}
-import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.*
+import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.{NewAgreement, RenewedAgreement, RentAgreement}
 import uk.gov.hmrc.ngrraldfrontend.models.Incentive.*
+import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.pages.*
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 
@@ -43,17 +43,32 @@ class NavigatorSpec
     with TestData {
 
   val mockSessionRepository: SessionRepository = mock[SessionRepository]
-  val navigator = new Navigator(mockSessionRepository)
-  val answersWithoutData = UserAnswers(credId)
+  val mockConfig: AppConfig = mock[AppConfig]
+  val navigator = new Navigator(mockSessionRepository, mockConfig)
+  val userAnswersWithoutData = UserAnswers(CredId("1234"))
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockSessionRepository)
+    reset(mockSessionRepository, mockConfig)
+  }
+
+  "normalRoute for WhatTypeOfAgreementPage" should {
+    "return AgreementVerbalController when AgreementVerbal is select and AgreementPage is removed" in {
+      val answers = userAnswersWithoutData
+        .set(WhatTypeOfAgreementPage, "Verbal")
+        .flatMap(_.set(AgreementPage, agreementModel))
+        .success.value
+
+      val result = navigator.nextPage(WhatTypeOfAgreementPage, NormalMode, answers)
+
+      result shouldBe routes.AgreementVerbalController.show(NormalMode)
+      verify(mockSessionRepository, times(1)).set(any[UserAnswers])
+    }
   }
 
   "checkRouteMap for WhatTypeOfAgreementPage" should {
     "return AgreementVerbalController when value is Verbal and AgreementVerbalPage is missing" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(WhatTypeOfAgreementPage, "Verbal")
         .flatMap(_.set(AgreementPage, agreementModel))
         .success.value
@@ -65,7 +80,7 @@ class NavigatorSpec
     }
 
     "return CheckAnswersController when value is Verbal and AgreementVerbalPage is present" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(WhatTypeOfAgreementPage, "Verbal")
         .flatMap(_.set(AgreementVerbalPage, agreementVerbalModel))
         .success.value
@@ -77,7 +92,7 @@ class NavigatorSpec
     }
 
     "return AgreementController when value is Written and AgreementPage is missing" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(WhatTypeOfAgreementPage, "Written")
         .flatMap(_.set(AgreementVerbalPage, agreementVerbalModel))
         .success.value
@@ -89,7 +104,7 @@ class NavigatorSpec
     }
 
     "return CheckAnswersController when value is Written and AgreementPage is present" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(WhatTypeOfAgreementPage, "Written")
         .flatMap(_.set(AgreementPage, agreementModel))
         .success.value
@@ -100,18 +115,16 @@ class NavigatorSpec
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
 
-    "throw NotFoundException when WhatTypeOfAgreementPage is missing" in {
-      val answers = UserAnswers(CredId("1234"))
+    "return WhatTypeOfAgreementController when WhatTypeOfAgreementPage is missing" in {
+      val result = navigator.checkRouteMap(WhatTypeOfAgreementPage)(false)(userAnswersWithoutData)
 
-      an[NotFoundException] shouldBe thrownBy {
-        navigator.checkRouteMap(WhatTypeOfAgreementPage)(false)(answers)
-      }
+      result shouldBe routes.WhatTypeOfAgreementController.show(NormalMode)
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
   }
   "checkRouteMap for AgreementVerbalPage" should {
     "return HowMuchIsTotalAnnualRentController when HowMuchIsTotalAnnualRentPage is missing" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(AgreementVerbalPage, agreementVerbalModel)
         .success.value
 
@@ -121,7 +134,7 @@ class NavigatorSpec
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
     "return CheckAnswersController when HowMuchIsTotalAnnualRentPage is present" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(AgreementVerbalPage, agreementVerbalModel)
         .flatMap(_.set(HowMuchIsTotalAnnualRentPage, BigDecimal("10000")))
         .success.value
@@ -134,7 +147,7 @@ class NavigatorSpec
   }
   "checkRouteMap for AgreementPage" should {
     "return WhatIsYourRentBasedOnController when WhatIsYourRentBasedOnPage is missing" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(AgreementPage, agreementModel)
         .success.value
 
@@ -144,7 +157,7 @@ class NavigatorSpec
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
     "return CheckAnswersController when WhatIsYourRentBasedOnPage is present" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(AgreementPage, agreementModel)
         .flatMap(_.set(WhatIsYourRentBasedOnPage, rentBasedOnModel))
         .success.value
@@ -157,7 +170,7 @@ class NavigatorSpec
   }
   "checkRouteMap for RentFreePeriodPage" should {
     "return RentDatesAgreeStartController when RentDatesAgreeStartPage is missing" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(RentFreePeriodPage, rentFreePeriodModel)
         .success.value
 
@@ -167,7 +180,7 @@ class NavigatorSpec
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
     "return CheckAnswersController when RentDatesAgreeStartPage is present" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(RentFreePeriodPage, rentFreePeriodModel)
         .flatMap(_.set(RentDatesAgreeStartPage, rentDatesAgreeStartModel))
         .success.value
@@ -181,7 +194,7 @@ class NavigatorSpec
   "checkRouteMap for WhatIsYourRentBasedOnPage" should {
 
     "return CheckAnswersController when rentBased is Other and TellUsAboutRentPage is present" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(WhatIsYourRentBasedOnPage, rentBasedOnModel)
         .flatMap(_.set(TellUsAboutRentPage, RentAgreement))
         .flatMap(_.set(WhatYourRentIncludesPage, whatYourRentIncludesModelAllYes))
@@ -194,7 +207,7 @@ class NavigatorSpec
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
     "return WhatYourRentIncludesController when rentBased is Other and TellUsAboutRentPage is present but RepairsAndInsurancePage is missing" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(WhatIsYourRentBasedOnPage, rentBasedOnModel)
         .flatMap(_.set(TellUsAboutRentPage, RentAgreement))
         .flatMap(_.set(WhatYourRentIncludesPage, whatYourRentIncludesModelAllYes))
@@ -206,7 +219,7 @@ class NavigatorSpec
       verify(mockSessionRepository, times(1)).set(any[UserAnswers])
     }
     "return AgreedRentChangeController when rentBased is Other and TellUsAboutRentPage, WhatYourRentIncludesPage and AgreedRentChangePage are missing" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(WhatIsYourRentBasedOnPage, rentBasedOnModel)
         .flatMap(_.set(HowMuchIsTotalAnnualRentPage, BigDecimal("10000")))
         .success.value
@@ -217,7 +230,7 @@ class NavigatorSpec
       verify(mockSessionRepository, times(1)).set(any[UserAnswers])
     }
     "return WhatYourRentIncludesController when rentBased is Other and TellUsAboutRentPage missing and WhatYourRentIncludesPage last 3 questions are missing but AgreedRentChangePage is provided" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(WhatIsYourRentBasedOnPage, rentBasedOnModel)
         .flatMap(_.set(AgreedRentChangePage, true))
         .flatMap(_.set(WhatYourRentIncludesPage, whatYourRentIncludesModelForTOC))
@@ -229,7 +242,7 @@ class NavigatorSpec
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
     "return CheckAnswersController when rentBased is Other and TellUsAboutRentPage is missing but AgreedRentChangePage and WhatYourRentIncludesPage are provided " in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(WhatIsYourRentBasedOnPage, rentBasedOnModel)
         .flatMap(_.set(AgreedRentChangePage, true))
         .flatMap(_.set(WhatYourRentIncludesPage, whatYourRentIncludesModelAllYes))
@@ -241,7 +254,7 @@ class NavigatorSpec
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
     "return HowMuchIsTotalAnnualRentController when rentBased is PercentageTurnover, TellUsAboutRentPage and HowMuchIsTotalAnnualRentPage are missing" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(WhatIsYourRentBasedOnPage, RentBasedOn("PercentageTurnover", None))
         .flatMap(_.set(AgreedRentChangePage, true))
         .success.value
@@ -252,7 +265,7 @@ class NavigatorSpec
       verify(mockSessionRepository, times(1)).set(any[UserAnswers])
     }
     "return WhatYourRentIncludesController when rentBased is PercentageTurnover, TellUsAboutRentPage and WhatYourRentIncludesPage last 3 questions are missing" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(WhatIsYourRentBasedOnPage, RentBasedOn("PercentageTurnover", None))
         .flatMap(_.set(AgreedRentChangePage, true))
         .flatMap(_.set(HowMuchIsTotalAnnualRentPage, BigDecimal("10000")))
@@ -265,7 +278,7 @@ class NavigatorSpec
       verify(mockSessionRepository, times(1)).set(any[UserAnswers])
     }
     "return CheckAnswersController when rentBased is PercentageTurnover and HowMuchIsTotalAnnualRentPage is present but TellUsAboutRentPage is missing" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(WhatIsYourRentBasedOnPage, RentBasedOn("PercentageTurnover", None))
         .flatMap(_.set(HowMuchIsTotalAnnualRentPage, BigDecimal("10000")))
         .success.value
@@ -276,7 +289,7 @@ class NavigatorSpec
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
     "return WhatYourRentIncludesController when rentBased is PercentageTurnover and TellUsAboutRentPage but RepairsAndInsurancePage is missing" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(WhatIsYourRentBasedOnPage, RentBasedOn("PercentageTurnover", None))
         .flatMap(_.set(TellUsAboutRentPage, RentAgreement))
         .flatMap(_.set(WhatYourRentIncludesPage, whatYourRentIncludesModelForTOC))
@@ -288,7 +301,7 @@ class NavigatorSpec
       verify(mockSessionRepository, times(1)).set(any[UserAnswers])
     }
     "return CheckAnswersController when rentBased is PercentageTurnover, TellUsAboutRentPage and RepairsAndInsurancePage are provided" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(WhatIsYourRentBasedOnPage, RentBasedOn("PercentageTurnover", None))
         .flatMap(_.set(TellUsAboutRentPage, RentAgreement))
         .flatMap(_.set(RepairsAndInsurancePage, repairsAndInsuranceModel))
@@ -300,7 +313,7 @@ class NavigatorSpec
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
     "return WhatRentIncludesRatesWaterServiceController when rentBased is TOC, TellUsAboutRentPage and RepairsAndInsurancePage are provided" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(WhatIsYourRentBasedOnPage, rentBasedOnTOC)
         .flatMap(_.set(TellUsAboutRentPage, RentAgreement))
         .flatMap(_.set(RepairsAndInsurancePage, repairsAndInsuranceModel))
@@ -313,7 +326,7 @@ class NavigatorSpec
       verify(mockSessionRepository, times(1)).set(any[UserAnswers])
     }
     "return CheckAnswersController when rentBased is TOC and TellUsAboutRentPage but RepairsAndInsurancePage is missing" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(WhatIsYourRentBasedOnPage, rentBasedOnTOC)
         .flatMap(_.set(TellUsAboutRentPage, RentAgreement))
         .success.value
@@ -327,7 +340,7 @@ class NavigatorSpec
   "checkRouteMap for AgreedRentChangePage" should {
 
     "return WhatYourRentIncludesController when AgreedRentChange is true, ProvideDetailsOfFirstRentPeriodPage has been entered but WhatYourRentIncludesPage and HowMuchIsTotalAnnualRentPage are missing" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(AgreedRentChangePage, true)
         .flatMap(_.set(ProvideDetailsOfFirstRentPeriodPage, firstRentPeriod))
         .success.value
@@ -339,7 +352,7 @@ class NavigatorSpec
     }
 
     "return WhatRentIncludesRatesWaterServiceController when AgreedRentChange is true, ProvideDetailsOfFirstRentPeriodPage has been entered and rentBaseOn is TOC" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(AgreedRentChangePage, true)
         .flatMap(_.set(ProvideDetailsOfFirstRentPeriodPage, firstRentPeriod))
         .flatMap(_.set(WhatIsYourRentBasedOnPage, rentBasedOnTOC))
@@ -352,7 +365,7 @@ class NavigatorSpec
     }
 
     "return ProvideDetailsOfFirstRentPeriodController when AgreedRentChange is true and ProvideDetailsOfFirstRentPeriodPage is missing" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(AgreedRentChangePage, true)
         .flatMap(_.set(HowMuchIsTotalAnnualRentPage, BigDecimal("10000")))
         .success.value
@@ -364,7 +377,7 @@ class NavigatorSpec
     }
 
     "return CheckAnswersController when AgreedRentChange is true and ProvideDetailsOfFirstRentPeriodPage is provided" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(AgreedRentChangePage, true)
         .flatMap(_.set(ProvideDetailsOfFirstRentPeriodPage, firstRentPeriod))
         .flatMap(_.set(WhatYourRentIncludesPage, whatYourRentIncludesModelAllNo))
@@ -377,7 +390,7 @@ class NavigatorSpec
     }
 
     "return CheckAnswersController when AgreedRentChange is false, HowMuchIsTotalAnnualRentPage and rentIncludes are provided" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(AgreedRentChangePage, false)
         .flatMap(_.set(HowMuchIsTotalAnnualRentPage, BigDecimal("10000")))
         .flatMap(_.set(WhatYourRentIncludesPage, whatYourRentIncludesModelAllNo))
@@ -390,7 +403,7 @@ class NavigatorSpec
     }
 
     "return AgreedRentChangeController when AgreedRentChange is false and HowMuchIsTotalAnnualRentPage is missing" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(AgreedRentChangePage, false)
         .flatMap(_.set(ProvideDetailsOfFirstRentPeriodPage, firstRentPeriodNoRentPayed))
         .success.value
@@ -402,7 +415,7 @@ class NavigatorSpec
     }
 
     "return WhatYourRentIncludesController when AgreedRentChange is false, HowMuchIsTotalAnnualRentPage has been entered but WhatYourRentIncludesPage and ProvideDetailsOfFirstRentPeriodPage are missing" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(AgreedRentChangePage, false)
         .flatMap(_.set(HowMuchIsTotalAnnualRentPage, BigDecimal("10000")))
         .success.value
@@ -414,7 +427,7 @@ class NavigatorSpec
     }
 
     "return WhatRentIncludesRatesWaterServiceController when AgreedRentChange is false, HowMuchIsTotalAnnualRentPage has been entered and rentBaseOn is TOC" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(AgreedRentChangePage, false)
         .flatMap(_.set(HowMuchIsTotalAnnualRentPage, BigDecimal("10000")))
         .flatMap(_.set(WhatIsYourRentBasedOnPage, rentBasedOnTOC))
@@ -426,18 +439,16 @@ class NavigatorSpec
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
 
-    "throw NotFoundException when AgreedRentChangePage is missing" in {
-      val answers = UserAnswers(CredId("1234"))
+    "return AgreedRentChangeController when AgreedRentChangePage is missing" in {
+      val result = navigator.checkRouteMap(AgreedRentChangePage)(false)(userAnswersWithoutData)
 
-      an[NotFoundException] shouldBe thrownBy {
-        navigator.checkRouteMap(AgreedRentChangePage)(false)(answers)
-      }
+      result shouldBe routes.AgreedRentChangeController.show(NormalMode)
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
   }
   "checkRouteMap for HowMuchIsTotalAnnualRentPage" should {
     "return CheckRentFreePeriodController when TellUsAboutYourRenewedAgreementPage is provided and CheckRentFreePeriodPage is missing" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(HowMuchIsTotalAnnualRentPage, BigDecimal("10000"))
         .flatMap(_.set(TellUsAboutYourRenewedAgreementPage, RenewedAgreement))
         .success.value
@@ -448,7 +459,7 @@ class NavigatorSpec
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
     "return RepairsAndInsuranceController when TellUsAboutYourRenewedAgreementPage and CheckRentFreePeriodPage are provided, rentBasedOn Other and RepairsAndInsurancePage is missing" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(HowMuchIsTotalAnnualRentPage, BigDecimal("10000"))
         .flatMap(_.set(TellUsAboutYourRenewedAgreementPage, RenewedAgreement))
         .flatMap(_.set(WhatIsYourRentBasedOnPage, rentBasedOnModel))
@@ -461,7 +472,7 @@ class NavigatorSpec
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
     "return CheckAnswersController when TellUsAboutYourRenewedAgreementPage, CheckRentFreePeriodPage, rentBasedOn Other and RepairsAndInsurancePage are provided" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(HowMuchIsTotalAnnualRentPage, BigDecimal("10000"))
         .flatMap(_.set(TellUsAboutYourRenewedAgreementPage, RenewedAgreement))
         .flatMap(_.set(WhatIsYourRentBasedOnPage, rentBasedOnModel))
@@ -475,7 +486,7 @@ class NavigatorSpec
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
     "return CheckRentFreePeriodController when TellUsAboutYourRenewedAgreementPage and CheckRentFreePeriodPage are missing" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(HowMuchIsTotalAnnualRentPage, BigDecimal("10000"))
         .success.value
 
@@ -485,7 +496,7 @@ class NavigatorSpec
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
     "return CheckAnswersController when TellUsAboutYourRenewedAgreementPage is missing but CheckRentFreePeriodPage is provided" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(HowMuchIsTotalAnnualRentPage, BigDecimal("10000"))
         .flatMap(_.set(CheckRentFreePeriodPage, true))
         .success.value
@@ -498,7 +509,7 @@ class NavigatorSpec
   }
   "checkRouteMap for RentDatesAgreePage" should {
     "return WhatYourRentIncludesController when WhatYourRentIncludesPage is missing and rentBasedOn is Other" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(RentDatesAgreePage, "2025-12-04")
         .flatMap(_.set(WhatIsYourRentBasedOnPage, rentBasedOnModel))
         .success.value
@@ -509,7 +520,7 @@ class NavigatorSpec
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
     "return WhatYourRentIncludesController when WhatYourRentIncludesPage is missing last 3 questions and rentBasedOn is Other" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(RentDatesAgreePage, "2025-12-04")
         .flatMap(_.set(WhatIsYourRentBasedOnPage, rentBasedOnModel))
         .flatMap(_.set(WhatYourRentIncludesPage, whatYourRentIncludesModelForTOC))
@@ -521,7 +532,7 @@ class NavigatorSpec
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
     "return CheckAnswersController when WhatYourRentIncludesPage is provided and rentBasedOn is Other" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(RentDatesAgreePage, "2025-12-04")
         .flatMap(_.set(WhatIsYourRentBasedOnPage, rentBasedOnModel))
         .flatMap(_.set(WhatYourRentIncludesPage, whatYourRentIncludesModelAllNo))
@@ -533,7 +544,7 @@ class NavigatorSpec
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
     "return WhatRentIncludesRatesWaterServiceController when WhatYourRentIncludesPage is missing and rentBasedOn is TOC" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(RentDatesAgreePage, "2025-12-04")
         .flatMap(_.set(WhatIsYourRentBasedOnPage, rentBasedOnTOC))
         .success.value
@@ -544,7 +555,7 @@ class NavigatorSpec
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
     "return CheckAnswersController when WhatYourRentIncludesPage is provided and rentBasedOn is TOC" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(RentDatesAgreePage, "2025-12-04")
         .flatMap(_.set(WhatIsYourRentBasedOnPage, rentBasedOnTOC))
         .flatMap(_.set(WhatYourRentIncludesPage, whatYourRentIncludesModelAllNo))
@@ -558,7 +569,7 @@ class NavigatorSpec
   }
   "checkRouteMap for RentDatesAgreeStartPage" should {
     "return WhatYourRentIncludesController when WhatYourRentIncludesPage is missing and rentBasedOn is Other" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(RentDatesAgreeStartPage, rentDatesAgreeStartModel)
         .flatMap(_.set(WhatIsYourRentBasedOnPage, rentBasedOnModel))
         .success.value
@@ -569,7 +580,7 @@ class NavigatorSpec
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
     "return WhatYourRentIncludesController when WhatYourRentIncludesPage is missing last 3 questions and rentBasedOn is Other" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(RentDatesAgreeStartPage, rentDatesAgreeStartModel)
         .flatMap(_.set(WhatIsYourRentBasedOnPage, rentBasedOnModel))
         .flatMap(_.set(WhatYourRentIncludesPage, whatYourRentIncludesModelForTOC))
@@ -581,7 +592,7 @@ class NavigatorSpec
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
     "return CheckAnswersController when WhatYourRentIncludesPage is provided and rentBasedOn is Other" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(RentDatesAgreeStartPage, rentDatesAgreeStartModel)
         .flatMap(_.set(WhatIsYourRentBasedOnPage, rentBasedOnModel))
         .flatMap(_.set(WhatYourRentIncludesPage, whatYourRentIncludesModelAllNo))
@@ -593,7 +604,7 @@ class NavigatorSpec
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
     "return WhatRentIncludesRatesWaterServiceController when WhatYourRentIncludesPage is missing and rentBasedOn is TOC" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(RentDatesAgreeStartPage, rentDatesAgreeStartModel)
         .flatMap(_.set(WhatIsYourRentBasedOnPage, rentBasedOnTOC))
         .success.value
@@ -604,7 +615,7 @@ class NavigatorSpec
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
     "return CheckAnswersController when WhatYourRentIncludesPage is provided and rentBasedOn is TOC" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(RentDatesAgreeStartPage, rentDatesAgreeStartModel)
         .flatMap(_.set(WhatIsYourRentBasedOnPage, rentBasedOnTOC))
         .flatMap(_.set(WhatYourRentIncludesPage, whatYourRentIncludesModelAllNo))
@@ -618,7 +629,7 @@ class NavigatorSpec
   }
   "checkRouteMap for WhatYourRentIncludesPage" should {
     "return RepairsAndInsuranceController when rentBasedOn is Other" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(WhatYourRentIncludesPage, whatYourRentIncludesModelAllNo)
         .flatMap(_.set(WhatIsYourRentBasedOnPage, rentBasedOnModel))
         .success.value
@@ -629,7 +640,7 @@ class NavigatorSpec
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
     "return RepairsAndInsuranceController when AgreementVerbalPage is provide" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(WhatYourRentIncludesPage, whatYourRentIncludesModelAllNo)
         .flatMap(_.set(AgreementVerbalPage, agreementVerbalModel))
         .success.value
@@ -640,7 +651,7 @@ class NavigatorSpec
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
     "return CheckAnswersController when AgreementVerbalPage and RepairsAndInsurancePage are provide and rentBasedOn is Other" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(WhatYourRentIncludesPage, whatYourRentIncludesModelAllNo)
         .flatMap(_.set(AgreementVerbalPage, agreementVerbalModel))
         .flatMap(_.set(WhatIsYourRentBasedOnPage, rentBasedOnModel))
@@ -653,7 +664,7 @@ class NavigatorSpec
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
     "return CheckAnswersController when rentBasedOn is TOC" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(WhatYourRentIncludesPage, whatYourRentIncludesModelAllNo)
         .flatMap(_.set(WhatIsYourRentBasedOnPage, rentBasedOnTOC))
         .success.value
@@ -666,7 +677,7 @@ class NavigatorSpec
   }
   "checkRouteMap for CheckRentFreePeriodPage" should {
     "return CheckAnswersController when CheckRentFreePeriod is true and RentFreePeriodPage is present" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(CheckRentFreePeriodPage, true)
         .flatMap(_.set(RentFreePeriodPage, RentFreePeriod(months = 2, reasons = "Was not in the country"))).success.value
 
@@ -677,7 +688,7 @@ class NavigatorSpec
     }
 
     "return RentFreePeriodController when CheckRentFreePeriod is true and RentFreePeriodPage is missing" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(CheckRentFreePeriodPage, true)
         .success.value
 
@@ -688,7 +699,7 @@ class NavigatorSpec
     }
 
     "return CheckAnswersController and remove RentFreePeriodPage when CheckRentFreePeriod is false" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(CheckRentFreePeriodPage, false)
         .flatMap(_.set(RentFreePeriodPage, RentFreePeriod(months = 2, reasons = "Was not in the country")))
         .flatMap(_.set(RentDatesAgreeStartPage, rentDatesAgreeStartModel))
@@ -701,7 +712,7 @@ class NavigatorSpec
     }
 
     "return RentDatesAgreeStartController and remove RentFreePeriodPage when CheckRentFreePeriod is false and RentDatesAgreeStartPage is missing" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(CheckRentFreePeriodPage, false)
         .flatMap(_.set(RentFreePeriodPage, RentFreePeriod(months = 2, reasons = "Was not in the country")))
         .success.value
@@ -712,19 +723,17 @@ class NavigatorSpec
       verify(mockSessionRepository, times(1)).set(any[UserAnswers])
     }
 
-    "throw NotFoundException when CheckRentFreePeriodPage is missing" in {
-      val answers = UserAnswers(CredId("1234"))
+    "return CheckRentFreePeriodController when CheckRentFreePeriodPage is missing" in {
+      val result = navigator.checkRouteMap(CheckRentFreePeriodPage)(false)(userAnswersWithoutData)
 
-      an[NotFoundException] shouldBe thrownBy {
-        navigator.checkRouteMap(CheckRentFreePeriodPage)(false)(answers)
-      }
+      result shouldBe routes.CheckRentFreePeriodController.show(NormalMode)
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
   }
   "checkRouteMap for DoesYourRentIncludeParkingPage" should {
 
     "return CheckAnswersController when DoesYourRentIncludeParking is true and HowManyParkingSpacesOrGaragesIncludedInRentPage is present" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(DoesYourRentIncludeParkingPage, true)
         .flatMap(_.set(HowManyParkingSpacesOrGaragesIncludedInRentPage, parkingSpacesIncluded))
         .success.value
@@ -736,7 +745,7 @@ class NavigatorSpec
     }
 
     "return HowManyParkingSpacesOrGaragesIncludedInRentController when DoesYourRentIncludeParking is true and HowManyParkingSpacesOrGaragesIncludedInRentPage is missing" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(DoesYourRentIncludeParkingPage, true)
         .success.value
 
@@ -747,7 +756,7 @@ class NavigatorSpec
     }
 
     "return CheckAnswersController and remove HowManyParkingSpacesOrGaragesIncludedInRentPage when DoesYourRentIncludeParking is false" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(DoesYourRentIncludeParkingPage, false)
         .flatMap(_.set(HowManyParkingSpacesOrGaragesIncludedInRentPage, parkingSpacesIncluded))
         .success.value
@@ -758,19 +767,17 @@ class NavigatorSpec
       verify(mockSessionRepository, times(1)).set(any[UserAnswers])
     }
 
-    "throw NotFoundException when DoesYourRentIncludeParkingPage is missing" in {
-      val answers = UserAnswers(CredId("1234"))
+    "return DoesYourRentIncludeParkingController when DoesYourRentIncludeParkingPage is missing" in {
+      val result = navigator.checkRouteMap(DoesYourRentIncludeParkingPage)(false)(userAnswersWithoutData)
 
-      an[NotFoundException] shouldBe thrownBy {
-        navigator.checkRouteMap(DoesYourRentIncludeParkingPage)(false)(answers)
-      }
+      result shouldBe routes.DoesYourRentIncludeParkingController.show(NormalMode)
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
   }
   "checkRouteMap for DoYouPayExtraForParkingSpacesPage" should {
 
     "return CheckAnswersController when DoYouPayExtraForParkingSpaces is true and ParkingSpacesOrGaragesNotIncludedInYourRentPage is present" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(DoYouPayExtraForParkingSpacesPage, true)
         .flatMap(_.set(ParkingSpacesOrGaragesNotIncludedInYourRentPage, parkingSpacesNotIncluded))
         .success.value
@@ -782,7 +789,7 @@ class NavigatorSpec
     }
 
     "return ParkingSpacesOrGaragesNotIncludedInYourRentController when DoYouPayExtraForParkingSpaces is true and ParkingSpacesOrGaragesNotIncludedInYourRentPage is missing" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(DoYouPayExtraForParkingSpacesPage, true)
         .success.value
 
@@ -793,7 +800,7 @@ class NavigatorSpec
     }
 
     "return CheckAnswersController and remove ParkingSpacesOrGaragesNotIncludedInYourRentPage when DoYouPayExtraForParkingSpaces is false" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(DoYouPayExtraForParkingSpacesPage, false)
         .flatMap(_.set(ParkingSpacesOrGaragesNotIncludedInYourRentPage, parkingSpacesNotIncluded))
         .success.value
@@ -804,19 +811,17 @@ class NavigatorSpec
       verify(mockSessionRepository, times(1)).set(any[UserAnswers])
     }
 
-    "throw NotFoundException when DoYouPayExtraForParkingSpacesPage is missing" in {
-      val answers = UserAnswers(CredId("1234"))
+    "return DoYouPayExtraForParkingSpacesController when DoYouPayExtraForParkingSpacesPage is missing" in {
+      val result = navigator.checkRouteMap(DoYouPayExtraForParkingSpacesPage)(false)(userAnswersWithoutData)
 
-      an[NotFoundException] shouldBe thrownBy {
-        navigator.checkRouteMap(DoYouPayExtraForParkingSpacesPage)(false)(answers)
-      }
+      result shouldBe routes.DoYouPayExtraForParkingSpacesController.show(NormalMode)
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
   }
   "checkRouteMap for DidYouGetMoneyFromLandlordPage" should {
 
     "return CheckAnswersController when DidYouGetMoneyFromLandlord is true and MoneyToTakeOnTheLeasePage is present" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(DidYouGetMoneyFromLandlordPage, true)
         .flatMap(_.set(MoneyToTakeOnTheLeasePage, MoneyToTakeOnTheLease(10000, "2000-01-01")))
         .success.value
@@ -828,7 +833,7 @@ class NavigatorSpec
     }
 
     "return MoneyToTakeOnTheLeaseController when DidYouGetMoneyFromLandlord is true and MoneyToTakeOnTheLeasePage is missing" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(DidYouGetMoneyFromLandlordPage, true)
         .success.value
 
@@ -839,7 +844,7 @@ class NavigatorSpec
     }
 
     "return CheckAnswersController and remove MoneyToTakeOnTheLeasePage when DidYouGetMoneyFromLandlord is false" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(DidYouGetMoneyFromLandlordPage, false)
         .flatMap(_.set(MoneyToTakeOnTheLeasePage, MoneyToTakeOnTheLease(10000, "2000-01-01")))
         .success.value
@@ -850,19 +855,17 @@ class NavigatorSpec
       verify(mockSessionRepository, times(1)).set(any[UserAnswers])
     }
 
-    "throw NotFoundException when DidYouGetMoneyFromLandlordPage is missing" in {
-      val answers = UserAnswers(CredId("1234"))
+    "return DidYouGetMoneyFromLandlordController when DidYouGetMoneyFromLandlordPage is missing" in {
+      val result = navigator.checkRouteMap(DidYouGetMoneyFromLandlordPage)(false)(userAnswersWithoutData)
 
-      an[NotFoundException] shouldBe thrownBy {
-        navigator.checkRouteMap(DidYouGetMoneyFromLandlordPage)(false)(answers)
-      }
+      result shouldBe routes.DidYouGetMoneyFromLandlordController.show(NormalMode)
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
   }
   "checkRouteMap for DidYouPayAnyMoneyToLandlordPage" should {
 
     "return CheckAnswersController when DidYouPayAnyMoneyToLandlord is true and MoneyYouPaidInAdvanceToLandlordPage is present" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(DidYouPayAnyMoneyToLandlordPage, true)
         .flatMap(_.set(MoneyYouPaidInAdvanceToLandlordPage, paymentAdvance))
         .success.value
@@ -874,7 +877,7 @@ class NavigatorSpec
     }
 
     "return MoneyYouPaidInAdvanceToLandlordController when DidYouPayAnyMoneyToLandlord is true and MoneyYouPaidInAdvanceToLandlordPage is missing" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(DidYouPayAnyMoneyToLandlordPage, true)
         .success.value
 
@@ -885,7 +888,7 @@ class NavigatorSpec
     }
 
     "return CheckAnswersController and remove MoneyYouPaidInAdvanceToLandlordPage when DidYouPayAnyMoneyToLandlord is false" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(DidYouPayAnyMoneyToLandlordPage, false)
         .flatMap(_.set(MoneyYouPaidInAdvanceToLandlordPage, paymentAdvance))
         .success.value
@@ -896,19 +899,17 @@ class NavigatorSpec
       verify(mockSessionRepository, times(1)).set(any[UserAnswers])
     }
 
-    "throw NotFoundException when DidYouPayAnyMoneyToLandlordPage is missing" in {
-      val answers = UserAnswers(CredId("1234"))
+    "return DidYouPayAnyMoneyToLandlordController when DidYouPayAnyMoneyToLandlordPage is missing" in {
+      val result = navigator.checkRouteMap(DidYouPayAnyMoneyToLandlordPage)(false)(userAnswersWithoutData)
 
-      an[NotFoundException] shouldBe thrownBy {
-        navigator.checkRouteMap(DidYouPayAnyMoneyToLandlordPage)(false)(answers)
-      }
+      result shouldBe routes.DidYouPayAnyMoneyToLandlordController.show(NormalMode)
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
   }
   "checkRouteMap for DidYouAgreeRentWithLandlordPage" should {
 
     "return CheckAnswersController and update answers when DidYouAgreeRentWithLandlord is true, CheckRentFreePeriodPage is provided" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(DidYouAgreeRentWithLandlordPage, true)
         .flatMap(_.set(CheckRentFreePeriodPage, false))
         .flatMap(_.set(RentInterimPage, false))
@@ -921,7 +922,7 @@ class NavigatorSpec
     }
 
     "return CheckAnswersController and update answers when DidYouAgreeRentWithLandlord is true, ProvideDetailsOfSecondRentPeriodPage and RentDatesAgreePage are provided" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(DidYouAgreeRentWithLandlordPage, true)
         .flatMap(_.set(ProvideDetailsOfSecondRentPeriodPage, detailsOfRentPeriod))
         .flatMap(_.set(RentDatesAgreePage, "2025-12-04"))
@@ -935,7 +936,7 @@ class NavigatorSpec
     }
 
     "return RentDatesAgreeController and update answers when DidYouAgreeRentWithLandlord is true, ProvideDetailsOfSecondRentPeriodPage is provided but RentDatesAgreePage is missing" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(DidYouAgreeRentWithLandlordPage, true)
         .flatMap(_.set(ProvideDetailsOfSecondRentPeriodPage, detailsOfRentPeriod))
         .flatMap(_.set(RentInterimPage, false))
@@ -948,7 +949,7 @@ class NavigatorSpec
     }
 
     "return CheckRentFreePeriodController and update answers when DidYouAgreeRentWithLandlord is true, CheckRentFreePeriodPage is missing" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(DidYouAgreeRentWithLandlordPage, true)
         .flatMap(_.set(RentInterimPage, false))
         .success.value
@@ -960,7 +961,7 @@ class NavigatorSpec
     }
 
     "return CheckAnswersController when DidYouAgreeRentWithLandlord is false and RentInterimPage is present" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(DidYouAgreeRentWithLandlordPage, false)
         .flatMap(_.set(RentInterimPage, true))
         .success.value
@@ -972,7 +973,7 @@ class NavigatorSpec
     }
 
     "return RentInterimController when DidYouAgreeRentWithLandlord is false and RentInterimPage is missing" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(DidYouAgreeRentWithLandlordPage, false)
         .success.value
 
@@ -982,19 +983,17 @@ class NavigatorSpec
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
 
-    "throw NotFoundException when DidYouAgreeRentWithLandlordPage is missing" in {
-      val answers = UserAnswers(CredId("1234"))
+    "return DidYouAgreeRentWithLandlordController when DidYouAgreeRentWithLandlordPage is missing" in {
+      val result = navigator.checkRouteMap(DidYouAgreeRentWithLandlordPage)(false)(userAnswersWithoutData)
 
-      an[NotFoundException] shouldBe thrownBy {
-        navigator.checkRouteMap(DidYouAgreeRentWithLandlordPage)(false)(answers)
-      }
+      result shouldBe routes.DidYouAgreeRentWithLandlordController.show(NormalMode)
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
   }
 
   "checkRouteMap for RentInterimPage" should {
     "return CheckAnswersController when RentInterimPage is true and InterimSetByTheCourtPage is present" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(RentInterimPage, true)
         .flatMap(_.set(InterimSetByTheCourtPage, interimRentSetByTheCourtModel))
         .success.value
@@ -1005,7 +1004,7 @@ class NavigatorSpec
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
     "return InterimRentSetByTheCourtController when RentInterimPage is true and InterimSetByTheCourtPage is present" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(RentInterimPage, true)
         .success.value
 
@@ -1015,7 +1014,7 @@ class NavigatorSpec
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
     "return CheckAnswersController when RentInterimPage is false and InterimSetByTheCourtPage is removed" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(RentInterimPage, false)
         .flatMap(_.set(InterimSetByTheCourtPage, interimRentSetByTheCourtModel))
         .success.value
@@ -1029,7 +1028,7 @@ class NavigatorSpec
   "checkRouteMap for ConfirmBreakClausePage" should {
 
     "return CheckAnswersController when ConfirmBreakClause is true and DidYouGetIncentiveForNotTriggeringBreakClausePage is present" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(ConfirmBreakClausePage, true)
         .flatMap(_.set(DidYouGetIncentiveForNotTriggeringBreakClausePage, DidYouGetIncentiveForNotTriggeringBreakClause(checkBox = Set(YesLumpSum, YesRentFreePeriod))))
         .success.value
@@ -1041,7 +1040,7 @@ class NavigatorSpec
     }
 
     "return DidYouGetIncentiveForNotTriggeringBreakClauseController when ConfirmBreakClause is true and DidYouGetIncentiveForNotTriggeringBreakClausePage is missing" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(ConfirmBreakClausePage, true)
         .success.value
 
@@ -1052,7 +1051,7 @@ class NavigatorSpec
     }
 
     "return CheckAnswersController and update answers when ConfirmBreakClause is false" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(ConfirmBreakClausePage, false)
         .flatMap(_.set(DidYouGetIncentiveForNotTriggeringBreakClausePage, DidYouGetIncentiveForNotTriggeringBreakClause(checkBox = Set(YesLumpSum, YesRentFreePeriod))))
         .success.value
@@ -1064,11 +1063,9 @@ class NavigatorSpec
     }
 
     "throw NotFoundException when ConfirmBreakClausePage is missing" in {
-      val answers = UserAnswers(CredId("1234"))
+      val result = navigator.checkRouteMap(ConfirmBreakClausePage)(false)(userAnswersWithoutData)
 
-      an[NotFoundException] shouldBe thrownBy {
-        navigator.checkRouteMap(ConfirmBreakClausePage)(false)(answers)
-      }
+      result shouldBe routes.ConfirmBreakClauseController.show(NormalMode)
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
   }
@@ -1078,7 +1075,7 @@ class NavigatorSpec
 
     "return AboutTheRentFreePeriodController when only YesRentFreePeriod selected and AboutTheRentFreePeriodPage is missing" in {
       val incentive = DidYouGetIncentiveForNotTriggeringBreakClause(Set(YesRentFreePeriod))
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(DidYouGetIncentiveForNotTriggeringBreakClausePage, incentive)
         .success
         .value
@@ -1090,7 +1087,7 @@ class NavigatorSpec
 
     "return CheckAnswersController when only YesRentFreePeriod selected and AboutTheRentFreePeriodPage is provided" in {
       val incentive = DidYouGetIncentiveForNotTriggeringBreakClause(Set(YesRentFreePeriod))
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(DidYouGetIncentiveForNotTriggeringBreakClausePage, incentive)
         .flatMap(_.set(AboutTheRentFreePeriodPage, aboutTheRentFreePeriodModel))
         .success
@@ -1103,7 +1100,7 @@ class NavigatorSpec
 
     "return CheckAnswersController when only YesRentFreePeriod selected, AboutTheRentFreePeriodPage is provided and HowMuchWasTheLumpSumPage is removed" in {
       val incentive = DidYouGetIncentiveForNotTriggeringBreakClause(Set(YesRentFreePeriod))
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(DidYouGetIncentiveForNotTriggeringBreakClausePage, incentive)
         .flatMap(_.set(AboutTheRentFreePeriodPage, aboutTheRentFreePeriodModel))
         .flatMap(_.set(HowMuchWasTheLumpSumPage, BigDecimal(7500.00)))
@@ -1118,7 +1115,7 @@ class NavigatorSpec
 
     "return HowMuchWasTheLumpSumController when YesLumpSum selected and HowMuchWasTheLumpSumPage is missing" in {
       val incentive = DidYouGetIncentiveForNotTriggeringBreakClause(Set(YesLumpSum))
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(DidYouGetIncentiveForNotTriggeringBreakClausePage, incentive)
         .success.value
 
@@ -1130,7 +1127,7 @@ class NavigatorSpec
 
     "return CheckAnswersController when only YesLumpSum selected, HowMuchWasTheLumpSumPage is provided and AboutTheRentFreePeriodPage is removed" in {
       val incentive = DidYouGetIncentiveForNotTriggeringBreakClause(Set(YesLumpSum))
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(DidYouGetIncentiveForNotTriggeringBreakClausePage, incentive)
         .flatMap(_.set(HowMuchWasTheLumpSumPage, BigDecimal(7500.00)))
         .flatMap(_.set(AboutTheRentFreePeriodPage, aboutTheRentFreePeriodModel))
@@ -1144,7 +1141,7 @@ class NavigatorSpec
 
     "return AboutTheRentFreePeriodController when YesLumpSum and YesLumpSum selected, HowMuchWasTheLumpSumPage is provided but AboutTheRentFreePeriodPage is missing" in {
       val incentive = DidYouGetIncentiveForNotTriggeringBreakClause(Set(YesRentFreePeriod, YesLumpSum))
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(DidYouGetIncentiveForNotTriggeringBreakClausePage, incentive)
         .flatMap(_.set(HowMuchWasTheLumpSumPage, BigDecimal(7500.00)))
         .success.value
@@ -1157,7 +1154,7 @@ class NavigatorSpec
 
     "return CheckAnswersController when all required pages are present" in {
       val incentive = DidYouGetIncentiveForNotTriggeringBreakClause(Set(YesRentFreePeriod, YesLumpSum))
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(DidYouGetIncentiveForNotTriggeringBreakClausePage, incentive)
         .flatMap(_.set(AboutTheRentFreePeriodPage, aboutTheRentFreePeriodModel))
         .flatMap(_.set(HowMuchWasTheLumpSumPage, BigDecimal(7500.00)))
@@ -1171,7 +1168,7 @@ class NavigatorSpec
 
     "return CheckAnswersController when no is selected and HowMuchWasTheLumpSumPage and AboutTheRentFreePeriodPage are removed" in {
       val incentive = DidYouGetIncentiveForNotTriggeringBreakClause(Set(No))
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(DidYouGetIncentiveForNotTriggeringBreakClausePage, incentive)
         .flatMap(_.set(AboutTheRentFreePeriodPage, aboutTheRentFreePeriodModel))
         .flatMap(_.set(HowMuchWasTheLumpSumPage, BigDecimal(7500.00)))
@@ -1185,7 +1182,7 @@ class NavigatorSpec
 
     "return CheckAnswersController when no is selected and HowMuchWasTheLumpSumPage is removed" in {
       val incentive = DidYouGetIncentiveForNotTriggeringBreakClause(Set(No))
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(DidYouGetIncentiveForNotTriggeringBreakClausePage, incentive)
         .flatMap(_.set(HowMuchWasTheLumpSumPage, BigDecimal(7500.00)))
         .success.value
@@ -1198,7 +1195,7 @@ class NavigatorSpec
 
     "return CheckAnswersController when no is selected and AboutTheRentFreePeriodPage is removed" in {
       val incentive = DidYouGetIncentiveForNotTriggeringBreakClause(Set(No))
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(DidYouGetIncentiveForNotTriggeringBreakClausePage, incentive)
         .flatMap(_.set(AboutTheRentFreePeriodPage, aboutTheRentFreePeriodModel))
         .success.value
@@ -1209,19 +1206,17 @@ class NavigatorSpec
       verify(mockSessionRepository, times(1)).set(any[UserAnswers])
     }
 
-    "throw NotFoundException when DidYouGetIncentiveForNotTriggeringBreakClausePage is missing" in {
-      val answers = UserAnswers(CredId("1234"))
+    "return DidYouGetIncentiveForNotTriggeringBreakClauseController when DidYouGetIncentiveForNotTriggeringBreakClausePage is missing" in {
+      val result = navigator.checkRouteMap(DidYouGetIncentiveForNotTriggeringBreakClausePage)(false)(userAnswersWithoutData)
 
-      an[NotFoundException] shouldBe thrownBy {
-        navigator.checkRouteMap(DidYouGetIncentiveForNotTriggeringBreakClausePage)(false)(answers)
-      }
+      result shouldBe routes.DidYouGetIncentiveForNotTriggeringBreakClauseController.show(NormalMode)
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
   }
   "checkRouteMap for HowMuchWasTheLumpSumPage" should {
     "return CheckAnswersController when YesRentFreePeriod is selected and AboutTheRentFreePeriodPage is provided" in {
       val incentive = DidYouGetIncentiveForNotTriggeringBreakClause(Set(YesRentFreePeriod, YesLumpSum))
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(DidYouGetIncentiveForNotTriggeringBreakClausePage, incentive)
         .flatMap(_.set(HowMuchWasTheLumpSumPage, BigDecimal(7500.00)))
         .flatMap(_.set(AboutTheRentFreePeriodPage, aboutTheRentFreePeriodModel))
@@ -1234,7 +1229,7 @@ class NavigatorSpec
     }
     "return CheckAnswersController when only YesLumpSum is selected" in {
       val incentive = DidYouGetIncentiveForNotTriggeringBreakClause(Set(YesLumpSum))
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(DidYouGetIncentiveForNotTriggeringBreakClausePage, incentive)
         .flatMap(_.set(HowMuchWasTheLumpSumPage, BigDecimal(7500.00)))
         .success.value
@@ -1246,7 +1241,7 @@ class NavigatorSpec
     }
     "return AboutTheRentFreePeriodController when YesRentFreePeriod is selected and AboutTheRentFreePeriodPage is missing" in {
       val incentive = DidYouGetIncentiveForNotTriggeringBreakClause(Set(YesRentFreePeriod, YesLumpSum))
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(DidYouGetIncentiveForNotTriggeringBreakClausePage, incentive)
         .flatMap(_.set(HowMuchWasTheLumpSumPage, BigDecimal(7500.00)))
         .success.value
@@ -1259,7 +1254,7 @@ class NavigatorSpec
   }
   "checkRouteMap for RepairsAndFittingOutPage" should {
     "return CheckAnswersController when RepairsAndFittingOutPage is true and AboutRepairsAndFittingOutPage is provided" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(RepairsAndFittingOutPage, true)
         .flatMap(_.set(AboutRepairsAndFittingOutPage, aboutRepairsAndFittingOutModel))
         .success.value
@@ -1270,7 +1265,7 @@ class NavigatorSpec
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
     "return CheckAnswersController when RepairsAndFittingOutPage is false and AboutRepairsAndFittingOutPage is removed" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(RepairsAndFittingOutPage, false)
         .flatMap(_.set(AboutRepairsAndFittingOutPage, aboutRepairsAndFittingOutModel))
         .success.value
@@ -1281,7 +1276,7 @@ class NavigatorSpec
       verify(mockSessionRepository, times(1)).set(any[UserAnswers])
     }
     "return AboutRepairsAndFittingOutController when RepairsAndFittingOutPage is true and AboutRepairsAndFittingOutPage is missing" in {
-      val answers = UserAnswers(CredId("1234"))
+      val answers = userAnswersWithoutData
         .set(RepairsAndFittingOutPage, true)
         .success.value
 
@@ -1290,16 +1285,16 @@ class NavigatorSpec
       result shouldBe routes.AboutRepairsAndFittingOutController.show(CheckMode)
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
-  }  
+  }
   "checkRouteMap for ProvideDetailsOfFirstRentPeriodPage" should {
     "return ProvideDetailsOfSecondRentPeriodController when shouldGoToSecondRentPeriod is true" in {
-      val result = navigator.nextPage(ProvideDetailsOfFirstRentPeriodPage, CheckMode, answersWithoutData, true)
+      val result = navigator.nextPage(ProvideDetailsOfFirstRentPeriodPage, CheckMode, userAnswersWithoutData, true)
 
       result shouldBe routes.ProvideDetailsOfSecondRentPeriodController.show(CheckMode)
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
     "return CheckAnswersController when shouldGoToSecondRentPeriod is false" in {
-      val result = navigator.nextPage(ProvideDetailsOfFirstRentPeriodPage, CheckMode, answersWithoutData, false)
+      val result = navigator.nextPage(ProvideDetailsOfFirstRentPeriodPage, CheckMode, userAnswersWithoutData, false)
 
       result shouldBe routes.CheckAnswersController.show
       verify(mockSessionRepository, never()).set(any[UserAnswers])
@@ -1308,13 +1303,13 @@ class NavigatorSpec
 
   "checkRouteMap for ProvideDetailsOfSecondRentPeriodPage" should {
     "return RentPeriodsController when shouldGoToRentPeriodsPage is true" in {
-      val result = navigator.nextPage(ProvideDetailsOfSecondRentPeriodPage, CheckMode, answersWithoutData, true)
+      val result = navigator.nextPage(ProvideDetailsOfSecondRentPeriodPage, CheckMode, userAnswersWithoutData, true)
 
       result shouldBe routes.RentPeriodsController.show(CheckMode)
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
     "return CheckAnswersController when shouldGoToRentPeriodsPage is false" in {
-      val result = navigator.nextPage(ProvideDetailsOfSecondRentPeriodPage, CheckMode, answersWithoutData)
+      val result = navigator.nextPage(ProvideDetailsOfSecondRentPeriodPage, CheckMode, userAnswersWithoutData)
 
       result shouldBe routes.CheckAnswersController.show
       verify(mockSessionRepository, never()).set(any[UserAnswers])
@@ -1323,14 +1318,14 @@ class NavigatorSpec
 
   "checkRouteMap for RentPeriodsPage" should {
     "return ProvideDetailsOfSecondRentPeriodController when rent periods seq is empty and user select yes for adding rent period" in {
-      val answers = answersWithoutData.set(RentPeriodsPage, true).success.value
+      val answers = userAnswersWithoutData.set(RentPeriodsPage, true).success.value
       val result = navigator.nextPage(RentPeriodsPage, CheckMode, answers)
 
       result shouldBe routes.ProvideDetailsOfSecondRentPeriodController.show(CheckMode)
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
     "return AdditionalRentPeriodController when rent periods seq is not empty and user select yes for adding rent period" in {
-      val answers = answersWithoutData.set(RentPeriodsPage, true)
+      val answers = userAnswersWithoutData.set(RentPeriodsPage, true)
         .flatMap(_.set(ProvideDetailsOfSecondRentPeriodPage, detailsOfRentPeriod))
         .success.value
       val result = navigator.nextPage(RentPeriodsPage, CheckMode, answers)
@@ -1339,7 +1334,7 @@ class NavigatorSpec
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
     "return RentDatesAgreeController when rent periods seq is not empty and user select yes for adding rent period" in {
-      val answers = answersWithoutData.set(RentPeriodsPage, false)
+      val answers = userAnswersWithoutData.set(RentPeriodsPage, false)
         .success.value
       val result = navigator.nextPage(RentPeriodsPage, CheckMode, answers)
 
@@ -1347,7 +1342,7 @@ class NavigatorSpec
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
     "return CheckAnswersController when user select no for adding rent period" in {
-      val answers = answersWithoutData.set(RentPeriodsPage, false)
+      val answers = userAnswersWithoutData.set(RentPeriodsPage, false)
         .flatMap(_.set(RentDatesAgreePage, "2025-01-01"))
         .success.value
       val result = navigator.nextPage(RentPeriodsPage, CheckMode, answers)
@@ -1359,32 +1354,32 @@ class NavigatorSpec
 
   "skipRepairsAndInsuranceIfRentBasedOnIsTOC" should {
     "return WhatIsYourRentBasedOnController if rentBasedOn is empty and type of agreement is not verbal" in {
-      val answers = answersWithoutData.set(WhatTypeOfAgreementPage, "LeaseOrTenancy").success.value
+      val answers = userAnswersWithoutData.set(WhatTypeOfAgreementPage, "LeaseOrTenancy").success.value
       val result = navigator.skipRepairsAndInsuranceIfRentBasedOnIsTOC(answers)
 
       result shouldBe routes.WhatIsYourRentBasedOnController.show(NormalMode)
     }
     "return RepairsAndInsuranceController if rentBasedOn is empty and type of agreement is verbal" in {
-      val answers = answersWithoutData.set(WhatTypeOfAgreementPage, "Verbal").success.value
+      val answers = userAnswersWithoutData.set(WhatTypeOfAgreementPage, "Verbal").success.value
       val result = navigator.skipRepairsAndInsuranceIfRentBasedOnIsTOC(answers)
 
       result shouldBe routes.RepairsAndInsuranceController.show(NormalMode)
     }
     "return RepairsAndInsuranceController if rentBasedOn is open market" in {
-      val answers = answersWithoutData.set(WhatIsYourRentBasedOnPage, RentBasedOn("OpenMarket", None)).success.value
+      val answers = userAnswersWithoutData.set(WhatIsYourRentBasedOnPage, RentBasedOn("OpenMarket", None)).success.value
       val result = navigator.skipRepairsAndInsuranceIfRentBasedOnIsTOC(answers)
 
       result shouldBe routes.RepairsAndInsuranceController.show(NormalMode)
     }
     "return RentReviewController if rentBasedOn is TOC in new agreement journey" in {
-      val answers = answersWithoutData.set(TellUsAboutYourNewAgreementPage, NewAgreement)
+      val answers = userAnswersWithoutData.set(TellUsAboutYourNewAgreementPage, NewAgreement)
         .flatMap(_.set(WhatIsYourRentBasedOnPage, RentBasedOn("TotalOccupancyCost", None))).success.value
       val result = navigator.skipRepairsAndInsuranceIfRentBasedOnIsTOC(answers)
 
       result shouldBe routes.RentReviewController.show(NormalMode)
     }
     "return ConfirmBreakClauseController if rentBasedOn is TOC in rent review journey" in {
-      val answers = answersWithoutData.set(TellUsAboutRentPage, RentAgreement)
+      val answers = userAnswersWithoutData.set(TellUsAboutRentPage, RentAgreement)
         .flatMap(_.set(WhatIsYourRentBasedOnPage, RentBasedOn("TotalOccupancyCost", None))).success.value
       val result = navigator.skipRepairsAndInsuranceIfRentBasedOnIsTOC(answers)
 
