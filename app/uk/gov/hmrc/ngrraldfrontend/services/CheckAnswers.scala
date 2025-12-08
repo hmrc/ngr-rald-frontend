@@ -321,7 +321,7 @@ object CheckAnswers {
 
     val interimRentAmountRow = interimRentSetByTheCourt.map { value =>
       buildRow(
-        labelKey = "checkAnswers.rent.rentInterim",
+        labelKey = "checkAnswers.rent.rentInterim.amount",
         value = CurrencyHelper.formatBigDecimals(value.amount),
         linkId = "rent-interim-amount",
         href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.InterimRentSetByTheCourtController.show(CheckMode),
@@ -398,8 +398,8 @@ object CheckAnswers {
       totalAnualRent,
       didYouAgreeRentWithLandlord,
       rentInterim,
-      interimRentDateRow,
       interimRentAmountRow,
+      interimRentDateRow,
       checkRentPeriod,
       rentFreePeriodMonths,
       rentFreePeriodReason,
