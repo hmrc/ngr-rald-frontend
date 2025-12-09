@@ -20,6 +20,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.libs.json.Json
 import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
+import uk.gov.hmrc.ngrraldfrontend.models.Incentive.{YesLumpSum, YesRentFreePeriod}
 import uk.gov.hmrc.ngrraldfrontend.models.UserAnswers
 import uk.gov.hmrc.ngrraldfrontend.services.CheckAnswers.*
 import uk.gov.hmrc.ngrraldfrontend.views.html.CheckAnswersView
@@ -1184,5 +1185,197 @@ class CheckAnswersViewSpec extends ViewBaseSpec {
       elementText(Selectors.thirdPeriodAmount) mustBe thirdPeriodAmount
     }
 
+  }
+  val fullRentReviewUserAnswers: UserAnswers = UserAnswers(
+    testCredId,
+    data = Json.obj(
+      "tellUsAboutRent" -> "RentAgreement",
+      "landlord" -> Json.obj(
+        "landlordName" -> "Anna",
+        "hasRelationship" -> true,
+        "landlordRelationship" -> "Parent"
+      ),
+      "rentReviewDetails" -> Json.obj(
+        "annualRentAmount" -> 300.0,
+        "whatHappensAtRentReview" -> "OnlyGoUp",
+        "startDate" -> "2020-01-01",
+        "hasAgreedNewRent" -> true
+      ),
+      "whatIsYourRentBasedOn" -> Json.obj(
+        "rentBased" -> "Other",
+        "otherDesc" -> "Other reason"
+      ),
+      "whatYourRentIncludes" -> Json.obj(
+        "livingAccommodation" -> true,
+        "rentPartAddress" -> false,
+        "rentEmptyShell" -> true,
+        "rentIncBusinessRates" -> false,
+        "rentIncWaterCharges" -> true,
+        "rentIncService" -> false,
+        "bedroomNumbers" -> 1
+      ),
+      "doesYourRentIncludeParking" -> true,
+      "howManyParkingSpacesOrGaragesIncludedInRent" -> Json.obj(
+        "uncoveredSpaces" -> 1,
+        "coveredSpaces" -> 2,
+        "garages" -> 3
+      ),
+      "doYouPayExtraForParkingSpacesNotIncludedInRent" -> true,
+      "parkingSpacesOrGaragesNotIncludedInYourRent" -> Json.obj(
+        "uncoveredSpaces" -> 1,
+        "coveredSpaces" -> 2,
+        "garages" -> 3,
+        "totalCost" -> 12.0,
+        "agreementDate" -> "2020-12-12"
+      ),
+      "repairsAndInsurance" -> Json.obj(
+        "internalRepairs" -> "You",
+        "externalRepairs" -> "Landlord",
+        "buildingInsurance" -> "YouAndLandlord"
+      ),
+      "confirmBreakClause" -> true,
+      "didYouGetIncentiveForNotTriggeringBreakClause" -> Json.obj(
+        "checkBox" -> Set(YesLumpSum, YesRentFreePeriod)
+      ),
+      "howMuchWasTheLumpSumPage" -> 300.0,
+      "aboutTheRentFreePeriod" -> Json.obj(
+        "months" -> 2,
+        "date" -> "2020-01-01"
+      ),
+      "hasAnythingElseAffectedTheRent" -> Json.obj(
+        "radio" -> true,
+        "reason" -> "something else"
+      )
+    )
+  )
+  "CheckAnswersView rent review" must {
+    val totalAnnualRentLabel = "How much is your new total annual rent?"
+    val whatHappenToRentReviewLabel = "What did your agreement say could happen to the rent at rent review?"
+    val payDateLabel = "When will you start paying rent?"
+    val didLandlordAgreeRentLabel = "Did you and the landlord (or their agent) agree the new rent?"
+    val agreementAllowBreakClauseLabel = "Did your agreement allow you to trigger a break clause?"
+    val confirmBreakClauseLabel = "Did you get an incentive if you do not trigger the break clause?"
+    val lumpSumLabel = "How much was the lump sum?"
+    val rentFreePeriodLabel = "How many months is the rent-free period?"
+    val rentFreePeriodStartDateLabel = "Rent-free period start date"
+
+    val totalAnnualRentLabelSelectors = "#main-content > div > div.govuk-grid-column-two-thirds > form > dl:nth-child(5) > div:nth-child(1) > dt"
+    val whatHappenToRentReviewLabelSelectors = "#main-content > div > div.govuk-grid-column-two-thirds > form > dl:nth-child(5) > div:nth-child(2) > dt"
+    val payDateLabelSelectors = "#main-content > div > div.govuk-grid-column-two-thirds > form > dl:nth-child(5) > div:nth-child(3) > dt"
+    val didLandlordAgreeRentLabelSelectors = "#main-content > div > div.govuk-grid-column-two-thirds > form > dl:nth-child(5) > div:nth-child(4) > dt"
+    val agreementAllowBreakClauseLabelSelectors = "#main-content > div > div.govuk-grid-column-two-thirds > form > dl:nth-child(13) > div:nth-child(1) > dt"
+    val confirmBreakClauseLabelSelectors = "#main-content > div > div.govuk-grid-column-two-thirds > form > dl:nth-child(13) > div:nth-child(2) > dt"
+    val lumpSumLabelSelectors = "#main-content > div > div.govuk-grid-column-two-thirds > form > dl:nth-child(13) > div:nth-child(3) > dt"
+    val rentFreePeriodLabelSelectors = "#main-content > div > div.govuk-grid-column-two-thirds > form > dl:nth-child(13) > div:nth-child(4) > dt"
+    val rentFreePeriodStartDateLabelSelectors = "#main-content > div > div.govuk-grid-column-two-thirds > form > dl:nth-child(13) > div:nth-child(5) > dt"
+
+    val checkAnswersView = view(
+      selectedPropertyAddress = address,
+      leaseRenewalsSummary = createLeaseRenewalsSummaryRows(fullRentReviewUserAnswers),
+      landlordSummary = createLandlordSummaryRows(fullRentReviewUserAnswers),
+      agreementDetailsSummary = createAgreementDetailsRows(fullRentReviewUserAnswers),
+      rentSummary = createRentRows(fullRentReviewUserAnswers),
+      firstRentPeriod = createFirstRentPeriodRow(fullRentReviewUserAnswers),
+      rentPeriods = createRentPeriodsSummaryLists(fullRentReviewUserAnswers),
+      whatYourRentIncludesSummary = createWhatYourRentIncludesRows(fullRentReviewUserAnswers),
+      repairsAndInsurance = createRepairsAndInsurance(fullRentReviewUserAnswers),
+      rentReview = createRentReviewRows(fullRentReviewUserAnswers),
+      repairsAndFittingOutSummary = createRepairsAndFittingOut(fullRentReviewUserAnswers),
+      payments = createPaymentRows(fullRentReviewUserAnswers),
+      breakClause = createBreakClauseRows(fullRentReviewUserAnswers),
+      otherDetailsSummary = createOtherDetailsRow(fullRentReviewUserAnswers),
+      isRentReviewed = true
+    )
+
+    lazy implicit val document: Document = Jsoup.parse(checkAnswersView.body)
+    val htmlApply = view.apply(
+      address,
+      leaseRenewalsSummary = createLeaseRenewalsSummaryRows(fullRentReviewUserAnswers),
+      landlordSummary = createLandlordSummaryRows(fullRentReviewUserAnswers),
+      agreementDetailsSummary = createAgreementDetailsRows(fullRentReviewUserAnswers),
+      rentSummary = createRentRows(fullRentReviewUserAnswers),
+      firstRentPeriod = createFirstRentPeriodRow(fullRentReviewUserAnswers),
+      rentPeriods = createRentPeriodsSummaryLists(fullRentReviewUserAnswers),
+      whatYourRentIncludesSummary = createWhatYourRentIncludesRows(fullRentReviewUserAnswers),
+      repairsAndInsurance = createRepairsAndInsurance(fullRentReviewUserAnswers),
+      rentReview = createRentReviewRows(fullRentReviewUserAnswers),
+      repairsAndFittingOutSummary = createRepairsAndFittingOut(fullRentReviewUserAnswers),
+      payments = createPaymentRows(fullRentReviewUserAnswers),
+      breakClause = createBreakClauseRows(fullRentReviewUserAnswers),
+      otherDetailsSummary = createOtherDetailsRow(fullRentReviewUserAnswers),
+      isRentReviewed = true
+    ).body
+
+    val htmlRender = view.render(
+      address,
+      leaseRenewalsSummary = createLeaseRenewalsSummaryRows(fullRentReviewUserAnswers),
+      landlordSummary = createLandlordSummaryRows(fullRentReviewUserAnswers),
+      agreementDetailsSummary = createAgreementDetailsRows(fullRentReviewUserAnswers),
+      rentSummary = createRentRows(fullRentReviewUserAnswers),
+      firstRentPeriod = createFirstRentPeriodRow(fullRentReviewUserAnswers),
+      rentPeriods = createRentPeriodsSummaryLists(fullRentReviewUserAnswers),
+      whatYourRentIncludesSummary = createWhatYourRentIncludesRows(fullRentReviewUserAnswers),
+      repairsAndInsurance = createRepairsAndInsurance(fullRentReviewUserAnswers),
+      rentReview = createRentReviewRows(fullRentReviewUserAnswers),
+      repairsAndFittingOutSummary = createRepairsAndFittingOut(fullRentReviewUserAnswers),
+      payments = createPaymentRows(fullRentReviewUserAnswers),
+      breakClause = createBreakClauseRows(fullRentReviewUserAnswers),
+      otherDetailsSummary = createOtherDetailsRow(fullRentReviewUserAnswers),
+      isRentReviewed = true,
+      request, messages, mockConfig).body
+
+    "apply must nit be the same as render" in {
+      htmlApply mustBe htmlRender
+    }
+
+    "render is not empty" in {
+      htmlRender must not be empty
+    }
+
+    "show the correct title" in {
+      elementText(Selectors.navTitle) mustBe title
+    }
+
+    "show the correct heading" in {
+      elementText(Selectors.heading) mustBe heading
+    }
+
+    //rent review details table
+    "show the correct label for total annual rent" in {
+      elementText(totalAnnualRentLabelSelectors) mustBe totalAnnualRentLabel
+    }
+
+    "show the correct label for what happen to rent review" in {
+      elementText(whatHappenToRentReviewLabelSelectors) mustBe whatHappenToRentReviewLabel
+    }
+
+    "show the correct label for start paying date" in {
+      elementText(payDateLabelSelectors) mustBe payDateLabel
+    }
+
+    "show the correct label for did landlord agree rent" in {
+      elementText(didLandlordAgreeRentLabelSelectors) mustBe didLandlordAgreeRentLabel
+    }
+
+    //Break clause table
+    "show the correct label for agreement allow break clause" in {
+      elementText(agreementAllowBreakClauseLabelSelectors) mustBe agreementAllowBreakClauseLabel
+    }
+
+    "show the correct label for confirm break clause" in {
+      elementText(confirmBreakClauseLabelSelectors) mustBe confirmBreakClauseLabel
+    }
+
+    "show the correct label for lump sum" in {
+      elementText(lumpSumLabelSelectors) mustBe lumpSumLabel
+    }
+
+    "show the correct label for rent free period" in {
+      elementText(rentFreePeriodLabelSelectors) mustBe rentFreePeriodLabel
+    }
+
+    "show the correct label for rent free period start date" in {
+      elementText(rentFreePeriodStartDateLabelSelectors) mustBe rentFreePeriodStartDateLabel
+    }
   }
 }
