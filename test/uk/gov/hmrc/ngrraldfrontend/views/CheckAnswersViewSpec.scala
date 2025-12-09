@@ -292,27 +292,6 @@ class CheckAnswersViewSpec extends ViewBaseSpec {
     val thirdRentPeriodLabel = "#main-content > div > div.govuk-grid-column-two-thirds > form > h2:nth-child(14)"
     val thirdPeriodEndDate = "#main-content > div > div.govuk-grid-column-two-thirds > form > dl:nth-child(15) > div:nth-child(1) > dt"
     val thirdPeriodAmount = "#main-content > div > div.govuk-grid-column-two-thirds > form > dl:nth-child(15) > div:nth-child(2) > dt"
-    
-//    val whenDidYouAgreeRenewal = "#main-content > div > div.govuk-grid-column-two-thirds > form > dl:nth-of-type(7) > div:nth-of-type(3) > dt"
-//    val totalAnnualRentRenewal = "#main-content > div > div.govuk-grid-column-two-thirds > form > dl:nth-child(7) > div:nth-child(1) > dt"
-//    val rentCheckRentPeriodRenewal = "#main-content > div > div.govuk-grid-column-two-thirds > form > dl:nth-child(7) > div:nth-child(6) > dt"
-//    val rentFreePeriodRenewal = "#main-content > div > div.govuk-grid-column-two-thirds > form > dl:nth-child(7) > div:nth-child(7) > dt"
-//    val rentFreePeriodReasonRenewal = "#main-content > div > div.govuk-grid-column-two-thirds > form > dl:nth-child(7) > div:nth-child(8) > dt"
-
-    val firstRentPeriodLabelRenewal = "#main-content > div > div.govuk-grid-column-two-thirds > form > h2:nth-child(12)"
-    val firstPeriodStartDateRenewal = "#main-content > div > div.govuk-grid-column-two-thirds > form > dl:nth-child(13) > div:nth-child(1) > dt"
-    val firstPeriodEndDateRenewal = "#main-content > div > div.govuk-grid-column-two-thirds > form > dl:nth-child(13) > div:nth-child(2) > dt"
-    val firstPeriodDoYouPayRenewal = "#main-content > div > div.govuk-grid-column-two-thirds > form > dl:nth-child(13) > div:nth-child(3) > dt"
-    val firstPeriodPayAmountRenewal = "#main-content > div > div.govuk-grid-column-two-thirds > form > dl:nth-child(13) > div:nth-child(4) > dt"
-
-    val secondRentPeriodLabelRenewal = "#main-content > div > div.govuk-grid-column-two-thirds > form > h2:nth-child(14)"
-    val secondPeriodEndDateRenewal = "#main-content > div > div.govuk-grid-column-two-thirds > form > dl:nth-child(15) > div:nth-child(1) > dt"
-    val secondPeriodAmountRenewal = "#main-content > div > div.govuk-grid-column-two-thirds > form > dl:nth-child(15) > div:nth-child(2) > dt"
-
-    val thirdRentPeriodLabelRenewal = "#main-content > div > div.govuk-grid-column-two-thirds > form > h2:nth-child(16)"
-    val thirdPeriodEndDateRenewal = "#main-content > div > div.govuk-grid-column-two-thirds > form > dl:nth-child(17) > div:nth-child(1) > dt"
-    val thirdPeriodAmountRenewal = "#main-content > div > div.govuk-grid-column-two-thirds > form > dl:nth-child(17) > div:nth-child(2) > dt"
-
     val saveButton = "#continue"
   }
 
@@ -418,7 +397,7 @@ class CheckAnswersViewSpec extends ViewBaseSpec {
       payments = createPaymentRows(fullNewAgreementUserAnswers),
       breakClause = createBreakClauseRows(fullNewAgreementUserAnswers),
       otherDetailsSummary = createOtherDetailsRow(fullNewAgreementUserAnswers),
-      isRenewed = false
+      isRentReviewed = false
     )
 
     lazy implicit val document: Document = Jsoup.parse(checkAnswersView.body)
@@ -437,7 +416,7 @@ class CheckAnswersViewSpec extends ViewBaseSpec {
       payments = createPaymentRows(fullNewAgreementUserAnswers),
       breakClause = createBreakClauseRows(fullNewAgreementUserAnswers),
       otherDetailsSummary = createOtherDetailsRow(fullNewAgreementUserAnswers),
-      isRenewed = false
+      isRentReviewed = false
     ).body
 
     val htmlRender = view.render(
@@ -455,7 +434,7 @@ class CheckAnswersViewSpec extends ViewBaseSpec {
       payments = createPaymentRows(fullNewAgreementUserAnswers),
       breakClause = createBreakClauseRows(fullNewAgreementUserAnswers),
       otherDetailsSummary = createOtherDetailsRow(fullNewAgreementUserAnswers),
-      isRenewed = false, request, messages, mockConfig).body
+      isRentReviewed = false, request, messages, mockConfig).body
 
     "apply must nit be the same as render" in {
       htmlApply mustBe htmlRender
@@ -1093,7 +1072,7 @@ class CheckAnswersViewSpec extends ViewBaseSpec {
       payments = createPaymentRows(fullRenewedAgreementUserAnswers),
       breakClause = createBreakClauseRows(fullRenewedAgreementUserAnswers),
       otherDetailsSummary = createOtherDetailsRow(fullRenewedAgreementUserAnswers),
-      isRenewed = true
+      isRentReviewed = false
     )
 
     lazy implicit val document: Document = Jsoup.parse(checkAnswersView.body)
@@ -1112,7 +1091,7 @@ class CheckAnswersViewSpec extends ViewBaseSpec {
       payments = createPaymentRows(fullRenewedAgreementUserAnswers),
       breakClause = createBreakClauseRows(fullRenewedAgreementUserAnswers),
       otherDetailsSummary = createOtherDetailsRow(fullRenewedAgreementUserAnswers),
-      isRenewed = true
+      isRentReviewed = false
     ).body
 
     val htmlRender = view.render(
@@ -1130,7 +1109,7 @@ class CheckAnswersViewSpec extends ViewBaseSpec {
       payments = createPaymentRows(fullRenewedAgreementUserAnswers),
       breakClause = createBreakClauseRows(fullRenewedAgreementUserAnswers),
       otherDetailsSummary = createOtherDetailsRow(fullRenewedAgreementUserAnswers),
-      isRenewed = true,
+      isRentReviewed = false,
       request, messages, mockConfig).body
 
     "apply must nit be the same as render" in {
@@ -1160,49 +1139,49 @@ class CheckAnswersViewSpec extends ViewBaseSpec {
 
     //first rent period table
     "show the correct label for first rent period table" in {
-      elementText(Selectors.firstRentPeriodLabelRenewal) mustBe firstRentPeriodLabel
+      elementText(Selectors.firstRentPeriodLabel) mustBe firstRentPeriodLabel
     }
     //first rent period start date
     "show the correct message for first period start date in the first rent period table" in {
-      elementText(Selectors.firstPeriodStartDateRenewal) mustBe firstPeriodStartDate
+      elementText(Selectors.firstPeriodStartDate) mustBe firstPeriodStartDate
     }
     //first rent period end date
     "show the correct message for first period end date in the first rent period table" in {
-      elementText(Selectors.firstPeriodEndDateRenewal) mustBe firstPeriodEndDate
+      elementText(Selectors.firstPeriodEndDate) mustBe firstPeriodEndDate
     }
     //first rent period do you pay
     "show the correct message for first period do you pay in the first rent period table" in {
-      elementText(Selectors.firstPeriodDoYouPayRenewal) mustBe firstPeriodDoYouPay
+      elementText(Selectors.firstPeriodDoYouPay) mustBe firstPeriodDoYouPay
     }
     //first rent period pay amount
     "show the correct message for first period pay amount in the first rent period table" in {
-      elementText(Selectors.firstPeriodPayAmountRenewal) mustBe firstPeriodPayAmount
+      elementText(Selectors.firstPeriodPayAmount) mustBe firstPeriodPayAmount
     }
 
     //second rent period table
     "show the correct label for second rent period table" in {
-      elementText(Selectors.secondRentPeriodLabelRenewal) mustBe secondRentPeriodLabel
+      elementText(Selectors.secondRentPeriodLabel) mustBe secondRentPeriodLabel
     }
     //second rent period start date
     "show the correct message for second period end date in the second rent period table" in {
-      elementText(Selectors.secondPeriodEndDateRenewal) mustBe secondPeriodEndDate
+      elementText(Selectors.secondPeriodEndDate) mustBe secondPeriodEndDate
     }
     //second rent period amount
     "show the correct message for second period amount in the second rent period table" in {
-      elementText(Selectors.secondPeriodAmountRenewal) mustBe secondPeriodAmount
+      elementText(Selectors.secondPeriodAmount) mustBe secondPeriodAmount
     }
 
     //third rent period table
     "show the correct label for third rent period table" in {
-      elementText(Selectors.thirdRentPeriodLabelRenewal) mustBe thirdRentPeriodLabel
+      elementText(Selectors.thirdRentPeriodLabel) mustBe thirdRentPeriodLabel
     }
     //third rent period start date
     "show the correct message for third period end date in the third rent period table" in {
-      elementText(Selectors.thirdPeriodEndDateRenewal) mustBe thirdPeriodEndDate
+      elementText(Selectors.thirdPeriodEndDate) mustBe thirdPeriodEndDate
     }
     //third rent period amount
     "show the correct message for third period amount in the third rent period table" in {
-      elementText(Selectors.thirdPeriodAmountRenewal) mustBe thirdPeriodAmount
+      elementText(Selectors.thirdPeriodAmount) mustBe thirdPeriodAmount
     }
 
   }
