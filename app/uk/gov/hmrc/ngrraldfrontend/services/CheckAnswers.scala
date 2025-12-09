@@ -496,7 +496,10 @@ object CheckAnswers {
 
   def createWhatYourRentIncludesRows(answers: UserAnswers)(implicit messages: Messages): SummaryList = {
     val whatYourRentIncludesOpt = answers.get(WhatYourRentIncludesPage)
-    val link = uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatYourRentIncludesController.show(CheckMode)
+    val link = if (answers.get(WhatIsYourRentBasedOnPage).exists(_.rentBased == "TotalOccupancyCost"))
+      uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatRentIncludesRatesWaterServiceController.show(CheckMode)
+    else
+      uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatYourRentIncludesController.show(CheckMode)
 
     val doesYourRentIncludeParkingValue = answers.get(DoesYourRentIncludeParkingPage)
     val howManyParkingSpacesOrGaragesIncludedInRentValue = answers.get(HowManyParkingSpacesOrGaragesIncludedInRentPage)

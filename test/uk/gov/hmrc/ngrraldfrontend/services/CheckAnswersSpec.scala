@@ -294,6 +294,50 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
       values must contain("3")
       values must contain(messages("service.no"))
       values.exists(_.contains("100")) mustBe true
+
+      summaryList.rows.head.actions.get.items.head.href mustBe uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatYourRentIncludesController.show(CheckMode).url
+    }
+    "return rows with all rent includes details when data is present for rent based on TOC" in {
+      val whatYourRentIncludes = WhatYourRentIncludes(
+        livingAccommodation = true,
+        bedroomNumbers = Some(3),
+        rentPartAddress = false,
+        rentEmptyShell = false,
+        rentIncBusinessRates = None,
+        rentIncWaterCharges = None,
+        rentIncService = None
+      )
+
+      val parkingSpacesIncluded = HowManyParkingSpacesOrGarages(uncoveredSpaces = 5, coveredSpaces = 6, garages = 0)
+      val parkingSpacesNotIncluded = ParkingSpacesOrGaragesNotIncludedInYourRent(uncoveredSpaces = 100, coveredSpaces = 0, garages = 20, totalCost = BigDecimal(12.0), agreementDate = NGRDate("12", "12", "2020").makeString)
+
+      val userAnswers = UserAnswers(CredId("cred-123"))
+        .set(WhatYourRentIncludesPage, whatYourRentIncludes)
+        .flatMap(_.set(WhatIsYourRentBasedOnPage, rentBasedOnTOC))
+        .flatMap(_.set(DoesYourRentIncludeParkingPage, true))
+        .flatMap(_.set(HowManyParkingSpacesOrGaragesIncludedInRentPage, parkingSpacesIncluded))
+        .flatMap(_.set(DoYouPayExtraForParkingSpacesPage, false))
+        .flatMap(_.set(ParkingSpacesOrGaragesNotIncludedInYourRentPage, parkingSpacesNotIncluded))
+        .success.value
+
+      val summaryList = CheckAnswers.createWhatYourRentIncludesRows(userAnswers)
+      summaryList.rows.size must be >= 6
+
+      val keys = summaryList.rows.map(row => extractText(row.key.content))
+      keys must contain(messages("checkAnswers.whatYourRentIncludes.livingAccommodation"))
+      keys must contain(messages("checkAnswers.whatYourRentIncludes.bedroomNumbers"))
+      keys must contain(messages("checkAnswers.whatYourRentIncludes.doesYourRentIncludeParking"))
+      keys mustNot contain(messages("checkAnswers.whatYourRentIncludes.rentIncBusinessRates"))
+      keys mustNot contain(messages("checkAnswers.whatYourRentIncludes.rentIncWaterCharges"))
+      keys mustNot contain(messages("checkAnswers.whatYourRentIncludes.rentIncService"))
+
+      val values = summaryList.rows.map(row => extractText(row.value.content))
+      values must contain(messages("service.yes"))
+      values must contain("3")
+      values must contain(messages("service.no"))
+      values.exists(_.contains("100")) mustBe true
+
+      summaryList.rows.head.actions.get.items.head.href mustBe uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatRentIncludesRatesWaterServiceController.show(CheckMode).url
     }
   }
   "createWhatYourRentIncludesRows return rows with 'not provided' when data is missing" in {
@@ -754,12 +798,14 @@ class CheckAnswersSpec extends ViewBaseSpec with TestData {
       firstSummaryList.rows.head.value.content.asHtml.toString must include("12 December 2020")
       firstSummaryList.rows(1).key.content.asHtml.toString must include("Rent for this period (excluding VAT)")
       firstSummaryList.rows(1).value.content.asHtml.toString must include("£800")
+      firstSummaryList.rows.head.actions.get.items.head.href mustBe uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfSecondRentPeriodController.show(CheckMode).url
 
       val lastSummaryList = summaryLists.last
       lastSummaryList.rows.head.key.content.asHtml.toString must include("End date")
       lastSummaryList.rows.head.value.content.asHtml.toString must include("13 May 2021")
       lastSummaryList.rows(1).key.content.asHtml.toString must include("Rent for this period (excluding VAT)")
       lastSummaryList.rows(1).value.content.asHtml.toString must include("£500")
+      lastSummaryList.rows.head.actions.get.items.head.href mustBe uk.gov.hmrc.ngrraldfrontend.controllers.routes.AdditionalRentPeriodController.show(CheckMode, 1).url
     }
   }
 
