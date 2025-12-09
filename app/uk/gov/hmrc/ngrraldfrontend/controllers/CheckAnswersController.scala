@@ -24,7 +24,7 @@ import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, CheckRequestSentRefe
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.*
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
-import uk.gov.hmrc.ngrraldfrontend.pages.{CheckAnswersPage, TellUsAboutYourRenewedAgreementPage}
+import uk.gov.hmrc.ngrraldfrontend.pages.{CheckAnswersPage, TellUsAboutRentPage}
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.services.CheckAnswers.*
 import uk.gov.hmrc.ngrraldfrontend.views.html.CheckAnswersView
@@ -62,7 +62,7 @@ class CheckAnswersController @Inject()(view: CheckAnswersView,
             payments = createPaymentRows(answers = answers),
             breakClause = createBreakClauseRows(answers = answers),
             otherDetailsSummary = createOtherDetailsRow(answers = answers),
-            isRenewed =  answers.get(TellUsAboutYourRenewedAgreementPage).nonEmpty
+            isRentReviewed =  answers.get(TellUsAboutRentPage).nonEmpty
           )))
         case None => Future.successful(Redirect(appConfig.ngrDashboardUrl))
     }
