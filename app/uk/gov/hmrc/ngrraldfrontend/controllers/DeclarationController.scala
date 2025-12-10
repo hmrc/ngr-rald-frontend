@@ -20,7 +20,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, CheckRequestSentReferenceAction, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-import uk.gov.hmrc.ngrraldfrontend.connectors.NGRConnector
+import uk.gov.hmrc.ngrraldfrontend.connectors.{NGRConnector, NGRNotifyConnector}
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
@@ -41,6 +41,7 @@ class DeclarationController @Inject()(declarationView: DeclarationView,
                                       navigator: Navigator,
                                       sessionRepository: SessionRepository,
                                       ngrConnector: NGRConnector,
+                                      notifyConnector: NGRNotifyConnector,
                                       mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport {
 
@@ -50,21 +51,35 @@ class DeclarationController @Inject()(declarationView: DeclarationView,
     }
   }
 
-  def submit: Action[AnyContent] =
+  def submit: Action[AnyContent] = {
     (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
+      val assessmentId = UniqueIdGenerator.generateId
+
+      val baseAnswers =
+        request.userAnswers.getOrElse(UserAnswers(CredId(request.credId)))
+
+      val updatedAnswersTry =
+        baseAnswers.set(DeclarationPage, assessmentId)
+
       for {
-        updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(CredId(request.credId)))
-          .set(DeclarationPage, UniqueIdGenerator.generateId)
-        )
-        result <- sessionRepository.set(updatedAnswers).flatMap {
-          case true =>
-            ngrConnector.upsertRaldUserAnswers(updatedAnswers).flatMap(
-              _.status match
-                case CREATED => Future.successful(Redirect(navigator.nextPage(DeclarationPage, NormalMode, updatedAnswers)))
-                case _       => Future.failed(new Exception(s"Failed upsert to backend for credId: ${request.credId}"))
-          )
-          case _ => Future.failed(new Exception(s"Could not save reference for credId: ${request.credId}"))
+        updatedAnswers <- Future.fromTry(updatedAnswersTry)
+
+        saved <- sessionRepository.set(updatedAnswers)
+        _     <- if (saved) Future.unit
+        else Future.failed(new Exception(s"Could not save reference for credId: ${request.credId}"))
+
+        upsertResponse <- ngrConnector.upsertRaldUserAnswers(updatedAnswers)
+        _ <- upsertResponse.status match {
+          case CREATED => Future.unit
+          case _       => Future.failed(new Exception(s"Failed upsert to backend for credId: ${request.credId}"))
         }
-      } yield result
+
+        notifyStatus <- notifyConnector.postRaldChanges(updatedAnswers, assessmentId)
+        _ <- if (notifyStatus == ACCEPTED || notifyStatus == CREATED)
+          Future.unit
+        else Future.failed(new Exception(s"Failed notify for credId: ${request.credId}, status=$notifyStatus"))
+
+      } yield Redirect(navigator.nextPage(DeclarationPage, NormalMode, updatedAnswers))
     }
+  }
 }
