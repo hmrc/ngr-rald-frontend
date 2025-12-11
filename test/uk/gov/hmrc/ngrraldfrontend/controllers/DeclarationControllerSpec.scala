@@ -19,20 +19,19 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.shouldBe
-import play.api.http.Status.{CREATED, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
+import play.api.http.Status.{ACCEPTED, CREATED, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
 import uk.gov.hmrc.ngrraldfrontend.models.UserAnswers
 import uk.gov.hmrc.ngrraldfrontend.views.html.DeclarationView
 
-
 import scala.concurrent.Future
 
-class DeclaratioinControllerSpec extends ControllerSpecSupport {
+class DeclarationControllerSpec extends ControllerSpecSupport {
   val pageTitle = "Declaration"
   val view: DeclarationView = inject[DeclarationView]
-  val controllerProperty: Option[UserAnswers] => DeclarationController = answers => new DeclarationController(view, mockAuthJourney, fakeDataProperty(Some(property), answers), mockCheckRequestSentReference, mockNavigator, mockSessionRepository, mockNGRConnector, mcc)
+  val controllerProperty: Option[UserAnswers] => DeclarationController = answers => new DeclarationController(view, mockAuthJourney, fakeDataProperty(Some(property), answers), mockCheckRequestSentReference, mockNavigator, mockSessionRepository, mockNGRConnector, mockNGRNotifyConnector, mcc)
 
   "Declaration controller" must {
     "method show" must {
@@ -47,6 +46,7 @@ class DeclaratioinControllerSpec extends ControllerSpecSupport {
       "Return SEE_OTHER and the correct view" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         when(mockNGRConnector.upsertRaldUserAnswers(any())(any())).thenReturn(Future.successful(HttpResponse(CREATED, "Created Successfully")))
+        when(mockNGRNotifyConnector.postRaldChanges(any(), any())(any())).thenReturn(Future.successful(ACCEPTED))
         val result = controllerProperty(rentAgreementAnswers).submit(authenticatedFakeRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) shouldBe Some(routes.RentReviewDetailsSentController.confirmation().url)

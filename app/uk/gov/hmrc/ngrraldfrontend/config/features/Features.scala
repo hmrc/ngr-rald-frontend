@@ -22,4 +22,5 @@ import javax.inject.Inject
 
 class Features @Inject()(implicit config: Configuration) {
   val welshLanguageSupportEnabled = new Feature("features.welsh-language-support")
+  val bridgeEndpointEnabled = new Feature("features.bridgeEnabled")
 }

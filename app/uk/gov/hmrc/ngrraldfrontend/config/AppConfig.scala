@@ -31,6 +31,7 @@ trait AppConfig {
   val ngrLogoutUrl: String
   def getString(key: String): String
   val cacheTtl: Long
+  val nextGenerationRatesNotifyUrl: String
 }
 
 @Singleton
@@ -42,6 +43,7 @@ class FrontendAppConfig @Inject()(config: Configuration, servicesConfig: Service
   override val ngrCheckYourDetailsUrl: String = s"$dashboardHost/ngr-dashboard-frontend/check-your-details"
   override val ngrLogoutUrl: String = s"$dashboardHost/ngr-dashboard-frontend/signout"
   override val cacheTtl: Long = config.get[Int]("mongodb.timeToLiveInSeconds")
+  override val nextGenerationRatesNotifyUrl: String = servicesConfig.baseUrl("ngr-notify")
 
   def getString(key: String): String =
     config.getOptional[String](key).filter(!_.isBlank).getOrElse(throwConfigNotFoundError(key))

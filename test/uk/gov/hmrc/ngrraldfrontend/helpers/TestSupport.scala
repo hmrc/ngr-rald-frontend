@@ -30,7 +30,7 @@ import play.api.test.{FakeRequest, Injecting}
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name}
 import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, Nino}
 import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames}
-import uk.gov.hmrc.ngrraldfrontend.connectors.NGRConnector
+import uk.gov.hmrc.ngrraldfrontend.connectors.{NGRConnector, NGRNotifyConnector}
 import uk.gov.hmrc.ngrraldfrontend.mocks.MockAppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, Postcode}
 
@@ -72,6 +72,7 @@ trait TestSupport extends PlaySpec
   lazy val testNoResultsFoundPostCode: Postcode = Postcode("LS1 6RE")
   lazy implicit val mockConfig: MockAppConfig = new MockAppConfig(app.configuration)
   lazy implicit val mockNGRConnector: NGRConnector = mock[NGRConnector]
+  lazy implicit val mockNGRNotifyConnector: NGRNotifyConnector = mock[NGRNotifyConnector]
   lazy val messagesApi: MessagesApi = inject[MessagesApi]
   implicit lazy val messages: Messages = MessagesImpl(Lang("en"), messagesApi)
   lazy val fakeRequest: FakeRequest[AnyContentAsEmpty.type] =
