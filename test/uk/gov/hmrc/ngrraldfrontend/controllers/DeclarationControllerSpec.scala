@@ -28,7 +28,7 @@ import uk.gov.hmrc.ngrraldfrontend.views.html.DeclarationView
 
 import scala.concurrent.Future
 
-class DeclaratioinControllerSpec extends ControllerSpecSupport {
+class DeclarationControllerSpec extends ControllerSpecSupport {
   val pageTitle = "Declaration"
   val view: DeclarationView = inject[DeclarationView]
   val controllerProperty: Option[UserAnswers] => DeclarationController = answers => new DeclarationController(view, mockAuthJourney, fakeDataProperty(Some(property), answers), mockCheckRequestSentReference, mockNavigator, mockSessionRepository, mockNGRConnector, mockNGRNotifyConnector, mcc)
