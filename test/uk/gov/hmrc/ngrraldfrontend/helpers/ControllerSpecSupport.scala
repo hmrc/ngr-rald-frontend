@@ -53,7 +53,7 @@ trait ControllerSpecSupport extends TestSupport {
   val renewedAgreementAnswers: Option[UserAnswers] = userAnswersWithoutData.set(TellUsAboutYourRenewedAgreementPage, RenewedAgreement).toOption
   val newAgreementAnswers: Option[UserAnswers] = userAnswersWithoutData.set(TellUsAboutYourNewAgreementPage, NewAgreement).toOption
   val rentAgreementAnswers: Option[UserAnswers] = userAnswersWithoutData.set(TellUsAboutRentPage, RentAgreement).flatMap(_.set(AssessmentIdKey, "123")).toOption
-  mockRequest
+  mockRequest()
   
   def mockRequest(): Unit = {
     val finalActionBuilder = new ActionBuilder[AuthenticatedUserRequest, AnyContent] {
