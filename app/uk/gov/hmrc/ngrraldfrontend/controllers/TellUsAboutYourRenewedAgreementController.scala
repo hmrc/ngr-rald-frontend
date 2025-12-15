@@ -22,9 +22,9 @@ import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.RenewedAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{AssessmentId, NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
-import uk.gov.hmrc.ngrraldfrontend.pages.TellUsAboutYourRenewedAgreementPage
+import uk.gov.hmrc.ngrraldfrontend.pages.{AssessmentIdKey, TellUsAboutYourRenewedAgreementPage}
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.views.html.TellUsAboutYourAgreementView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -41,9 +41,15 @@ class TellUsAboutYourRenewedAgreementController @Inject()(view: TellUsAboutYourA
                                                           navigator: Navigator
                                                      )(implicit appConfig: AppConfig, ec:ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
-  def show: Action[AnyContent] = {
+  def show(assessmentId: AssessmentId): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
-          Future.successful(Ok(view(selectedPropertyAddress = request.property.addressFull, agreement = RenewedAgreement)))
+      for {
+        updatedAnswers <- Future.fromTry(request.userAnswers
+          .map(answers => answers.getCurrentJourneyUserAnswers(AssessmentIdKey, answers, request.credId))
+          .getOrElse(UserAnswers(CredId(request.credId)))
+          .set(AssessmentIdKey, assessmentId.value))
+        _ <- sessionRepository.set(updatedAnswers)
+      } yield Ok(view(selectedPropertyAddress = request.property.addressFull, agreement = RenewedAgreement))
     }
   }
 

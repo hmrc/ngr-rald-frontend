@@ -24,7 +24,7 @@ import play.api.libs.json.Json
 import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
-import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{AssessmentId, NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.views.html.TellUsAboutYourAgreementView
 
@@ -34,13 +34,15 @@ import scala.concurrent.Future
 class TellUsAboutYourRentControllerSpec extends ControllerSpecSupport {
   val pageTitle = "Tell us about your rent review"
   val view: TellUsAboutYourAgreementView = inject[TellUsAboutYourAgreementView]
-  val controllerProperty = (answers: Option[UserAnswers]) => new TellUsAboutRentController(view, fakeAuth, mockNavigator, mcc, fakeDataProperty(Some(property), answers), mockSessionRepository)(mockConfig)
+  val controllerProperty: Option[UserAnswers] => TellUsAboutRentController = (answers: Option[UserAnswers]) => new TellUsAboutRentController(view, fakeAuth, mockNavigator, mcc, fakeDataProperty(Some(property), answers), mockSessionRepository)(mockConfig)
   val controllerNoProperty: TellUsAboutRentController = new TellUsAboutRentController(view, fakeAuth, mockNavigator, mcc, fakeData(None), mockSessionRepository)(mockConfig)
+  val assessmentID = AssessmentId("123")
 
   "Tell us about your rent controller" must {
     "method show" must {
       "Return OK and the correct view" in {
-        val result = controllerProperty(None).show()(authenticatedFakeRequest)
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        val result = controllerProperty(None).show(assessmentID)(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
         content must include(pageTitle)
@@ -48,7 +50,7 @@ class TellUsAboutYourRentControllerSpec extends ControllerSpecSupport {
       "Return NotFoundException when property is not found in the mongo" in {
         when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(None))
         val exception = intercept[NotFoundException] {
-          await(controllerNoProperty.show()(authenticatedFakeRequest))
+          await(controllerNoProperty.show(assessmentID)(authenticatedFakeRequest))
         }
         exception.getMessage contains "Could not find answers in backend mongo" mustBe true
       }

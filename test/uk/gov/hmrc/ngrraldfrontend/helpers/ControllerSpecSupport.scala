@@ -32,7 +32,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.requests.OptionalDataRequest
 import uk.gov.hmrc.ngrraldfrontend.models.vmvProperty.VMVProperty
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
-import uk.gov.hmrc.ngrraldfrontend.pages.{DeclarationPage, TellUsAboutRentPage, TellUsAboutYourNewAgreementPage, TellUsAboutYourRenewedAgreementPage}
+import uk.gov.hmrc.ngrraldfrontend.pages.{AssessmentIdKey, DeclarationPage, TellUsAboutRentPage, TellUsAboutYourNewAgreementPage, TellUsAboutYourRenewedAgreementPage}
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.{InputText, NGRCharacterCountComponent}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -52,10 +52,10 @@ trait ControllerSpecSupport extends TestSupport {
   val userAnswersWithoutData = UserAnswers(CredId("id"))
   val renewedAgreementAnswers: Option[UserAnswers] = userAnswersWithoutData.set(TellUsAboutYourRenewedAgreementPage, RenewedAgreement).toOption
   val newAgreementAnswers: Option[UserAnswers] = userAnswersWithoutData.set(TellUsAboutYourNewAgreementPage, NewAgreement).toOption
-  val rentAgreementAnswers: Option[UserAnswers] = userAnswersWithoutData.set(TellUsAboutRentPage, RentAgreement).toOption
-  mockRequest
+  val rentAgreementAnswers: Option[UserAnswers] = userAnswersWithoutData.set(TellUsAboutRentPage, RentAgreement).flatMap(_.set(AssessmentIdKey, "123")).toOption
+  mockRequest()
   
-  def mockRequest: Unit = {
+  def mockRequest(): Unit = {
     val finalActionBuilder = new ActionBuilder[AuthenticatedUserRequest, AnyContent] {
       override def invokeBlock[A](
                                    request: Request[A],
