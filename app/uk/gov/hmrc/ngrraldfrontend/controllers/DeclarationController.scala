@@ -18,13 +18,14 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, CheckRequestSentReferenceAction, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.connectors.{NGRConnector, NGRNotifyConnector}
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
-import uk.gov.hmrc.ngrraldfrontend.pages.DeclarationPage
+import uk.gov.hmrc.ngrraldfrontend.pages.{AssessmentIdKey, DeclarationPage}
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.utils.UniqueIdGenerator
 import uk.gov.hmrc.ngrraldfrontend.views.html.DeclarationView
@@ -53,10 +54,11 @@ class DeclarationController @Inject()(declarationView: DeclarationView,
 
   def submit: Action[AnyContent] = {
     (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
-      val assessmentId = UniqueIdGenerator.generateId
 
       val baseAnswers =
         request.userAnswers.getOrElse(UserAnswers(CredId(request.credId)))
+
+      val assessmentId = baseAnswers.get(AssessmentIdKey).getOrElse(throw new NotFoundException("No Assessment ID found"))
 
       val updatedAnswersTry =
         baseAnswers.set(DeclarationPage, assessmentId)
