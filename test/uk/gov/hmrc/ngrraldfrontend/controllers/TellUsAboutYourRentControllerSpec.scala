@@ -58,7 +58,7 @@ class TellUsAboutYourRentControllerSpec extends ControllerSpecSupport {
     "method submit" must {
       "Return SEE_OTHER and the correct view" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        val result = controllerProperty(None).submit()(authenticatedFakeRequest)
+        val result = controllerProperty(None).submit(assessmentID)(authenticatedFakeRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) shouldBe Some(routes.LandlordController.show(NormalMode).url)
       }
@@ -69,7 +69,7 @@ class TellUsAboutYourRentControllerSpec extends ControllerSpecSupport {
           "landlord" -> Json.obj(
             "landlordName" -> "Anna"
           )
-        ), Instant.now))).submit()(authenticatedFakeRequest)
+        ), Instant.now))).submit(assessmentID)(authenticatedFakeRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) shouldBe Some(routes.LandlordController.show(NormalMode).url)
       }
@@ -78,7 +78,7 @@ class TellUsAboutYourRentControllerSpec extends ControllerSpecSupport {
         val result = controllerProperty(Some(UserAnswers(credId, Json.obj(
           "tellUsAboutRenewedAgreement" -> "RenewedAgreement",
           "whatTypeOfLeaseRenewal" -> "SurrenderAndRenewal"
-        ), Instant.now))).submit()(authenticatedFakeRequest)
+        ), Instant.now))).submit(assessmentID)(authenticatedFakeRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) shouldBe Some(routes.LandlordController.show(NormalMode).url)
       }

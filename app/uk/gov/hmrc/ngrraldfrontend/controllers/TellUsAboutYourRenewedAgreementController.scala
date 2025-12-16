@@ -43,23 +43,18 @@ class TellUsAboutYourRenewedAgreementController @Inject()(view: TellUsAboutYourA
 
   def show(assessmentId: AssessmentId): Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
-      for {
-        updatedAnswers <- Future.fromTry(request.userAnswers
-          .map(answers => answers.getCurrentJourneyUserAnswers(AssessmentIdKey, answers, request.credId))
-          .getOrElse(UserAnswers(CredId(request.credId)))
-          .set(AssessmentIdKey, assessmentId.value))
-        _ <- sessionRepository.set(updatedAnswers)
-      } yield Ok(view(selectedPropertyAddress = request.property.addressFull, agreement = RenewedAgreement))
+      Future.successful(Ok(view(selectedPropertyAddress = request.property.addressFull, agreement = RenewedAgreement, assessmentId = assessmentId)))
     }
   }
 
-    def submit: Action[AnyContent]   = {
+    def submit(assessmentId: AssessmentId): Action[AnyContent]   = {
       (authenticate andThen getData).async { implicit request =>
         for {
-          updatedAnswers <- Future.fromTry(
-            request.userAnswers.getOrElse(UserAnswers(CredId(request.credId)))
-              .set(TellUsAboutYourRenewedAgreementPage, RenewedAgreement)
-          )
+          updatedAnswers <- Future.fromTry(request.userAnswers
+            .map(answers => answers.getCurrentJourneyUserAnswers(TellUsAboutYourRenewedAgreementPage, answers, request.credId))
+            .getOrElse(UserAnswers(CredId(request.credId)))
+            .set(TellUsAboutYourRenewedAgreementPage, RenewedAgreement)
+            .flatMap(_.set(AssessmentIdKey, assessmentId.value)))
           _ <- sessionRepository.set(updatedAnswers)
         } yield Redirect(navigator.nextPage(TellUsAboutYourRenewedAgreementPage, NormalMode, updatedAnswers))
       }
