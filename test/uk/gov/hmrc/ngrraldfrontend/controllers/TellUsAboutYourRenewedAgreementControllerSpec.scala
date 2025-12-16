@@ -24,7 +24,7 @@ import play.api.libs.json.Json
 import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
-import uk.gov.hmrc.ngrraldfrontend.models.{AssessmentId, NormalMode, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.views.html.TellUsAboutYourAgreementView
 

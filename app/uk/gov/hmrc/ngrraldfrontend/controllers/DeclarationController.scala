@@ -26,7 +26,7 @@ import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.vmvProperty.VMVProperty
 import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
-import uk.gov.hmrc.ngrraldfrontend.pages.{AssessmentIdKey, DeclarationPage}
+import uk.gov.hmrc.ngrraldfrontend.pages.DeclarationPage
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.utils.UniqueIdGenerator
 import uk.gov.hmrc.ngrraldfrontend.views.html.DeclarationView

@@ -22,9 +22,9 @@ import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.RentAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.models.{AssessmentId, NormalMode, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
-import uk.gov.hmrc.ngrraldfrontend.pages.{AssessmentIdKey, TellUsAboutRentPage}
+import uk.gov.hmrc.ngrraldfrontend.pages.TellUsAboutRentPage
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.views.html.TellUsAboutYourAgreementView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
