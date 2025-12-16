@@ -434,20 +434,10 @@ class Navigator @Inject()(sessionRepository: SessionRepository, appConfig: AppCo
     case DeclarationPage => answers => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentReviewDetailsSentController.confirmation()
   }
 
-  val checkRouteMap: Page => Boolean => UserAnswers => Call = {
-    case ProvideDetailsOfFirstRentPeriodPage => shouldGoToSecondRentPeriod => answers =>
-        shouldGoToSecondRentPeriod match {
-          case true => uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfSecondRentPeriodController.show(CheckMode)
-          case _    => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show
-        }
-
-    case ProvideDetailsOfSecondRentPeriodPage => shouldGoToRentPeriodsPage => answers =>
-        shouldGoToRentPeriodsPage match {
-          case true => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentPeriodsController.show(CheckMode)
-          case _    => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show
-        }
-
-    case RentPeriodsPage => _ => answers =>
+  val checkRouteMap: Page => UserAnswers => Call = {
+    case ProvideDetailsOfFirstRentPeriodPage => answers => uk.gov.hmrc.ngrraldfrontend.controllers.routes.ProvideDetailsOfSecondRentPeriodController.show(CheckMode)
+    case ProvideDetailsOfSecondRentPeriodPage => answers => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentPeriodsController.show(CheckMode)
+    case RentPeriodsPage => answers =>
       answers.get(RentPeriodsPage).getOrElse(false) match
         case true =>
           val rentPeriodsSize = answers.get(ProvideDetailsOfSecondRentPeriodPage).map(_.size).getOrElse(0)
@@ -461,7 +451,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository, appConfig: AppCo
           else
             uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show
 
-    case WhatTypeOfAgreementPage => _ => answers =>
+    case WhatTypeOfAgreementPage => answers =>
       answers.get(WhatTypeOfAgreementPage) match {
         case Some(value) => value match {
           case "Verbal" =>
@@ -488,14 +478,14 @@ class Navigator @Inject()(sessionRepository: SessionRepository, appConfig: AppCo
         case None => uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatTypeOfAgreementController.show(NormalMode)
       }
 
-    case AgreementVerbalPage => _ => answers =>
+    case AgreementVerbalPage => answers =>
       checkModeNextPage(HowMuchIsTotalAnnualRentPage, uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchIsTotalAnnualRentController.show(CheckMode), answers)
-    case RentFreePeriodPage => _ => answers =>
+    case RentFreePeriodPage => answers =>
         checkModeNextPage(RentDatesAgreeStartPage, uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeStartController.show(CheckMode), answers)
-    case AgreementPage => _ => answers =>
+    case AgreementPage => answers =>
       checkModeNextPage(WhatIsYourRentBasedOnPage, uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatIsYourRentBasedOnController.show(CheckMode), answers)
 
-    case WhatIsYourRentBasedOnPage => _ => answers =>
+    case WhatIsYourRentBasedOnPage => answers =>
       answers.get(WhatIsYourRentBasedOnPage) match {
         case Some(value) => value.rentBased match {
           case "PercentageTurnover" =>
@@ -572,7 +562,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository, appConfig: AppCo
         }
         case None => uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatIsYourRentBasedOnController.show(NormalMode)
       }
-    case AgreedRentChangePage => _ => answers =>
+    case AgreedRentChangePage => answers =>
       answers.get(AgreedRentChangePage) match {
         case Some(value) => if (value) {
           val direction: Call = if (answers.get(ProvideDetailsOfFirstRentPeriodPage).isEmpty)
@@ -612,7 +602,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository, appConfig: AppCo
         case None => uk.gov.hmrc.ngrraldfrontend.controllers.routes.AgreedRentChangeController.show(NormalMode)
       }
 
-    case HowMuchIsTotalAnnualRentPage => _ => answers =>
+    case HowMuchIsTotalAnnualRentPage => answers =>
       answers.get(TellUsAboutYourRenewedAgreementPage) match
         case Some(_) =>
           if (answers.get(CheckRentFreePeriodPage).isEmpty)
@@ -623,25 +613,25 @@ class Navigator @Inject()(sessionRepository: SessionRepository, appConfig: AppCo
             uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show
         case _ => checkModeNextPage(CheckRentFreePeriodPage, uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(CheckMode), answers)
 
-    case RentDatesAgreePage => _ => answers =>
+    case RentDatesAgreePage => answers =>
       if (answers.get(WhatIsYourRentBasedOnPage).exists(_.rentBased != "TotalOccupancyCost"))
         nextPageForRentBaseOnNonTOCCheckModeOnly(WhatYourRentIncludesPage, uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatYourRentIncludesController.show(CheckMode), answers)
       else
         checkModeNextPage(WhatYourRentIncludesPage, uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatRentIncludesRatesWaterServiceController.show(CheckMode), answers)
 
-    case RentDatesAgreeStartPage => _ => answers =>
+    case RentDatesAgreeStartPage => answers =>
       if (answers.get(WhatIsYourRentBasedOnPage).exists(_.rentBased != "TotalOccupancyCost") || answers.get(AgreementVerbalPage).nonEmpty)
         nextPageForRentBaseOnNonTOCCheckModeOnly(WhatYourRentIncludesPage, uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatYourRentIncludesController.show(CheckMode), answers)
       else
         checkModeNextPage(WhatYourRentIncludesPage, uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatRentIncludesRatesWaterServiceController.show(CheckMode), answers)
 
-    case WhatYourRentIncludesPage => _ => answers =>
+    case WhatYourRentIncludesPage => answers =>
       if (answers.get(WhatIsYourRentBasedOnPage).exists(_.rentBased != "TotalOccupancyCost") || answers.get(AgreementVerbalPage).nonEmpty)
         checkModeNextPage(RepairsAndInsurancePage, uk.gov.hmrc.ngrraldfrontend.controllers.routes.RepairsAndInsuranceController.show(CheckMode), answers)
       else
         uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show
 
-    case CheckRentFreePeriodPage => _ => answers =>
+    case CheckRentFreePeriodPage => answers =>
       answers.get(CheckRentFreePeriodPage) match {
         case Some(value) => if (value) {
           if (answers.get(RentFreePeriodPage).nonEmpty) {
@@ -662,7 +652,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository, appConfig: AppCo
         case None => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckRentFreePeriodController.show(NormalMode)
       }
 
-    case DoesYourRentIncludeParkingPage => _ => answers =>
+    case DoesYourRentIncludeParkingPage => answers =>
       answers.get(DoesYourRentIncludeParkingPage) match {
         case Some(value) => if (value) {
           if (answers.get(HowManyParkingSpacesOrGaragesIncludedInRentPage).nonEmpty) {
@@ -682,7 +672,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository, appConfig: AppCo
         }
         case None => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DoesYourRentIncludeParkingController.show(NormalMode)
       }
-    case DoYouPayExtraForParkingSpacesPage => _ => answers =>
+    case DoYouPayExtraForParkingSpacesPage => answers =>
       answers.get(DoYouPayExtraForParkingSpacesPage) match {
         case Some(value) => if (value) {
           if (answers.get(ParkingSpacesOrGaragesNotIncludedInYourRentPage).nonEmpty) {
@@ -703,7 +693,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository, appConfig: AppCo
         case None => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DoYouPayExtraForParkingSpacesController.show(NormalMode)
       }
 
-    case DidYouGetMoneyFromLandlordPage => _ => answers =>
+    case DidYouGetMoneyFromLandlordPage => answers =>
       answers.get(DidYouGetMoneyFromLandlordPage) match {
         case Some(value) => if (value) {
           if (answers.get(MoneyToTakeOnTheLeasePage).nonEmpty) {
@@ -724,7 +714,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository, appConfig: AppCo
         case None => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouGetMoneyFromLandlordController.show(NormalMode)
       }
 
-    case DidYouPayAnyMoneyToLandlordPage => _ => answers =>
+    case DidYouPayAnyMoneyToLandlordPage => answers =>
       answers.get(DidYouPayAnyMoneyToLandlordPage) match {
         case Some(value) => if (value) {
           if (answers.get(MoneyYouPaidInAdvanceToLandlordPage).nonEmpty) {
@@ -745,7 +735,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository, appConfig: AppCo
         case None => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouPayAnyMoneyToLandlordController.show(NormalMode)
       }
 
-    case DidYouAgreeRentWithLandlordPage => _ => answers =>
+    case DidYouAgreeRentWithLandlordPage => answers =>
       answers.get(DidYouAgreeRentWithLandlordPage) match {
         case Some(value) => if (value) {
           val direction = if (answers.get(ProvideDetailsOfSecondRentPeriodPage).nonEmpty) {
@@ -777,7 +767,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository, appConfig: AppCo
         case None => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouAgreeRentWithLandlordController.show(NormalMode)
       }
 
-    case RentInterimPage => _ => answers =>
+    case RentInterimPage => answers =>
       answers.get(RentInterimPage) match {
         case Some(value) => value match {
           case true =>
@@ -798,7 +788,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository, appConfig: AppCo
         case None => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentInterimController.show(NormalMode)
       }
 
-    case ConfirmBreakClausePage => _ => answers =>
+    case ConfirmBreakClausePage => answers =>
       answers.get(ConfirmBreakClausePage) match {
         case Some(value) => if (value) {
           if (answers.get(DidYouGetIncentiveForNotTriggeringBreakClausePage).nonEmpty) {
@@ -819,7 +809,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository, appConfig: AppCo
         case None => uk.gov.hmrc.ngrraldfrontend.controllers.routes.ConfirmBreakClauseController.show(NormalMode)
       }
 
-    case DidYouGetIncentiveForNotTriggeringBreakClausePage => _ => answers =>
+    case DidYouGetIncentiveForNotTriggeringBreakClausePage => answers =>
       answers.get(DidYouGetIncentiveForNotTriggeringBreakClausePage) match {
         case Some(value) => value match {
           case value if value.checkBox.size == 1 && value.checkBox.contains(YesRentFreePeriod) =>
@@ -878,7 +868,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository, appConfig: AppCo
         case None => uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouGetIncentiveForNotTriggeringBreakClauseController.show(NormalMode)
       }
 
-    case HowMuchWasTheLumpSumPage => _ => answers =>
+    case HowMuchWasTheLumpSumPage => answers =>
       answers.get(DidYouGetIncentiveForNotTriggeringBreakClausePage) match {
         case Some(value) => value match {
           case value if value.checkBox.contains(YesRentFreePeriod) =>
@@ -891,7 +881,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository, appConfig: AppCo
         case None => uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchWasTheLumpSumController.show(NormalMode)
       }
 
-    case RepairsAndFittingOutPage => _ => answers =>
+    case RepairsAndFittingOutPage => answers =>
       answers.get(RepairsAndFittingOutPage) match {
         case Some(value) => value match {
           case true =>
@@ -912,7 +902,7 @@ class Navigator @Inject()(sessionRepository: SessionRepository, appConfig: AppCo
         case None => uk.gov.hmrc.ngrraldfrontend.controllers.routes.RepairsAndFittingOutController.show(NormalMode)
       }
 
-    case _ => _ => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show
+    case _ => _ => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show
   }
 
   private def genericNavigationSwitchHandler[A](
@@ -971,11 +961,11 @@ class Navigator @Inject()(sessionRepository: SessionRepository, appConfig: AppCo
       case Some(_) => uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.show
       case _ => nextPageCall
 
-  def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers, shouldGoToRentPeriodsPage: Boolean = false): Call = mode match {
+  def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
     case NormalMode =>
       normalRoutes(page)(userAnswers)
     case CheckMode =>
-      checkRouteMap(page)(shouldGoToRentPeriodsPage)(userAnswers)
+      checkRouteMap(page)(userAnswers)
   }
 
   private def nextPageForRentBasedOnRentCheckMode(userAnswers: UserAnswers, isTOC: Boolean) = {
