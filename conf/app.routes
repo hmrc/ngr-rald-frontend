@@ -3,12 +3,12 @@
 GET        /assets/*file                                controllers.Assets.versioned(path = "/public", file: Asset)
 
 #Interstitial Pages
-GET        /tell-us-about-your-new-agreement/:assessmentId               uk.gov.hmrc.ngrraldfrontend.controllers.TellUsAboutYourNewAgreementController.show(assessmentId: AssessmentId)
-POST       /tell-us-about-your-new-agreement/:assessmentId               uk.gov.hmrc.ngrraldfrontend.controllers.TellUsAboutYourNewAgreementController.submit(assessmentId: AssessmentId)
-GET        /tell-us-about-your-renewed-agreement/:assessmentId           uk.gov.hmrc.ngrraldfrontend.controllers.TellUsAboutYourRenewedAgreementController.show(assessmentId: AssessmentId)
-POST       /tell-us-about-your-renewed-agreement/:assessmentId           uk.gov.hmrc.ngrraldfrontend.controllers.TellUsAboutYourRenewedAgreementController.submit(assessmentId: AssessmentId)
-GET        /tell-us-about-rent-review/:assessmentId                      uk.gov.hmrc.ngrraldfrontend.controllers.TellUsAboutRentController.show(assessmentId: AssessmentId)
-POST       /tell-us-about-rent-review/:assessmentId                      uk.gov.hmrc.ngrraldfrontend.controllers.TellUsAboutRentController.submit(assessmentId: AssessmentId)
+GET        /tell-us-about-your-new-agreement            uk.gov.hmrc.ngrraldfrontend.controllers.TellUsAboutYourNewAgreementController.show
+POST       /tell-us-about-your-new-agreement            uk.gov.hmrc.ngrraldfrontend.controllers.TellUsAboutYourNewAgreementController.submit
+GET        /tell-us-about-your-renewed-agreement        uk.gov.hmrc.ngrraldfrontend.controllers.TellUsAboutYourRenewedAgreementController.show
+POST       /tell-us-about-your-renewed-agreement        uk.gov.hmrc.ngrraldfrontend.controllers.TellUsAboutYourRenewedAgreementController.submit
+GET        /tell-us-about-rent-review                   uk.gov.hmrc.ngrraldfrontend.controllers.TellUsAboutRentController.show
+POST       /tell-us-about-rent-review                   uk.gov.hmrc.ngrraldfrontend.controllers.TellUsAboutRentController.submit
 
 #What type of lease renewal is it
 GET        /what-type-of-lease-renewal-is-it            uk.gov.hmrc.ngrraldfrontend.controllers.WhatTypeOfLeaseRenewalController.show(mode: Mode = NormalMode)

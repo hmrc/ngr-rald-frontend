@@ -41,20 +41,20 @@ class TellUsAboutRentController @Inject()(view: TellUsAboutYourAgreementView,
                                           sessionRepository: SessionRepository
                                          )(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
-  def show(assessmentId: AssessmentId): Action[AnyContent] = {
+  def show: Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
-      Future.successful(Ok(view(selectedPropertyAddress = request.property.addressFull, agreement = RentAgreement, assessmentId = assessmentId)))
+      Future.successful(Ok(view(selectedPropertyAddress = request.property.addressFull, agreement = RentAgreement)))
     }
   }
 
-  def submit(assessmentId: AssessmentId): Action[AnyContent] = {
+  def submit: Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
       for {
         updatedAnswers <- Future.fromTry(request.userAnswers
           .map(answers => answers.getCurrentJourneyUserAnswers(TellUsAboutRentPage, answers, request.credId))
           .getOrElse(UserAnswers(CredId(request.credId)))
           .set(TellUsAboutRentPage, RentAgreement)
-          .flatMap(_.set(AssessmentIdKey, assessmentId.value)))
+        )
         _ <- sessionRepository.set(updatedAnswers)
       } yield Redirect(navigator.nextPage(TellUsAboutRentPage, NormalMode, updatedAnswers))
     }

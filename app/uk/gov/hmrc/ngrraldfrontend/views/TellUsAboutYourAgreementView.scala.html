@@ -25,7 +25,7 @@
  formHelper: FormWithCSRF
 )
 
-@(selectedPropertyAddress: String, agreement:AgreementType, assessmentId: AssessmentId)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+@(selectedPropertyAddress: String, agreement:AgreementType)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
 @heading = {
     @if(agreement == AgreementType.NewAgreement){
@@ -78,11 +78,11 @@
 
  @formHelper(action =
     if(agreement == AgreementType.NewAgreement){
-        uk.gov.hmrc.ngrraldfrontend.controllers.routes.TellUsAboutYourNewAgreementController.submit(assessmentId)
+        uk.gov.hmrc.ngrraldfrontend.controllers.routes.TellUsAboutYourNewAgreementController.submit
     }else if(agreement == AgreementType.RenewedAgreement){
-        uk.gov.hmrc.ngrraldfrontend.controllers.routes.TellUsAboutYourRenewedAgreementController.submit(assessmentId)
+        uk.gov.hmrc.ngrraldfrontend.controllers.routes.TellUsAboutYourRenewedAgreementController.submit
     }else{
-        uk.gov.hmrc.ngrraldfrontend.controllers.routes.TellUsAboutRentController.submit(assessmentId)
+        uk.gov.hmrc.ngrraldfrontend.controllers.routes.TellUsAboutRentController.submit
     }, Symbol("autoComplete") -> "off") {
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">

@@ -23,6 +23,7 @@ import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, CheckRequestSentRefe
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.connectors.{NGRConnector, NGRNotifyConnector}
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
+import uk.gov.hmrc.ngrraldfrontend.models.vmvProperty.VMVProperty
 import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.{AssessmentIdKey, DeclarationPage}
@@ -52,13 +53,21 @@ class DeclarationController @Inject()(declarationView: DeclarationView,
     }
   }
 
+  private def getAssessmentId(property: VMVProperty): Option[String] = {
+    property.valuations
+      .filter(_.assessmentStatus == "CURRENT")
+      .sortBy(_.effectiveDate)
+      .lastOption
+      .map(_.assessmentRef.toString)
+  }
+
   def submit: Action[AnyContent] = {
     (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
 
       val baseAnswers =
         request.userAnswers.getOrElse(UserAnswers(CredId(request.credId)))
 
-      val assessmentId = baseAnswers.get(AssessmentIdKey).getOrElse(throw new NotFoundException("No Assessment ID found"))
+      val assessmentId = getAssessmentId(request.property).getOrElse(throw new NotFoundException("No Assessment ID found"))
 
       val updatedAnswersTry =
         baseAnswers.set(DeclarationPage, assessmentId)

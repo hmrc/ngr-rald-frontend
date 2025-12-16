@@ -20,11 +20,11 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
+import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.{NewAgreement, RentAgreement}
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{AssessmentId, NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
-import uk.gov.hmrc.ngrraldfrontend.pages.{AssessmentIdKey, TellUsAboutYourNewAgreementPage}
+import uk.gov.hmrc.ngrraldfrontend.pages.{AssessmentIdKey, TellUsAboutRentPage, TellUsAboutYourNewAgreementPage}
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.views.html.TellUsAboutYourAgreementView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -41,20 +41,21 @@ class TellUsAboutYourNewAgreementController @Inject()(view: TellUsAboutYourAgree
                                                       navigator: Navigator
                                                      )(implicit appConfig: AppConfig, ec:ExecutionContext)  extends FrontendController(mcc) with I18nSupport {
 
-  def show(assessmentId: AssessmentId): Action[AnyContent] = {
+  def show: Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
-      Future.successful(Ok(view(selectedPropertyAddress = request.property.addressFull, agreement = NewAgreement, assessmentId = assessmentId)))
+      Future.successful(Ok(view(selectedPropertyAddress = request.property.addressFull, agreement = NewAgreement)))
     }
   }
 
-    def submit(assessmentId: AssessmentId): Action[AnyContent] = {
+    def submit: Action[AnyContent] = {
       (authenticate andThen getData).async { implicit request =>
+
         for {
           updatedAnswers <- Future.fromTry(request.userAnswers
             .map(answers => answers.getCurrentJourneyUserAnswers(TellUsAboutYourNewAgreementPage, answers, request.credId))
             .getOrElse(UserAnswers(CredId(request.credId)))
             .set(TellUsAboutYourNewAgreementPage, NewAgreement)
-            .flatMap(_.set(AssessmentIdKey, assessmentId.value)))
+          )
           _ <- sessionRepository.set(updatedAnswers)
         } yield Redirect(navigator.nextPage(TellUsAboutYourNewAgreementPage, NormalMode, updatedAnswers))
       }
