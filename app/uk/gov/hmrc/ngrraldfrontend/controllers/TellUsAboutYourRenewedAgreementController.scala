@@ -56,10 +56,10 @@ class TellUsAboutYourRenewedAgreementController @Inject()(view: TellUsAboutYourA
     def submit: Action[AnyContent]   = {
       (authenticate andThen getData).async { implicit request =>
         for {
-          updatedAnswers <- Future.fromTry(request.userAnswers
-            .map(answers => answers.getCurrentJourneyUserAnswers(TellUsAboutYourRenewedAgreementPage, answers, request.credId))
-            .getOrElse(UserAnswers(CredId(request.credId)))
-            .set(TellUsAboutYourRenewedAgreementPage, RenewedAgreement))
+          updatedAnswers <- Future.fromTry(
+            request.userAnswers.getOrElse(UserAnswers(CredId(request.credId)))
+              .set(TellUsAboutYourRenewedAgreementPage, RenewedAgreement)
+          )
           _ <- sessionRepository.set(updatedAnswers)
         } yield Redirect(navigator.nextPage(TellUsAboutYourRenewedAgreementPage, NormalMode, updatedAnswers))
       }
