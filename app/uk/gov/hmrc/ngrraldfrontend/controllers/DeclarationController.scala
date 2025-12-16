@@ -53,21 +53,15 @@ class DeclarationController @Inject()(declarationView: DeclarationView,
     }
   }
 
-  private def getAssessmentId(property: VMVProperty): Option[String] = {
-    property.valuations
-      .filter(_.assessmentStatus == "CURRENT")
-      .sortBy(_.effectiveDate)
-      .lastOption
-      .map(_.assessmentRef.toString)
-  }
-
   def submit: Action[AnyContent] = {
     (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
 
       val baseAnswers =
         request.userAnswers.getOrElse(UserAnswers(CredId(request.credId)))
 
-      val assessmentId = getAssessmentId(request.property).getOrElse(throw new NotFoundException("No Assessment ID found"))
+      val assessmentId = request.property.valuations.headOption
+        .map(_.assessmentRef.toString)
+        .getOrElse(throw new NotFoundException("No Assessment ID found"))
 
       val updatedAnswersTry =
         baseAnswers.set(DeclarationPage, assessmentId)
