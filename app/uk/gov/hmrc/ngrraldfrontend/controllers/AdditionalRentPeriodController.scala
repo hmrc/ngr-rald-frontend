@@ -30,7 +30,7 @@ import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.{ProvideDetailsOfSecondRentPeriodPage, RentPeriodsPage}
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.utils.DateKeyFinder
-import uk.gov.hmrc.ngrraldfrontend.utils.RentPeriodsHelper.{shouldGoToRentPeriodsPageCheckMode, setRentPeriodsValueToFalseIf10thPeriodHasBeenAdded, updateRentPeriodsIfEndDateIsChanged}
+import uk.gov.hmrc.ngrraldfrontend.utils.RentPeriodsHelper.{setRentPeriodsValueToFalseIf10thPeriodHasBeenAdded, updateRentPeriodsIfEndDateIsChanged}
 import uk.gov.hmrc.ngrraldfrontend.views.html.ProvideDetailsOfSecondRentPeriodView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -115,6 +115,6 @@ class AdditionalRentPeriodController @Inject()(view: ProvideDetailsOfSecondRentP
               updatedAnswers <- Future.fromTry(userAnswers.set(ProvideDetailsOfSecondRentPeriodPage, formToAnswers(rentPeriodDetailsForm, rentPeriods, index)))
               updateRentPeriodsPageUserAnswers <- Future.fromTry(setRentPeriodsValueToFalseIf10thPeriodHasBeenAdded(updatedAnswers))
               _ <- sessionRepository.set(updateRentPeriodsPageUserAnswers)
-            } yield Redirect(navigator.nextPage(ProvideDetailsOfSecondRentPeriodPage, mode, updateRentPeriodsPageUserAnswers, shouldGoToRentPeriodsPageCheckMode(userAnswers, updatedAnswers)))
+            } yield Redirect(navigator.nextPage(ProvideDetailsOfSecondRentPeriodPage, mode, updateRentPeriodsPageUserAnswers))
         )
     }

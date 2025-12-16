@@ -244,9 +244,9 @@ object CheckAnswers {
       buildRow(
         labelKey = "checkAnswers.rent.otherReason",
         value = desc,
-        linkId = "agreed-rent-change",
+        linkId = "what-is-your-rent-based-on",
         href = uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatIsYourRentBasedOnController.show(CheckMode),
-        hiddenKey = "agreed-rent-change"
+        hiddenKey = "what-is-your-rent-based-on"
       )
     }
 

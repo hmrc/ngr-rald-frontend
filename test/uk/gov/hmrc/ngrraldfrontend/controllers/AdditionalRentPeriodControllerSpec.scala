@@ -111,7 +111,7 @@ class AdditionalRentPeriodControllerSpec extends ControllerSpecSupport:
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.RentPeriodsController.show(NormalMode).url)
       }
-      "return SEE_OTHER after changing end date and direct to check your answer" in {
+      "return SEE_OTHER after changing end date and direct to review rent periods" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val result = controllerWithAnswers(fourRentPeriodsAnswers).submit(CheckMode, 2)(authenticatedFakePostRequest(
           FakeRequest(routes.AdditionalRentPeriodController.submit(CheckMode, 2))
@@ -123,7 +123,7 @@ class AdditionalRentPeriodControllerSpec extends ControllerSpecSupport:
             )
         ))
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.CheckAnswersController.show.url)
+        redirectLocation(result) mustBe Some(routes.RentPeriodsController.show(CheckMode).url)
       }
       "return SEE_OTHER after changing end date and direct to rent periods" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
@@ -139,7 +139,7 @@ class AdditionalRentPeriodControllerSpec extends ControllerSpecSupport:
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.RentPeriodsController.show(CheckMode).url)
       }
-      "return SEE_OTHER after updating 4th rent period end date and direct to check your answers" in {
+      "return SEE_OTHER after updating 4th rent period end date and direct to rent periods" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val result = controllerWithAnswers(fourRentPeriodsAnswers).submit(CheckMode, detailsOfRentPeriod.size - 1)(authenticatedFakePostRequest(
           FakeRequest(routes.AdditionalRentPeriodController.submit(CheckMode, detailsOfRentPeriod.size - 1))
@@ -151,7 +151,7 @@ class AdditionalRentPeriodControllerSpec extends ControllerSpecSupport:
             )
         ))
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.CheckAnswersController.show.url)
+        redirectLocation(result) mustBe Some(routes.RentPeriodsController.show(CheckMode).url)
       }
       "return SEE_OTHER after adding additional rent period and direct to rent periods" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))

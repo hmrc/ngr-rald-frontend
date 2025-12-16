@@ -70,8 +70,7 @@ class CheckAnswersController @Inject()(view: CheckAnswersView,
 
   def submit: Action[AnyContent] = {
     (authenticate andThen checkRequestSentReference andThen getData).async { implicit request =>
-      Future.successful(Redirect(navigator.nextPage(CheckAnswersPage, NormalMode,
-        request.userAnswers.getOrElse(throw new NotFoundException(s"Failed to find answers for credId: ${request.credId}")))))
+      Future.successful(Redirect(navigator.nextPage(CheckAnswersPage, NormalMode, request.userAnswers.getOrElse(throw new NotFoundException(s"Failed to find answers for credId: ${request.credId}")))))
     }
   }
 }

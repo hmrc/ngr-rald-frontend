@@ -100,7 +100,7 @@ class ProvideDetailsOfSecondRentPeriodControllerSpec extends ControllerSpecSuppo
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.RentPeriodsController.show(NormalMode).url)
       }
-      "return SEE_OTHER after change end date in check mode and direct to check your answer" in {
+      "return SEE_OTHER after change end date in check mode and direct to review rent periods" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val result = controllerWithAnswers(firstSecondAnswers).submit(CheckMode)(authenticatedFakePostRequest(
           FakeRequest(routes.ProvideDetailsOfSecondRentPeriodController.submit(CheckMode))
@@ -112,7 +112,7 @@ class ProvideDetailsOfSecondRentPeriodControllerSpec extends ControllerSpecSuppo
             )
         ))
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.CheckAnswersController.show.url)
+        redirectLocation(result) mustBe Some(routes.RentPeriodsController.show(CheckMode).url)
       }
       "return SEE_OTHER after change end date in check mode and direct to rent periods" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
