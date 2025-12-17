@@ -22,9 +22,9 @@ import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.RentAgreement
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.models.{AssessmentId, NormalMode, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
-import uk.gov.hmrc.ngrraldfrontend.pages.{AssessmentIdKey, TellUsAboutRentPage}
+import uk.gov.hmrc.ngrraldfrontend.pages.TellUsAboutRentPage
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
 import uk.gov.hmrc.ngrraldfrontend.views.html.TellUsAboutYourAgreementView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -41,16 +41,9 @@ class TellUsAboutRentController @Inject()(view: TellUsAboutYourAgreementView,
                                           sessionRepository: SessionRepository
                                          )(implicit appConfig: AppConfig, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
-  def show(assessmentId: AssessmentId): Action[AnyContent] = {
+  def show: Action[AnyContent] = {
     (authenticate andThen getData).async { implicit request =>
-
-      for {
-        updatedAnswers <- Future.fromTry(request.userAnswers
-          .map(answers => answers.getCurrentJourneyUserAnswers(AssessmentIdKey, answers, request.credId))
-          .getOrElse(UserAnswers(CredId(request.credId))).set(AssessmentIdKey, assessmentId.value))
-        _ <- sessionRepository.set(updatedAnswers)
-      } yield Ok(view(selectedPropertyAddress = request.property.addressFull, agreement = RentAgreement))
-      
+      Future.successful(Ok(view(selectedPropertyAddress = request.property.addressFull, agreement = RentAgreement)))
     }
   }
 
@@ -59,7 +52,9 @@ class TellUsAboutRentController @Inject()(view: TellUsAboutYourAgreementView,
       for {
         updatedAnswers <- Future.fromTry(request.userAnswers
           .map(answers => answers.getCurrentJourneyUserAnswers(TellUsAboutRentPage, answers, request.credId))
-          .getOrElse(UserAnswers(CredId(request.credId))).set(TellUsAboutRentPage, RentAgreement))
+          .getOrElse(UserAnswers(CredId(request.credId)))
+          .set(TellUsAboutRentPage, RentAgreement)
+        )
         _ <- sessionRepository.set(updatedAnswers)
       } yield Redirect(navigator.nextPage(TellUsAboutRentPage, NormalMode, updatedAnswers))
     }

@@ -24,7 +24,7 @@ import play.api.libs.json.Json
 import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
-import uk.gov.hmrc.ngrraldfrontend.models.{AssessmentId, NormalMode, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.views.html.TellUsAboutYourAgreementView
 
@@ -36,13 +36,12 @@ class TellUsAboutYourRenewedAgreementControllerSpec extends ControllerSpecSuppor
   val view: TellUsAboutYourAgreementView = inject[TellUsAboutYourAgreementView]
   val controllerNoProperty: TellUsAboutYourRenewedAgreementController = new TellUsAboutYourRenewedAgreementController(view, fakeAuth, mcc, fakeData(None), mockSessionRepository, mockNavigator)(mockConfig)
   val controllerProperty: Option[UserAnswers] => TellUsAboutYourRenewedAgreementController = (answers: Option[UserAnswers]) => new TellUsAboutYourRenewedAgreementController(view, fakeAuth, mcc, fakeDataProperty(Some(property), answers), mockSessionRepository, mockNavigator)(mockConfig)
-  val assessmentID = AssessmentId("123")
 
   "Tell us about your new agreement controller" must {
     "method show" must {
       "Return OK and the correct view" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        val result = controllerProperty(None).show(assessmentID)(authenticatedFakeRequest)
+        val result = controllerProperty(None).show(authenticatedFakeRequest)
         status(result) mustBe OK
         val content = contentAsString(result)
         content must include(pageTitle)
@@ -50,7 +49,7 @@ class TellUsAboutYourRenewedAgreementControllerSpec extends ControllerSpecSuppor
       "Return NotFoundException when property is not found in the mongo" in {
         when(mockNGRConnector.getLinkedProperty(any[CredId])(any())).thenReturn(Future.successful(None))
         val exception = intercept[NotFoundException] {
-          await(controllerNoProperty.show(assessmentID)(authenticatedFakeRequest))
+          await(controllerNoProperty.show(authenticatedFakeRequest))
         }
         exception.getMessage contains "Could not find answers in backend mongo" mustBe true
       }
@@ -59,7 +58,7 @@ class TellUsAboutYourRenewedAgreementControllerSpec extends ControllerSpecSuppor
     "method submit" must {
       "Return SEE_OTHER and the correct view" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        val result = controllerProperty(None).submit()(authenticatedFakeRequest)
+        val result = controllerProperty(None).submit(authenticatedFakeRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) shouldBe Some(routes.WhatTypeOfLeaseRenewalController.show(NormalMode).url)
       }
@@ -68,7 +67,7 @@ class TellUsAboutYourRenewedAgreementControllerSpec extends ControllerSpecSuppor
         val result = controllerProperty(Some(UserAnswers(credId, Json.obj(
           "tellUsAboutRenewedAgreement" -> "RenewedAgreement",
           "whatTypeOfLeaseRenewal" -> "SurrenderAndRenewal"
-        ), Instant.now))).submit()(authenticatedFakeRequest)
+        ), Instant.now))).submit(authenticatedFakeRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) shouldBe Some(routes.WhatTypeOfLeaseRenewalController.show(NormalMode).url)
       }
@@ -79,7 +78,7 @@ class TellUsAboutYourRenewedAgreementControllerSpec extends ControllerSpecSuppor
           "landlord" -> Json.obj(
             "landlordName" -> "Anna"
           )
-        ), Instant.now))).submit()(authenticatedFakeRequest)
+        ), Instant.now))).submit(authenticatedFakeRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) shouldBe Some(routes.WhatTypeOfLeaseRenewalController.show(NormalMode).url)
       }

@@ -56,7 +56,8 @@ class DeclarationControllerSpec extends ControllerSpecSupport {
         val exception = intercept[Exception] {
           await(controllerProperty(None).submit(authenticatedFakeRequest))
         }
-        exception.getMessage contains "No Assessment ID found" mustBe true
+        println(exception.getMessage)
+        exception.getMessage contains "Could not save reference for credId: 1234" mustBe true
       }
       "Return Exception when fail to store user answers to backend mongoDB" in {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
@@ -64,7 +65,8 @@ class DeclarationControllerSpec extends ControllerSpecSupport {
         val exception = intercept[Exception] {
           await(controllerProperty(None).submit(authenticatedFakeRequest))
         }
-        exception.getMessage contains "No Assessment ID found" mustBe true
+        println(exception.getMessage)
+        exception.getMessage contains "Failed upsert to backend for credId: 1234" mustBe true
       }
     }
   }
