@@ -51,7 +51,7 @@
     <p class="govuk-body">@firstRentPeriodEnd</p>
 }
 
-@layout(pageTitle = Some(messages(s"rentPeriod.${index + 2}.sequence") + " " + messages("provideDetailsOfSecondRentPeriod.title")), showBackLink = true, fullWidth = false) {
+@layout(pageTitle = Some(messages(s"rentPeriod.${index + 2}.sequence") + " " + messages("provideDetailsOfSecondRentPeriod.title")), showJSBackLink = true, fullWidth = false) {
 
     @formHelper(action =
         if(index == 0){

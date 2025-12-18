@@ -21,7 +21,6 @@
 @import uk.gov.hmrc.ngrraldfrontend.views.html.components._
 @import uk.gov.hmrc.ngrraldfrontend.viewmodels.govuk.all._
 @import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-@import uk.gov.hmrc.ngrraldfrontend.models.components.NavigationBarContent
 @import uk.gov.hmrc.ngrraldfrontend.models.forms.DidYouPayAnyMoneyToLandlordForm
 
 @this(
@@ -34,7 +33,7 @@
 
 @(selectedPropertyAddress: String, form: Form[DidYouPayAnyMoneyToLandlordForm], ngrRadio: Radios, mode: Mode)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
-@layout(pageTitle = Some(messages("didYouPayAnyMoneyToLandlord.title")), showBackLink = true, fullWidth = false) {
+@layout(pageTitle = Some(messages("didYouPayAnyMoneyToLandlord.title")), showJSBackLink = true, fullWidth = false) {
     @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouPayAnyMoneyToLandlordController.submit(mode), Symbol("autoComplete") -> "off") {
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

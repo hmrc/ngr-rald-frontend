@@ -31,7 +31,7 @@
 
 @(form: Form[RentDatesAgreeStartForm], selectedPropertyAddress: String, mode: Mode)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
-@layout(pageTitle = Some(messages("rentDatesAgreeStart.title")), showBackLink = true, fullWidth = false) {
+@layout(pageTitle = Some(messages("rentDatesAgreeStart.title")), showJSBackLink = true, fullWidth = false) {
 
  @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeStartController.submit(mode), Symbol("autoComplete") -> "off") {
     @if(form.errors.nonEmpty) {

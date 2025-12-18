@@ -31,7 +31,7 @@
 
 @(form:Form[WhatTypeOfLeaseRenewalForm], radios: Radios, propertyAddress: String, mode: Mode)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
-@layout(pageTitle = Some(messages("typeOfLeaseRenewal.title")), showBackLink = true, fullWidth = true) {
+@layout(pageTitle = Some(messages("typeOfLeaseRenewal.title")), showJSBackLink = true, fullWidth = true) {
     @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatTypeOfLeaseRenewalController.submit(mode), Symbol("autoComplete") -> "off") {
         @if(form.errors.nonEmpty) {
          @govukErrorSummary(ErrorSummaryViewModel(form))

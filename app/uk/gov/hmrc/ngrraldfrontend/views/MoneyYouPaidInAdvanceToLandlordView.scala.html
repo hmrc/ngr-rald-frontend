@@ -31,7 +31,7 @@
 
 @(form:Form[MoneyYouPaidInAdvanceToLandlordForm], propertyAddress: String, advanceMoney: Html, dateInput: DateInput, mode: Mode)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
-@layout(pageTitle = Some(messages("moneyYouPaidInAdvanceToLandlord.title")), showBackLink = true, fullWidth = false) {
+@layout(pageTitle = Some(messages("moneyYouPaidInAdvanceToLandlord.title")), showJSBackLink = true, fullWidth = false) {
     @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.MoneyYouPaidInAdvanceToLandlordController.submit(mode), Symbol("autoComplete") -> "off") {
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, Some("moneyYouPaidInAdvanceToLandlord"), Some(Seq("date"))))

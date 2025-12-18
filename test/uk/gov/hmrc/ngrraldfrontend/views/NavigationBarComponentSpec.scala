@@ -46,19 +46,19 @@ class NavigationBarComponentSpec extends ViewBaseSpec {
 
   "The Nav Bar template" when {
     "navigation bar should render correctly" in {
-      injectedView.f(content, false)(request, messages).toString() must not be empty
-      injectedView.render(content, false, request, messages).toString() must not be empty
+      injectedView.f(content, false, None)(request, messages).toString() must not be empty
+      injectedView.render(content, false, None, request, messages).toString() must not be empty
     }
 
     "back link should be created when showBackLine sets to true" in {
-      val view = injectedView(content, true)(request, messages)
+      val view = injectedView(content, true, None)(request, messages)
       lazy implicit val document: Document = Jsoup.parse(view.body)
 
       elementText(Selectors.backLine) mustBe backLine
     }
 
     "back link should be missing when showBackLine sets to false" in {
-      val htmlReader = injectedView.render(content, false, request, messages).toString()
+      val htmlReader = injectedView.render(content, false, None, request, messages).toString()
 
       htmlReader contains "<a href=\"#\" class=\"govuk-back-link\" data-module=\"hmrc-back-link\">Back</a>" shouldBe false
     }

@@ -34,7 +34,7 @@
 
 @(selectedPropertyAddress: String, form: Form[DidYouGetIncentiveForNotTriggeringBreakClause], mode: Mode)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
-@layout(pageTitle = Some(messages("didYouGetIncentiveForNotTriggeringBreakClause.title")), showBackLink = true, fullWidth = false) {
+@layout(pageTitle = Some(messages("didYouGetIncentiveForNotTriggeringBreakClause.title")), showJSBackLink = true, fullWidth = false) {
   @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouGetIncentiveForNotTriggeringBreakClauseController.submit(mode), Symbol("autoComplete") -> "off") {
     <span class="govuk-caption-m">@selectedPropertyAddress</span>
     @if(form.errors.nonEmpty) {

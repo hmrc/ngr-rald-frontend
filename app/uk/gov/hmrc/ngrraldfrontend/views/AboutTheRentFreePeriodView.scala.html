@@ -33,7 +33,7 @@
 
 @(form:Form[AboutTheRentFreePeriodForm], propertyAddress: String, dateInput: DateInput, mode: Mode)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
-@layout(pageTitle = Some(messages("aboutTheRentFreePeriod.title")), showBackLink = true, fullWidth = false) {
+@layout(pageTitle = Some(messages("aboutTheRentFreePeriod.title")), showJSBackLink = true, fullWidth = false) {
     @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.AboutTheRentFreePeriodController.submit(mode), Symbol("autoComplete") -> "off") {
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, Some("aboutTheRentFreePeriod"), Some(Seq("date"))))

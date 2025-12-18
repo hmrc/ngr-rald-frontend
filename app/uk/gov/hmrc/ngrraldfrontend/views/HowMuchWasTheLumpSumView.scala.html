@@ -31,7 +31,7 @@ saveAndContinueButton: saveAndContinueButton
 
 @(form:Form[HowMuchWasTheLumpSumForm], propertyAddress: String, mode: Mode)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
-@layout(pageTitle = Some(messages("howMuchWasTheLumpSum.title")), showBackLink = true, fullWidth = false) {
+@layout(pageTitle = Some(messages("howMuchWasTheLumpSum.title")), showJSBackLink = true, fullWidth = false) {
 @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.HowMuchWasTheLumpSumController.submit(mode), Symbol("autoComplete") -> "off") {
 @if(form.errors.nonEmpty) {
 @govukErrorSummary(ErrorSummaryViewModel(form))

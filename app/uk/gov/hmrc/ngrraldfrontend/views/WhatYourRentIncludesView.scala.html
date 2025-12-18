@@ -32,7 +32,7 @@
 
 @(form:Form[WhatYourRentIncludesForm], radios1: Radios, radios2: Radios, radios3: Radios, radios4: Option[Radios], radios5: Option[Radios], radios6: Option[Radios], propertyAddress: String, mode: Mode)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
-@layout(pageTitle = Some(messages("whatYourRentIncludes.title")), showBackLink = true, fullWidth = true) {
+@layout(pageTitle = Some(messages("whatYourRentIncludes.title")), showJSBackLink = true, fullWidth = true) {
     @formHelper(action = if(radios4.nonEmpty){uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatYourRentIncludesController.submit(mode)} else {uk.gov.hmrc.ngrraldfrontend.controllers.routes.WhatRentIncludesRatesWaterServiceController.submit(mode)}, Symbol("autoComplete") -> "off") {
     @if(form.errors.nonEmpty) {
         @govukErrorSummary(ErrorSummaryViewModel(form))

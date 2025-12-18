@@ -35,7 +35,7 @@ saveAndContinueButton: saveAndContinueButton
   propertyAddress: String,
   mode: Mode)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
-@layout(pageTitle = Some(messages("rentDatesAgree.title")), showBackLink = true, fullWidth = false) {
+@layout(pageTitle = Some(messages("rentDatesAgree.title")), showJSBackLink = true, fullWidth = false) {
   @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.RentDatesAgreeController.submit(mode), Symbol("autoComplete") -> "off") {
     @if(form.errors.nonEmpty) {
       @govukErrorSummary(ErrorSummaryViewModel(form, Some("rentDatesAgree"), Some(Seq("date"))))

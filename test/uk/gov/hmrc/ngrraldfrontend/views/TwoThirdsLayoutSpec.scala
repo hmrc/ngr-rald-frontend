@@ -25,9 +25,9 @@ class TwoThirdsLayoutSpec extends ViewBaseSpec  {
   val injectedView: TwoThirdsLayout = inject[TwoThirdsLayout]
 
   "produce the same output for apply() and render()" in {
-    val htmlApply = injectedView.apply(Html("Test"), Html("Test")).body
-    val htmlRender = injectedView.render(Html("Test"), Html("Test")).body
-    val htmlF = injectedView.f(Html("Test"), Html("Test")).body
+    val htmlApply = injectedView.apply(Html("Test")).body
+    val htmlRender = injectedView.render(Html("Test")).body
+    val htmlF = injectedView.f(Html("Test")).body
     htmlApply mustBe htmlRender
     htmlF must not be empty
   }

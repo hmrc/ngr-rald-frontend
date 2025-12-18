@@ -19,7 +19,6 @@
 @import uk.gov.hmrc.ngrraldfrontend.views.html.components._
 @import uk.gov.hmrc.ngrraldfrontend.viewmodels.govuk.all._
 @import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
-@import uk.gov.hmrc.ngrraldfrontend.models.components.NavigationBarContent
 @import uk.gov.hmrc.ngrraldfrontend.models.*
 
 
@@ -37,7 +36,7 @@
 }
  
 
-@layout(pageTitle = Some(agreement), showBackLink = false) {
+@layout(pageTitle = Some(agreement), showJSBackLink = false) {
 
 
  @govukPanel(Panel(

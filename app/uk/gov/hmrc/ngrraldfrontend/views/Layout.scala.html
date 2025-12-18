@@ -17,12 +17,12 @@
 @import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 @import uk.gov.hmrc.hmrcfrontend.config.ContactFrontendConfig
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage._
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
 @import uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcStandardPage
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage.HmrcStandardPageParams
-@import uk.gov.hmrc.ngrraldfrontend.models.components.NavigationBarContent
 @import uk.gov.hmrc.ngrraldfrontend.views.html.components.navigationBarComponent
 @import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
 
@@ -38,50 +38,41 @@
 )(implicit cfConfig: ContactFrontendConfig)
 
 @(pageTitle: Option[String] = None,
-showBackLink: Boolean = false,
-fullWidth: Boolean = false,
-navigationBarContent: Option[NavigationBarContent] = None
+showJSBackLink: Boolean = false,
+backLinkUrl: Option[String] = None,
+fullWidth: Boolean = false
 )(contentBlock: Html)(implicit request: RequestHeader, messages: Messages,  appConfig: AppConfig)
 
 @headScripts = {
     @stylesheets()
 }
 
-@navbar = {
-    @if(navigationBarContent.isEmpty){
-        @navigationBarComponent(createDefaultNavBar, showBackLink)
-    }else{
-        @navigationBarContent.map { content =>
-            @navigationBarComponent(content, showBackLink)
-        }
-    }
-}
-
-@languageSelector = {
-    @hmrcLanguageSelectHelper()
-}
-
-@content = {
-    @if(appConfig.features.welshLanguageSupportEnabled()) {
-        @languageSelector
-    }
-    @contentBlock
+@beforeContentBlock = {
+    @navigationBarComponent(createDefaultNavBar, showJSBackLink, backLinkUrl)
 }
 
 @hmrcStandardPage(
     HmrcStandardPageParams(
         pageTitle = pageTitle.map(title => messages("service.base.title", title)),
         templateOverrides = TemplateOverrides(
-        mainContentLayout = if (fullWidth) {
-            Some((_: Html) => fullWidthLayout(content, navbar))
-        } else {
-            Some((_: Html) => twoThirdsLayout(content, navbar))
-        },
-        additionalHeadBlock = Some(headScripts)
+            mainContentLayout = if (fullWidth) {
+                Some(fullWidthLayout(_))
+            } else {
+                Some(twoThirdsLayout(_))
+            },
+            additionalHeadBlock = Some(headScripts),
+            beforeContentBlock = Some(beforeContentBlock)
         ),
-        backLink = None,
+        backLink = backLinkUrl.map(BackLink(_)),
         banners = Banners(
             phaseBanner = Some(standardBetaBanner()),
         ),
+        serviceNavigation = Some(
+            if (appConfig.features.welshLanguageSupportEnabled()) {
+                ServiceNavigation(serviceName = Some(messages("service.name"))).withLanguageToggle()
+            } else{
+                ServiceNavigation(serviceName = Some(messages("service.name")))
+            }
+        )
     )
-)(content)
+)(contentBlock)
