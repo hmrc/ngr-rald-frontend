@@ -21,7 +21,7 @@
 
 @this(govukBackLink: GovukBackLink)
 
-@(navigationBar: NavigationBarContent, showBackLink: Boolean = false)(implicit request: RequestHeader, messages: Messages)
+@(navigationBar: NavigationBarContent, showJavaScriptBackLink: Boolean = false, backLinkUrl: Option[String] = None)(implicit request: RequestHeader, messages: Messages)
 
 @hrefLinkClass(button: NavButton) = {
     @if(button.fieldName.equals("SignOutPage")){
@@ -31,7 +31,7 @@
     }
 }
 
-<div class="govuk-width-container" style="margin-top: -45px; margin-bottom: @if(showBackLink) {10px} else {30px};">
+<div class="govuk-width-container">
     <nav id="secondary-nav" class="hmrc-account-menu">
         @navigationBar.accountHome.map{ Home =>
         <a href=@Home.call.url
@@ -58,7 +58,11 @@
             }
         </ul>
     </nav>
-    @if(showBackLink){
-    @govukBackLink(BackLink.mimicsBrowserBackButtonViaJavaScript)
+    @backLinkUrl.map { url =>
+        @govukBackLink(BackLink(url))
+    }.getOrElse {
+        @if(showJavaScriptBackLink) {
+            @govukBackLink(BackLink.mimicsBrowserBackButtonViaJavaScript)
+        }
     }
 </div>

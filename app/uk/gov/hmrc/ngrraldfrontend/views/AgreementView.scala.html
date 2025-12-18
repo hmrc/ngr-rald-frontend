@@ -32,7 +32,7 @@ saveAndContinueButton: saveAndContinueButton
 
 @(selectedPropertyAddress: String, form: Form[AgreementForm], dateInput: DateInput, openEndedRadio: Radios, breakClauseRadio: Radios, mode: Mode)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
-@layout(pageTitle = Some(messages("agreement.title")), showBackLink = true, fullWidth = false) {
+@layout(pageTitle = Some(messages("agreement.title")), showJSBackLink = true, fullWidth = false) {
 
     @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.AgreementController.submit(mode), Symbol("autoComplete") -> "off") {
 

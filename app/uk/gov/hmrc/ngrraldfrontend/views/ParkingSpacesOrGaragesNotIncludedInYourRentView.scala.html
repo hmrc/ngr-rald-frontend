@@ -31,7 +31,7 @@
 
 @(form:Form[ParkingSpacesOrGaragesNotIncludedInYourRentForm], propertyAddress: String, uncoveredSpaces: Html, coveredSpaces: Html, garages: Html, agreementDate: DateInput, mode: Mode)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
-@layout(pageTitle = Some(messages("parkingSpacesOrGaragesNotIncludedInYourRent.title")), showBackLink = true, fullWidth = false) {
+@layout(pageTitle = Some(messages("parkingSpacesOrGaragesNotIncludedInYourRent.title")), showJSBackLink = true, fullWidth = false) {
     @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.ParkingSpacesOrGaragesNotIncludedInYourRentController.submit(mode), Symbol("autoComplete") -> "off") {
     @if(form.errors.nonEmpty) {
         @govukErrorSummary(ErrorSummaryViewModel(form, Some("parkingSpacesOrGaragesNotIncludedInYourRent"), Some(Seq("agreementDate"))))

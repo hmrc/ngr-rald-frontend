@@ -46,7 +46,7 @@
         isRentReviewed: Boolean
 )(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 @heading = @{messages("checkAnswers.title")}
-@layout(pageTitle = Some(messages("checkAnswers.title")), showBackLink = true, fullWidth = false) {
+@layout(pageTitle = Some(messages("checkAnswers.title")), showJSBackLink = true, fullWidth = false) {
   @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.CheckAnswersController.submit, Symbol("autoComplete") -> "off") {
 
     <h1 class="govuk-heading-l">@messages("checkAnswers.title")</h1>

@@ -32,7 +32,7 @@
 @(form:Form[MoneyToTakeOnTheLeaseForm], propertyAddress: String, mode: Mode)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
 
-@layout(pageTitle = Some(messages("moneyToTakeOnTheLease.title")), showBackLink = true, fullWidth = false) {
+@layout(pageTitle = Some(messages("moneyToTakeOnTheLease.title")), showJSBackLink = true, fullWidth = false) {
     @formHelper(
         action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.MoneyToTakeOnTheLeaseController.submit(mode),
         Symbol("autoComplete") -> "off"

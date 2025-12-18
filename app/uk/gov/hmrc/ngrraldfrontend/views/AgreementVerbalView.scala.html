@@ -32,7 +32,7 @@
 
 @(form: Form[AgreementVerbalForm], ngrRadio: Radios, selectedPropertyAddress: String, mode: Mode)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
-@layout(pageTitle = Some(messages("agreementVerbal.title")), showBackLink = true, fullWidth = false) {
+@layout(pageTitle = Some(messages("agreementVerbal.title")), showJSBackLink = true, fullWidth = false) {
 
  @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.AgreementVerbalController.submit(mode), Symbol("autoComplete") -> "off") {
     @if(form.errors.nonEmpty) {

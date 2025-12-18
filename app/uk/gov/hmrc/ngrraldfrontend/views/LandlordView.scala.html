@@ -18,7 +18,6 @@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.ngrraldfrontend.models.components.NavigationBarContent
 @import uk.gov.hmrc.ngrraldfrontend.viewmodels.govuk.all._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.ngrraldfrontend.views.html.components._
@@ -35,7 +34,7 @@
 
 @(selectedPropertyAddress: String, form: Form[LandlordForm], ngrRadio: Radios, mode: Mode)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
-@layout(pageTitle = Some(messages("landlord.title")), showBackLink = true, fullWidth = false) {
+@layout(pageTitle = Some(messages("landlord.title")), showJSBackLink = true, fullWidth = false) {
 
  @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.LandlordController.submit(mode), Symbol("autoComplete") -> "off") {
 

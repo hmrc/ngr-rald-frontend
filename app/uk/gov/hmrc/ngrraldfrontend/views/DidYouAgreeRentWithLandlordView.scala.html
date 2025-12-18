@@ -30,7 +30,7 @@
 
 @(selectedPropertyAddress: String, form: Form[DidYouAgreeRentWithLandlordForm], ngrRadio: Radios, mode: Mode)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
-@layout(pageTitle = Some(messages("didYouAgreeRentWithLandlord.title")), showBackLink = true, fullWidth = false) {
+@layout(pageTitle = Some(messages("didYouAgreeRentWithLandlord.title")), showJSBackLink = true, fullWidth = false) {
 
     @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.DidYouAgreeRentWithLandlordController.submit(mode), Symbol("autoComplete") -> "off") {
         @if(form.errors.nonEmpty) {

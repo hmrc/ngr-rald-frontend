@@ -31,7 +31,7 @@
 
 @(form:Form[AgreedRentChangeForm], radios: Radios, propertyAddress: String, mode: Mode)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
-@layout(pageTitle = Some(messages("agreedRentChange.title")), showBackLink = true, fullWidth = false) {
+@layout(pageTitle = Some(messages("agreedRentChange.title")), showJSBackLink = true, fullWidth = false) {
     @formHelper(action = uk.gov.hmrc.ngrraldfrontend.controllers.routes.AgreedRentChangeController.submit(mode), Symbol("autoComplete") -> "off") {
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

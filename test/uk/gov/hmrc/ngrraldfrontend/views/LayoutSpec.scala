@@ -22,14 +22,16 @@ import play.twirl.api.Html
 import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
 import uk.gov.hmrc.ngrraldfrontend.views.html.{Layout, Stylesheets}
 
+import scala.jdk.CollectionConverters.*
+
 class LayoutSpec extends ViewBaseSpec {
   val injectedView: Layout = injector.instanceOf[Layout]
   val navTitle = "Manage your business rates valuation"
   val backLink = "Back"
 
   object Selectors {
-    val navTitle = ".govuk-header__service-name"
-    val languageSelector = "#main-content > div > div > nav > ul > li:nth-child(1) > span"
+    val navTitle = ".govuk-service-navigation__service-name"
+    val languageSelector = ".hmrc-service-navigation-language-select"
     val backLink = ".govuk-back-link"
   }
 
@@ -43,8 +45,8 @@ class LayoutSpec extends ViewBaseSpec {
 
     "produce the same output for apply() and render()" in {
       val htmlApply = injectedView.apply(pageTitle = Some("Title of page"))(Html("Test")).body
-      val htmlRender = injectedView.render(pageTitle = Some("Title of page"), showBackLink = false, contentBlock = Html("Test"), request = request, messages = messages, appConfig = mockConfig, fullWidth = false, navigationBarContent = None).body
-      val htmlF = injectedView.f(Some("Title of page"), false, false, None)(Html("Test"))(request, messages, mockConfig).body
+      val htmlRender = injectedView.render(pageTitle = Some("Title of page"), contentBlock = Html("Test"), backLinkUrl = None, showJSBackLink = false, request = request, messages = messages, appConfig = mockConfig, fullWidth = false).body
+      val htmlF = injectedView.f(Some("Title of page"), false, None, false)(Html("Test"))(request, messages, mockConfig).body
       htmlApply mustBe htmlRender
       htmlF must not be empty
     }
@@ -70,7 +72,14 @@ class LayoutSpec extends ViewBaseSpec {
         lazy val view = injectedView(pageTitle = Some("Title of page"))(Html("Test"))(request, messages,  mockConfig)
         lazy implicit val document: Document = Jsoup.parse(view.body)
 
-        elementText(Selectors.languageSelector) mustBe "English"
+        val langToggle = document.select(Selectors.languageSelector)
+        langToggle.toString must include("""href="/ngr-rald-frontend/hmrc-frontend/language/cy"""")
+
+        val langItems = langToggle.select(".hmrc-service-navigation-language-select__list-item").eachText().asScala
+        langItems.size mustBe 2
+        langItems.head must include("ENG")
+        langItems(1) must include("CYM")
+
         mockConfig.features.welshLanguageSupportEnabled(false)
       }
     }
