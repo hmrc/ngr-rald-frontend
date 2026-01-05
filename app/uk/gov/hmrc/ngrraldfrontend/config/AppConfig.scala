@@ -23,6 +23,7 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import javax.inject.{Inject, Singleton}
 
 trait AppConfig {
+  val appName: String
   val features: Features
   val nextGenerationRatesHost: String
   val ngrLoginRegistrationHost: String
@@ -36,6 +37,7 @@ trait AppConfig {
 
 @Singleton
 class FrontendAppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig) extends AppConfig {
+  override val appName: String = servicesConfig.getString("appName")
   override val features = new Features()(config)
   override val nextGenerationRatesHost: String = servicesConfig.baseUrl("next-generation-rates")
   override val ngrLoginRegistrationHost: String = servicesConfig.baseUrl("ngr-login-register-frontend")
