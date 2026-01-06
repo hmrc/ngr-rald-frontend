@@ -18,7 +18,7 @@ package uk.gov.hmrc.ngrraldfrontend.controllers
 
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{times, verify, when}
 import org.scalatest.matchers.should.Matchers.shouldBe
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.FakeRequest
@@ -27,6 +27,7 @@ import uk.gov.hmrc.auth.core.Nino
 import uk.gov.hmrc.http.{HeaderNames, NotFoundException}
 import uk.gov.hmrc.ngrraldfrontend.helpers.ControllerSpecSupport
 import uk.gov.hmrc.ngrraldfrontend.models.AgreementType.NewAgreement
+import uk.gov.hmrc.ngrraldfrontend.models.audit.AuditModel
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
 import uk.gov.hmrc.ngrraldfrontend.models.{AuthenticatedUserRequest, NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.pages.WhatTypeOfAgreementPage
@@ -37,8 +38,8 @@ import scala.concurrent.Future
 class WhatTypeOfAgreementControllerSpec extends ControllerSpecSupport {
   val pageTitle = "What type of agreement do you have?"
   val view: WhatTypeOfAgreementView = inject[WhatTypeOfAgreementView]
-  val controllerProperty: Option[UserAnswers] => WhatTypeOfAgreementController = answers => new WhatTypeOfAgreementController(view, mockAuthJourney, mcc, fakeDataProperty(Some(property),answers), mockCheckRequestSentReference, mockNavigator, mockSessionRepository)(mockConfig, ec)
-  val controllerNoProperty: WhatTypeOfAgreementController = new WhatTypeOfAgreementController(view, mockAuthJourney, mcc, fakeData(None), mockCheckRequestSentReference, mockNavigator, mockSessionRepository)(mockConfig, ec)
+  val controllerProperty: Option[UserAnswers] => WhatTypeOfAgreementController = answers => new WhatTypeOfAgreementController(view, mockAuthJourney, mcc, fakeDataProperty(Some(property),answers), mockCheckRequestSentReference, mockNavigator, mockSessionRepository, mockAuditingService)(mockConfig, ec)
+  val controllerNoProperty: WhatTypeOfAgreementController = new WhatTypeOfAgreementController(view, mockAuthJourney, mcc, fakeData(None), mockCheckRequestSentReference, mockNavigator, mockSessionRepository, mockAuditingService)(mockConfig, ec)
   val whatTypeOfAgreementAnswers: Option[UserAnswers] = userAnswersWithoutData.set(WhatTypeOfAgreementPage, "Verbal").toOption
 
 

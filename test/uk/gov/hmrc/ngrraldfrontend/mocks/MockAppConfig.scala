@@ -21,6 +21,7 @@ import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 import uk.gov.hmrc.ngrraldfrontend.config.features.Features
 
 class MockAppConfig(val runModeConfiguration: Configuration) extends AppConfig {
+  override val appName: String = "ngr-rald-frontend"
   override val features: Features = new Features()(runModeConfiguration)
   override val nextGenerationRatesHost: String = "https://localhost:1500"
   override val ngrLoginRegistrationHost: String = "https://localhost:1502"
