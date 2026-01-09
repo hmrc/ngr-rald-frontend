@@ -17,11 +17,12 @@
 @import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
 @import uk.gov.hmrc.hmrcfrontend.config.ContactFrontendConfig
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage._
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage.HmrcStandardPageParams
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage.TemplateOverrides
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
 @import uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcStandardPage
-@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage.HmrcStandardPageParams
+@import uk.gov.hmrc.hmrcfrontend.views.html.components._
 @import uk.gov.hmrc.ngrraldfrontend.models.components.NavigationBarContent
 @import uk.gov.hmrc.ngrraldfrontend.views.html.components.navigationBarComponent
 @import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
@@ -34,17 +35,32 @@
   twoThirdsLayout: TwoThirdsLayout,
   hmrcStandardPage: HmrcStandardPage,
   stylesheets: Stylesheets,
-  navigationBarComponent: navigationBarComponent
+  navigationBarComponent: navigationBarComponent,
+  hmrcTimeoutDialog: HmrcTimeoutDialog
 )(implicit cfConfig: ContactFrontendConfig)
 
 @(pageTitle: Option[String] = None,
 showBackLink: Boolean = false,
 fullWidth: Boolean = false,
-navigationBarContent: Option[NavigationBarContent] = None
+navigationBarContent: Option[NavigationBarContent] = None,
+timeout: Boolean = true
 )(contentBlock: Html)(implicit request: RequestHeader, messages: Messages,  appConfig: AppConfig)
 
 @headScripts = {
-    @stylesheets()
+@stylesheets()
+    @if(timeout) {
+        @hmrcTimeoutDialog(TimeoutDialog(
+            timeout             = Some(appConfig.timeout),
+            countdown           = Some(appConfig.countdown),
+            keepAliveUrl        = Some(uk.gov.hmrc.ngrraldfrontend.controllers.routes.KeepAliveController.keepAlive.url),
+            keepAliveButtonText = Some(messages("timeout.keepAlive")),
+            signOutUrl          = Some(uk.gov.hmrc.ngrraldfrontend.controllers.routes.BeforeYouGoController.signout.url),
+            signOutButtonText   = Some(messages("timeout.signOut")),
+            title               = Some(messages("timeout.title")),
+            message             = Some(messages("timeout.message")),
+            language            = Some(messages.lang.code)
+        ))
+    }
 }
 
 @navbar = {

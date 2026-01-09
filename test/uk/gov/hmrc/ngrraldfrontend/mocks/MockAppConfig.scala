@@ -30,5 +30,9 @@ class MockAppConfig(val runModeConfiguration: Configuration) extends AppConfig {
   override def getString(key: String): String = ""
   override val cacheTtl: Long = 8
   override val nextGenerationRatesNotifyUrl: String = "https://localhost:1515"
+  override val logoutUrl: String = "http://localhost:9553/bas-gateway/sign-out-without-state?continue=http://localhost:1505/ngr-rald-frontend/beforeYouGo"
+  override val timeout: Int = 900
+  override val countdown: Int = 200
+  override val feedbackFrontendUrl: String = "http://localhost:9514/feedback/NGR-Rald"
 }
 

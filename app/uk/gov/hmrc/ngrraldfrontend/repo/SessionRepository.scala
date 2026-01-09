@@ -62,12 +62,12 @@ class SessionRepository @Inject()(
 
   implicit val instantFormat: Format[Instant] = MongoJavatimeFormats.instantFormat
 
-  private def filterByCredId(id: String): Bson = Filters.equal("credId.value", id)
+  private def filterByCredId(credId: String): Bson = Filters.equal("credId.value", credId)
 
-  def keepAlive(id: String): Future[Boolean] = Mdc.preservingMdc {
+  def keepAlive(credId: String): Future[Boolean] = Mdc.preservingMdc {
     collection
       .updateOne(
-        filter = filterByCredId(id),
+        filter = filterByCredId(credId),
         update = Updates.set("lastUpdated", Instant.now(clock)),
       )
       .toFuture()
