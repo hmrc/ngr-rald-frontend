@@ -20,6 +20,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.should.Matchers.shouldBe
 import play.api.mvc.Call
+import uk.gov.hmrc.ngrraldfrontend.controllers.routes
 import uk.gov.hmrc.ngrraldfrontend.helpers.ViewBaseSpec
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.views.html.components.navigationBarComponent
@@ -66,7 +67,7 @@ class NavigationBarComponentSpec extends ViewBaseSpec {
     "Links are populated correctly" in {
       content.navigationButtons.isDefined mustBe true
       content.accountHome.get shouldBe NavButton(fieldName = "HomePage", call = Call("GET", mockConfig.ngrDashboardUrl), messageKey = "nav.home", linkId = "Home", selected = true, notification = None)
-      content.navigationButtons.get shouldBe Seq(NavButton(fieldName = "SignOutPage", call = Call("GET", mockConfig.ngrLogoutUrl), messageKey = "nav.signOut", linkId = "SignOut", selected = false, notification = None))
+      content.navigationButtons.get shouldBe Seq(NavButton(fieldName = "SignOutPage", call = Call("GET", routes.BeforeYouGoController.signout.url), messageKey = "nav.signOut", linkId = "SignOut", selected = false, notification = None))
     }
   }
 }
