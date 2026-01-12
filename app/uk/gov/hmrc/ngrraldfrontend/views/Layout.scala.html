@@ -25,10 +25,10 @@
 @import uk.gov.hmrc.ngrraldfrontend.models.components.NavigationBarContent
 @import uk.gov.hmrc.ngrraldfrontend.views.html.components.navigationBarComponent
 @import uk.gov.hmrc.ngrraldfrontend.models.components.NavBarPageContents.createDefaultNavBar
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
   appConfig: AppConfig,
-  hmrcLanguageSelectHelper: HmrcLanguageSelectHelper,
   standardBetaBanner: StandardBetaBanner,
   fullWidthLayout: FullWidthLayout,
   twoThirdsLayout: TwoThirdsLayout,
@@ -57,25 +57,14 @@ navigationBarContent: Option[NavigationBarContent] = None
     }
 }
 
-@languageSelector = {
-    @hmrcLanguageSelectHelper()
-}
-
-@content = {
-    @if(appConfig.features.welshLanguageSupportEnabled()) {
-        @languageSelector
-    }
-    @contentBlock
-}
-
 @hmrcStandardPage(
     HmrcStandardPageParams(
         pageTitle = pageTitle.map(title => messages("service.base.title", title)),
         templateOverrides = TemplateOverrides(
         mainContentLayout = if (fullWidth) {
-            Some((_: Html) => fullWidthLayout(content, navbar))
+            Some((_: Html) => fullWidthLayout(contentBlock, navbar))
         } else {
-            Some((_: Html) => twoThirdsLayout(content, navbar))
+            Some((_: Html) => twoThirdsLayout(contentBlock, navbar))
         },
         additionalHeadBlock = Some(headScripts)
         ),
@@ -83,5 +72,12 @@ navigationBarContent: Option[NavigationBarContent] = None
         banners = Banners(
             phaseBanner = Some(standardBetaBanner()),
         ),
+        serviceNavigation = Some(
+            if(appConfig.features.welshLanguageSupportEnabled()){
+                ServiceNavigation(serviceName = Some(messages("service.name"))).withLanguageToggle()
+            } else{
+                ServiceNavigation(serviceName = Some(messages("service.name")))
+            }
+        )
     )
-)(content)
+)(contentBlock)
