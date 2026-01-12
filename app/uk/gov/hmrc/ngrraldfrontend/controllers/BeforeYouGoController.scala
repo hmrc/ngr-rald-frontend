@@ -32,12 +32,7 @@ class BeforeYouGoController @Inject()(
   extends FrontendController(mcc) with I18nSupport {
 
   def signout: Action[AnyContent] = Action { _ =>
-    println(Console.MAGENTA_B + appConfig.logoutUrl + Console.RESET)
     Redirect(appConfig.logoutUrl).withNewSession
-  }
-
-  def signin: Action[AnyContent] = Action { implicit request =>
-    Redirect(appConfig.ngrDashboardUrl)
   }
 
   def show: Action[AnyContent] = Action { implicit request =>
