@@ -725,3 +725,17 @@ checkAnswers.rentPeriod.ordinal.6 = Seventh rent period
 checkAnswers.rentPeriod.ordinal.7 = Eighth rent period
 checkAnswers.rentPeriod.ordinal.8 = Ninth rent period
 checkAnswers.rentPeriod.ordinal.9 = Tenth rent period
+
+#BeforeYouGo
+beforeYouGo.title=You have signed out
+beforeYouGo.signin=Sign in to the service
+beforeYouGo.h2=Before you go
+beforeYouGo.p1=Your feedback helps us make our service better.
+beforeYouGo.feedback=Take a short survey
+beforeYouGo.p3= to share your feedback on this service.
+
+#timeout
+timeout.title = You’re about to be signed out
+timeout.message = Your session is about to expire due to inactivity.
+timeout.keepAlive = Stay Signed In
+timeout.signOut = Sign Out Now

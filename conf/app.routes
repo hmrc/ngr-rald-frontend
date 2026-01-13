@@ -254,3 +254,10 @@ GET        /rent-review-details-sent               uk.gov.hmrc.ngrraldfrontend.c
 #check answers
 GET        /check-answers                          uk.gov.hmrc.ngrraldfrontend.controllers.CheckAnswersController.show
 POST       /check-answers                          uk.gov.hmrc.ngrraldfrontend.controllers.CheckAnswersController.submit
+
+#sign out
+GET        /signout                                uk.gov.hmrc.ngrraldfrontend.controllers.BeforeYouGoController.signout
+GET        /beforeYouGo                            uk.gov.hmrc.ngrraldfrontend.controllers.BeforeYouGoController.show
+GET        /feedback                               uk.gov.hmrc.ngrraldfrontend.controllers.BeforeYouGoController.feedback
+
+GET        /refresh-session                        uk.gov.hmrc.ngrraldfrontend.controllers.KeepAliveController.keepAlive
