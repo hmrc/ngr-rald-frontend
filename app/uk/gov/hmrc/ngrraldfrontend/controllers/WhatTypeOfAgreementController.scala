@@ -20,15 +20,17 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.ngrraldfrontend.actions.{AuthRetrievals, CheckRequestSentReferenceAction, DataRetrievalAction}
 import uk.gov.hmrc.ngrraldfrontend.config.AppConfig
+import uk.gov.hmrc.ngrraldfrontend.models.audit.AuditModel
 import uk.gov.hmrc.ngrraldfrontend.models.components.*
 import uk.gov.hmrc.ngrraldfrontend.models.components.NGRRadio.buildRadios
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatTypeOfAgreementForm
 import uk.gov.hmrc.ngrraldfrontend.models.forms.WhatTypeOfAgreementForm.form
 import uk.gov.hmrc.ngrraldfrontend.models.registration.CredId
-import uk.gov.hmrc.ngrraldfrontend.models.{Mode, UserAnswers}
+import uk.gov.hmrc.ngrraldfrontend.models.{Mode, NormalMode, UserAnswers}
 import uk.gov.hmrc.ngrraldfrontend.navigation.Navigator
 import uk.gov.hmrc.ngrraldfrontend.pages.{WhatIsYourRentBasedOnPage, WhatTypeOfAgreementPage}
 import uk.gov.hmrc.ngrraldfrontend.repo.SessionRepository
+import uk.gov.hmrc.ngrraldfrontend.services.AuditingService
 import uk.gov.hmrc.ngrraldfrontend.views.html.WhatTypeOfAgreementView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -43,7 +45,8 @@ class WhatTypeOfAgreementController @Inject()(view: WhatTypeOfAgreementView,
                                               getData: DataRetrievalAction,
                                               checkRequestSentReference: CheckRequestSentReferenceAction,
                                               navigator: Navigator,
-                                              sessionRepository: SessionRepository)
+                                              sessionRepository: SessionRepository,
+                                              auditingService: AuditingService)
                                              (implicit appConfig: AppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport {
 
@@ -77,6 +80,11 @@ class WhatTypeOfAgreementController @Inject()(view: WhatTypeOfAgreementView,
                 mode
               ))),
           whatTypeOfAgreementForm =>
+            auditingService.extendedAudit(AuditModel(
+              request.credId, 
+              "what-type-of-agreement-do-you-have", 
+              Map("whatTypeOfAgreement" -> whatTypeOfAgreementForm.radioValue)),
+              routes.WhatTypeOfAgreementController.show(mode).url)
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(CredId(request.credId)))
                 .set(WhatTypeOfAgreementPage, whatTypeOfAgreementForm.radioValue))
